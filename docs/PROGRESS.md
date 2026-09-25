@@ -132,4 +132,7 @@ Note: I can build and test on Linux here, but **not produce a Windows `.exe`** i
 ### Still open
 - **Receipt printing**: thermal 58/80 mm? (not answered yet)
 
+## Phase 1.5 — Accounting (proposed) · 📝 awaiting owner's choice
+Research and proposal in `docs/ACCOUNTING_RESEARCH.md` (what Karma Soft / Al-Ameen offer and what we're missing). Proposed order: suppliers + purchase invoices (bonus, cost, expiry) → supplier statements and payments → cost & profit → shortages → purchase order → stocktaking without stopping sales → expenses and monthly P&L → automatic backup; then price-list import, money accounts, customer statements, reports, finer permissions.
+
 ## Phase 2 — Backend + sync · not started
