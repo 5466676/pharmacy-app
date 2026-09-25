@@ -132,7 +132,57 @@ Note: I can build and test on Linux here, but **not produce a Windows `.exe`** i
 ### Still open
 - **Receipt printing**: thermal 58/80 mm? (not answered yet)
 
-## Phase 1.5 — Accounting (proposed) · 📝 awaiting owner's choice
-Research and proposal in `docs/ACCOUNTING_RESEARCH.md` (what Karma Soft / Al-Ameen offer and what we're missing). Proposed order: suppliers + purchase invoices (bonus, cost, expiry) → supplier statements and payments → cost & profit → shortages → purchase order → stocktaking without stopping sales → expenses and monthly P&L → automatic backup; then price-list import, money accounts, customer statements, reports, finer permissions.
+## Phase 1.5 — Accounting · 📝 plan awaiting approval
+
+Goal: turn the counter app into a complete pharmacy accounting system (inspired by Karma Soft / Al-Ameen, see `docs/ACCOUNTING_RESEARCH.md`), still fully offline and still built on append-only records so Phase 2 sync stays safe.
+
+### A. Suppliers & purchases (المستودعات والمشتريات)
+- **Suppliers** (mutable master data): name, phone, sales rep, notes, credit limit.
+- **Purchase invoice** (append-only header + lines), keyboard-first like the POS (scan or search → line):
+  - per line: quantity (boxes, or strips when split), **bonus / free goods**, unit price, line discount %, **expiry** (optional), sale price (update the product price if it changed);
+  - per invoice: supplier invoice number, invoice discount, transport cost, paid **cash** or **on credit**.
+  - Each line opens a batch (`received` event). The **true cost per piece** = what was paid ÷ (quantity + bonus), after discounts and with transport spread across lines. The line total cost is stored exactly; per-piece cost is derived, so rounding can't drift.
+- **Supplier ledger** (new append-only `supplier_debt_events`): `purchase_on_credit`, `payment_made`, `return_credited`. This gives a **supplier statement** (كشف حساب), balance, and **debt age**.
+- **Purchase return to supplier** (expired / damaged / surplus): a new stock event type `returned_to_supplier`, taken from chosen batches, credited to the supplier or refunded in cash.
+- **Purchase price history** per product and supplier: last price, best price.
+
+### B. Cost & profit (التكلفة والأرباح)
+- Every `sold` event already records its batch, so the **cost of goods sold** comes from that batch's cost. Returns bring their cost back.
+- **Profit** per invoice, product, employee and day; margin %. Products received before this phase have no cost: they're shown as "cost unknown", never guessed.
+
+### C. Shortages → purchase order (النواقص والطلبية)
+- Shortage list: under the minimum, out of stock, or selling fast. Each line shows the last supplier and last price.
+- One tap builds a **purchase order** per supplier. It can be shared as text (WhatsApp / Telegram) or printed, and turns into a purchase invoice when the goods arrive.
+
+### D. Stocktaking without stopping sales (جرد بدون توقف)
+- A stocktake session, optionally limited to certain shelves. Each product is counted on its own. At the moment of counting we record both the counted quantity and the system quantity, so sales can carry on.
+- Applying the session writes `adjusted` events linked to it. The report shows shortage and surplus in value (cost).
+
+### E. Expenses & monthly P&L (المصاريف والأرباح والخسائر)
+- Expenses (rent, salaries, electricity, generator/ampere, internet, other + custom), paid **from the drawer** (reduces the till's expected cash) or **from outside** (the owner).
+- **Monthly profit & loss**: sales − returns − cost of goods − expenses = net profit.
+- Purchases paid in cash from the drawer also reduce the till's expected cash.
+
+### F. Automatic backup (النسخ الاحتياطي)
+- A daily copy of the database (SQLite `VACUUM INTO`, safe while the app runs) to a chosen folder, such as a USB stick. The last 30 are kept.
+- Settings shows the last backup and a "back up now" button. A restore guide is included.
+
+### G. Reports & dashboard
+- Dashboard adds: today's profit, supplier debts due, shortages count.
+- Owner reports: profit by product / employee / day, stock value at cost, P&L, supplier statements.
+
+### Not in this phase (next, after your review)
+Health ministry price-list import · money accounts (drawer / Sham Cash / bank + owner withdrawals) · printed customer statement + credit limit · finer permissions · barcode labels · receipts (needs your printer answer).
+
+### Steps (tests first, a commit after each, **stop for review after step 3**)
+1. `doaya_core`: supplier ledger, purchase cost allocation (bonus, discounts, transport), COGS/profit, stocktake deltas, P&L. Unit tests first.
+2. Schema v5 + migration (tested from the real v4 schema) + repositories.
+3. Suppliers + purchase invoice screen + supplier statement and payments + purchase returns → **review**.
+4. Cost & profit reports; dashboard additions.
+5. Shortages → purchase orders (share / print).
+6. Stocktaking sessions.
+7. Expenses + monthly P&L; the till takes expenses and cash purchases into account.
+8. Automatic backup.
+9. Real Linux build driven end to end + screenshots → **review**.
 
 ## Phase 2 — Backend + sync · not started
