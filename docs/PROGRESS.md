@@ -348,3 +348,130 @@ Patients aren't on the pharmacy's Wi-Fi, so the patient app will need a server r
   - Installer, systemd unit, Dockerfile and the end-to-end script were moved to HTTPS.
   - The end-to-end test runs over real TLS: first-contact pinning, linking, syncing, and an impostor certificate refused before anything is sent. Details in DECISIONS.
 - Totals: server 34, core 95, design system 23, app 80 (+ the end-to-end script, over HTTPS).
+
+## Phase 3 — Patient app + AI · 📝 plan, waiting for approval
+
+Goal: a patient describes symptoms to an AI assistant in their own dialect, and gets a clear summary sent to **their chosen pharmacy**. The pharmacist decides the medicine and the dosage and marks it ready, and the patient is told and picks it up (pay at pickup). Patients can also browse that pharmacy's shelf and order for pickup. Safety rules (CLAUDE.md, SPEC §2.1) apply to every step.
+
+### A. Architecture: one server on the internet, the pharmacy stays local
+Patients aren't on the pharmacy's Wi-Fi, so something must be reachable from the internet.
+- **Central server ("دوايا أونلاين")**: the same FastAPI code (it has been multi-pharmacy from day one) on a rented server with a real domain and a normal certificate. It holds:
+  - patients
+  - the list of pharmacies taking part
+  - AI consultations, cases and orders
+  - each pharmacy's **published shelf**
+- **The pharmacy keeps working locally, exactly as now.** POS, stock, debts and sync stay on the pharmacy's own server and Wi-Fi.
+- **Bridge** (a small job inside the pharmacy's local server): whenever there's internet, it publishes the shelf up to the central server: products, prices and "available / not available". **Recommended: nothing else leaves the pharmacy** (no sales, debts, customers or quantities). That keeps the patient side simple and the pharmacy's books private. It uses the same push-by-cursor idea as Phase 2.
+- **Case inbox**: the pharmacy's devices (PC and phones) talk to the central server directly over the internet, with a WebSocket for live updates. A case needs the internet anyway, because the patient is on the internet. With no internet, the inbox shows "no internet" and selling goes on.
+- **A pickup becomes a normal sale**: the pharmacist opens the ready order in the POS with the cart already filled, so stock and the till stay right.
+
+### B. The AI consultation (server side, **tests before any UI**)
+Every patient message goes through this pipeline, in order:
+1. **Red-flag rules**, before any LLM:
+   - Arabic text is normalized first: diacritics and tatweel removed; أ/إ/آ→ا, ى→ي, ة→ه unified; Arabic digits converted.
+   - Then keyword and pattern rules cover formal Arabic **and Syrian dialect**. Examples:
+     - «وجع بصدري»
+     - «ما عم اقدر اتنفس» / «نفسي مقطوع»
+     - «تمّه معوّج» / «ايدي نملت فجأة»
+     - «عم ينزف كتير»
+     - «ابني عمره ٣ شهور وحرارته ٣٩»
+     - «بدي موّت حالي»
+     - poisoning / an overdose taken
+     - pregnancy with bleeding
+     - convulsions, fainting, severe allergy (swollen face or throat)
+   - Negation is handled conservatively: «ما عندي وجع بصدري» doesn't fire. When in doubt, it fires.
+   - A large table of example sentences, the ones that must fire and the ones that must not, is written **first**.
+2. **LLM classifier** as the second check: it returns strict JSON `{red_flag, category, reason}`. If the model is down or its answer can't be parsed, the rules alone decide, and the case is never silently dropped.
+3. **On a hit**:
+   - The emergency message shows at once, with the emergency numbers (to confirm: ambulance 110).
+   - The chat stops.
+   - An **urgent** case goes to the pharmacy with the conversation so far, and it rings on the pharmacy's screen.
+4. **Assistant** (OpenAI-compatible chat API: hosted / LM Studio / Ollama, chosen in settings):
+   - It asks short follow-up questions, one at a time, with quick-reply chips like the mockup: symptoms, how long, age, sex, pregnancy / breastfeeding, allergies, current medicines, chronic conditions.
+   - Its system prompt is versioned. It **never** names a dose, never recommends or prescribes a medicine, and never says a doctor isn't needed.
+5. **Output guard**, after the LLM and before the patient sees anything:
+   - It checks the reply for doses (mg, «حبة كل…», «مرتين باليوم»…), prescribing phrases, and "you don't need a doctor".
+   - A reply that fails is replaced with a safe line («هالسؤال بيجاوبك عليه الصيدلي»), and the failure is logged for review.
+6. **Case summary**:
+   - The LLM fills a fixed JSON schema: symptoms, duration, age, sex, allergies, medicines, conditions, and the red flags asked about and denied. The schema is checked, and the model retries once if it doesn't fit.
+   - The patient sees the summary, can correct it, and presses «ابعت للصيدلية».
+7. **If the model is down**, the patient can still send their message straight to the pharmacist as a case without a summary. The consultation never becomes a dead end.
+8. **Logging**:
+   - every message
+   - every AI reply, with the model, prompt version and red-flag result
+   - every guard replacement
+   - every pharmacist correction (a wrong summary or a wrong question), with the corrected text
+
+   This is the review queue and the curated knowledge base of Phase 4. It is **never used for automatic fine-tuning**. Phase 3 already leaves a retrieval hook (empty knowledge base) in the prompt.
+
+### C. Pharmacy app: the case inbox (from `design/pharmacy_case_detail_layout.html`)
+- **Inbox**: new (urgent on top, in red, with a sound), ready, picked up. The top-bar badge shows new cases.
+- **Case detail**:
+  - the AI summary
+  - the red flags that were asked about and denied
+  - the full conversation
+  - **the customer's history at this pharmacy** if their phone number matches a customer (past purchases, debt)
+- **The pharmacist's decision** («القرار والجرعات دايماً عند الصيدلي»):
+  - Add medicines from stock (with the available quantity).
+  - Write how to use each one (the pharmacist's own words, plus optional structured times per day and number of days for reminders).
+  - «جاهز، بلّغ المريض».
+  - «اسأل المريض سؤال» (goes into the patient's chat).
+  - «بحاجة طبيب» (the patient is told to see a doctor; the case closes).
+- **«صحّح المساعد»** on any AI summary line or question, logged as a correction.
+- **Pickup**: «استلم» opens the POS with the cart filled, and the sale is recorded normally, with who sold it and on which device.
+- Owner and employees both see the inbox, and every action records who did it.
+
+### D. Patient app (`apps/patient`, Flutter: Android + web first; iOS later)
+Screens from `design/patient_*.html`, same `doaya_ui` dark glass, RTL, English digits.
+- **Onboarding and account**: phone number + password (no SMS in v1), name, birth year, sex. Staying signed in works as on the pharmacy's devices.
+- **Choosing the pharmacy**: a list by city, or typing the short code the pharmacy shows at its counter (a QR code later). It can be changed later.
+- **Home**: «حاسس بشي؟ احكيلي», categories, «متوفر بصيدليتك».
+- **Chat**:
+  - bubbles, quick replies, the summary card
+  - «وصلت للصيدلية»
+  - the fixed safety line («إذا صار عندك ضيق نفس… روح عالطوارئ»)
+  - the full emergency screen
+- **Case status**: sent → the pharmacist is preparing it → ready → picked up. Updates arrive live while the app is open (WebSocket), and are checked on opening otherwise.
+- **The pharmacy's shelf**: search, product detail («اسأل صيدليتك عن الجرعة»), and **order for pickup** with a note for the pharmacist. Pay at pickup. A small payment interface is left in place for local wallets later.
+- **My orders**.
+- **Reminders («جرعاتي»)**: built from the pharmacist's structured instructions and shown as local notifications on the phone. No server push is involved, so no Firebase.
+- **Prescription photo**: attach a photo to a case or order. The server stores it privately and only the chosen pharmacy sees it.
+
+### E. Questions for you before starting
+1. **Where the central server lives**:
+   - a rented server outside Syria (cheap and reliable, but paid by card), or
+   - a hosting company inside Syria.
+
+   Plus a domain name for it (e.g. `doaya.app`, if available).
+2. **What leaves the pharmacy**: only the shelf (names, prices, available yes/no), as recommended? Or also a full off-site backup of everything?
+3. **Which AI model first**:
+   - a hosted OpenAI-compatible service (billing and access from Syria vary), or
+   - a local model (Ollama / LM Studio) on a machine with a GPU.
+
+   For the pilot it can run in LM Studio on your own PC.
+4. **Patients see**: price + "available / not available" (recommended), or the exact quantity too?
+5. **Emergency numbers** to show: ambulance 110? Anything local to add?
+6. **Notifications with the app closed**:
+   - v1 = local reminders + live updates while the app is open (recommended).
+   - Real push with the app closed would need a self-hosted push service (ntfy / UnifiedPush) later.
+7. **Subscriptions** stay off for the pilot (free), right?
+
+### F. Dependencies to approve
+- **Server**:
+  - `httpx` as a runtime dependency (the LLM client; it is already a test dependency)
+  - `websockets` (WebSocket support in uvicorn)
+  - `python-multipart` (photo upload)
+- **Flutter**:
+  - `web_socket_channel` (live cases in both apps)
+  - `flutter_local_notifications` (dose reminders, and the new-case sound/alert on the pharmacy's phones)
+  - `image_picker` (prescription photos)
+
+### Steps (tests first; a commit after each; **stop for review after step 4 and after step 8**)
+1. **Red-flag rules**: normalization + rules, with a large example table (must fire / must not fire) written first.
+2. **LLM interface**: OpenAI-compatible client switchable by settings, a scripted fake model for tests, the red-flag classifier, and the output guard (dose / prescribing / "no doctor" tests).
+3. **Consultation engine**: the pipeline above, follow-up questions, summary schema + validation, the model-down fallback, and logging of every AI reply. Tests with the fake model, including an emergency mid-chat.
+4. **Central server**: patient accounts; the pharmacy list and published shelf; cases, messages and orders APIs; WebSocket; the local server's bridge; tenant isolation (a pharmacy only sees its own cases). Tests → **review**.
+5. **Pharmacy app**: case inbox + case detail + decision; urgent alert; «اسأل المريض»; «بحاجة طبيب»; corrections; pickup into the POS. Phone layout too.
+6. **Patient app**: new app skeleton, onboarding and account, choosing the pharmacy, home, chat with the emergency screen, case status.
+7. **Patient app**: the shelf, product detail, order for pickup, my orders, reminders, prescription photo.
+8. **Real run**: central server (in Docker here, standing in for the internet), a pharmacy's local server and PC app, the patient app on web and at phone size. Covers a normal case to pickup, a red-flag case, the model switched off, and the internet cut at the pharmacy → **review**.
