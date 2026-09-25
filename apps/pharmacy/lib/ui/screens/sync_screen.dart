@@ -98,8 +98,8 @@ class _ServerPickerState extends ConsumerState<ServerPicker> {
           Padding(
             padding: const EdgeInsets.only(top: DoayaSpacing.sm),
             child: CaseRow(
-              initials: initialsOf(s.pharmacyName ?? 'D'),
-              title: s.pharmacyName ?? l.syncTitle,
+              initials: initialsOf(s.pharmacyName ?? l.appName),
+              title: s.pharmacyName ?? l.newServer,
               subtitle: ltrIsolate('${s.url.host}:${s.url.port}'),
               onTap: () => widget.onChosen(s.url),
             ),
@@ -184,48 +184,54 @@ class _AccountFormState extends State<AccountForm> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    return Form(
-      key: _form,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          GlassTextField(
-            label: l.phoneAccountLabel,
-            controller: _phone,
-            keyboardType: TextInputType.phone,
-            textDirection: TextDirection.ltr,
-            autofocus: true,
-            validator: (v) => whatsappNumber(v) == null ? l.invalidPhone : null,
-          ),
-          const SizedBox(height: DoayaSpacing.l),
-          GlassTextField(
-            label: l.passwordLabel,
-            controller: _password,
-            obscureText: true,
-            validator: (v) => (v ?? '').length < 6 ? l.passwordTooShort : null,
-            onSubmitted: widget.confirmPassword ? null : (_) => _submit(),
-          ),
-          if (widget.confirmPassword) ...[
+    // Tab stays inside the form (not into the server panel next to it).
+    return FocusTraversalGroup(
+      child: Form(
+        key: _form,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            GlassTextField(
+              label: l.phoneAccountLabel,
+              controller: _phone,
+              keyboardType: TextInputType.phone,
+              textDirection: TextDirection.ltr,
+              autofocus: true,
+              validator: (v) => whatsappNumber(v) == null ? l.invalidPhone : null,
+            ),
             const SizedBox(height: DoayaSpacing.l),
             GlassTextField(
-              label: l.passwordConfirmLabel,
-              controller: _confirm,
+              label: l.passwordLabel,
+              controller: _password,
               obscureText: true,
-              validator: (v) => v == _password.text ? null : l.passwordMismatch,
-              onSubmitted: (_) => _submit(),
+              validator: (v) => (v ?? '').length < 6 ? l.passwordTooShort : null,
+              onSubmitted: widget.confirmPassword ? null : (_) => _submit(),
+            ),
+            if (widget.confirmPassword) ...[
+              const SizedBox(height: DoayaSpacing.l),
+              GlassTextField(
+                label: l.passwordConfirmLabel,
+                controller: _confirm,
+                obscureText: true,
+                validator: (v) => v == _password.text ? null : l.passwordMismatch,
+                onSubmitted: (_) => _submit(),
+              ),
+            ],
+            if (_error != null) ...[
+              const SizedBox(height: DoayaSpacing.sm),
+              Text(
+                _error!,
+                style: DoayaTypography.bodySmall.copyWith(color: DoayaColors.dangerText),
+              ),
+            ],
+            const SizedBox(height: DoayaSpacing.xl),
+            SagePillButton(
+              label: widget.submitLabel,
+              expand: true,
+              onPressed: _busy ? null : _submit,
             ),
           ],
-          if (_error != null) ...[
-            const SizedBox(height: DoayaSpacing.sm),
-            Text(_error!, style: DoayaTypography.bodySmall.copyWith(color: DoayaColors.dangerText)),
-          ],
-          const SizedBox(height: DoayaSpacing.xl),
-          SagePillButton(
-            label: widget.submitLabel,
-            expand: true,
-            onPressed: _busy ? null : _submit,
-          ),
-        ],
+        ),
       ),
     );
   }

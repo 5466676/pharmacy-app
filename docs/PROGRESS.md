@@ -238,7 +238,7 @@ Health ministry price-list import · money accounts (drawer / Sham Cash / bank +
 ### Question for this review
 - **Receipt printing**: OK to add the `pdf` + `printing` packages (well-maintained, pure Dart/Flutter, no Google services, work offline with any system printer, including 80 mm thermal printers installed in Windows)? The button will be a small print icon on the completed sale, nothing more.
 
-## Phase 2 — Backend + sync · 🔍 steps 1–5 ready for review (plan approved 2026-09-25, with the owner's changes)
+## Phase 2 — Backend + sync · 🚧 steps 1–6 done, 7–8 left (plan approved 2026-09-25, with the owner's changes)
 
 Goal: the pharmacy's devices (counter PC, the owner's and employees' phones) share one set of data through a server **on the pharmacy's own computer, over the local Wi-Fi, with no internet needed**. Every device keeps a full copy and keeps selling when the server is off; they catch up when it's back. This is also the base the patient app (Phase 3) builds on. Phase 1.5 steps 7–9 (expenses + P&L, automatic backup, final run) are paused and come back later.
 
@@ -308,6 +308,21 @@ Patients aren't on the pharmacy's Wi-Fi, so the patient app will need a server r
   - 5 app tests on real SQLite: triggers catch sales, edits and deletions; the PC uploads its history and a new phone gets the same pharmacy; both sell offline and end up identical; a child arriving before its edited parent still applies.
   - **End-to-end against the real server** (`tool/sync_e2e.sh`): the PC creates the pharmacy and uploads; the owner gives Rana an account; her phone links with the number typed in Arabic digits; both sell; after sync both have stock 5 and 2 sales; unlinking her phone makes its next sync refused.
 - Totals: server 23, core 90, design system 23, app 70 (+1 end-to-end run by the script).
+
+- [x] **6. Linking from the app and live sync**:
+  - **Finding the server**: the server answers "DOAYA?" on UDP 47800 (Python standard library, 3 tests); the app broadcasts with `dart:io` (a test), or the PC's address is typed by hand.
+  - **السيرفر والمزامنة** (sidebar, and a tap on the status chip):
+    - On an empty server: create the pharmacy (owner phone + password) and upload all history.
+    - Otherwise: link with phone + password.
+    - Shows the state, pending changes, download progress and «زامن هلق». The owner also sees linked devices (with unlink) and employee accounts (add a phone + password for each employee).
+  - **Top-bar chip** shows the real state: not linked / syncing / synced at 14:05 / server missing / device unlinked. Sync runs every 30 s in the background.
+  - **First-run screen**: «انضمام لصيدلية موجودة» (device name → find server → phone + password). It registers only this device, downloads everything, and the account's employee is signed in by itself on that device (once per app start, so "switch user" still works).
+  - A `SyncApi` interface with an in-memory fake runs 3 widget flows: the owner links the PC; a new phone joins and opens as Rana; server off and unlinked shown.
+  - **Real run** (`docs/screenshots/phase2/`), with the real server and the real Linux app:
+    - The counter's existing database migrated v5 → v6, found the server on the network, created «صيدلية الشفاء» and uploaded 22 tables of history.
+    - A second copy of the app with its own empty database joined, downloaded everything, and opened straight into the owner.
+    - It sold Panadol; the counter then showed that sale (device «موبايل سامر») and today's total went from 194 to 212.
+  - Fixed after the real run: Tab left the account form (now kept inside it); a server with no pharmacy yet gets a clear name.
 
 ### Open (asked at the step-5 review)
 - **Encryption on the Wi-Fi**: HTTPS with a certificate the server makes itself, trusted the first time a device links. That needs the `cryptography` package on the server. Until then the pilot runs over plain HTTP on the pharmacy's own Wi-Fi.

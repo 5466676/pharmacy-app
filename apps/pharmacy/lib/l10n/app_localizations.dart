@@ -2894,6 +2894,12 @@ abstract class AppLocalizations {
   /// **'انضمام لصيدلية موجودة'**
   String get joinExisting;
 
+  /// No description provided for @newServer.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيرفر دوايا جديد (بلا صيدلية لسا)'**
+  String get newServer;
+
   /// No description provided for @newPharmacy.
   ///
   /// In ar, this message translates to:

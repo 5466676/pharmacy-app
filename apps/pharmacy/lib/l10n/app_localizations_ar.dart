@@ -1559,6 +1559,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get joinExisting => 'انضمام لصيدلية موجودة';
 
   @override
+  String get newServer => 'سيرفر دوايا جديد (بلا صيدلية لسا)';
+
+  @override
   String get newPharmacy => 'صيدلية جديدة';
 
   @override
