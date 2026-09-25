@@ -5,8 +5,9 @@ from pathlib import Path
 from fastapi import FastAPI
 from sqlalchemy import select, text
 
-from . import __version__, accounts, sync
+from . import __version__, accounts, directory, patients, sync
 from .backup import BackupScheduler, latest_backup_time, list_backups
+from .bridge import ShelfPublisher
 from .config import Settings, get_settings
 from .db import Database
 from .deps import DbSession, Owner
@@ -56,7 +57,15 @@ def create_app(
             ).start()
         scheduler = BackupScheduler(settings).start() if backups else None
         app.state.backups = scheduler
+        publisher = None
+        if backups and settings.central_url and settings.central_key:
+            publisher = ShelfPublisher(
+                settings, app.state.db.sessions, every=settings.shelf_publish_minutes * 60
+            ).start()
+        app.state.shelf_publisher = publisher
         yield
+        if publisher:
+            publisher.stop()
         if responder:
             responder.stop()
         if scheduler:
@@ -68,6 +77,8 @@ def create_app(
     app.state.login_limiter = LoginLimiter()
     app.include_router(accounts.router)
     app.include_router(sync.router)
+    app.include_router(patients.router)
+    app.include_router(directory.router)
 
     @app.get("/health")
     def health(db: DbSession) -> dict:

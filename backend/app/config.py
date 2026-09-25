@@ -39,6 +39,13 @@ class Settings(BaseSettings):
     llm_api_key: str = ""
     llm_timeout_seconds: float = 60
 
+    # A pharmacy's own server → the central (internet) server. Empty: the
+    # pharmacy works on its own. The key comes from `app.cli pharmacy-key`
+    # on the central server.
+    central_url: str = ""
+    central_key: str = ""
+    shelf_publish_minutes: float = 10
+
 
 @lru_cache
 def get_settings() -> Settings:
