@@ -1729,6 +1729,378 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'مرتجع للمستودع'**
   String get evReturnedToSupplier;
+
+  /// No description provided for @navPurchases.
+  ///
+  /// In ar, this message translates to:
+  /// **'المشتريات'**
+  String get navPurchases;
+
+  /// No description provided for @purchasesTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'المشتريات'**
+  String get purchasesTitle;
+
+  /// No description provided for @tabInvoices.
+  ///
+  /// In ar, this message translates to:
+  /// **'فواتير الشراء'**
+  String get tabInvoices;
+
+  /// No description provided for @tabSuppliers.
+  ///
+  /// In ar, this message translates to:
+  /// **'الموردين'**
+  String get tabSuppliers;
+
+  /// No description provided for @newPurchase.
+  ///
+  /// In ar, this message translates to:
+  /// **'فاتورة شراء'**
+  String get newPurchase;
+
+  /// No description provided for @addSupplier.
+  ///
+  /// In ar, this message translates to:
+  /// **'مورد جديد'**
+  String get addSupplier;
+
+  /// No description provided for @supplierNameLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم المستودع / المورد'**
+  String get supplierNameLabel;
+
+  /// No description provided for @repNameLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم المندوب'**
+  String get repNameLabel;
+
+  /// No description provided for @noSuppliers.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما في موردين لسا'**
+  String get noSuppliers;
+
+  /// No description provided for @noPurchases.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما في فواتير شراء لسا'**
+  String get noPurchases;
+
+  /// No description provided for @chooseSupplier.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختار المورد'**
+  String get chooseSupplier;
+
+  /// No description provided for @supplierInvoiceNoLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم فاتورة المورد'**
+  String get supplierInvoiceNoLabel;
+
+  /// No description provided for @colQty.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكمية'**
+  String get colQty;
+
+  /// No description provided for @colBonus.
+  ///
+  /// In ar, this message translates to:
+  /// **'بونص'**
+  String get colBonus;
+
+  /// No description provided for @colUnitPrice.
+  ///
+  /// In ar, this message translates to:
+  /// **'سعر الشراء'**
+  String get colUnitPrice;
+
+  /// No description provided for @colDiscountPct.
+  ///
+  /// In ar, this message translates to:
+  /// **'حسم %'**
+  String get colDiscountPct;
+
+  /// No description provided for @colExpiry.
+  ///
+  /// In ar, this message translates to:
+  /// **'الانتهاء'**
+  String get colExpiry;
+
+  /// No description provided for @colSalePrice.
+  ///
+  /// In ar, this message translates to:
+  /// **'سعر المبيع'**
+  String get colSalePrice;
+
+  /// No description provided for @colLineTotal.
+  ///
+  /// In ar, this message translates to:
+  /// **'المجموع'**
+  String get colLineTotal;
+
+  /// No description provided for @colSupplier.
+  ///
+  /// In ar, this message translates to:
+  /// **'المورد'**
+  String get colSupplier;
+
+  /// No description provided for @colInvoiceNo.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الفاتورة'**
+  String get colInvoiceNo;
+
+  /// No description provided for @purchaseSearchHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'امسح باركود أو ابحث عن صنف لتضيفه للفاتورة'**
+  String get purchaseSearchHint;
+
+  /// No description provided for @gross.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإجمالي قبل الحسم'**
+  String get gross;
+
+  /// No description provided for @lineDiscounts.
+  ///
+  /// In ar, this message translates to:
+  /// **'حسومات الأسطر'**
+  String get lineDiscounts;
+
+  /// No description provided for @invoiceDiscountLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'حسم على الفاتورة'**
+  String get invoiceDiscountLabel;
+
+  /// No description provided for @transportLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'مصاريف نقل'**
+  String get transportLabel;
+
+  /// No description provided for @purchaseTotal.
+  ///
+  /// In ar, this message translates to:
+  /// **'صافي الفاتورة'**
+  String get purchaseTotal;
+
+  /// No description provided for @payCash.
+  ///
+  /// In ar, this message translates to:
+  /// **'نقدي'**
+  String get payCash;
+
+  /// No description provided for @payCredit.
+  ///
+  /// In ar, this message translates to:
+  /// **'دين على الصيدلية'**
+  String get payCredit;
+
+  /// No description provided for @paidFromLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'من وين الدفع؟'**
+  String get paidFromLabel;
+
+  /// No description provided for @fromDrawer.
+  ///
+  /// In ar, this message translates to:
+  /// **'من الصندوق'**
+  String get fromDrawer;
+
+  /// No description provided for @fromOutside.
+  ///
+  /// In ar, this message translates to:
+  /// **'من برّا الصندوق'**
+  String get fromOutside;
+
+  /// No description provided for @savePurchase.
+  ///
+  /// In ar, this message translates to:
+  /// **'حفظ الفاتورة'**
+  String get savePurchase;
+
+  /// No description provided for @purchaseSaved.
+  ///
+  /// In ar, this message translates to:
+  /// **'انحفظت فاتورة الشراء'**
+  String get purchaseSaved;
+
+  /// No description provided for @errPurchaseEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما في أصناف بالفاتورة'**
+  String get errPurchaseEmpty;
+
+  /// No description provided for @errPurchaseLine.
+  ///
+  /// In ar, this message translates to:
+  /// **'في سطر ناقص أو غلط'**
+  String get errPurchaseLine;
+
+  /// No description provided for @errPurchaseDiscount.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحسم أكبر من الفاتورة'**
+  String get errPurchaseDiscount;
+
+  /// No description provided for @errNeedSupplier.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختار المورد أول'**
+  String get errNeedSupplier;
+
+  /// No description provided for @balanceOwed.
+  ///
+  /// In ar, this message translates to:
+  /// **'علينا للمورد'**
+  String get balanceOwed;
+
+  /// No description provided for @oldestDebt.
+  ///
+  /// In ar, this message translates to:
+  /// **'أقدم دين'**
+  String get oldestDebt;
+
+  /// No description provided for @daysAgo.
+  ///
+  /// In ar, this message translates to:
+  /// **'من {days} يوم'**
+  String daysAgo(String days);
+
+  /// No description provided for @statement.
+  ///
+  /// In ar, this message translates to:
+  /// **'كشف الحساب'**
+  String get statement;
+
+  /// No description provided for @paySupplier.
+  ///
+  /// In ar, this message translates to:
+  /// **'دفعة للمورد'**
+  String get paySupplier;
+
+  /// No description provided for @returnToSupplier.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرتجع للمستودع'**
+  String get returnToSupplier;
+
+  /// No description provided for @evPurchaseOnCredit.
+  ///
+  /// In ar, this message translates to:
+  /// **'فاتورة شراء (دين)'**
+  String get evPurchaseOnCredit;
+
+  /// No description provided for @evPaymentMade.
+  ///
+  /// In ar, this message translates to:
+  /// **'دفعة'**
+  String get evPaymentMade;
+
+  /// No description provided for @evReturnCredited.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرتجع'**
+  String get evReturnCredited;
+
+  /// No description provided for @colDate.
+  ///
+  /// In ar, this message translates to:
+  /// **'التاريخ'**
+  String get colDate;
+
+  /// No description provided for @colMovement.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحركة'**
+  String get colMovement;
+
+  /// No description provided for @colAmount.
+  ///
+  /// In ar, this message translates to:
+  /// **'المبلغ'**
+  String get colAmount;
+
+  /// No description provided for @colBalance.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرصيد'**
+  String get colBalance;
+
+  /// No description provided for @batchLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الدفعة'**
+  String get batchLabel;
+
+  /// No description provided for @piecesLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكمية (قطعة)'**
+  String get piecesLabel;
+
+  /// No description provided for @creditValueLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'قيمة المرتجع ({symbol})'**
+  String creditValueLabel(String symbol);
+
+  /// No description provided for @refundCreditAccount.
+  ///
+  /// In ar, this message translates to:
+  /// **'خصم من حساب المورد'**
+  String get refundCreditAccount;
+
+  /// No description provided for @refundCashFromSupplier.
+  ///
+  /// In ar, this message translates to:
+  /// **'استرجاع نقدي'**
+  String get refundCashFromSupplier;
+
+  /// No description provided for @returnSaved.
+  ///
+  /// In ar, this message translates to:
+  /// **'انسجّل المرتجع للمستودع'**
+  String get returnSaved;
+
+  /// No description provided for @noBatches.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما في كمية بهالصنف'**
+  String get noBatches;
+
+  /// No description provided for @bestPrice.
+  ///
+  /// In ar, this message translates to:
+  /// **'أرخص سعر: {price} من {supplier}'**
+  String bestPrice(String price, String supplier);
+
+  /// No description provided for @lastPrice.
+  ///
+  /// In ar, this message translates to:
+  /// **'آخر سعر: {price}'**
+  String lastPrice(String price);
+
+  /// No description provided for @ownerOnlyAmounts.
+  ///
+  /// In ar, this message translates to:
+  /// **'المبالغ والأرصدة للمالك بس'**
+  String get ownerOnlyAmounts;
+
+  /// No description provided for @purchaseBy.
+  ///
+  /// In ar, this message translates to:
+  /// **'دخّلها {name}'**
+  String purchaseBy(String name);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

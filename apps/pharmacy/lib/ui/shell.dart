@@ -31,6 +31,7 @@ class AppShell extends ConsumerWidget {
       (Routes.dashboard, DoayaNavItem(icon: DoayaIcons.dashboard, label: l.navDashboard)),
       (Routes.pos, DoayaNavItem(icon: DoayaIcons.pos, label: l.navPos)),
       (Routes.inventory, DoayaNavItem(icon: DoayaIcons.inventory, label: l.navInventory)),
+      (Routes.purchases, DoayaNavItem(icon: DoayaIcons.receive, label: l.navPurchases)),
       (Routes.debts, DoayaNavItem(icon: DoayaIcons.debts, label: l.navDebts)),
       (Routes.till, DoayaNavItem(icon: DoayaIcons.till, label: l.navTill)),
     ];

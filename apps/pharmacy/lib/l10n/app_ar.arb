@@ -556,5 +556,105 @@
     }
   },
   "staffTransferSales": "تحويلات",
-  "evReturnedToSupplier": "مرتجع للمستودع"
+  "evReturnedToSupplier": "مرتجع للمستودع",
+  "navPurchases": "المشتريات",
+  "purchasesTitle": "المشتريات",
+  "tabInvoices": "فواتير الشراء",
+  "tabSuppliers": "الموردين",
+  "newPurchase": "فاتورة شراء",
+  "addSupplier": "مورد جديد",
+  "supplierNameLabel": "اسم المستودع / المورد",
+  "repNameLabel": "اسم المندوب",
+  "noSuppliers": "ما في موردين لسا",
+  "noPurchases": "ما في فواتير شراء لسا",
+  "chooseSupplier": "اختار المورد",
+  "supplierInvoiceNoLabel": "رقم فاتورة المورد",
+  "colQty": "الكمية",
+  "colBonus": "بونص",
+  "colUnitPrice": "سعر الشراء",
+  "colDiscountPct": "حسم %",
+  "colExpiry": "الانتهاء",
+  "colSalePrice": "سعر المبيع",
+  "colLineTotal": "المجموع",
+  "colSupplier": "المورد",
+  "colInvoiceNo": "رقم الفاتورة",
+  "purchaseSearchHint": "امسح باركود أو ابحث عن صنف لتضيفه للفاتورة",
+  "gross": "الإجمالي قبل الحسم",
+  "lineDiscounts": "حسومات الأسطر",
+  "invoiceDiscountLabel": "حسم على الفاتورة",
+  "transportLabel": "مصاريف نقل",
+  "purchaseTotal": "صافي الفاتورة",
+  "payCash": "نقدي",
+  "payCredit": "دين على الصيدلية",
+  "paidFromLabel": "من وين الدفع؟",
+  "fromDrawer": "من الصندوق",
+  "fromOutside": "من برّا الصندوق",
+  "savePurchase": "حفظ الفاتورة",
+  "purchaseSaved": "انحفظت فاتورة الشراء",
+  "errPurchaseEmpty": "ما في أصناف بالفاتورة",
+  "errPurchaseLine": "في سطر ناقص أو غلط",
+  "errPurchaseDiscount": "الحسم أكبر من الفاتورة",
+  "errNeedSupplier": "اختار المورد أول",
+  "balanceOwed": "علينا للمورد",
+  "oldestDebt": "أقدم دين",
+  "daysAgo": "من {days} يوم",
+  "statement": "كشف الحساب",
+  "paySupplier": "دفعة للمورد",
+  "returnToSupplier": "مرتجع للمستودع",
+  "evPurchaseOnCredit": "فاتورة شراء (دين)",
+  "evPaymentMade": "دفعة",
+  "evReturnCredited": "مرتجع",
+  "colDate": "التاريخ",
+  "colMovement": "الحركة",
+  "colAmount": "المبلغ",
+  "colBalance": "الرصيد",
+  "batchLabel": "الدفعة",
+  "piecesLabel": "الكمية (قطعة)",
+  "creditValueLabel": "قيمة المرتجع ({symbol})",
+  "refundCreditAccount": "خصم من حساب المورد",
+  "refundCashFromSupplier": "استرجاع نقدي",
+  "returnSaved": "انسجّل المرتجع للمستودع",
+  "noBatches": "ما في كمية بهالصنف",
+  "bestPrice": "أرخص سعر: {price} من {supplier}",
+  "lastPrice": "آخر سعر: {price}",
+  "ownerOnlyAmounts": "المبالغ والأرصدة للمالك بس",
+  "purchaseBy": "دخّلها {name}",
+  "@daysAgo": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "@creditValueLabel": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "@bestPrice": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      },
+      "supplier": {
+        "type": "String"
+      }
+    }
+  },
+  "@lastPrice": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "@purchaseBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  }
 }

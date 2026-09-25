@@ -904,4 +904,200 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get evReturnedToSupplier => 'مرتجع للمستودع';
+
+  @override
+  String get navPurchases => 'المشتريات';
+
+  @override
+  String get purchasesTitle => 'المشتريات';
+
+  @override
+  String get tabInvoices => 'فواتير الشراء';
+
+  @override
+  String get tabSuppliers => 'الموردين';
+
+  @override
+  String get newPurchase => 'فاتورة شراء';
+
+  @override
+  String get addSupplier => 'مورد جديد';
+
+  @override
+  String get supplierNameLabel => 'اسم المستودع / المورد';
+
+  @override
+  String get repNameLabel => 'اسم المندوب';
+
+  @override
+  String get noSuppliers => 'ما في موردين لسا';
+
+  @override
+  String get noPurchases => 'ما في فواتير شراء لسا';
+
+  @override
+  String get chooseSupplier => 'اختار المورد';
+
+  @override
+  String get supplierInvoiceNoLabel => 'رقم فاتورة المورد';
+
+  @override
+  String get colQty => 'الكمية';
+
+  @override
+  String get colBonus => 'بونص';
+
+  @override
+  String get colUnitPrice => 'سعر الشراء';
+
+  @override
+  String get colDiscountPct => 'حسم %';
+
+  @override
+  String get colExpiry => 'الانتهاء';
+
+  @override
+  String get colSalePrice => 'سعر المبيع';
+
+  @override
+  String get colLineTotal => 'المجموع';
+
+  @override
+  String get colSupplier => 'المورد';
+
+  @override
+  String get colInvoiceNo => 'رقم الفاتورة';
+
+  @override
+  String get purchaseSearchHint => 'امسح باركود أو ابحث عن صنف لتضيفه للفاتورة';
+
+  @override
+  String get gross => 'الإجمالي قبل الحسم';
+
+  @override
+  String get lineDiscounts => 'حسومات الأسطر';
+
+  @override
+  String get invoiceDiscountLabel => 'حسم على الفاتورة';
+
+  @override
+  String get transportLabel => 'مصاريف نقل';
+
+  @override
+  String get purchaseTotal => 'صافي الفاتورة';
+
+  @override
+  String get payCash => 'نقدي';
+
+  @override
+  String get payCredit => 'دين على الصيدلية';
+
+  @override
+  String get paidFromLabel => 'من وين الدفع؟';
+
+  @override
+  String get fromDrawer => 'من الصندوق';
+
+  @override
+  String get fromOutside => 'من برّا الصندوق';
+
+  @override
+  String get savePurchase => 'حفظ الفاتورة';
+
+  @override
+  String get purchaseSaved => 'انحفظت فاتورة الشراء';
+
+  @override
+  String get errPurchaseEmpty => 'ما في أصناف بالفاتورة';
+
+  @override
+  String get errPurchaseLine => 'في سطر ناقص أو غلط';
+
+  @override
+  String get errPurchaseDiscount => 'الحسم أكبر من الفاتورة';
+
+  @override
+  String get errNeedSupplier => 'اختار المورد أول';
+
+  @override
+  String get balanceOwed => 'علينا للمورد';
+
+  @override
+  String get oldestDebt => 'أقدم دين';
+
+  @override
+  String daysAgo(String days) {
+    return 'من $days يوم';
+  }
+
+  @override
+  String get statement => 'كشف الحساب';
+
+  @override
+  String get paySupplier => 'دفعة للمورد';
+
+  @override
+  String get returnToSupplier => 'مرتجع للمستودع';
+
+  @override
+  String get evPurchaseOnCredit => 'فاتورة شراء (دين)';
+
+  @override
+  String get evPaymentMade => 'دفعة';
+
+  @override
+  String get evReturnCredited => 'مرتجع';
+
+  @override
+  String get colDate => 'التاريخ';
+
+  @override
+  String get colMovement => 'الحركة';
+
+  @override
+  String get colAmount => 'المبلغ';
+
+  @override
+  String get colBalance => 'الرصيد';
+
+  @override
+  String get batchLabel => 'الدفعة';
+
+  @override
+  String get piecesLabel => 'الكمية (قطعة)';
+
+  @override
+  String creditValueLabel(String symbol) {
+    return 'قيمة المرتجع ($symbol)';
+  }
+
+  @override
+  String get refundCreditAccount => 'خصم من حساب المورد';
+
+  @override
+  String get refundCashFromSupplier => 'استرجاع نقدي';
+
+  @override
+  String get returnSaved => 'انسجّل المرتجع للمستودع';
+
+  @override
+  String get noBatches => 'ما في كمية بهالصنف';
+
+  @override
+  String bestPrice(String price, String supplier) {
+    return 'أرخص سعر: $price من $supplier';
+  }
+
+  @override
+  String lastPrice(String price) {
+    return 'آخر سعر: $price';
+  }
+
+  @override
+  String get ownerOnlyAmounts => 'المبالغ والأرصدة للمالك بس';
+
+  @override
+  String purchaseBy(String name) {
+    return 'دخّلها $name';
+  }
 }

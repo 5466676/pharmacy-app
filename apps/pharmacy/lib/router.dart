@@ -9,10 +9,13 @@ import 'ui/screens/inventory_screen.dart';
 import 'ui/screens/login_screen.dart';
 import 'ui/screens/pos_screen.dart';
 import 'ui/screens/product_screen.dart';
+import 'ui/screens/purchase_form_screen.dart';
+import 'ui/screens/purchases_screen.dart';
 import 'ui/screens/return_screen.dart';
 import 'ui/screens/settings_screen.dart';
 import 'ui/screens/setup_screen.dart';
 import 'ui/screens/staff_screen.dart';
+import 'ui/screens/supplier_screen.dart';
 import 'ui/screens/till_screen.dart';
 import 'ui/shell.dart';
 
@@ -28,6 +31,10 @@ abstract final class Routes {
   static const till = '/till';
   static const returns = '/pos/return';
   static const settings = '/settings';
+  static const purchases = '/purchases';
+  static const newPurchase = '$purchases/new';
+  static String newPurchaseFrom(String supplierId) => '$newPurchase?supplier=$supplierId';
+  static String supplier(String id) => '$purchases/supplier/$id';
 
   static String product(String id) => '$inventory/product/$id';
   static const newProduct = '$inventory/new';
@@ -81,6 +88,21 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'product/:id',
                 builder: (_, s) => ProductScreen(productId: s.pathParameters['id']!),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: Routes.purchases,
+            pageBuilder: (_, _) => const NoTransitionPage(child: PurchasesScreen()),
+            routes: [
+              GoRoute(
+                path: 'new',
+                builder: (_, s) =>
+                    PurchaseFormScreen(supplierId: s.uri.queryParameters['supplier']),
+              ),
+              GoRoute(
+                path: 'supplier/:id',
+                builder: (_, s) => SupplierScreen(supplierId: s.pathParameters['id']!),
               ),
             ],
           ),
