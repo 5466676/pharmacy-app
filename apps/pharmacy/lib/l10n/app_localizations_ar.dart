@@ -1726,4 +1726,53 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get expenseSaved => 'انسجّل المصروف';
+
+  @override
+  String get backupSection => 'النسخ الاحتياطي على هالجهاز';
+
+  @override
+  String get backupHelp =>
+      'كل يوم بتنعمل نسخة كاملة لحالها وبنخلّي آخر 30. الأحسن يكون المجلد على فلاشة، أو مجلد بينسخ لبرّا الكمبيوتر.';
+
+  @override
+  String get backupFolderLabel => 'مجلد النسخ';
+
+  @override
+  String get saveFolder => 'اعتمد المجلد';
+
+  @override
+  String get backupNow => 'خذ نسخة هلق';
+
+  @override
+  String get backingUp => 'عم ناخد نسخة';
+
+  @override
+  String backupLast(String when) {
+    return 'آخر نسخة: $when';
+  }
+
+  @override
+  String get backupNone => 'ما في نسخة لسا';
+
+  @override
+  String get backupFailed =>
+      'ما قدرنا ناخد النسخة (المجلد مو موجود أو الفلاشة مشلوحة؟). منرجع منجرّب لحالنا.';
+
+  @override
+  String get backupDone => 'انعملت النسخة';
+
+  @override
+  String get restoreButton => 'استرجع';
+
+  @override
+  String restoreConfirm(String when) {
+    return 'رح ترجع بيانات هالجهاز متل ما كانت بتاريخ $when، وكل شي صار بعدها على هالجهاز بيروح. البيانات الحالية بتنحفظ على جنب. أكيد؟';
+  }
+
+  @override
+  String get restoreRestart => 'جاهز. سكّر البرنامج وافتحه من جديد، وبيفتح على النسخة يلي اخترتها.';
+
+  @override
+  String get restoreLinkedNote =>
+      'هالجهاز مربوط بالسيرفر: إذا خرب، ركّبه من جديد واختار «انضمام لصيدلية موجودة» وبتنزل كل البيانات. الاسترجاع من نسخة هون للأجهزة يلي مو مربوطة.';
 }

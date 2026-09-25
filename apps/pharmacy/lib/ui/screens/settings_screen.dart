@@ -9,6 +9,7 @@ import '../../l10n/app_localizations.dart';
 import '../../providers.dart';
 import '../format.dart';
 import '../widgets.dart';
+import 'backup_panel.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -194,6 +195,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ],
           ),
         ),
+        const SizedBox(height: DoayaSpacing.xl),
+        const BackupPanel(),
         if (!hasData) ...[
           const SizedBox(height: DoayaSpacing.xl),
           Align(

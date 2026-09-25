@@ -865,5 +865,21 @@
   "expensesListTitle": "مصاريف الشهر",
   "expenseFromDrawerTag": "من الصندوق",
   "expenseFromOutsideTag": "من برّا",
-  "expenseSaved": "انسجّل المصروف"
+  "expenseSaved": "انسجّل المصروف",
+  "backupSection": "النسخ الاحتياطي على هالجهاز",
+  "backupHelp": "كل يوم بتنعمل نسخة كاملة لحالها وبنخلّي آخر 30. الأحسن يكون المجلد على فلاشة، أو مجلد بينسخ لبرّا الكمبيوتر.",
+  "backupFolderLabel": "مجلد النسخ",
+  "saveFolder": "اعتمد المجلد",
+  "backupNow": "خذ نسخة هلق",
+  "backingUp": "عم ناخد نسخة",
+  "backupLast": "آخر نسخة: {when}",
+  "@backupLast": {"placeholders": {"when": {"type": "String"}}},
+  "backupNone": "ما في نسخة لسا",
+  "backupFailed": "ما قدرنا ناخد النسخة (المجلد مو موجود أو الفلاشة مشلوحة؟). منرجع منجرّب لحالنا.",
+  "backupDone": "انعملت النسخة",
+  "restoreButton": "استرجع",
+  "restoreConfirm": "رح ترجع بيانات هالجهاز متل ما كانت بتاريخ {when}، وكل شي صار بعدها على هالجهاز بيروح. البيانات الحالية بتنحفظ على جنب. أكيد؟",
+  "@restoreConfirm": {"placeholders": {"when": {"type": "String"}}},
+  "restoreRestart": "جاهز. سكّر البرنامج وافتحه من جديد، وبيفتح على النسخة يلي اخترتها.",
+  "restoreLinkedNote": "هالجهاز مربوط بالسيرفر: إذا خرب، ركّبه من جديد واختار «انضمام لصيدلية موجودة» وبتنزل كل البيانات. الاسترجاع من نسخة هون للأجهزة يلي مو مربوطة."
 }

@@ -3163,6 +3163,90 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'انسجّل المصروف'**
   String get expenseSaved;
+
+  /// No description provided for @backupSection.
+  ///
+  /// In ar, this message translates to:
+  /// **'النسخ الاحتياطي على هالجهاز'**
+  String get backupSection;
+
+  /// No description provided for @backupHelp.
+  ///
+  /// In ar, this message translates to:
+  /// **'كل يوم بتنعمل نسخة كاملة لحالها وبنخلّي آخر 30. الأحسن يكون المجلد على فلاشة، أو مجلد بينسخ لبرّا الكمبيوتر.'**
+  String get backupHelp;
+
+  /// No description provided for @backupFolderLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'مجلد النسخ'**
+  String get backupFolderLabel;
+
+  /// No description provided for @saveFolder.
+  ///
+  /// In ar, this message translates to:
+  /// **'اعتمد المجلد'**
+  String get saveFolder;
+
+  /// No description provided for @backupNow.
+  ///
+  /// In ar, this message translates to:
+  /// **'خذ نسخة هلق'**
+  String get backupNow;
+
+  /// No description provided for @backingUp.
+  ///
+  /// In ar, this message translates to:
+  /// **'عم ناخد نسخة'**
+  String get backingUp;
+
+  /// No description provided for @backupLast.
+  ///
+  /// In ar, this message translates to:
+  /// **'آخر نسخة: {when}'**
+  String backupLast(String when);
+
+  /// No description provided for @backupNone.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما في نسخة لسا'**
+  String get backupNone;
+
+  /// No description provided for @backupFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما قدرنا ناخد النسخة (المجلد مو موجود أو الفلاشة مشلوحة؟). منرجع منجرّب لحالنا.'**
+  String get backupFailed;
+
+  /// No description provided for @backupDone.
+  ///
+  /// In ar, this message translates to:
+  /// **'انعملت النسخة'**
+  String get backupDone;
+
+  /// No description provided for @restoreButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'استرجع'**
+  String get restoreButton;
+
+  /// No description provided for @restoreConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'رح ترجع بيانات هالجهاز متل ما كانت بتاريخ {when}، وكل شي صار بعدها على هالجهاز بيروح. البيانات الحالية بتنحفظ على جنب. أكيد؟'**
+  String restoreConfirm(String when);
+
+  /// No description provided for @restoreRestart.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاهز. سكّر البرنامج وافتحه من جديد، وبيفتح على النسخة يلي اخترتها.'**
+  String get restoreRestart;
+
+  /// No description provided for @restoreLinkedNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'هالجهاز مربوط بالسيرفر: إذا خرب، ركّبه من جديد واختار «انضمام لصيدلية موجودة» وبتنزل كل البيانات. الاسترجاع من نسخة هون للأجهزة يلي مو مربوطة.'**
+  String get restoreLinkedNote;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -246,6 +246,14 @@ Health ministry price-list import · money accounts (drawer / Sham Cash / bank +
     - next to it, the month's expenses with date, drawer/outside, who, and note
   - Tests: P&L repository test (period bounds, returns, expenses by kind); widget test (an employee pays electricity from the drawer and the till drops; the owner adds a custom kind from outside and sees the net loss); expenses page at 360 px. App 82.
 
+- [x] Step 8: **automatic backup on the device**:
+  - Every day, while the app is open (checked every hour), a full copy of the database is saved with SQLite `VACUUM INTO`, which is consistent while selling goes on. The newest 30 are kept.
+  - It goes to `Documents/Doaya Backups` by default, or to any folder the owner types (a USB stick). If the folder is missing, a warning shows and it's tried again later.
+  - Settings → **النسخ الاحتياطي على هالجهاز**: the last backup, «خذ نسخة هلق», the folder, and the latest copies with «استرجع».
+  - **Restore** takes effect at the next start, before the database opens. The current database is kept aside as `.before-restore`.
+  - On a device linked to the server, restore is not offered: re-joining the pharmacy brings everything back (see DECISIONS).
+  - Tests: complete readable copy; not again within 24 h; keep N; another folder; two in one second; restore applied once with the WAL removed and the old database kept. App 86.
+
 ### How to review (step 3)
 المشتريات → مورد جديد → فاتورة شراء → scan or search → type quantity, bonus, price… → F9. Then open the supplier: statement, "دفعة للمورد", "مرتجع للمستودع". Sign in as an employee to check the amounts are hidden.
 

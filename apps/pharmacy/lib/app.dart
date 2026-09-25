@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'data/backup_controller.dart';
 import 'l10n/app_localizations.dart';
+import 'providers.dart';
 import 'router.dart';
 
 /// Desktop counters get the solid theme (no blur, fast on old laptops);
@@ -19,6 +21,8 @@ class PharmacyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Daily backups once the pharmacy is set up on this device.
+    if (ref.watch(thisDeviceProvider).value != null) ref.watch(backupProvider);
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       onGenerateTitle: (context) => AppLocalizations.of(context).appName,

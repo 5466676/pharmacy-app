@@ -153,3 +153,14 @@ The server doesn't recreate the app's ~25 tables. Each synced row is stored once
 - **Another certificate at that address**, from an impostor or a reinstalled server, gets the state «السيرفر تغيّر». Nothing is sent and selling goes on. «اربط من جديد» forgets the link (local data stays and is all uploaded again on the next link; the download starts over).
 - `http://` still works when typed explicitly (development, tests). Android no longer allows plain HTTP.
 
+## 2026-09-25 · Expenses and the device's own backups
+- **Expenses**: anyone can record one from the till, and it's taken from the drawer or from outside, chosen each time. The monthly P&L page is owner-only.
+  - Kinds are fixed keys (rent, salaries, electricity, generator, internet) shown in Arabic, or a name typed by hand, stored as typed.
+  - Expenses are append-only like every ledger. A mistake is corrected by the owner with an opposite entry later, never by deleting.
+- **P&L** = the profit report's sales (after discounts) with customer returns shown apart, − cost of goods (unknown cost flagged, never guessed), − expenses of the month.
+- **Device backups**:
+  - `VACUUM INTO` a folder once a day, newest 30 kept. The folder and last time live in the device-local `sync_state`, because each device has its own folder.
+  - The folder is a typed path, so no file-picker dependency is needed.
+  - A restore is scheduled and applied at the next start, before the database opens, and the old file is kept as `.before-restore`.
+  - **Restore is not offered on a device linked to a server**: the server doesn't send a device its own rows back. A linked device that lost data re-joins the pharmacy as a new device and downloads everything.
+
