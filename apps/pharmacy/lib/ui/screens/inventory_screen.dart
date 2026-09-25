@@ -48,7 +48,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
       final onHand = stock.onHand(p.id);
       return switch (_filter) {
         InventoryFilter.all => true,
-        InventoryFilter.low => onHand > 0 && onHand <= p.lowStockThreshold,
+        InventoryFilter.low => onHand > 0 && onHand <= lowStockPieces(p),
         InventoryFilter.out => onHand <= 0,
         InventoryFilter.nearExpiry => isNear(p.id),
       };
@@ -121,10 +121,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                                   flex: 2,
                                   child: Align(
                                     alignment: AlignmentDirectional.centerStart,
-                                    child: StockChip(
-                                      onHand: stock.onHand(p.id),
-                                      threshold: p.lowStockThreshold,
-                                    ),
+                                    child: StockChip(product: p, onHand: stock.onHand(p.id)),
                                   ),
                                 ),
                                 Expanded(

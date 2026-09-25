@@ -5,4 +5,5 @@ export 'src/events.dart';
 export 'src/ids.dart';
 export 'src/ledger.dart';
 export 'src/money.dart';
+export 'src/returns.dart';
 export 'src/sale.dart';

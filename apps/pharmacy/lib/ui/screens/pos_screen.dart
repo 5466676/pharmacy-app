@@ -5,10 +5,12 @@ import 'package:doaya_ui/doaya_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../data/database.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers.dart';
+import '../../router.dart';
 import '../format.dart';
 import '../widgets.dart';
 import 'debts_screen.dart' show showAddCustomerDialog;
@@ -26,9 +28,17 @@ class PosScreen extends ConsumerStatefulWidget {
 }
 
 class _CartItem {
-  _CartItem(this.product, this.quantity);
+  _CartItem(this.product, this.quantity, {required this.strip});
   final ProductRow product;
   int quantity;
+
+  /// Selling single strips instead of whole boxes.
+  final bool strip;
+
+  int get piecesPerUnit => strip ? 1 : (product.unitsPerPack < 1 ? 1 : product.unitsPerPack);
+  int get unitPriceMinor =>
+      strip ? (product.stripPriceMinor ?? product.priceMinor) : product.priceMinor;
+  int get pieces => quantity * piecesPerUnit;
 }
 
 class _PosScreenState extends ConsumerState<PosScreen> {
@@ -96,21 +106,23 @@ class _PosScreenState extends ConsumerState<PosScreen> {
 
   int _onHand(String productId) => ref.read(stockProvider).value?.onHand(productId) ?? 0;
 
-  void _add(ProductRow p) {
+  /// Pieces of [productId] already in the cart (boxes + strips).
+  int _piecesInCart(String productId, {_CartItem? except}) =>
+      _cart.where((c) => c.product.id == productId && c != except).fold(0, (s, c) => s + c.pieces);
+
+  void _add(ProductRow p, {bool strip = false}) {
     final l = AppLocalizations.of(context);
-    final existing = _cart.where((c) => c.product.id == p.id).firstOrNull;
-    final wanted = (existing?.quantity ?? 0) + 1;
-    if (wanted > _onHand(p.id)) {
+    final asStrip = strip && p.unitsPerPack > 1;
+    final existing = _cart.where((c) => c.product.id == p.id && c.strip == asStrip).firstOrNull;
+    final item = existing ?? _CartItem(p, 0, strip: asStrip);
+    if (_piecesInCart(p.id) + item.piecesPerUnit > _onHand(p.id)) {
       toast(context, l.errStock, error: true);
       if (_onHand(p.id) <= 0) _showAlternatives(p);
       return;
     }
     setState(() {
-      if (existing != null) {
-        existing.quantity = wanted;
-      } else {
-        _cart.add(_CartItem(p, 1));
-      }
+      item.quantity++;
+      if (existing == null) _cart.add(item);
     });
   }
 
@@ -118,8 +130,11 @@ class _PosScreenState extends ConsumerState<PosScreen> {
     setState(() {
       if (q <= 0) {
         _cart.remove(item);
-      } else if (q <= _onHand(item.product.id)) {
+      } else if (_piecesInCart(item.product.id, except: item) + q * item.piecesPerUnit <=
+          _onHand(item.product.id)) {
         item.quantity = q;
+      } else {
+        toast(context, AppLocalizations.of(context).errStock, error: true);
       }
     });
     _searchFocus.requestFocus();
@@ -176,11 +191,7 @@ class _PosScreenState extends ConsumerState<PosScreen> {
   }
 
   Future<void> _pickCustomer() async {
-    final picked = await showDialog<CustomerRow>(
-      context: context,
-      barrierColor: DoayaColors.scrim,
-      builder: (_) => const _CustomerPicker(),
-    );
+    final picked = await showCustomerPicker(context);
     if (picked != null) setState(() => _customer = picked);
     _searchFocus.requestFocus();
   }
@@ -202,7 +213,8 @@ class _PosScreenState extends ConsumerState<PosScreen> {
                 CartLine(
                   productId: c.product.id,
                   quantity: c.quantity,
-                  unitPrice: Money(c.product.priceMinor, currency),
+                  unitPrice: Money(c.unitPriceMinor, currency),
+                  piecesPerUnit: c.piecesPerUnit,
                 ),
             ],
             currency: currency,
@@ -234,13 +246,17 @@ class _PosScreenState extends ConsumerState<PosScreen> {
     final stock = ref.watch(stockProvider).value;
     final now = ref.watch(clockProvider)();
     final window = ref.watch(nearExpiryWindowProvider);
-    final subtotal = _cart.fold<int>(0, (s, c) => s + c.product.priceMinor * c.quantity);
+    final subtotal = _cart.fold<int>(0, (s, c) => s + c.unitPriceMinor * c.quantity);
 
     String? nudgeFor(String productId) {
       final near = stock?.nearExpiry(now, window, productId: productId) ?? const [];
       if (near.isEmpty) return null;
       final b = near.first;
-      return l.nearExpiryNudge(formatQty(b.quantity), formatDate(b.expiry!));
+      final p = ref.read(productsByIdProvider)[productId];
+      return l.nearExpiryNudge(
+        formatStock(l, b.quantity, p?.unitsPerPack ?? 1),
+        formatDate(b.expiry!),
+      );
     }
 
     return CallbackShortcuts(
@@ -257,7 +273,14 @@ class _PosScreenState extends ConsumerState<PosScreen> {
               children: [
                 PageHeader(
                   title: l.posTitle,
-                  actions: [StatusChip(label: l.scannerReady, dot: true)],
+                  actions: [
+                    StatusChip(label: l.scannerReady, dot: true),
+                    GlassPillButton(
+                      label: l.returnsButton,
+                      icon: DoayaIcons.returns,
+                      onPressed: () => context.go(Routes.returns),
+                    ),
+                  ],
                 ),
                 GlassSearchField(
                   hint: l.posSearchHint,
@@ -284,9 +307,18 @@ class _PosScreenState extends ConsumerState<PosScreen> {
                         product: p,
                         onHand: onHand,
                         price: formatMoney(p.priceMinor, currency),
-                        addLabel: onHand > 0 ? l.addToCart : l.showAlternatives,
+                        addLabel: onHand <= 0
+                            ? l.showAlternatives
+                            : (p.unitsPerPack > 1 ? l.addBox : l.addToCart),
                         nudge: nudgeFor(p.id),
                         prescriptionLabel: p.prescriptionOnly ? l.prescriptionOnly : null,
+                        stripLabel: p.unitsPerPack > 1 && onHand > 0 ? l.addStrip : null,
+                        onAddStrip: () {
+                          _add(p, strip: true);
+                          _search.clear();
+                          setState(() => _results = const []);
+                          _searchFocus.requestFocus();
+                        },
                         onAdd: () {
                           if (onHand > 0) {
                             _add(p);
@@ -348,6 +380,8 @@ class _ResultRow extends StatelessWidget {
     required this.onAdd,
     this.nudge,
     this.prescriptionLabel,
+    this.stripLabel,
+    this.onAddStrip,
   });
 
   final ProductRow product;
@@ -357,6 +391,8 @@ class _ResultRow extends StatelessWidget {
   final VoidCallback onAdd;
   final String? nudge;
   final String? prescriptionLabel;
+  final String? stripLabel;
+  final VoidCallback? onAddStrip;
 
   @override
   Widget build(BuildContext context) {
@@ -396,13 +432,17 @@ class _ResultRow extends StatelessWidget {
             StatusChip(label: prescriptionLabel!),
             const SizedBox(width: DoayaSpacing.sm),
           ],
-          StockChip(onHand: onHand, threshold: product.lowStockThreshold),
+          StockChip(product: product, onHand: onHand),
           const SizedBox(width: DoayaSpacing.l),
           SizedBox(
             width: DoayaSizes.priceColumn,
             child: Text(price, style: DoayaTypography.label, textAlign: TextAlign.end),
           ),
           const SizedBox(width: DoayaSpacing.l),
+          if (stripLabel != null) ...[
+            GlassPillButton(label: stripLabel!, onPressed: onAddStrip),
+            const SizedBox(width: DoayaSpacing.s),
+          ],
           out
               ? GlassPillButton(label: addLabel, icon: DoayaIcons.swap, onPressed: onAdd)
               : SagePillButton(label: addLabel, size: PillSize.small, onPressed: onAdd),
@@ -558,7 +598,9 @@ class _Invoice extends StatelessWidget {
                                       style: DoayaTypography.label,
                                     ),
                                     Text(
-                                      l.perUnit(formatMoney(item.product.priceMinor, currency)),
+                                      item.strip
+                                          ? l.perStrip(formatMoney(item.unitPriceMinor, currency))
+                                          : l.perUnit(formatMoney(item.unitPriceMinor, currency)),
                                       style: DoayaTypography.caption.copyWith(
                                         color: DoayaColors.textSecondary,
                                       ),
@@ -707,7 +749,14 @@ class _QtyStepper extends StatelessWidget {
   }
 }
 
-/// Search existing customers or create one.
+/// Search existing customers or create one. Returns the chosen customer.
+Future<CustomerRow?> showCustomerPicker(BuildContext context) => showDialog<CustomerRow>(
+  context: context,
+  useRootNavigator: false,
+  barrierColor: DoayaColors.scrim,
+  builder: (_) => const _CustomerPicker(),
+);
+
 class _CustomerPicker extends ConsumerStatefulWidget {
   const _CustomerPicker();
 

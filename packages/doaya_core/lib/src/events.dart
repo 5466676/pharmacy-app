@@ -105,11 +105,15 @@ class StockEvent {
 
 enum DebtEventType {
   debtAdded,
-  paymentReceived;
+  paymentReceived,
+
+  /// Debt reduced without cash (goods returned by a customer who owed).
+  debtCredited;
 
   String get wire => switch (this) {
     debtAdded => 'debt_added',
     paymentReceived => 'payment_received',
+    debtCredited => 'debt_credited',
   };
 
   static DebtEventType fromWire(String s) =>

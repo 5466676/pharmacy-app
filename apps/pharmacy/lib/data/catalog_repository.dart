@@ -17,6 +17,8 @@ class ProductDraft {
     this.prescriptionOnly = false,
     this.lowStockThreshold = 5,
     this.barcodes = const [],
+    this.unitsPerPack = 1,
+    this.stripPriceMinor,
   });
 
   final String tradeName;
@@ -30,6 +32,16 @@ class ProductDraft {
   final bool prescriptionOnly;
   final int lowStockThreshold;
   final List<String> barcodes;
+
+  /// Strips per box (1 = whole boxes only).
+  final int unitsPerPack;
+  final int? stripPriceMinor;
+}
+
+/// Strips-per-box can't change once stock moved: every stored quantity is in
+/// strips and would silently change meaning.
+class UnitsPerPackLocked implements Exception {
+  const UnitsPerPackLocked();
 }
 
 class DuplicateBarcode implements Exception {
@@ -66,6 +78,8 @@ class CatalogRepository {
               priceMinor: d.priceMinor,
               prescriptionOnly: Value(d.prescriptionOnly),
               lowStockThreshold: Value(d.lowStockThreshold),
+              unitsPerPack: Value(d.unitsPerPack < 1 ? 1 : d.unitsPerPack),
+              stripPriceMinor: Value(d.unitsPerPack > 1 ? d.stripPriceMinor : null),
               createdAt: now,
               updatedAt: now,
               updatedByDevice: deviceId,
@@ -78,6 +92,10 @@ class CatalogRepository {
 
   Future<void> update(String id, ProductDraft d, {required String deviceId}) async {
     await _db.transaction(() async {
+      final current = await byId(id);
+      if (current != null && current.unitsPerPack != d.unitsPerPack && await hasMovements(id)) {
+        throw const UnitsPerPackLocked();
+      }
       await (_db.update(_db.products)..where((t) => t.id.equals(id))).write(
         ProductsCompanion(
           tradeName: Value(d.tradeName.trim()),
@@ -90,6 +108,8 @@ class CatalogRepository {
           priceMinor: Value(d.priceMinor),
           prescriptionOnly: Value(d.prescriptionOnly),
           lowStockThreshold: Value(d.lowStockThreshold),
+          unitsPerPack: Value(d.unitsPerPack < 1 ? 1 : d.unitsPerPack),
+          stripPriceMinor: Value(d.unitsPerPack > 1 ? d.stripPriceMinor : null),
           updatedAt: Value(_clock()),
           updatedByDevice: Value(deviceId),
         ),
@@ -114,6 +134,13 @@ class CatalogRepository {
           );
     }
   }
+
+  Future<bool> hasMovements(String productId) async =>
+      (await (_db.select(_db.stockEvents)
+                ..where((t) => t.productId.equals(productId))
+                ..limit(1))
+              .get())
+          .isNotEmpty;
 
   Future<ProductRow?> byId(String id) =>
       (_db.select(_db.products)..where((t) => t.id.equals(id))).getSingleOrNull();

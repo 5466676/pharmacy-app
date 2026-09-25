@@ -1295,8 +1295,218 @@ abstract class AppLocalizations {
   /// No description provided for @staffCashHint.
   ///
   /// In ar, this message translates to:
-  /// **'النقدي = المبيعات النقدية + دفعات الديون يلي قبضها'**
+  /// **'النقدي = المبيعات النقدية + دفعات الديون − المرتجع النقدي'**
   String get staffCashHint;
+
+  /// No description provided for @unitBox.
+  ///
+  /// In ar, this message translates to:
+  /// **'علبة'**
+  String get unitBox;
+
+  /// No description provided for @unitStrip.
+  ///
+  /// In ar, this message translates to:
+  /// **'ظرف'**
+  String get unitStrip;
+
+  /// No description provided for @packsAndStrips.
+  ///
+  /// In ar, this message translates to:
+  /// **'{packs} علبة + {strips} ظرف'**
+  String packsAndStrips(String packs, String strips);
+
+  /// No description provided for @stripsOnly.
+  ///
+  /// In ar, this message translates to:
+  /// **'{strips} ظرف'**
+  String stripsOnly(String strips);
+
+  /// No description provided for @unitsPerPackLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'عدد الظروف بالعلبة'**
+  String get unitsPerPackLabel;
+
+  /// No description provided for @unitsPerPackHelp.
+  ///
+  /// In ar, this message translates to:
+  /// **'١ = بيع بالعلبة بس'**
+  String get unitsPerPackHelp;
+
+  /// No description provided for @stripPriceLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'سعر الظرف ({symbol})'**
+  String stripPriceLabel(String symbol);
+
+  /// No description provided for @unitsPerPackLocked.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما فيك تغيّر عدد الظروف بعد ما صار في حركة مخزون لهالصنف'**
+  String get unitsPerPackLocked;
+
+  /// No description provided for @receiveQtyBoxes.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكمية (علب)'**
+  String get receiveQtyBoxes;
+
+  /// No description provided for @looseStripsLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'ظروف فرط'**
+  String get looseStripsLabel;
+
+  /// No description provided for @addBox.
+  ///
+  /// In ar, this message translates to:
+  /// **'علبة'**
+  String get addBox;
+
+  /// No description provided for @addStrip.
+  ///
+  /// In ar, this message translates to:
+  /// **'ظرف'**
+  String get addStrip;
+
+  /// No description provided for @returnsButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرتجع'**
+  String get returnsButton;
+
+  /// No description provided for @returnsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرتجع'**
+  String get returnsTitle;
+
+  /// No description provided for @returnFromInvoice.
+  ///
+  /// In ar, this message translates to:
+  /// **'من فاتورة'**
+  String get returnFromInvoice;
+
+  /// No description provided for @returnFree.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرتجع حر'**
+  String get returnFree;
+
+  /// No description provided for @pickInvoice.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختار الفاتورة'**
+  String get pickInvoice;
+
+  /// No description provided for @noInvoices.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما في فواتير'**
+  String get noInvoices;
+
+  /// No description provided for @returnable.
+  ///
+  /// In ar, this message translates to:
+  /// **'قابل للإرجاع: {qty}'**
+  String returnable(String qty);
+
+  /// No description provided for @refundMethod.
+  ///
+  /// In ar, this message translates to:
+  /// **'طريقة الإرجاع'**
+  String get refundMethod;
+
+  /// No description provided for @refundCash.
+  ///
+  /// In ar, this message translates to:
+  /// **'نقدي من الصندوق'**
+  String get refundCash;
+
+  /// No description provided for @refundDebtCredit.
+  ///
+  /// In ar, this message translates to:
+  /// **'خصم من دين الزبون'**
+  String get refundDebtCredit;
+
+  /// No description provided for @returnTotal.
+  ///
+  /// In ar, this message translates to:
+  /// **'مبلغ المرتجع'**
+  String get returnTotal;
+
+  /// No description provided for @confirmReturn.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكيد المرتجع'**
+  String get confirmReturn;
+
+  /// No description provided for @returnDone.
+  ///
+  /// In ar, this message translates to:
+  /// **'انسجّل المرتجع: {total}'**
+  String returnDone(String total);
+
+  /// No description provided for @errReturnEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما اخترت شي للإرجاع'**
+  String get errReturnEmpty;
+
+  /// No description provided for @errReturnTooMany.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكمية أكتر من يلي انباع'**
+  String get errReturnTooMany;
+
+  /// No description provided for @errReturnNeedsCustomer.
+  ///
+  /// In ar, this message translates to:
+  /// **'الخصم من الدين بدو زبون'**
+  String get errReturnNeedsCustomer;
+
+  /// No description provided for @errReturnCreditTooBig.
+  ///
+  /// In ar, this message translates to:
+  /// **'المبلغ أكبر من دين الزبون'**
+  String get errReturnCreditTooBig;
+
+  /// No description provided for @errReturnUnknown.
+  ///
+  /// In ar, this message translates to:
+  /// **'هالصنف ما إله مخزون سابق'**
+  String get errReturnUnknown;
+
+  /// No description provided for @unitPriceLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'سعر الوحدة'**
+  String get unitPriceLabel;
+
+  /// No description provided for @debtCredited.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرتجع (خصم)'**
+  String get debtCredited;
+
+  /// No description provided for @staffReturns.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرتجعات'**
+  String get staffReturns;
+
+  /// No description provided for @staffCashRefunds.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرتجع نقدي'**
+  String get staffCashRefunds;
+
+  /// No description provided for @perStrip.
+  ///
+  /// In ar, this message translates to:
+  /// **'{price} للظرف'**
+  String perStrip(String price);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

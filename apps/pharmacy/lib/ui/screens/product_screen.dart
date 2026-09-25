@@ -65,7 +65,7 @@ class ProductScreen extends ConsumerWidget {
           child: Row(
             children: [
               Expanded(child: ProductName(product: p)),
-              StockChip(onHand: stock.onHand(p.id), threshold: p.lowStockThreshold),
+              StockChip(product: p, onHand: stock.onHand(p.id)),
               const SizedBox(width: DoayaSpacing.xl),
               Text(formatMoney(p.priceMinor, currency), style: DoayaTypography.price),
             ],
@@ -110,7 +110,7 @@ class ProductScreen extends ConsumerWidget {
                             SizedBox(
                               width: DoayaSizes.priceColumn,
                               child: Text(
-                                l.units(formatQty(b.quantity)),
+                                formatStock(l, b.quantity, p.unitsPerPack),
                                 style: DoayaTypography.label,
                               ),
                             ),
@@ -187,7 +187,7 @@ class ProductScreen extends ConsumerWidget {
         child: Column(
           children: [
             GlassTextField(
-              label: l.quantityLabel,
+              label: p.unitsPerPack > 1 ? l.receiveQtyBoxes : l.quantityLabel,
               controller: qty,
               autofocus: true,
               keyboardType: TextInputType.number,
@@ -232,7 +232,7 @@ class ProductScreen extends ConsumerWidget {
         .receive(
           ref.read(requireSessionProvider).stamp,
           productId: p.id,
-          quantity: int.parse(qty.text),
+          quantity: int.parse(qty.text) * (p.unitsPerPack < 1 ? 1 : p.unitsPerPack),
           expiry: parseDate(expiry.text),
           unitCostMinor: Money.tryParse(cost.text, currency)?.minor,
         );
@@ -241,7 +241,10 @@ class ProductScreen extends ConsumerWidget {
   Future<void> _adjust(BuildContext context, WidgetRef ref, ProductRow p, int onHand) async {
     final l = AppLocalizations.of(context);
     final form = GlobalKey<FormState>();
-    final actual = TextEditingController(text: '$onHand');
+    final ppu = p.unitsPerPack < 1 ? 1 : p.unitsPerPack;
+    final (packs, loose) = splitPieces(onHand < 0 ? 0 : onHand, ppu);
+    final actual = TextEditingController(text: '$packs');
+    final strips = TextEditingController(text: '$loose');
     final ok = await showDoayaDialog<bool>(
       context: context,
       title: l.adjustStock,
@@ -256,13 +259,26 @@ class ProductScreen extends ConsumerWidget {
             ),
             const SizedBox(height: DoayaSpacing.l),
             GlassTextField(
-              label: l.actualQtyLabel,
+              label: ppu > 1 ? l.receiveQtyBoxes : l.actualQtyLabel,
               controller: actual,
               autofocus: true,
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               validator: (v) => int.tryParse(v ?? '') == null ? l.invalidNumber : null,
             ),
+            if (ppu > 1) ...[
+              const SizedBox(height: DoayaSpacing.l),
+              GlassTextField(
+                label: l.looseStripsLabel,
+                controller: strips,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                validator: (v) {
+                  final n = int.tryParse(v ?? '');
+                  return n == null || n >= ppu ? l.invalidNumber : null;
+                },
+              ),
+            ],
           ],
         ),
       ),
@@ -283,7 +299,7 @@ class ProductScreen extends ConsumerWidget {
         .adjust(
           ref.read(requireSessionProvider).stamp,
           productId: p.id,
-          delta: int.parse(actual.text) - onHand,
+          delta: int.parse(actual.text) * ppu + (ppu > 1 ? int.parse(strips.text) : 0) - onHand,
         );
   }
 
@@ -353,6 +369,8 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
   late final _price = TextEditingController();
   late final _threshold = TextEditingController(text: '${widget.existing?.lowStockThreshold ?? 5}');
   final _barcodes = TextEditingController();
+  late final _unitsPerPack = TextEditingController(text: '${widget.existing?.unitsPerPack ?? 1}');
+  final _stripPrice = TextEditingController();
   late var _rx = widget.existing?.prescriptionOnly ?? false;
   String? _error;
 
@@ -362,6 +380,9 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
     final p = widget.existing;
     if (p != null) {
       _price.text = moneyInput(p.priceMinor, ref.read(currencyProvider));
+      if (p.stripPriceMinor != null) {
+        _stripPrice.text = moneyInput(p.stripPriceMinor!, ref.read(currencyProvider));
+      }
       ref.read(catalogProvider).barcodesOf(p.id).then((c) => _barcodes.text = c.join(', '));
     }
   }
@@ -382,6 +403,8 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
       prescriptionOnly: _rx,
       lowStockThreshold: int.parse(_threshold.text),
       barcodes: _barcodes.text.split(RegExp(r'[,،\s]+')),
+      unitsPerPack: int.parse(_unitsPerPack.text),
+      stripPriceMinor: Money.tryParse(_stripPrice.text, currency)?.minor,
     );
     final catalog = ref.read(catalogProvider);
     final deviceId = ref.read(requireSessionProvider).device.id;
@@ -396,6 +419,8 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
       }
     } on DuplicateBarcode catch (e) {
       setState(() => _error = l.duplicateBarcode(e.barcode));
+    } on UnitsPerPackLocked {
+      setState(() => _error = l.unitsPerPackLocked);
     }
   }
 
@@ -485,6 +510,26 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                       _threshold,
                       kb: TextInputType.number,
                       validator: (v) => (int.tryParse(v ?? '') ?? -1) >= 0 ? null : l.invalidNumber,
+                    ),
+                  ),
+                  gap,
+                  pair(
+                    field(
+                      '${l.unitsPerPackLabel} (${l.unitsPerPackHelp})',
+                      _unitsPerPack,
+                      kb: TextInputType.number,
+                      validator: (v) => (int.tryParse(v ?? '') ?? 0) >= 1 ? null : l.invalidNumber,
+                    ),
+                    field(
+                      l.stripPriceLabel(currency.symbol),
+                      _stripPrice,
+                      kb: const TextInputType.numberWithOptions(decimal: true),
+                      validator: (v) {
+                        final many = (int.tryParse(_unitsPerPack.text) ?? 1) > 1;
+                        if (!many) return null;
+                        final m = Money.tryParse(v ?? '', currency);
+                        return m == null || m.isZero ? l.invalidNumber : null;
+                      },
                     ),
                   ),
                   gap,

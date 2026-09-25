@@ -659,5 +659,122 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get staffCashHint => 'النقدي = المبيعات النقدية + دفعات الديون يلي قبضها';
+  String get staffCashHint => 'النقدي = المبيعات النقدية + دفعات الديون − المرتجع النقدي';
+
+  @override
+  String get unitBox => 'علبة';
+
+  @override
+  String get unitStrip => 'ظرف';
+
+  @override
+  String packsAndStrips(String packs, String strips) {
+    return '$packs علبة + $strips ظرف';
+  }
+
+  @override
+  String stripsOnly(String strips) {
+    return '$strips ظرف';
+  }
+
+  @override
+  String get unitsPerPackLabel => 'عدد الظروف بالعلبة';
+
+  @override
+  String get unitsPerPackHelp => '١ = بيع بالعلبة بس';
+
+  @override
+  String stripPriceLabel(String symbol) {
+    return 'سعر الظرف ($symbol)';
+  }
+
+  @override
+  String get unitsPerPackLocked => 'ما فيك تغيّر عدد الظروف بعد ما صار في حركة مخزون لهالصنف';
+
+  @override
+  String get receiveQtyBoxes => 'الكمية (علب)';
+
+  @override
+  String get looseStripsLabel => 'ظروف فرط';
+
+  @override
+  String get addBox => 'علبة';
+
+  @override
+  String get addStrip => 'ظرف';
+
+  @override
+  String get returnsButton => 'مرتجع';
+
+  @override
+  String get returnsTitle => 'مرتجع';
+
+  @override
+  String get returnFromInvoice => 'من فاتورة';
+
+  @override
+  String get returnFree => 'مرتجع حر';
+
+  @override
+  String get pickInvoice => 'اختار الفاتورة';
+
+  @override
+  String get noInvoices => 'ما في فواتير';
+
+  @override
+  String returnable(String qty) {
+    return 'قابل للإرجاع: $qty';
+  }
+
+  @override
+  String get refundMethod => 'طريقة الإرجاع';
+
+  @override
+  String get refundCash => 'نقدي من الصندوق';
+
+  @override
+  String get refundDebtCredit => 'خصم من دين الزبون';
+
+  @override
+  String get returnTotal => 'مبلغ المرتجع';
+
+  @override
+  String get confirmReturn => 'تأكيد المرتجع';
+
+  @override
+  String returnDone(String total) {
+    return 'انسجّل المرتجع: $total';
+  }
+
+  @override
+  String get errReturnEmpty => 'ما اخترت شي للإرجاع';
+
+  @override
+  String get errReturnTooMany => 'الكمية أكتر من يلي انباع';
+
+  @override
+  String get errReturnNeedsCustomer => 'الخصم من الدين بدو زبون';
+
+  @override
+  String get errReturnCreditTooBig => 'المبلغ أكبر من دين الزبون';
+
+  @override
+  String get errReturnUnknown => 'هالصنف ما إله مخزون سابق';
+
+  @override
+  String get unitPriceLabel => 'سعر الوحدة';
+
+  @override
+  String get debtCredited => 'مرتجع (خصم)';
+
+  @override
+  String get staffReturns => 'مرتجعات';
+
+  @override
+  String get staffCashRefunds => 'مرتجع نقدي';
+
+  @override
+  String perStrip(String price) {
+    return '$price للظرف';
+  }
 }

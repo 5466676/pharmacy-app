@@ -63,6 +63,8 @@ Future<void> seedDemoData(
         priceMinor: 1800,
         lowStockThreshold: 10,
         barcodes: ['6221000000042'],
+        unitsPerPack: 3,
+        stripPriceMinor: 650,
       ),
       [(8, 25), (40, 500)],
     ),
@@ -109,7 +111,7 @@ Future<void> seedDemoData(
       await ledger.receive(
         session,
         productId: p.id,
-        quantity: qty,
+        quantity: qty * draft.unitsPerPack, // boxes → pieces
         expiry: days == null ? null : inDays(days),
       );
     }

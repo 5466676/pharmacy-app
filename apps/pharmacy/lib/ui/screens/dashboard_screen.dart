@@ -50,7 +50,7 @@ class DashboardScreen extends ConsumerWidget {
         .nearExpiry(now, window)
         .where((b) => products.containsKey(b.productId))
         .toList();
-    final low = stock.lowStock({for (final p in products.values) p.id: p.lowStockThreshold});
+    final low = stock.lowStock({for (final p in products.values) p.id: lowStockPieces(p)});
     final todayTotal = today.fold<int>(0, (s, x) => s + x.totalMinor);
 
     return ListView(
@@ -90,7 +90,7 @@ class DashboardScreen extends ConsumerWidget {
               StatCard(
                 icon: DoayaIcons.expiry,
                 label: l.statNearExpiry,
-                value: l.units(formatQty(near.fold(0, (s, b) => s + b.quantity))),
+                value: formatQty(near.map((b) => b.productId).toSet().length),
                 caption: l.statWithinDays(formatQty(window.inDays)),
                 tone: near.isEmpty ? StatusTone.neutral : StatusTone.warning,
                 onTap: () => context.go(Routes.inventory),
@@ -157,7 +157,7 @@ class DashboardScreen extends ConsumerWidget {
                                     : StatusTone.warning,
                                 icon: DoayaIcons.expiry,
                                 message: l.nearExpiryAlertLine(
-                                  l.units(formatQty(b.quantity)),
+                                  formatStock(l, b.quantity, products[b.productId]!.unitsPerPack),
                                   ltrIsolate(products[b.productId]!.tradeName),
                                   formatDate(b.expiry!),
                                 ),

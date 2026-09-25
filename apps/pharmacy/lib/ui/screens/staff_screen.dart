@@ -29,11 +29,17 @@ final _paymentsProvider = StreamProvider.family<List<DebtEventRow>, ReportPeriod
   return ref.watch(ledgerProvider).watchPaymentsBetween(from, to);
 });
 
+final _returnsProvider = StreamProvider.family<List<ReturnRow>, ReportPeriod>((ref, p) {
+  final (from, to) = ref.watch(_rangeProvider(p));
+  return ref.watch(ledgerProvider).watchReturnsBetween(from, to);
+});
+
 final _summariesProvider = Provider.family<List<EmployeeSummary>, ReportPeriod>((ref, p) {
   return summarizeByEmployee(
     sales: ref.watch(_salesProvider(p)).value ?? const [],
     lines: ref.watch(_linesProvider(p)).value ?? const [],
     payments: ref.watch(_paymentsProvider(p)).value ?? const [],
+    returns: ref.watch(_returnsProvider(p)).value ?? const [],
   );
 });
 
@@ -194,6 +200,13 @@ class _EmployeeAccountState extends ConsumerState<_EmployeeAccount> {
                   ),
                   stat(DoayaIcons.receive, l.staffDiscounts, formatMoney(s.discountMinor, c)),
                   stat(DoayaIcons.inventory, l.staffUnits, formatQty(s.unitsSold)),
+                  stat(DoayaIcons.returns, l.staffReturns, formatQty(s.returnsCount)),
+                  stat(
+                    DoayaIcons.cash,
+                    l.staffCashRefunds,
+                    formatMoney(s.cashRefundsMinor, c),
+                    tone: s.cashRefundsMinor > 0 ? StatusTone.danger : StatusTone.neutral,
+                  ),
                 ])
                   SizedBox(width: w, child: card),
               ],

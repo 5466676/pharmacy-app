@@ -216,6 +216,7 @@ class LedgerRepository {
                 productId: l.productId,
                 quantity: l.quantity,
                 unitPriceMinor: l.unitPriceMinor,
+                piecesPerUnit: Value(l.piecesPerUnit),
               ),
             );
       }
@@ -270,6 +271,109 @@ class LedgerRepository {
 
   Future<List<SaleLineRow>> linesOf(String saleId) =>
       (_db.select(_db.saleLines)..where((t) => t.saleId.equals(saleId))).get();
+
+  // ─── Returns ──────────────────────────────────────────────────────────────
+
+  /// Pieces still returnable per sale line (sold minus already returned).
+  Future<Map<String, int>> returnablePieces(String saleId) async {
+    final lines = await linesOf(saleId);
+    final out = {for (final l in lines) l.id: l.quantity * l.piecesPerUnit};
+    if (lines.isEmpty) return out;
+    final returned = await (_db.select(
+      _db.returnLines,
+    )..where((t) => t.saleLineId.isIn(out.keys))).get();
+    for (final r in returned) {
+      out[r.saleLineId!] = out[r.saleLineId!]! - r.quantity * r.piecesPerUnit;
+    }
+    return out;
+  }
+
+  /// productId → batchId → pieces the sale took and that haven't come back.
+  Future<Map<String, Map<String, int>>> _soldFromBatches(String saleId) async {
+    final events = await (_db.select(_db.stockEvents)..where((t) => t.saleId.equals(saleId))).get();
+    final out = <String, Map<String, int>>{};
+    for (final e in events) {
+      final byBatch = out.putIfAbsent(e.productId, () => {});
+      // sold is negative, returned positive: net pieces still out.
+      byBatch[e.batchId] = (byBatch[e.batchId] ?? 0) - e.quantity;
+    }
+    for (final m in out.values) {
+      m.removeWhere((_, v) => v <= 0);
+    }
+    return out;
+  }
+
+  /// Records a return (from a sale when [saleId] is set, else free-form) in
+  /// ONE transaction: header, lines, `returned` stock events, and for a debt
+  /// credit a `debt_credited` event.
+  Future<CompletedReturn> processReturn(
+    Session s, {
+    required List<ReturnItem> items,
+    required Currency currency,
+    required RefundMethod refund,
+    String? saleId,
+    String? customerId,
+  }) {
+    return _db.transaction(() async {
+      final r = buildReturn(
+        items: items,
+        stock: await loadStock(),
+        currency: currency,
+        refund: refund,
+        saleId: saleId,
+        customerId: customerId,
+        returnablePieces: saleId == null ? const {} : await returnablePieces(saleId),
+        soldFromBatches: saleId == null ? const {} : await _soldFromBatches(saleId),
+        customerBalanceMinor: customerId == null ? 0 : (await loadDebts()).balance(customerId),
+        deviceId: s.deviceId,
+        employeeId: s.employeeId,
+        now: _clock().toUtc(),
+        ids: _ids,
+      );
+      await _db
+          .into(_db.returns)
+          .insert(
+            ReturnsCompanion.insert(
+              id: r.id,
+              saleId: Value(r.saleId),
+              customerId: Value(r.customerId),
+              refund: r.refund.wire,
+              currencyCode: r.currency.code,
+              totalMinor: r.totalMinor,
+              deviceId: r.meta.deviceId,
+              employeeId: r.meta.employeeId,
+              occurredAt: r.meta.occurredAt,
+            ),
+          );
+      for (final l in r.lines) {
+        await _db
+            .into(_db.returnLines)
+            .insert(
+              ReturnLinesCompanion.insert(
+                id: l.id,
+                returnId: r.id,
+                productId: l.productId,
+                quantity: l.quantity,
+                unitPriceMinor: l.unitPriceMinor,
+                piecesPerUnit: l.piecesPerUnit,
+                saleLineId: Value(l.saleLineId),
+              ),
+            );
+      }
+      await insertStockEvents(r.stockEvents);
+      if (r.debtEvent != null) await insertDebtEvents([r.debtEvent!]);
+      return r;
+    });
+  }
+
+  /// Returns in `[from, to)`.
+  Stream<List<ReturnRow>> watchReturnsBetween(DateTime from, DateTime to) =>
+      (_db.select(_db.returns)..where(
+            (t) =>
+                t.occurredAt.isBiggerOrEqualValue(from.toUtc()) &
+                t.occurredAt.isSmallerThanValue(to.toUtc()),
+          ))
+          .watch();
 
   // ─── Debts ────────────────────────────────────────────────────────────────
 

@@ -12,12 +12,26 @@ enum PaymentType {
 }
 
 class CartLine {
-  const CartLine({required this.productId, required this.quantity, required this.unitPrice});
+  const CartLine({
+    required this.productId,
+    required this.quantity,
+    required this.unitPrice,
+    this.piecesPerUnit = 1,
+  });
 
   final String productId;
+
+  /// Number of selling units (boxes, or strips).
   final int quantity;
+
+  /// Price of ONE selling unit.
   final Money unitPrice;
 
+  /// Stock pieces one selling unit takes: a box of 3 strips = 3, a strip = 1.
+  /// Stock is always counted in the smallest piece.
+  final int piecesPerUnit;
+
+  int get pieces => quantity * piecesPerUnit;
   Money get total => unitPrice.times(quantity);
 }
 
@@ -28,12 +42,16 @@ class SaleLine {
     required this.productId,
     required this.quantity,
     required this.unitPriceMinor,
+    this.piecesPerUnit = 1,
   });
 
   final String id;
   final String productId;
   final int quantity;
   final int unitPriceMinor;
+  final int piecesPerUnit;
+
+  int get pieces => quantity * piecesPerUnit;
 }
 
 /// Immutable sale header + everything it wrote to the ledgers.
@@ -98,17 +116,21 @@ CompletedSale buildSale({
     throw const SaleException(SaleError.debtNeedsCustomer);
   }
 
-  // Merge duplicate product lines so allocation sees the full quantity.
-  final merged = <String, CartLine>{};
+  // Merge duplicate lines (same product AND same selling unit).
+  final merged = <(String, int), CartLine>{};
   for (final l in cart) {
-    if (l.quantity <= 0) throw SaleException(SaleError.badQuantity, l.productId);
-    final prev = merged[l.productId];
-    merged[l.productId] = prev == null
+    if (l.quantity <= 0 || l.piecesPerUnit <= 0) {
+      throw SaleException(SaleError.badQuantity, l.productId);
+    }
+    final key = (l.productId, l.piecesPerUnit);
+    final prev = merged[key];
+    merged[key] = prev == null
         ? l
         : CartLine(
             productId: l.productId,
             quantity: prev.quantity + l.quantity,
             unitPrice: prev.unitPrice,
+            piecesPerUnit: l.piecesPerUnit,
           );
   }
 
@@ -124,29 +146,36 @@ CompletedSale buildSale({
       EventMeta(id: ids.generate(), deviceId: deviceId, employeeId: employeeId, occurredAt: now);
 
   final saleMeta = meta();
-  final lines = <SaleLine>[];
-  final events = <StockEvent>[];
-  for (final l in merged.values) {
-    final List<Allocation> allocations;
-    try {
-      allocations = stock.allocate(l.productId, l.quantity);
-    } on InsufficientStock catch (e) {
-      throw SaleException(SaleError.insufficientStock, e);
-    }
-    lines.add(
+  final lines = [
+    for (final l in merged.values)
       SaleLine(
         id: ids.generate(),
         productId: l.productId,
         quantity: l.quantity,
         unitPriceMinor: l.unitPrice.minor,
+        piecesPerUnit: l.piecesPerUnit,
       ),
-    );
+  ];
+
+  // Allocate ONCE per product (boxes + strips of the same product share batches).
+  final piecesByProduct = <String, int>{};
+  for (final l in merged.values) {
+    piecesByProduct[l.productId] = (piecesByProduct[l.productId] ?? 0) + l.pieces;
+  }
+  final events = <StockEvent>[];
+  for (final MapEntry(key: productId, value: pieces) in piecesByProduct.entries) {
+    final List<Allocation> allocations;
+    try {
+      allocations = stock.allocate(productId, pieces);
+    } on InsufficientStock catch (e) {
+      throw SaleException(SaleError.insufficientStock, e);
+    }
     for (final a in allocations) {
       events.add(
         StockEvent(
           meta: meta(),
           type: StockEventType.sold,
-          productId: l.productId,
+          productId: productId,
           batchId: a.batchId,
           quantity: -a.quantity,
           saleId: saleMeta.id,

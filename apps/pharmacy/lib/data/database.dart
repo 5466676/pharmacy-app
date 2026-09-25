@@ -61,6 +61,12 @@ class Products extends Table {
   IntColumn get priceMinor => integer()();
   BoolColumn get prescriptionOnly => boolean().withDefault(const Constant(false))();
   IntColumn get lowStockThreshold => integer().withDefault(const Constant(5))();
+
+  /// Strips per box. 1 = sold as whole boxes only. Stock is counted in strips.
+  IntColumn get unitsPerPack => integer().withDefault(const Constant(1))();
+
+  /// Price of one strip when [unitsPerPack] > 1.
+  IntColumn get stripPriceMinor => integer().nullable()();
   BoolColumn get active => boolean().withDefault(const Constant(true))();
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime()();
@@ -144,6 +150,9 @@ class SaleLines extends Table {
   IntColumn get quantity => integer()();
   IntColumn get unitPriceMinor => integer()();
 
+  /// Stock pieces per selling unit: box of 3 strips = 3, strip = 1.
+  IntColumn get piecesPerUnit => integer().withDefault(const Constant(1))();
+
   @override
   Set<Column> get primaryKey => {id};
 }
@@ -168,7 +177,49 @@ class DebtEvents extends Table {
   Set<Column> get primaryKey => {id};
 }
 
-const _appendOnlyTables = ['stock_events', 'sales', 'sale_lines', 'debt_events'];
+@DataClassName('ReturnRow')
+class Returns extends Table {
+  TextColumn get id => text()();
+
+  /// Set when returning against a past sale; null for a free-form return.
+  TextColumn get saleId => text().nullable()();
+  TextColumn get customerId => text().nullable()();
+
+  /// `cash` | `debt_credit`.
+  TextColumn get refund => text()();
+  TextColumn get currencyCode => text()();
+  IntColumn get totalMinor => integer()();
+  TextColumn get deviceId => text()();
+  TextColumn get employeeId => text()();
+  DateTimeColumn get occurredAt => dateTime()();
+  DateTimeColumn get syncedAt => dateTime().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+@DataClassName('ReturnLineRow')
+class ReturnLines extends Table {
+  TextColumn get id => text()();
+  TextColumn get returnId => text().references(Returns, #id)();
+  TextColumn get productId => text()();
+  IntColumn get quantity => integer()();
+  IntColumn get unitPriceMinor => integer()();
+  IntColumn get piecesPerUnit => integer()();
+  TextColumn get saleLineId => text().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+const _appendOnlyTables = [
+  'stock_events',
+  'sales',
+  'sale_lines',
+  'debt_events',
+  'returns',
+  'return_lines',
+];
 
 @DriftDatabase(
   tables: [
@@ -182,6 +233,8 @@ const _appendOnlyTables = ['stock_events', 'sales', 'sale_lines', 'debt_events']
     Sales,
     SaleLines,
     DebtEvents,
+    Returns,
+    ReturnLines,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -197,7 +250,7 @@ class AppDatabase extends _$AppDatabase {
   );
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -206,13 +259,25 @@ class AppDatabase extends _$AppDatabase {
       await _createLedgerGuards();
       await _createIndexes();
     },
+    onUpgrade: (m, from, to) async {
+      if (from < 2) {
+        // v2: strips (partial packs) and returns.
+        await m.addColumn(products, products.unitsPerPack);
+        await m.addColumn(products, products.stripPriceMinor);
+        await m.addColumn(saleLines, saleLines.piecesPerUnit);
+        await m.createTable(returns);
+        await m.createTable(returnLines);
+        await _guardReturns();
+        await customStatement('CREATE INDEX return_lines_sale_line ON return_lines (sale_line_id)');
+      }
+    },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
     },
   );
 
   Future<void> _createLedgerGuards() async {
-    for (final t in _appendOnlyTables) {
+    for (final t in _appendOnlyTables.where((t) => !t.startsWith('return'))) {
       await customStatement('''
         CREATE TRIGGER ${t}_no_delete BEFORE DELETE ON $t
         BEGIN SELECT RAISE(ABORT, 'append-only: $t'); END;
@@ -230,6 +295,25 @@ class AppDatabase extends _$AppDatabase {
       CREATE TRIGGER sale_lines_no_update BEFORE UPDATE ON sale_lines
       BEGIN SELECT RAISE(ABORT, 'append-only: sale_lines'); END;
     ''');
+    await _guardReturns();
+  }
+
+  Future<void> _guardReturns() async {
+    for (final t in ['returns', 'return_lines']) {
+      await customStatement('''
+        CREATE TRIGGER ${t}_no_delete BEFORE DELETE ON $t
+        BEGIN SELECT RAISE(ABORT, 'append-only: $t'); END;
+      ''');
+    }
+    await customStatement('''
+      CREATE TRIGGER returns_no_update BEFORE UPDATE ON returns
+      WHEN NOT (${_sameColumnsExceptSynced('returns')})
+      BEGIN SELECT RAISE(ABORT, 'append-only: returns'); END;
+    ''');
+    await customStatement('''
+      CREATE TRIGGER return_lines_no_update BEFORE UPDATE ON return_lines
+      BEGIN SELECT RAISE(ABORT, 'append-only: return_lines'); END;
+    ''');
   }
 
   String _sameColumnsExceptSynced(String table) {
@@ -246,6 +330,10 @@ class AppDatabase extends _$AppDatabase {
         'id', 'type', 'customer_id', 'amount_minor', 'currency_code', 'sale_id', 'note', //
         'device_id', 'employee_id', 'occurred_at',
       ],
+      'returns' => [
+        'id', 'sale_id', 'customer_id', 'refund', 'currency_code', 'total_minor', //
+        'device_id', 'employee_id', 'occurred_at',
+      ],
       _ => throw ArgumentError(table),
     };
     return cols.map((c) => 'OLD.$c IS NEW.$c').join(' AND ');
@@ -260,6 +348,7 @@ class AppDatabase extends _$AppDatabase {
       'CREATE INDEX sale_lines_sale ON sale_lines (sale_id)',
       'CREATE INDEX products_ingredient ON products (active_ingredient)',
       'CREATE INDEX product_barcodes_product ON product_barcodes (product_id)',
+      'CREATE INDEX return_lines_sale_line ON return_lines (sale_line_id)',
     ]) {
       await customStatement(s);
     }

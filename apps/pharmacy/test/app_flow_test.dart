@@ -5,6 +5,7 @@ import 'package:doaya_pharmacy/data/database.dart';
 import 'package:doaya_pharmacy/data/ledger_repository.dart';
 import 'package:doaya_pharmacy/data/people_repository.dart';
 import 'package:doaya_pharmacy/providers.dart';
+import 'package:doaya_pharmacy/router.dart';
 import 'package:doaya_ui/doaya_ui.dart';
 import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:drift/native.dart';
@@ -222,7 +223,9 @@ void main() {
         device = (await people.thisDevice())!;
         await LedgerRepository(db).sell(
           Session(deviceId: device.id, employeeId: rana.id),
-          cart: [CartLine(productId: amox.id, quantity: 1, unitPrice: const Money(4500, Currency.syp))],
+          cart: [
+            CartLine(productId: amox.id, quantity: 1, unitPrice: const Money(4500, Currency.syp)),
+          ],
           currency: Currency.syp,
           payment: PaymentType.cash,
         );
@@ -243,6 +246,121 @@ void main() {
       expect(find.text('رنا'), findsWidgets);
       expect(find.text('المفروض يسلّم نقدي'), findsOneWidget);
       expect(find.text('٤٥ ل.س'), findsWidgets);
+      await unmount(tester);
+    });
+
+    testWidgets('POS: sells strips of a split box; stock counted in strips', (tester) async {
+      late ProductRow pan;
+      await seed(tester);
+      await tester.runAsync(() async {
+        final device = (await PeopleRepository(db).thisDevice())!;
+        pan = await CatalogRepository(db).create(
+          const ProductDraft(
+            tradeName: 'Panadol 500 mg',
+            activeIngredient: 'paracetamol',
+            priceMinor: 1800,
+            unitsPerPack: 3,
+            stripPriceMinor: 650,
+          ),
+          deviceId: device.id,
+        );
+        await LedgerRepository(db).receive(
+          Session(deviceId: device.id, employeeId: owner.id),
+          productId: pan.id,
+          quantity: 2 * 3,
+        );
+      });
+      await pumpApp(tester);
+      final device = await tester.runAsync(() => PeopleRepository(db).thisDevice());
+      container.read(sessionProvider.notifier).signIn(device!, owner);
+      await settle(tester);
+      await tester.sendKeyEvent(LogicalKeyboardKey.f2);
+      await settle(tester);
+
+      await tester.enterText(find.byType(TextField).first, 'panadol');
+      await tester.pump(const Duration(milliseconds: 300));
+      await settle(tester);
+      // 6 strips = 2 boxes, under the default threshold of 5 boxes.
+      expect(find.text('باقي ٢ علبة'), findsOneWidget);
+      await tester.tap(find.text('ظرف'));
+      await settle(tester);
+      expect(find.text('٦٫٥٠ ل.س للظرف'), findsOneWidget);
+
+      await tester.testTextInput.receiveAction(TextInputAction.search); // Enter = complete
+      await settle(tester);
+      final stock = await tester.runAsync(() => LedgerRepository(db).loadStock());
+      expect(stock!.onHand(pan.id), 5);
+      await unmount(tester);
+    });
+
+    testWidgets('returns screen: from an invoice, back into stock with cash refund', (
+      tester,
+    ) async {
+      await seed(tester);
+      await tester.runAsync(() async {
+        final device = (await PeopleRepository(db).thisDevice())!;
+        await LedgerRepository(db).sell(
+          Session(deviceId: device.id, employeeId: owner.id),
+          cart: [
+            CartLine(productId: amox.id, quantity: 2, unitPrice: const Money(4500, Currency.syp)),
+          ],
+          currency: Currency.syp,
+          payment: PaymentType.cash,
+        );
+      });
+      await pumpApp(tester);
+      final device = await tester.runAsync(() => PeopleRepository(db).thisDevice());
+      container.read(sessionProvider.notifier).signIn(device!, owner);
+      await settle(tester);
+      await tester.sendKeyEvent(LogicalKeyboardKey.f2);
+      await settle(tester);
+      await tester.tap(find.text('مرتجع'));
+      await settle(tester);
+
+      await tester.tap(find.text('زبون عابر'));
+      await settle(tester);
+      expect(find.text('Amoxil 500 mg'), findsOneWidget);
+      await tester.tap(find.byTooltip('+'));
+      await settle(tester);
+      await tester.tap(find.byTooltip('+'));
+      await settle(tester);
+      await tester.tap(find.byTooltip('+')); // capped at 2
+      await settle(tester);
+      expect(find.text('٩٠ ل.س'), findsWidgets);
+      await tester.tap(find.text('تأكيد المرتجع'));
+      await settle(tester);
+
+      final stock = await tester.runAsync(() => LedgerRepository(db).loadStock());
+      expect(stock!.onHand(amox.id), 5);
+      final returns = await tester.runAsync(() => db.select(db.returns).get());
+      expect((returns!.single.totalMinor, returns.single.refund), (9000, 'cash'));
+      expect(find.textContaining('انسجّل المرتجع'), findsOneWidget);
+      await unmount(tester);
+    });
+
+    testWidgets('receive-stock dialog saves and closes without leaving the product page', (
+      tester,
+    ) async {
+      await seed(tester);
+      await pumpApp(tester);
+      final device = await tester.runAsync(() => PeopleRepository(db).thisDevice());
+      container.read(sessionProvider.notifier).signIn(device!, owner);
+      await settle(tester);
+      container.read(routerProvider).go(Routes.product(amox.id));
+      await settle(tester);
+      expect(find.text('تفاصيل الصنف'), findsOneWidget);
+
+      await tester.tap(find.text('استلام بضاعة'));
+      await settle(tester);
+      await tester.enterText(find.byType(TextFormField).first, '3');
+      await tester.tap(find.text('حفظ'));
+      await settle(tester);
+
+      expect(find.text('الكمية (علب)'), findsNothing); // dialog closed
+      expect(find.text('الكمية'), findsNothing);
+      expect(find.text('تفاصيل الصنف'), findsOneWidget); // still on the product page
+      final stock = await tester.runAsync(() => LedgerRepository(db).loadStock());
+      expect(stock!.onHand(amox.id), 8);
       await unmount(tester);
     });
 

@@ -68,3 +68,18 @@ drift stores dates as ISO text. Mixing local and UTC values makes range queries 
 
 ## 2026-09-25 · Employee accounts (owner request)
 The owner sees, per employee and period (today / this week from Saturday / this month): number of sales, cash vs debt totals, discounts, debt payments collected, **cash to hand in** (cash sales + collected payments), units sold, top products, and every invoice with its lines. This is computed from the immutable sales and ledger events, so an employee can't edit it. Employees can't open this screen.
+
+## 2026-09-25 · Strips (partial packs)
+Each product has `units_per_pack` (strips per box, 1 = whole boxes only) and a strip price. **Stock and every ledger quantity are counted in the smallest piece (strips).** Sale and return lines record `pieces_per_unit`, so box prices stay exact (a box isn't forced to cost 3 × a strip). Selling boxes and strips of the same product in one invoice is allocated once per product, FEFO. `units_per_pack` is locked once a product has stock movements, because every stored quantity would change meaning. Display is "٣ علبة + ١ ظرف": "و١" reads like "وا".
+
+## 2026-09-25 · Returns: from an invoice, or free-form
+Returns get their own append-only tables (`returns`, `return_lines`) and `returned` stock events.
+- **From an invoice:** you can't return more than was sold minus earlier returns, checked per sale line. Stock goes back into the batches that sale took it from.
+- **Free-form:** you choose the product and price, and stock goes into the latest-expiring existing batch.
+- **Refund:** cash, which is subtracted from the employee's cash to hand in, or a **debt credit**. A credit is a new debt event type, `debt_credited`, because it lowers the balance without cash changing hands; counting it as `payment_received` would inflate the employee's cash. You can't credit more than the customer owes.
+
+## 2026-09-25 · Schema v2 migration, tested against the real v1 schema
+`test/fixtures/schema_v1.sql` was dumped from the Phase 1 code. The migration test opens that exact v1 schema with data and upgrades it. It was also checked on a real v1 database file with the Linux build.
+
+## 2026-09-25 · Dialogs open on the nearest navigator
+`showDoayaDialog` uses `useRootNavigator: false`. With the root navigator, the page context's `Navigator.pop` popped the go_router shell page instead of the dialog: in the real app, "Save" in the receive-stock dialog left the dialog open and closed the product page. A widget test covers this, and it fails without the fix.

@@ -380,5 +380,85 @@
       }
     }
   },
-  "staffCashHint": "النقدي = المبيعات النقدية + دفعات الديون يلي قبضها"
+  "staffCashHint": "النقدي = المبيعات النقدية + دفعات الديون − المرتجع النقدي",
+  "unitBox": "علبة",
+  "unitStrip": "ظرف",
+  "packsAndStrips": "{packs} علبة + {strips} ظرف",
+  "@packsAndStrips": {
+    "placeholders": {
+      "packs": {
+        "type": "String"
+      },
+      "strips": {
+        "type": "String"
+      }
+    }
+  },
+  "stripsOnly": "{strips} ظرف",
+  "@stripsOnly": {
+    "placeholders": {
+      "strips": {
+        "type": "String"
+      }
+    }
+  },
+  "unitsPerPackLabel": "عدد الظروف بالعلبة",
+  "unitsPerPackHelp": "١ = بيع بالعلبة بس",
+  "stripPriceLabel": "سعر الظرف ({symbol})",
+  "@stripPriceLabel": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "unitsPerPackLocked": "ما فيك تغيّر عدد الظروف بعد ما صار في حركة مخزون لهالصنف",
+  "receiveQtyBoxes": "الكمية (علب)",
+  "looseStripsLabel": "ظروف فرط",
+  "addBox": "علبة",
+  "addStrip": "ظرف",
+  "returnsButton": "مرتجع",
+  "returnsTitle": "مرتجع",
+  "returnFromInvoice": "من فاتورة",
+  "returnFree": "مرتجع حر",
+  "pickInvoice": "اختار الفاتورة",
+  "noInvoices": "ما في فواتير",
+  "returnable": "قابل للإرجاع: {qty}",
+  "@returnable": {
+    "placeholders": {
+      "qty": {
+        "type": "String"
+      }
+    }
+  },
+  "refundMethod": "طريقة الإرجاع",
+  "refundCash": "نقدي من الصندوق",
+  "refundDebtCredit": "خصم من دين الزبون",
+  "returnTotal": "مبلغ المرتجع",
+  "confirmReturn": "تأكيد المرتجع",
+  "returnDone": "انسجّل المرتجع: {total}",
+  "@returnDone": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "errReturnEmpty": "ما اخترت شي للإرجاع",
+  "errReturnTooMany": "الكمية أكتر من يلي انباع",
+  "errReturnNeedsCustomer": "الخصم من الدين بدو زبون",
+  "errReturnCreditTooBig": "المبلغ أكبر من دين الزبون",
+  "errReturnUnknown": "هالصنف ما إله مخزون سابق",
+  "unitPriceLabel": "سعر الوحدة",
+  "debtCredited": "مرتجع (خصم)",
+  "staffReturns": "مرتجعات",
+  "staffCashRefunds": "مرتجع نقدي",
+  "perStrip": "{price} للظرف",
+  "@perStrip": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  }
 }

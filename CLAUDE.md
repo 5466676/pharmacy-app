@@ -54,5 +54,6 @@ flutter analyze                               # at repo root
 flutter build web --no-web-resources-cdn      # ALWAYS this flag: no Google CDNs (see DECISIONS)
 ```
 Never put "·" next to an Arabic-Indic number (it reads as ٠); use ":" or "،".
+After adding a new icon, run `flutter clean` before a release build: the icon tree-shaker's cache went stale and dropped the new glyphs.
 Never put glyphs missing from Amiri/Readex Pro (←, ✓, emoji) in strings — use `DoayaIcons`.
 Regenerate localizations after editing an `.arb` file: `flutter gen-l10n` inside that package.

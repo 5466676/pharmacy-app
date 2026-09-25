@@ -82,23 +82,38 @@ class EmptyHint extends StatelessWidget {
   );
 }
 
-/// Stock chip: "متوفر · ٢٤" / "باقي ٣" / "نفد".
-class StockChip extends StatelessWidget {
-  const StockChip({super.key, required this.onHand, required this.threshold});
+/// "٤ علبة" / "٢ علبة و١ ظرف" / "٢ ظرف", from a stock count in pieces.
+String formatStock(AppLocalizations l, int pieces, int unitsPerPack) {
+  if (unitsPerPack <= 1) return l.units(formatQty(pieces));
+  final (packs, loose) = splitPieces(pieces, unitsPerPack);
+  if (loose == 0) return l.units(formatQty(packs));
+  if (packs == 0) return l.stripsOnly(formatQty(loose));
+  return l.packsAndStrips(formatQty(packs), formatQty(loose));
+}
 
+/// Stock chip: "متوفر: ٢٤ علبة" / "باقي ٣ علبة" / "نفد".
+class StockChip extends StatelessWidget {
+  const StockChip({super.key, required this.product, required this.onHand});
+
+  final ProductRow product;
+
+  /// In pieces (strips when the box is split).
   final int onHand;
-  final int threshold;
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final text = formatStock(l, onHand, product.unitsPerPack);
     if (onHand <= 0) return StatusChip(label: l.outOfStock, tone: StatusTone.danger);
-    if (onHand <= threshold) {
-      return StatusChip(label: l.lowLeft(formatQty(onHand)), tone: StatusTone.warning);
+    if (onHand <= lowStockPieces(product)) {
+      return StatusChip(label: l.lowLeft(text), tone: StatusTone.warning);
     }
-    return StatusChip(label: l.inStock(formatQty(onHand)), tone: StatusTone.accent);
+    return StatusChip(label: l.inStock(text), tone: StatusTone.accent);
   }
 }
+
+/// The low-stock threshold (set in boxes) in pieces.
+int lowStockPieces(ProductRow p) => p.lowStockThreshold * (p.unitsPerPack < 1 ? 1 : p.unitsPerPack);
 
 /// Product name block: Latin trade name + Arabic name / ingredient under it.
 class ProductName extends StatelessWidget {

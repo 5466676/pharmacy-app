@@ -174,7 +174,11 @@ class _CustomerDetail extends ConsumerWidget {
               child: Row(
                 children: [
                   StatusChip(
-                    label: e.type == 'debt_added' ? l.debtAdded : l.paymentReceived,
+                    label: switch (e.type) {
+                      'debt_added' => l.debtAdded,
+                      'debt_credited' => l.debtCredited,
+                      _ => l.paymentReceived,
+                    },
                     tone: e.type == 'debt_added' ? StatusTone.warning : StatusTone.accent,
                   ),
                   const SizedBox(width: DoayaSpacing.ml),

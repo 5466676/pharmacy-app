@@ -98,7 +98,7 @@ Note: I can build and test on Linux here, but **not produce a Windows `.exe`** i
 - [x] POS: barcode = keyboard input, search by name/ingredient, alternatives with the same active ingredient, near-expiry warnings, cash/debt, **F2 / F8 / Enter**
 - [x] Customers & debts, record payment; dashboard (today's sales, open debts, near expiry, low stock, recent sales with employee + device)
 - [x] Settings (owner only): pharmacy, currency, near-expiry window, employees, demo data
-- [x] End-to-end widget tests (7) + format tests (5): 27 app tests in total
+- [x] Tests: 40 core + 28 design system + 41 app (end-to-end flows, migration, returns, strips, reports) = 109
 - [x] **Real Linux desktop build** driven by keyboard under a virtual display: setup → demo data → scan → sell → debt sale → restart → PIN login. Screenshots: `docs/screenshots/phase1-*.png`
 
 ### Bugs found by running the real app (fixed)
@@ -112,10 +112,21 @@ Note: I can build and test on Linux here, but **not produce a Windows `.exe`** i
 - Windows: `cd apps/pharmacy && flutter build windows --release` on a Windows PC (not buildable in this Linux environment; the code has no platform-specific parts).
 - Linux: `flutter run -d linux`. First run → setup; Settings → «عبّي بيانات تجريبية» loads sample drugs with near-expiry batches.
 
-### Not built yet / questions for you
-- **Returns** (مرتجع): supported in the ledger, but there's no screen yet. Should it start from a past sale, or be a free-form return?
-- **Discount** at the POS: supported in the logic, with no field in the invoice yet. Should any employee be able to give a discount, or only the owner?
-- **Receipt printing**: do you need thermal receipts (58/80 mm)?
-- **Partial packs** (selling a strip from a box): still whole units only.
+### Added after review (owner requests, 2026-09-25)
+- **Employee accounts** (owner only): for today / this week (from Saturday) / this month, each employee's sales, cash vs debt, discounts, debt payments collected, returns and cash refunds, **cash to hand in** (cash sales + collected payments − cash refunds), top products, and every invoice with its lines. The admin pages are hidden from employees.
+- **Strips:** "strips per box" and a strip price per product. The POS has a box button and a strip button, and stock shows as "٣ علبة + ١ ظرف". Stock is counted in strips; strips-per-box is locked once stock has moved.
+- **Returns, both ways:**
+  - From an invoice: capped at what was sold minus earlier returns, back into the original batches.
+  - Free-form: pick the product, unit and price.
+  - Refund in cash, or as a credit against the customer's debt.
+- Schema v2 with a migration tested against the exact v1 schema, and checked on a real v1 database.
+- Real-app bugs fixed:
+  - **Dialogs popped the page instead of closing** (receive/count/payment); now covered by a test.
+  - The "و١" ambiguity.
+  - The release icon cache (documented).
+
+### Still open
+- **Discount** at the POS: supported by the logic, not shown in the invoice yet. Any employee, or the owner only?
+- **Receipt printing**: thermal 58/80 mm?
 
 ## Phase 2 — Backend + sync · not started

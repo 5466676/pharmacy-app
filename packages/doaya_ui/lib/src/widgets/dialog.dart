@@ -14,8 +14,12 @@ Future<T?> showDoayaDialog<T>({
   List<Widget> actions = const [],
   double maxWidth = DoayaSizes.dialogWidth,
 }) {
+  // Nearest navigator, not the root one: callers pop with the context they
+  // passed in, which then closes this dialog even inside nested navigators
+  // (e.g. a go_router ShellRoute) instead of popping the page underneath.
   return showDialog<T>(
     context: context,
+    useRootNavigator: false,
     barrierColor: DoayaColors.scrim,
     builder: (context) => Dialog(
       backgroundColor: DoayaColors.transparent,

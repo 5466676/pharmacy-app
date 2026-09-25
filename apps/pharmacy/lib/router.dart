@@ -9,6 +9,7 @@ import 'ui/screens/inventory_screen.dart';
 import 'ui/screens/login_screen.dart';
 import 'ui/screens/pos_screen.dart';
 import 'ui/screens/product_screen.dart';
+import 'ui/screens/return_screen.dart';
 import 'ui/screens/settings_screen.dart';
 import 'ui/screens/setup_screen.dart';
 import 'ui/screens/staff_screen.dart';
@@ -23,6 +24,7 @@ abstract final class Routes {
   static const inventory = '/inventory';
   static const debts = '/debts';
   static const staff = '/staff';
+  static const returns = '/pos/return';
   static const settings = '/settings';
 
   static String product(String id) => '$inventory/product/$id';
@@ -67,6 +69,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: Routes.pos,
             pageBuilder: (_, _) => const NoTransitionPage(child: PosScreen()),
+            routes: [GoRoute(path: 'return', builder: (_, _) => const ReturnScreen())],
           ),
           GoRoute(
             path: Routes.inventory,

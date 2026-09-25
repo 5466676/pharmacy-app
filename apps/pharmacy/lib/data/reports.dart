@@ -13,13 +13,17 @@ class EmployeeSummary {
   /// Debt payments this employee took from customers (cash in hand).
   int paymentsCollectedMinor = 0;
   int unitsSold = 0;
+  int returnsCount = 0;
+  int cashRefundsMinor = 0;
+  int creditRefundsMinor = 0;
   final Map<String, int> unitsByProduct = {};
   final List<SaleRow> sales = [];
 
   int get totalSalesMinor => cashSalesMinor + debtSalesMinor;
 
-  /// Cash this employee should hand over: cash sales + debt payments taken.
-  int get cashToHandInMinor => cashSalesMinor + paymentsCollectedMinor;
+  /// Cash this employee should hand over:
+  /// cash sales + debt payments taken − cash refunds paid out.
+  int get cashToHandInMinor => cashSalesMinor + paymentsCollectedMinor - cashRefundsMinor;
 
   /// Top products by units, largest first.
   List<MapEntry<String, int>> topProducts([int n = 5]) =>
@@ -34,6 +38,7 @@ List<EmployeeSummary> summarizeByEmployee({
   required List<SaleRow> sales,
   required List<SaleLineRow> lines,
   required List<DebtEventRow> payments,
+  List<ReturnRow> returns = const [],
 }) {
   final byId = <String, EmployeeSummary>{};
   EmployeeSummary of(String id) => byId.putIfAbsent(id, () => EmployeeSummary(id));
@@ -55,11 +60,21 @@ List<EmployeeSummary> summarizeByEmployee({
     final owner = saleOwner[l.saleId];
     if (owner == null) continue;
     final e = of(owner);
+    // Counted in selling units (a box and a strip each count as one).
     e.unitsSold += l.quantity;
     e.unitsByProduct[l.productId] = (e.unitsByProduct[l.productId] ?? 0) + l.quantity;
   }
   for (final p in payments) {
     of(p.employeeId).paymentsCollectedMinor += p.amountMinor;
+  }
+  for (final r in returns) {
+    final e = of(r.employeeId);
+    e.returnsCount++;
+    if (r.refund == 'cash') {
+      e.cashRefundsMinor += r.totalMinor;
+    } else {
+      e.creditRefundsMinor += r.totalMinor;
+    }
   }
   for (final e in byId.values) {
     e.sales.sort((a, b) => b.occurredAt.compareTo(a.occurredAt));
