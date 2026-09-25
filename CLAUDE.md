@@ -47,5 +47,7 @@ flutter pub get                               # at repo root, resolves every pac
 cd packages/doaya_ui && flutter test          # design-system tests
 cd packages/doaya_ui/example && flutter run -d chrome   # component gallery (or -d windows / linux)
 flutter analyze                               # at repo root
+flutter build web --no-web-resources-cdn      # ALWAYS this flag: no Google CDNs (see DECISIONS)
 ```
+Never put glyphs missing from Amiri/Readex Pro (←, ✓, emoji) in strings — use `DoayaIcons`.
 Regenerate localizations after editing an `.arb` file: `flutter gen-l10n` inside that package.
