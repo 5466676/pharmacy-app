@@ -52,6 +52,7 @@ cd apps/pharmacy && flutter test && flutter run -d linux   # or -d windows
 cd packages/doaya_ui/example && flutter run -d chrome   # component gallery (or -d windows / linux)
 flutter analyze                               # at repo root
 cd backend && .venv/bin/pytest && .venv/bin/ruff check .   # server (needs PostgreSQL, see backend/README.md)
+./tool/sync_e2e.sh                            # app ⇄ real server end-to-end sync test
 flutter build web --no-web-resources-cdn      # ALWAYS this flag: no Google CDNs (see DECISIONS)
 ```
 Prefer ":" or "،" over "·" next to numbers (clearer at the counter).

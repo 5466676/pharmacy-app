@@ -133,3 +133,10 @@ The server doesn't recreate the app's ~25 tables. Each synced row is stored once
   - Everything accepted, including a losing older edit, can be marked synced on the device.
 - **Pull** `GET /sync/pull?after=N&limit=…` returns changes from other devices after N, the next cursor, `more`, and `latest` (for a progress bar).
 - **No skipped changes**: pushes of one pharmacy take a transaction-level advisory lock, so their sequence numbers commit in order. Without it, a pull could pass seq 11 while seq 10 was still uncommitted and never see it. A test runs 6 concurrent pushes and checks that a paging reader sees all 120 rows.
+
+## 2026-09-25 · Device side of sync: a trigger-fed outbox
+- The app records its changes in `sync_outbox` through SQLite **triggers** on every synced table (INSERT on ledgers; INSERT/UPDATE/DELETE on master data). Every repository, migration or future screen is covered with no code to remember. Master tables had no `synced_at` and deletions left no trace; the outbox handles both. The ledgers' old `synced_at` column is no longer used for sync and never leaves the device.
+- Rows travel as generic column → value maps read with `SELECT *` and written back with `INSERT OR IGNORE` (ledgers) or `INSERT … ON CONFLICT DO UPDATE` (master data), only for columns the local schema knows. The sync code doesn't need to know each table, and a newer app version's extra columns are ignored by an older one.
+- While pulled changes are applied, a flag in `sync_state` pauses the triggers, so they aren't queued back.
+- **Foreign keys are switched off while a pulled page is applied.** An edited parent (a product whose price changed) gets a newer sequence number than its older children (its barcodes), so a new device can receive the child first. The rows were consistent on the device that wrote them, and a test covers this case.
+- **The first upload** of a device that already has history (the counter PC creating the pharmacy) queues every row, parents first. Master rows keep their own `updated_at`; rows without one use 1970, so re-linking an old PC can never override newer edits already on the server.

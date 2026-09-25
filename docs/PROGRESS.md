@@ -238,7 +238,7 @@ Health ministry price-list import · money accounts (drawer / Sham Cash / bank +
 ### Question for this review
 - **Receipt printing**: OK to add the `pdf` + `printing` packages (well-maintained, pure Dart/Flutter, no Google services, work offline with any system printer, including 80 mm thermal printers installed in Windows)? The button will be a small print icon on the completed sale, nothing more.
 
-## Phase 2 — Backend + sync · 🚧 in progress (plan approved 2026-09-25, with the owner's changes)
+## Phase 2 — Backend + sync · 🔍 steps 1–5 ready for review (plan approved 2026-09-25, with the owner's changes)
 
 Goal: the pharmacy's devices (counter PC, the owner's and employees' phones) share one set of data through a server **on the pharmacy's own computer, over the local Wi-Fi, with no internet needed**. Every device keeps a full copy and keeps selling when the server is off; they catch up when it's back. This is also the base the patient app (Phase 3) builds on. Phase 1.5 steps 7–9 (expenses + P&L, automatic backup, final run) are paused and come back later.
 
@@ -290,6 +290,24 @@ Patients aren't on the pharmacy's Wi-Fi, so the patient app will need a server r
 6. App: find the server on the Wi-Fi, "ربط بالسيرفر" (creating the pharmacy on first link), sync status, background sync, devices list, employees' phone/password.
 7. Phone layout (Android) with selling; an employee's phone opens straight in.
 8. Running the server on the pharmacy PC: Windows install guide, service start at boot, daily PostgreSQL backup; a real run (server + PC app + phone app) → **review**.
+
+### Done (steps 1–5)
+- [x] **1. Server skeleton**: settings (`DOAYA_*` / `.env`), `/health`, pytest on a real PostgreSQL, ruff, Docker Compose. The token secret is generated on first run when not set.
+- [x] **2. Schema** (Alembic `0001`): pharmacies, users, devices, and one generic `sync_rows` table with a change sequence. Tests: uniqueness per pharmacy, sequence order, migrate down and up.
+- [x] **3. Accounts** (8 tests):
+  - `/setup` (first run only: pharmacy + owner + this device), `/auth/link` (phone + password once), `/auth/token` (device secret → 15-minute token).
+  - The owner lists and unlinks devices (takes effect at once) and manages employee accounts.
+  - Login rate limit; a CLI to create pharmacies by hand; phone numbers typed in Arabic digits accepted.
+- [x] **4. Sync API** (10 tests):
+  - Push with idempotent ledgers and last-writer-wins master data (decided in one SQL statement), tombstones, and pull by cursor with paging.
+  - Pharmacies isolated; pushes serialised per pharmacy so no change is ever skipped (tested with concurrent pushes).
+- [x] **5. Sync on the device**:
+  - `doaya_core`: the sync engine (9 tests on an in-memory server with the same rules) and the HTTP client (setup, link, push/pull, automatic token refresh; 5 tests).
+  - App schema **v6**: `sync_outbox`, filled by SQLite **triggers** on all 23 synced tables, so no code path can forget a change, and `sync_state`. Migration tested from the real v5 schema.
+  - `DriftSyncStore` copies rows generically. Pulled rows don't bounce back; a newer local edit not pushed yet keeps its value; `is_this_device` and `synced_at` stay local.
+  - 5 app tests on real SQLite: triggers catch sales, edits and deletions; the PC uploads its history and a new phone gets the same pharmacy; both sell offline and end up identical; a child arriving before its edited parent still applies.
+  - **End-to-end against the real server** (`tool/sync_e2e.sh`): the PC creates the pharmacy and uploads; the owner gives Rana an account; her phone links with the number typed in Arabic digits; both sell; after sync both have stock 5 and 2 sales; unlinking her phone makes its next sync refused.
+- Totals: server 23, core 90, design system 23, app 70 (+1 end-to-end run by the script).
 
 ### Open (asked at the step-5 review)
 - **Encryption on the Wi-Fi**: HTTPS with a certificate the server makes itself, trusted the first time a device links. That needs the `cryptography` package on the server. Until then the pilot runs over plain HTTP on the pharmacy's own Wi-Fi.
