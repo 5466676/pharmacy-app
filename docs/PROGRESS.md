@@ -238,56 +238,58 @@ Health ministry price-list import · money accounts (drawer / Sham Cash / bank +
 ### Question for this review
 - **Receipt printing**: OK to add the `pdf` + `printing` packages (well-maintained, pure Dart/Flutter, no Google services, work offline with any system printer, including 80 mm thermal printers installed in Windows)? The button will be a small print icon on the completed sale, nothing more.
 
-## Phase 2 — Backend + sync · 📝 plan waiting for approval
+## Phase 2 — Backend + sync · 🚧 in progress (plan approved 2026-09-25, with the owner's changes)
 
-Goal: one self-hosted server that the pharmacy's devices sync with, safely and without ever blocking a sale, and the base the patient app (Phase 3) will connect to. Phase 1.5 steps 7–9 (expenses + P&L, automatic backup, final run) are paused and come back later.
+Goal: the pharmacy's devices (counter PC, the owner's and employees' phones) share one set of data through a server **on the pharmacy's own computer, over the local Wi-Fi, with no internet needed**. Every device keeps a full copy and keeps selling when the server is off; they catch up when it's back. This is also the base the patient app (Phase 3) builds on. Phase 1.5 steps 7–9 (expenses + P&L, automatic backup, final run) are paused and come back later.
 
-### A. Backend (`backend/`)
-- FastAPI + PostgreSQL 16 + SQLAlchemy 2 + Alembic + Pydantic v2 (the approved stack). Docker Compose: `db`, `api`, and a reverse proxy with automatic HTTPS.
-- **Tenancy**: every row belongs to one pharmacy (`pharmacy_id`). Every query is scoped to it, and a test proves one pharmacy can never read or write another's data.
-- **Server tables**: pharmacies, users (owner accounts, later patients and admins), devices, refresh tokens, and a mirror of every table the app syncs: products, barcodes, customers, suppliers, employees, settings, all the ledgers (stock, sales and lines, debts, returns, till, purchases, supplier debts and returns, expenses, stocktakes), and purchase orders.
+### Owner decisions (2026-09-25)
+- Dependencies approved: `uvicorn`, `psycopg` 3, `pyjwt`, `argon2-cffi`, `pydantic-settings`, dev-only `pytest` / `httpx` / `ruff`; Flutter `http`.
+- **The server is the pharmacy's computer, on the local network (LAN).** The internet isn't required. If the computer is off, phones keep selling and sync when it's back on.
+- **Pharmacies are created by hand for now.** The first one is the owner's mother's pharmacy, used as the pilot.
+- **Phone number + password once per device, then the account stays signed in**: for the owner and for employees.
+- **Phones sell too** (the owner's and the employees'), for when the computer is off or far away. Every phone downloads the full catalogue and stock, so all devices stay consistent.
+
+### A. Server (`backend/`)
+- FastAPI + PostgreSQL 16 + SQLAlchemy 2 + Alembic + Pydantic v2. It runs on the pharmacy PC as a background service that starts with Windows (PostgreSQL's official Windows installer + our server). Docker Compose is kept for Linux, and for the internet server later.
+- **Multi-pharmacy from day one** (`pharmacy_id` on every row, a tenant-isolation test), even if a local server holds one pharmacy, because the same code becomes the internet server later.
+- It mirrors every table the app syncs (catalogue, customers, suppliers, employees, settings, every ledger, stocktakes, orders), and the server numbers every change with one sequence.
 
 ### B. Accounts & devices
-- **Pharmacy sign-up**: the owner registers with the pharmacy name, their name, phone and password. The pharmacy starts as *pending* until it's approved: by a command-line tool now, by the admin panel in Phase 4.
-- **Linking a device** (counter laptop, second laptop, owner's phone): the owner signs in once from Settings → "ربط بالسيرفر". The server registers the device and gives it its own long-lived token. After that the device syncs with no password.
-- **Employees keep signing in locally with their PIN**, even offline. The server only needs to know which device and employee each event came from.
-- The owner sees the linked devices and can **unlink** one (a lost or stolen laptop). Its token stops working at once.
-- JWT: 15-minute access tokens and rotating refresh tokens (stored hashed). Passwords are hashed with Argon2. Login is rate-limited. Roles: `pharmacist_owner`, `pharmacist_employee`; `patient` and `admin` are reserved for Phases 3–4.
+- **Creating the pharmacy**:
+  - The first time the counter app links to an empty server, it offers to create the pharmacy there with the owner's phone and password, and uploads all its existing history.
+  - A command-line tool does the same by hand.
+- **Accounts**: the owner and every employee get a phone number + password on the server (the owner sets the employees' in Settings). PINs stay for switching users on the shared counter PC; the PIN hashes sync so any shared device accepts them.
+- **Linking a device**:
+  - Once, with a phone number + password. The device gets its own long-lived token and stays signed in.
+  - An **employee's own phone** opens straight into that employee's session. The counter PC keeps the "who's working?" PIN screen.
+- The owner sees every linked device and can **unlink** one (a lost phone): its token stops working at once. JWT (short access + rotating refresh stored hashed), Argon2 passwords, login rate limit.
 
-### C. Sync (push / pull by cursor)
-- **Push**: the device sends everything not yet synced (`synced_at IS NULL`, the outbox the schema already has) in batches. The server stores it idempotently: sending the same event twice is harmless. The device then marks those rows `synced_at` (the only update the append-only guards allow).
-- **Pull**: the device asks for "everything after cursor N". The server numbers every change for the pharmacy with one sequence, returns the next 500 changes from the *other* devices plus the new cursor, and the device applies them and saves the cursor.
-- **Ledgers merge without conflicts** because they're append-only with UUIDv7 ids. **Master data** (a product's price, a customer's phone…) uses last-writer-wins on `updated_at`, with the device id breaking ties. This is shown in the decisions log.
-- Two laptops selling the last box offline can make stock go below zero after sync. That's accepted, shown in red, and fixed by a stocktake. **A sale is never blocked by sync.**
-- Sync runs every 30 s while online and on demand ("زامن هلق"), always in the background. The top-bar chip shows the real state: offline / syncing / synced at 14:05 / N waiting.
-- A newly linked device downloads the pharmacy's full history once, with a progress bar.
-- The sync engine lives in `doaya_core` (pure Dart, the network behind an interface) with **tests first**. The app adds the drift side.
+### C. Sync (push / pull by cursor), local network
+- **Finding the server**: the app finds it on the Wi-Fi by itself (a UDP broadcast, standard library only). Typing the PC's address by hand is a fallback.
+- **Push**: each device sends its unsynced rows (`synced_at IS NULL`). They're stored idempotently, and the device marks them synced.
+- **Pull**: "everything after cursor N" from the other devices, 500 at a time.
+- **Merging**: ledgers merge with no conflicts (append-only, UUIDv7). Master data uses last-writer-wins on `updated_at`, with the device id breaking ties.
+- **Selling is never blocked by sync.** Two devices selling the last box offline can take stock below zero; that shows in red and a stocktake fixes it.
+- Sync runs every 30 s when the server is reachable, plus "زامن هلق". The top-bar chip shows the real state: server not found / syncing / synced at 14:05 / N waiting.
+- A newly linked phone downloads the whole pharmacy once, with a progress bar.
+- **If the PC's disk dies**, any phone still holds everything and can fill a fresh server. This comes on top of the PostgreSQL daily backup.
+- The sync engine lives in `doaya_core` (the network behind an interface), **tests first**. An end-to-end test runs two devices through a real server.
 
-### D. Owner's phone (Android)
-- The same pharmacy app on Android, linked as the owner's device: a phone layout with bottom navigation for the dashboard, profits, stock lookup, debts, suppliers and orders, and the till/shift summaries.
-- Selling at the counter stays on the desktop.
+### D. Phones (Android)
+- The same app with a phone layout and bottom navigation: **selling** (search; camera scanning can come later), stock, debts, the till/shift, the dashboard and, for the owner, profits and purchases.
 
-### E. Operations
-- Docker Compose file, `.env` example, daily PostgreSQL backup, health check, and a one-page install guide.
-- The LLM connection (OpenAI-compatible, switchable) arrives with the patient chat in Phase 3.
+### E. Later, for the patient app (Phase 3)
+Patients aren't on the pharmacy's Wi-Fi, so the patient app will need a server reachable from the internet. The plan is that the pharmacy's local server syncs up to it with the same protocol whenever the internet is available, and the pharmacy keeps working locally either way. This gets decided with the Phase 3 plan.
 
 ### Steps (tests first; a commit after each; **stop for review after step 5**)
-1. Backend skeleton: settings, health endpoint, Docker Compose, pytest against a real Postgres, lint.
+1. Server skeleton: settings, health endpoint, pytest against a real PostgreSQL, lint.
 2. Schema + first Alembic migration; tenant isolation tests.
-3. Auth: sign-up (pending), approve command, login, device linking, refresh, unlink. Tests.
-4. Sync API: push / pull with idempotency, last-writer-wins, cursor paging, tenant isolation. Tests.
-5. `doaya_core` sync engine + tests; the app's drift adapter; an end-to-end test: two devices sell offline, sync through a real test server, and end up identical → **review**.
-6. App: Settings → "ربط بالسيرفر", real sync status in the top bar, background sync, linked devices (owner).
-7. Owner's phone layout (Android).
-8. Deployment guide + a real run (server + two app instances) + screenshots → **review**.
+3. Accounts: create a pharmacy (from the app or the command line), owner and employee accounts, device linking and unlinking, tokens. Tests.
+4. Sync API: push / pull, idempotency, last-writer-wins, cursor paging, isolation. Tests.
+5. `doaya_core` sync engine + tests; the app's drift adapter; end-to-end: two devices sell offline, sync, and end up identical → **review**.
+6. App: find the server on the Wi-Fi, "ربط بالسيرفر" (creating the pharmacy on first link), sync status, background sync, devices list, employees' phone/password.
+7. Phone layout (Android) with selling; an employee's phone opens straight in.
+8. Running the server on the pharmacy PC: Windows install guide, service start at boot, daily PostgreSQL backup; a real run (server + PC app + phone app) → **review**.
 
-### Dependencies to approve
-- **Backend (Python)**: `uvicorn` (runs the server), `psycopg` 3 (PostgreSQL driver), `pyjwt` (tokens), `argon2-cffi` (password hashing), `pydantic-settings` (config from `.env`); for development only: `pytest`, `httpx` (API tests), `ruff` (lint).
-- **Flutter**: `http` (the Dart team's HTTP client) for talking to the server.
-
-### Questions for the owner
-1. **Where will the server run?** A VPS abroad, a Syrian data centre, or a computer at the pharmacy? The code is the same; it changes the install guide and the domain/HTTPS setup.
-2. **Pharmacy sign-up**: self sign-up plus approval (planned), or you create each pharmacy yourself?
-3. **Owner login**: phone + password (planned). SMS codes need a local SMS gateway and can come later.
-4. **Owner's phone app in this phase**: viewing and following up (planned), with selling staying on the desktop?
-
+### Open (asked at the step-5 review)
+- **Encryption on the Wi-Fi**: HTTPS with a certificate the server makes itself, trusted the first time a device links. That needs the `cryptography` package on the server. Until then the pilot runs over plain HTTP on the pharmacy's own Wi-Fi.
