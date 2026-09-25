@@ -245,6 +245,82 @@ void main() {
     });
   });
 
+  group('profit report', () {
+    final day1 = DateTime.utc(2026, 9, 1, 9), day2 = DateTime.utc(2026, 9, 2, 17);
+    DateTime dayOf(DateTime t) => DateTime.utc(t.year, t.month, t.day);
+    StockEvent ev(
+      StockEventType type,
+      String product,
+      String batch,
+      int q,
+      String emp,
+      DateTime at,
+    ) => StockEvent(
+      meta: EventMeta(
+        id: type == StockEventType.received ? batch : ids.generate(),
+        deviceId: 'd',
+        employeeId: emp,
+        occurredAt: at,
+      ),
+      type: type,
+      productId: product,
+      batchId: batch,
+      quantity: q,
+    );
+    final costs = CostBook({
+      'a1': const BatchCost(totalMinor: 1000, pieces: 10), // 1.00 each
+      'b1': const BatchCost(totalMinor: 6000, pieces: 20), // 3.00 each
+    });
+
+    test('groups revenue and cost by product, employee and day; returns subtract', () {
+      final r = buildProfitReport(
+        revenue: [
+          RevenueItem(productId: 'a', employeeId: 'rana', at: day1, amountMinor: 500),
+          RevenueItem(productId: 'b', employeeId: 'rana', at: day1, amountMinor: 1000),
+          RevenueItem(productId: 'b', employeeId: 'sam', at: day2, amountMinor: 800),
+          RevenueItem(productId: 'b', employeeId: 'sam', at: day2, amountMinor: -400), // refund
+        ],
+        stockEvents: [
+          ev(StockEventType.sold, 'a', 'a1', -2, 'rana', day1),
+          ev(StockEventType.sold, 'b', 'b1', -2, 'rana', day1),
+          ev(StockEventType.sold, 'b', 'b1', -2, 'sam', day2),
+          ev(StockEventType.returned, 'b', 'b1', 1, 'sam', day2),
+          ev(StockEventType.received, 'b', 'b2', 5, 'sam', day2), // ignored
+        ],
+        costs: costs,
+        dayOf: dayOf,
+      );
+      expect((r.total.revenueMinor, r.total.costMinor), (1900, 200 + 600 + 600 - 300));
+      expect(r.byProduct['a']!.profitMinor, 300);
+      expect(r.byProduct['b']!.profitMinor, 1400 - 900);
+      expect(r.byEmployee['rana']!.profitMinor, 1500 - 800);
+      expect(r.byEmployee['sam']!.profitMinor, 400 - 300);
+      expect(r.byDay[dayOf(day2)]!.revenueMinor, 400);
+      expect(ProfitReport.ranked(r.byProduct).first.key, 'b');
+      expect(r.total.complete, isTrue);
+    });
+
+    test('pieces from batches without a cost are counted, never guessed', () {
+      final r = buildProfitReport(
+        revenue: [RevenueItem(productId: 'a', employeeId: 'e', at: day1, amountMinor: 900)],
+        stockEvents: [ev(StockEventType.sold, 'a', 'old', -3, 'e', day1)],
+        costs: costs,
+        dayOf: dayOf,
+      );
+      expect((r.total.costMinor, r.total.unknownCostPieces, r.total.complete), (0, 3, false));
+    });
+
+    test('stock value at cost: known batches valued, unknown pieces counted', () {
+      final stock = StockLedger([
+        ev(StockEventType.received, 'b', 'b1', 20, 'e', day1),
+        ev(StockEventType.sold, 'b', 'b1', -5, 'e', day1),
+        ev(StockEventType.received, 'a', 'old', 4, 'e', day1),
+      ]);
+      final v = stockValue(stock, costs);
+      expect((v.costMinor, v.unknownCostPieces), (15 * 300, 4));
+    });
+  });
+
   group('stocktake', () {
     test('difference is taken at count time; last count wins; zero ignored', () {
       final adj = stocktakeAdjustments(const [
