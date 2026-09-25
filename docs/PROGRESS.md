@@ -132,7 +132,7 @@ Note: I can build and test on Linux here, but **not produce a Windows `.exe`** i
 ### Still open
 - **Receipt printing**: thermal 58/80 mm? (not answered yet)
 
-## Phase 1.5 — Accounting · 🚧 steps 1–4 done (plan approved 2026-09-25)
+## Phase 1.5 — Accounting · 🚧 steps 1–5 done (plan approved 2026-09-25)
 
 Goal: turn the counter app into a complete pharmacy accounting system (inspired by Karma Soft / Al-Ameen, see `docs/ACCOUNTING_RESEARCH.md`), still fully offline and still built on append-only records so Phase 2 sync stays safe.
 
@@ -209,6 +209,15 @@ Health ministry price-list import · money accounts (drawer / Sham Cash / bank +
   - Pieces sold from stock received before purchase invoices existed have no cost. They're counted and flagged ("تكلفة ناقصة" plus a notice), never guessed, and the margin is hidden until the cost is complete.
   - Dashboard (owner): today's profit and what we owe suppliers.
   - Tests: 72 core, 60 app. Screenshots `docs/screenshots/phase1_5/07–09`.
+
+- [x] Step 5: **النواقص والطلبيات** (tabs under المشتريات, for everyone; last prices owner-only):
+  - Shortages: out of stock, under the minimum, or running out within 14 days at the last 30 days' pace. Most urgent first, with how many days are left.
+  - Suggested quantity in whole boxes: enough for 14 days, and back above the minimum. It can be changed or unticked.
+  - Supplier: the last one we bought from by default, or picked. "اعمل الطلبيات" makes one draft order per supplier.
+  - Order: edit quantities; **انسخ الطلبية** copies a ready message (pharmacy, date, numbered lines "1. Amoxil 500 mg: 6 علبة") to paste in WhatsApp / Telegram, and marks it sent.
+  - **وصلت: فاتورة شراء** opens a purchase invoice with the supplier and lines filled in. Saving it marks the order received.
+  - The dashboard's low-stock card now opens the shortages.
+  - Tests: 75 core, 62 app. Screenshots `docs/screenshots/phase1_5/10–13`.
 
 ### How to review (step 3)
 المشتريات → مورد جديد → فاتورة شراء → scan or search → type quantity, bonus, price… → F9. Then open the supplier: statement, "دفعة للمورد", "مرتجع للمستودع". Sign in as an employee to check the amounts are hidden.

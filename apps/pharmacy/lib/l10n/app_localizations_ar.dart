@@ -1097,7 +1097,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get ownerOnlyAmounts => 'المبالغ والأرصدة للمالك بس';
 
   @override
-  String get dateFormatHint => '1/6/2028';
+  String get dateFormatHint => '1/6/28';
 
   @override
   String get errDrawerClosed => 'الصندوق مسكّر، افتحه أول أو اختار الدفع من برّا الصندوق';

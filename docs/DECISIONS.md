@@ -107,3 +107,7 @@ Names, phones, notes, shelves, barcodes and settings are saved with English digi
 
 ## 2026-09-25 · Profit is computed from events, per period
 Profit of a period = sales in it (after discount, spread over lines by `allocateProportionally`) − refunds in it, minus the cost of `sold` events + the cost given back by `returned` events in it. Cost comes from the batch each piece left (purchase line cost ÷ pieces). A return counts in the period it happens, not the sale's, so closed periods never change. Pieces from batches without a purchase cost are reported as a count, never valued with a guess, and no margin is shown while any cost is missing.
+
+## 2026-09-25 · Purchase orders are sent by copy-paste
+Suppliers take orders electronically (owner). The order is copied as plain text to the clipboard, to paste into WhatsApp / Telegram desktop. That needs no new dependency, and nothing is sent from the app itself. Each line starts with a number and the Latin drug name, so chat apps lay it out left to right. Orders are mutable drafts (not a ledger): nothing in stock or money changes until they're received as a purchase invoice, which is the append-only record.
+Shortage rule: out of stock; at or under the minimum; or fewer days left than the cover period (14) at the pace of the last 30 days (sold − returned). Suggested boxes = enough for 14 days and above the minimum, rounded up, at least 1.

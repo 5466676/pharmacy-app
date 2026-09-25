@@ -2099,7 +2099,7 @@ abstract class AppLocalizations {
   /// No description provided for @dateFormatHint.
   ///
   /// In ar, this message translates to:
-  /// **'1/6/2028'**
+  /// **'1/6/28'**
   String get dateFormatHint;
 
   /// No description provided for @errDrawerClosed.
