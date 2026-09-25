@@ -26,6 +26,11 @@ enum SyncPhase {
   /// The owner unlinked this device.
   unlinked,
 
+  /// Another certificate answers at the server's address (the server was
+  /// reinstalled, or another machine poses as it). Nothing is sent until
+  /// the device is linked again.
+  wrongServer,
+
   /// Something else went wrong; retried on the next run.
   failed,
 }
@@ -169,7 +174,12 @@ class SyncController extends Notifier<SyncStatus> {
 
   Future<void> _run() async {
     final store = _store, c = client;
-    if (store == null || c == null || state.phase == SyncPhase.unlinked) return;
+    if (store == null ||
+        c == null ||
+        state.phase == SyncPhase.unlinked ||
+        state.phase == SyncPhase.wrongServer) {
+      return;
+    }
     state = state.copyWith(phase: SyncPhase.syncing);
     try {
       await SyncEngine(store, c).sync(
@@ -178,6 +188,8 @@ class SyncController extends Notifier<SyncStatus> {
       final now = DateTime.now();
       await store.setState('last_sync_at', now.toUtc().toIso8601String());
       state = state.copyWith(phase: SyncPhase.idle, lastSyncAt: now);
+    } on SyncCertificateException {
+      state = state.copyWith(phase: SyncPhase.wrongServer);
     } on SyncNetworkException {
       state = state.copyWith(phase: SyncPhase.serverUnreachable);
     } on SyncApiException catch (e) {
@@ -245,6 +257,32 @@ class SyncController extends Notifier<SyncStatus> {
     await ref.read(thisDeviceProvider.future);
     await _saveLink(url, result, autoSignIn: true);
     return result;
+  }
+
+  /// Drops the link to the server (after it was unlinked or reinstalled)
+  /// so the device can be linked again. Local data stays; it all goes up
+  /// again on the next link, and the download starts over.
+  Future<void> forgetServer() async {
+    final store = _store;
+    if (store == null) return;
+    await _running;
+    for (final key in [
+      'server_url',
+      'device_token',
+      'pharmacy_id',
+      'pharmacy_name',
+      'user_name',
+      'role',
+      'employee_id',
+      'cursor',
+      'last_sync_at',
+    ]) {
+      await store.setState(key, null);
+    }
+    _timer?.cancel();
+    _client?.close();
+    _client = null;
+    state = const SyncStatus();
   }
 
   Future<void> _saveLink(Uri url, LinkResult r, {bool autoSignIn = false}) async {

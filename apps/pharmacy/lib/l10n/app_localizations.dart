@@ -2780,6 +2780,48 @@ abstract class AppLocalizations {
   /// **'ما عم نوصل للسيرفر. البيع شغّال عادي، والحركات ناطرة لحتى يرجع.'**
   String get serverMissingHelp;
 
+  /// No description provided for @statusWrongServer.
+  ///
+  /// In ar, this message translates to:
+  /// **'السيرفر تغيّر'**
+  String get statusWrongServer;
+
+  /// No description provided for @wrongServerHelp.
+  ///
+  /// In ar, this message translates to:
+  /// **'يلي عم يرد على عنوان السيرفر مو نفس السيرفر يلي انربط عليه هالجهاز (رمزه مختلف)، فوقّفنا المزامنة منشان ما تطلع البيانات لجهاز غريب. البيع شغّال عادي. إذا انعاد تركيب السيرفر، اربط الجهاز من جديد.'**
+  String get wrongServerHelp;
+
+  /// No description provided for @errWrongServer.
+  ///
+  /// In ar, this message translates to:
+  /// **'رمز السيرفر مو نفسه يلي انربط عليه الجهاز'**
+  String get errWrongServer;
+
+  /// No description provided for @relinkButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'اربط من جديد'**
+  String get relinkButton;
+
+  /// No description provided for @relinkConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'رح ينفك ربط هالجهاز بالسيرفر لتربطه من جديد. البيانات يلي عليه بتضل، وبترتفع كلها مع الربط الجديد. أكيد؟'**
+  String get relinkConfirm;
+
+  /// No description provided for @serverCode.
+  ///
+  /// In ar, this message translates to:
+  /// **'رمز السيرفر: {code}'**
+  String serverCode(String code);
+
+  /// No description provided for @serverCodeHelp.
+  ///
+  /// In ar, this message translates to:
+  /// **'لازم يطابق الرمز يلي طلع وقت تركيب السيرفر.'**
+  String get serverCodeHelp;
+
   /// No description provided for @devicesTitle.
   ///
   /// In ar, this message translates to:

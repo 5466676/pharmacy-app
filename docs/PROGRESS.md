@@ -332,7 +332,7 @@ Patients aren't on the pharmacy's Wi-Fi, so the patient app will need a server r
     - Inventory rows, and debts/returns as a list then details with a back button.
     - Till, profits (2×2 cards, two-line rows), the purchase invoice (lines over the summary, three fields per row), the supplier page (one scrolling column), shortages, sync and stocktake.
   - `PageHeader`, `Panel` and `SplitPanes` adapt by themselves.
-  - Android manifest: internet, plain HTTP on the local network, WhatsApp, Arabic app name.
+  - Android manifest: internet, WhatsApp, Arabic app name (plain HTTP removed with step 9).
   - **APK not built here**: this environment's network blocks Google's Android SDK downloads (403). On a machine with Android Studio: `cd apps/pharmacy && flutter build apk --release`.
 - [x] **8. Server on the pharmacy PC**:
   - **Daily backups by the server itself** (Windows or Linux): `pg_dump` into `data/backups`, keeping 30. CLI `backup` / `list-backups` / `restore`; owner endpoint `/backups`. Tested with a real dump and restore. The app shows the owner the server's last backup.
@@ -342,7 +342,9 @@ Patients aren't on the pharmacy's Wi-Fi, so the patient app will need a server r
     - The server took its first backup by itself, then was switched off.
     - The phone (at 360 px) showed «السيرفر مو موجود» and still sold Brufen.
     - The server came back; «زامن هلق» synced; the counter then showed that sale (26 ل.س, «موبايل سامر») and today's total went to 238 over 6 sales.
-- Totals: server 30, core 90, design system 23, app 78 (+ the end-to-end script).
-
-### Open (asked at the step-5 review)
-- **Encryption on the Wi-Fi**: HTTPS with a certificate the server makes itself, trusted the first time a device links. That needs the `cryptography` package on the server. Until then the pilot runs over plain HTTP on the pharmacy's own Wi-Fi.
+- [x] **9. Encryption on the Wi-Fi** (owner approved `cryptography`):
+  - The server runs HTTPS with a certificate it makes itself (`python -m app.serve`), and discovery announces the certificate's fingerprint.
+  - Devices pin it when they link, show its short code (`AB12-CD34`), and refuse any other certificate. That state shows as «السيرفر تغيّر» with an «اربط من جديد» button.
+  - Installer, systemd unit, Dockerfile and the end-to-end script were moved to HTTPS.
+  - The end-to-end test runs over real TLS: first-contact pinning, linking, syncing, and an impostor certificate refused before anything is sent. Details in DECISIONS.
+- Totals: server 34, core 95, design system 23, app 80 (+ the end-to-end script, over HTTPS).

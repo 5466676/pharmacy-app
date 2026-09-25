@@ -1496,6 +1496,31 @@ class AppLocalizationsAr extends AppLocalizations {
   String get serverMissingHelp => 'ما عم نوصل للسيرفر. البيع شغّال عادي، والحركات ناطرة لحتى يرجع.';
 
   @override
+  String get statusWrongServer => 'السيرفر تغيّر';
+
+  @override
+  String get wrongServerHelp =>
+      'يلي عم يرد على عنوان السيرفر مو نفس السيرفر يلي انربط عليه هالجهاز (رمزه مختلف)، فوقّفنا المزامنة منشان ما تطلع البيانات لجهاز غريب. البيع شغّال عادي. إذا انعاد تركيب السيرفر، اربط الجهاز من جديد.';
+
+  @override
+  String get errWrongServer => 'رمز السيرفر مو نفسه يلي انربط عليه الجهاز';
+
+  @override
+  String get relinkButton => 'اربط من جديد';
+
+  @override
+  String get relinkConfirm =>
+      'رح ينفك ربط هالجهاز بالسيرفر لتربطه من جديد. البيانات يلي عليه بتضل، وبترتفع كلها مع الربط الجديد. أكيد؟';
+
+  @override
+  String serverCode(String code) {
+    return 'رمز السيرفر: $code';
+  }
+
+  @override
+  String get serverCodeHelp => 'لازم يطابق الرمز يلي طلع وقت تركيب السيرفر.';
+
+  @override
   String get devicesTitle => 'الأجهزة المربوطة';
 
   @override

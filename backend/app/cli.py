@@ -8,6 +8,7 @@
     python -m app.cli backup                 # a backup now (also done daily)
     python -m app.cli list-backups
     python -m app.cli restore <file.dump>    # replaces the database's content
+    python -m app.cli server-code            # the code devices show when linking
 """
 
 import argparse
@@ -21,6 +22,7 @@ from .config import Settings, get_settings
 from .db import Database
 from .models import Pharmacy, User
 from .security import hash_password, new_id, normalize_phone
+from .tls import ensure_certificate
 
 
 def main(argv: list[str] | None = None, database_url: str | None = None) -> int:
@@ -42,6 +44,7 @@ def main(argv: list[str] | None = None, database_url: str | None = None) -> int:
     sub.add_parser("list-backups")
     rs = sub.add_parser("restore")
     rs.add_argument("file")
+    sub.add_parser("server-code")
     args = parser.parse_args(argv)
 
     settings: Settings = get_settings()
@@ -53,6 +56,9 @@ def main(argv: list[str] | None = None, database_url: str | None = None) -> int:
     if args.cmd == "list-backups":
         for f in list_backups(settings):
             print(f)
+        return 0
+    if args.cmd == "server-code":
+        print(ensure_certificate(settings.data_dir).short_code)
         return 0
     if args.cmd == "restore":
         restore(settings, Path(args.file))

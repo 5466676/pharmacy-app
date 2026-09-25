@@ -87,12 +87,16 @@ Start-ScheduledTask -TaskName "DoayaServer"
 
 # 6) Check it answers, and show the address to type in the app if needed.
 Start-Sleep -Seconds 8
-try {
-    $h = Invoke-RestMethod "http://localhost:$Port/health"
-    Write-Host "Server is running: $($h.status)" -ForegroundColor Green
-} catch {
+# The certificate is the server's own (not from an authority), so skip the
+# check here with -k; the devices pin it instead (see docs/DECISIONS.md).
+$h = & curl.exe -sk "https://localhost:$Port/health"
+if ($h -match '"ok"') {
+    Write-Host "Server is running: ok" -ForegroundColor Green
+} else {
     Write-Host "Server did not answer yet; see $Backend\data\server.log" -ForegroundColor Yellow
 }
+$code = & .\.venv\Scripts\python.exe -m app.cli server-code
+Write-Host "Server code (the devices show it when linking): $code" -ForegroundColor Green
 Get-NetIPAddress -AddressFamily IPv4 |
     Where-Object { $_.IPAddress -notlike "127.*" -and $_.IPAddress -notlike "169.254.*" } |
     ForEach-Object { Write-Host "Address for the app: $($_.IPAddress):$Port" }

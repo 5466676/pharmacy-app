@@ -228,4 +228,44 @@ void main() {
     expect(find.text('الجهاز مفصول'), findsWidgets);
     expect(find.textContaining('فصل هالجهاز عن السيرفر'), findsOneWidget);
   });
+
+  testWidgets('another certificate at the server address: sync stops, relink starts over', (
+    tester,
+  ) async {
+    final db = newDb();
+    final (dev, owner, _, _) = await seedPc(tester, db);
+    await pumpApp(tester, db);
+    container.read(sessionProvider.notifier).signIn(dev, owner);
+    await settle(tester);
+    container.read(routerProvider).go(Routes.sync);
+    await settle(tester);
+    await tester.enterText(field('عنوان السيرفر'), '192.168.1.10');
+    await tester.tap(find.text('اعتمد هالعنوان'));
+    await settle(tester);
+    // First contact pins the certificate; its code is shown to compare.
+    expect(find.textContaining('C0FF-EEC0'), findsOneWidget);
+    await tester.enterText(field('رقم الموبايل'), '0944123456');
+    await tester.enterText(field('كلمة السر'), 'secret-1');
+    await tester.enterText(field('تأكيد كلمة السر'), 'secret-1');
+    await tester.tap(find.text('أنشئ واربط'));
+    await settle(tester, 10);
+    expect(find.textContaining('متزامن'), findsWidgets);
+    expect(
+      container.read(syncProvider).link!.url.toString(),
+      endsWith('#sha256=${api.certificate}'),
+    );
+
+    api.certificate = 'ab' * 32;
+    await tester.tap(find.text('زامن هلق'));
+    await settle(tester);
+    expect(find.text('السيرفر تغيّر'), findsWidgets);
+    expect(find.textContaining('مو نفس السيرفر'), findsOneWidget);
+
+    await tester.tap(find.text('اربط من جديد'));
+    await settle(tester);
+    await tester.tap(find.text('تأكيد'));
+    await settle(tester);
+    expect(container.read(syncProvider).linked, isFalse);
+    expect(find.text('اعتمد هالعنوان'), findsOneWidget);
+  });
 }

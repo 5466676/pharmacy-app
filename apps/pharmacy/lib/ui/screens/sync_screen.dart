@@ -14,6 +14,7 @@ import '../widgets.dart';
 
 /// Arabic message for a failed server call.
 String syncErrorText(AppLocalizations l, Object e) => switch (e) {
+  SyncCertificateException() => l.errWrongServer,
   SyncNetworkException() => l.serverNotResponding,
   SyncApiException(code: 'bad_credentials') => l.errBadCredentials,
   SyncApiException(code: 'phone_taken') => l.errPhoneTaken,
@@ -24,6 +25,12 @@ String syncErrorText(AppLocalizations l, Object e) => switch (e) {
   SyncApiException(:final code) => l.errServer(code),
   _ => l.errServer('$e'),
 };
+
+/// "host:port، رمز السيرفر: AB12-CD34" for a server address.
+String serverLabel(AppLocalizations l, Uri url) => [
+  ltrIsolate('${url.host}:${url.port}'),
+  if (serverPin(url) case final pin?) l.serverCode(ltrIsolate(serverCode(pin))),
+].join('، ');
 
 /// Finds the pharmacy's server on the Wi-Fi (or takes a typed address) and
 /// confirms it answers. Returns the chosen address.
@@ -68,8 +75,9 @@ class _ServerPickerState extends ConsumerState<ServerPicker> {
 
   Future<void> _useTyped() async {
     final l = AppLocalizations.of(context);
-    final url = parseServerAddress(toLatinDigits(_address.text));
-    if (url == null || !await ref.read(syncApiProvider).ping(url)) {
+    final typed = parseServerAddress(toLatinDigits(_address.text));
+    final url = typed == null ? null : await ref.read(syncApiProvider).probe(typed);
+    if (url == null) {
       if (mounted) setState(() => _error = l.serverNotResponding);
       return;
     }
@@ -100,7 +108,7 @@ class _ServerPickerState extends ConsumerState<ServerPicker> {
             child: CaseRow(
               initials: initialsOf(s.pharmacyName ?? l.appName),
               title: s.pharmacyName ?? l.newServer,
-              subtitle: ltrIsolate('${s.url.host}:${s.url.port}'),
+              subtitle: serverLabel(l, s.url),
               onTap: () => widget.onChosen(s.url),
             ),
           ),
@@ -314,7 +322,8 @@ class _NotLinkedState extends ConsumerState<_NotLinked> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      LatinText('${server.host}:${server.port}', style: secondary),
+                      Text(serverLabel(l, server), style: secondary),
+                      if (serverPin(server) != null) Text(l.serverCodeHelp, style: secondary),
                       const SizedBox(height: DoayaSpacing.sm),
                       if (_needsSetup!) ...[
                         Text(l.createOnServerHelp, style: secondary),
@@ -395,7 +404,7 @@ class _Linked extends ConsumerWidget {
               Text(
                 [
                   l.signedInAs(link.userName),
-                  ltrIsolate('${link.url.host}:${link.url.port}'),
+                  serverLabel(l, link.url),
                   status.lastSyncAt == null
                       ? l.neverSynced
                       : l.lastSync(
@@ -436,9 +445,40 @@ class _Linked extends ConsumerWidget {
                     ),
                   ),
                 ],
-              if (status.phase == SyncPhase.unlinked) ...[
+              if (status.phase == SyncPhase.unlinked || status.phase == SyncPhase.wrongServer) ...[
                 const SizedBox(height: DoayaSpacing.sm),
-                NoticeBanner(message: l.unlinkedHelp, tone: StatusTone.danger),
+                NoticeBanner(
+                  message: status.phase == SyncPhase.unlinked ? l.unlinkedHelp : l.wrongServerHelp,
+                  tone: StatusTone.danger,
+                ),
+                const SizedBox(height: DoayaSpacing.sm),
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: GlassPillButton(
+                    label: l.relinkButton,
+                    icon: DoayaIcons.sync,
+                    size: PillSize.medium,
+                    onPressed: () async {
+                      final ok = await showDoayaDialog<bool>(
+                        context: context,
+                        title: l.relinkButton,
+                        content: Text(l.relinkConfirm, style: DoayaTypography.bodyMedium),
+                        actions: [
+                          GlassPillButton(
+                            label: l.cancel,
+                            onPressed: () => Navigator.of(context).pop(false),
+                          ),
+                          SagePillButton(
+                            label: l.confirm,
+                            size: PillSize.small,
+                            onPressed: () => Navigator.of(context).pop(true),
+                          ),
+                        ],
+                      );
+                      if (ok == true) await ref.read(syncProvider.notifier).forgetServer();
+                    },
+                  ),
+                ),
               ],
               if (status.phase == SyncPhase.serverUnreachable) ...[
                 const SizedBox(height: DoayaSpacing.sm),
@@ -483,6 +523,11 @@ StatusChip syncStatusChip(AppLocalizations l, SyncStatus s, int pending) => swit
     dot: true,
   ),
   SyncPhase.unlinked => StatusChip(label: l.statusUnlinked, tone: StatusTone.danger, dot: true),
+  SyncPhase.wrongServer => StatusChip(
+    label: l.statusWrongServer,
+    tone: StatusTone.danger,
+    dot: true,
+  ),
   SyncPhase.failed => StatusChip(label: l.statusFailed, tone: StatusTone.danger, dot: true),
 };
 

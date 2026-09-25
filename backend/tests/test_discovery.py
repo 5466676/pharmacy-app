@@ -16,9 +16,15 @@ def ask(port: int) -> dict | None:
 
 
 def test_answers_with_the_http_port_and_pharmacy_name():
-    r = DiscoveryResponder(0, 8000, lambda: "صيدلية الشفاء").start()
+    r = DiscoveryResponder(0, 8000, lambda: "صيدلية الشفاء", "ab" * 32).start()
     try:
-        assert ask(r.port) == {"service": "doaya", "http_port": 8000, "pharmacy": "صيدلية الشفاء"}
+        assert ask(r.port) == {
+            "service": "doaya",
+            "http_port": 8000,
+            "pharmacy": "صيدلية الشفاء",
+            "scheme": "https",
+            "fingerprint": "ab" * 32,
+        }
     finally:
         r.stop()
 

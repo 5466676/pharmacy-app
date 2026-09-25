@@ -1,5 +1,6 @@
 // End-to-end against the real server: run through tool/sync_e2e.sh, which
-// starts it on an empty database and sets DOAYA_SERVER_URL.
+// starts it (HTTPS, its own certificate) on an empty database and sets
+// DOAYA_SERVER_URL. Goes through the app's HttpSyncApi: pinned TLS.
 import 'dart:io';
 
 import 'package:doaya_core/doaya_core.dart';
@@ -8,6 +9,7 @@ import 'package:doaya_pharmacy/data/database.dart';
 import 'package:doaya_pharmacy/data/ledger_repository.dart';
 import 'package:doaya_pharmacy/data/people_repository.dart';
 import 'package:doaya_pharmacy/data/sync_store.dart';
+import 'package:doaya_pharmacy/sync/sync_api.dart';
 import 'package:drift/drift.dart' hide isNull;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -18,9 +20,11 @@ void main() {
   const syp = Currency.syp;
 
   test('counter PC creates the pharmacy, an employee phone links, both sell, both agree', () async {
-    final base = Uri.parse(url!);
-    expect(await HttpSyncClient.ping(base), isTrue);
-    expect(await HttpSyncClient.needsSetup(base), isTrue);
+    const api = HttpSyncApi();
+    // First contact pins the server's certificate.
+    final base = (await api.probe(Uri.parse(url!)))!;
+    expect(serverPin(base), hasLength(64));
+    expect(await api.needsSetup(base), isTrue);
 
     // ── Counter PC: existing offline history, then first link (setup).
     final pcDb = AppDatabase(NativeDatabase.memory());
@@ -42,7 +46,7 @@ void main() {
       productId: amox.id,
       quantity: 10,
     );
-    final linked = await HttpSyncClient.setup(
+    final linked = await api.setup(
       base,
       pharmacyName: 'صيدلية الشفاء',
       ownerName: 'سامر',
@@ -52,11 +56,7 @@ void main() {
       deviceId: dev.id,
       deviceName: dev.name,
     );
-    final pcClient = HttpSyncClient(
-      baseUrl: base,
-      deviceId: dev.id,
-      deviceToken: linked.deviceToken,
-    );
+    final pcClient = api.remote(base, deviceId: dev.id, deviceToken: linked.deviceToken);
     addTearDown(pcClient.close);
     final pcStore = DriftSyncStore(pcDb, deviceId: dev.id);
     await pcStore.seedOutbox();
@@ -86,7 +86,7 @@ void main() {
             createdAt: DateTime.now(),
           ),
         );
-    final ranaLink = await HttpSyncClient.link(
+    final ranaLink = await api.link(
       base,
       phone: '٠٩٣٣ ٠٠٠ ١١١',
       password: 'rana-pass',
@@ -94,11 +94,7 @@ void main() {
       deviceName: 'موبايل رنا',
     );
     expect(ranaLink.employeeId, rana.id);
-    final phoneClient = HttpSyncClient(
-      baseUrl: base,
-      deviceId: phoneId,
-      deviceToken: ranaLink.deviceToken,
-    );
+    final phoneClient = api.remote(base, deviceId: phoneId, deviceToken: ranaLink.deviceToken);
     addTearDown(phoneClient.close);
     final phoneStore = DriftSyncStore(phoneDb, deviceId: phoneId);
     await SyncEngine(phoneStore, phoneClient, pullLimit: 4).sync();
@@ -122,6 +118,20 @@ void main() {
       expect((await LedgerRepository(db).loadStock()).onHand(amox.id), 5);
       expect(await db.select(db.sales).get(), hasLength(2));
     }
+
+    // ── Another certificate at the same address (an impostor, or the
+    // server reinstalled): refused before anything is sent.
+    final impostor = api.remote(
+      pinServer(base, 'ab' * 32),
+      deviceId: dev.id,
+      deviceToken: linked.deviceToken,
+    );
+    addTearDown(impostor.close);
+    await expectLater(
+      SyncEngine(pcStore, impostor).sync(),
+      throwsA(isA<SyncCertificateException>()),
+    );
+    expect(await api.probe(Uri.parse(url.replaceFirst('https', 'http'))), isNull);
 
     // ── The owner unlinks the phone: its next sync is refused.
     await pcClient.postJson('devices/$phoneId/unlink');

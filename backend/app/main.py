@@ -13,6 +13,7 @@ from .deps import DbSession, Owner
 from .discovery import DiscoveryResponder
 from .models import Pharmacy
 from .security import LoginLimiter
+from .tls import ensure_certificate
 
 
 def ensure_secret(settings: Settings) -> Settings:
@@ -29,10 +30,15 @@ def ensure_secret(settings: Settings) -> Settings:
 
 
 def create_app(
-    settings: Settings | None = None, *, discovery: bool = False, backups: bool = False
+    settings: Settings | None = None,
+    *,
+    discovery: bool = False,
+    backups: bool = False,
+    tls: bool = False,
 ) -> FastAPI:
     """[discovery] starts the Wi-Fi discovery responder and [backups] the
-    daily database backup (the real server; tests leave them off)."""
+    daily database backup (the real server; tests leave them off). With [tls]
+    discovery announces https and the certificate fingerprint."""
     settings = ensure_secret(settings or get_settings())
 
     @asynccontextmanager
@@ -44,8 +50,9 @@ def create_app(
                 with app.state.db.sessions() as s:
                     return s.scalar(select(Pharmacy.name).order_by(Pharmacy.created_at).limit(1))
 
+            fingerprint = ensure_certificate(settings.data_dir).fingerprint if tls else None
             responder = DiscoveryResponder(
-                settings.discovery_port, settings.http_port, pharmacy_name
+                settings.discovery_port, settings.http_port, pharmacy_name, fingerprint
             ).start()
         scheduler = BackupScheduler(settings).start() if backups else None
         app.state.backups = scheduler
@@ -81,6 +88,7 @@ def create_app(
     return app
 
 
-def server_app() -> FastAPI:
-    """What uvicorn runs on the pharmacy PC: the API plus Wi-Fi discovery."""
-    return create_app(discovery=True, backups=True)
+def server_app(tls: bool = False) -> FastAPI:
+    """What runs on the pharmacy PC: the API plus Wi-Fi discovery and backups
+    (`python -m app.serve` turns on [tls])."""
+    return create_app(discovery=True, backups=True, tls=tls)

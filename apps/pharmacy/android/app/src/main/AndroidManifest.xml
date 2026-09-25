@@ -13,10 +13,9 @@
             <data android:scheme="https"/>
         </intent>
     </queries>
-    <!-- The pharmacy's server is on its own Wi-Fi without a certificate
-         (plain HTTP) until TLS is added; see docs/DECISIONS.md. -->
+    <!-- The pharmacy's server speaks HTTPS with its own certificate, pinned
+         by the app (see docs/DECISIONS.md): no plain HTTP needed. -->
     <application
-        android:usesCleartextTraffic="true"
         android:label="دوايا"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
