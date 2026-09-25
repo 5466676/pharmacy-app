@@ -128,21 +128,24 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
           ),
         ],
         const SizedBox(height: DoayaSpacing.xl),
-        Row(
-          children: [
-            for (final (g, label) in [
-              (_Group.product, l.byProduct),
-              (_Group.employee, l.byEmployee),
-              (_Group.day, l.byDay),
-            ]) ...[
-              GlassPillButton(
-                label: label,
-                selected: _group == g,
-                onPressed: () => setState(() => _group = g),
-              ),
-              const SizedBox(width: DoayaSpacing.s),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              for (final (g, label) in [
+                (_Group.product, l.byProduct),
+                (_Group.employee, l.byEmployee),
+                (_Group.day, l.byDay),
+              ]) ...[
+                GlassPillButton(
+                  label: label,
+                  selected: _group == g,
+                  onPressed: () => setState(() => _group = g),
+                ),
+                const SizedBox(width: DoayaSpacing.s),
+              ],
             ],
-          ],
+          ),
         ),
         const SizedBox(height: DoayaSpacing.l),
         Panel(child: report == null ? const SizedBox.shrink() : _table(l, currency, report)),

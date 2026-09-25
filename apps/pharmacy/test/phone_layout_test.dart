@@ -1,5 +1,5 @@
-import 'package:doaya_core/doaya_core.dart';
 import 'package:doaya_pharmacy/app.dart';
+import 'package:doaya_pharmacy/data/accounting_repository.dart';
 import 'package:doaya_pharmacy/data/catalog_repository.dart';
 import 'package:doaya_pharmacy/data/database.dart';
 import 'package:doaya_pharmacy/data/ledger_repository.dart';
@@ -57,7 +57,7 @@ void main() {
   }
 
   Future<void> pumpPhone(WidgetTester tester) async {
-    tester.view.physicalSize = const Size(400, 820);
+    tester.view.physicalSize = const Size(360, 740);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
     container = ProviderContainer(
@@ -110,5 +110,40 @@ void main() {
       await settle(tester);
       expect(tester.takeException(), isNull, reason: route);
     }
+  });
+
+  testWidgets('phone: the owner\'s other screens fit a 360 px phone', (tester) async {
+    final (dev, owner, _) = await seed(tester);
+    late String productId, supplierId;
+    await tester.runAsync(() async {
+      productId = (await db.select(db.products).get()).single.id;
+      supplierId = (await AccountingRepository(
+        db,
+        LedgerRepository(db),
+      ).addSupplier(name: 'مستودع النور', phone: '0944123456')).id;
+    });
+    await pumpPhone(tester);
+    container.read(sessionProvider.notifier).signIn(dev, owner);
+    await settle(tester);
+    final failures = <String>[];
+    for (final route in [
+      Routes.newPurchase,
+      Routes.supplier(supplierId),
+      Routes.returns,
+      Routes.product(productId),
+      Routes.newProduct,
+      Routes.staff,
+      Routes.settings,
+      Routes.stocktake,
+      Routes.reports,
+      '${Routes.purchases}?tab=shortages',
+      '${Routes.purchases}?tab=suppliers',
+    ]) {
+      container.read(routerProvider).go(route);
+      await settle(tester);
+      final e = tester.takeException();
+      if (e != null) failures.add('$route: ${'$e'.split('\n').first}');
+    }
+    expect(failures, isEmpty);
   });
 }

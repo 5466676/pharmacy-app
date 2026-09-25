@@ -105,12 +105,18 @@ class Panel extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (title != null) ...[
-            Row(
-              children: [
-                Expanded(child: Text(title!, style: DoayaTypography.lead)),
-                ?trailing,
-              ],
-            ),
+            if (isPhoneLayout(context) && trailing != null) ...[
+              // Phone: the actions go under the title.
+              Text(title!, style: DoayaTypography.lead),
+              const SizedBox(height: DoayaSpacing.sm),
+              Align(alignment: AlignmentDirectional.centerStart, child: trailing),
+            ] else
+              Row(
+                children: [
+                  Expanded(child: Text(title!, style: DoayaTypography.lead)),
+                  ?trailing,
+                ],
+              ),
             const SizedBox(height: DoayaSpacing.l),
           ],
           child,

@@ -136,6 +136,7 @@ class _ReturnScreenState extends ConsumerState<ReturnScreen> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final phone = isPhoneLayout(context);
     final currency = ref.watch(currencyProvider);
     final products = ref.watch(productsByIdProvider);
     final customers = {
@@ -175,16 +176,27 @@ class _ReturnScreenState extends ConsumerState<ReturnScreen> {
           ],
         ),
         Expanded(
-          child: Row(
+          child: Flex(
+            direction: phone ? Axis.vertical : Axis.horizontal,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Expanded(
+                flex: 3,
                 child: _mode == _Mode.invoice
                     ? _invoicePane(l, currency, customers, products, lines, detail?.$2 ?? const {})
                     : _freePane(l, currency),
               ),
-              const SizedBox(width: DoayaSpacing.huge),
-              SizedBox(width: DoayaSizes.invoiceWidth, child: _summary(l, currency, items, total)),
+              const SizedBox(width: DoayaSpacing.huge, height: DoayaSpacing.l),
+              if (phone)
+                Expanded(
+                  flex: 2,
+                  child: SingleChildScrollView(child: _summary(l, currency, items, total)),
+                )
+              else
+                SizedBox(
+                  width: DoayaSizes.invoiceWidth,
+                  child: _summary(l, currency, items, total),
+                ),
             ],
           ),
         ),
@@ -206,108 +218,117 @@ class _ReturnScreenState extends ConsumerState<ReturnScreen> {
       return (customers[s.customerId]?.name.contains(q) ?? false);
     }).toList();
 
+    final phone = isPhoneLayout(context);
+    final Widget list = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        GlassSearchField(hint: l.pickInvoice, onChanged: (v) => setState(() => _saleQuery = v)),
+        const SizedBox(height: DoayaSpacing.ml),
+        Expanded(
+          child: sales.isEmpty
+              ? EmptyHint(l.noInvoices)
+              : ListView.separated(
+                  itemCount: sales.length,
+                  separatorBuilder: (_, _) => const SizedBox(height: DoayaSpacing.s),
+                  itemBuilder: (context, i) {
+                    final s = sales[i];
+                    final name = s.customerId == null
+                        ? l.walkInCustomer
+                        : customers[s.customerId]?.name ?? l.none;
+                    return CaseRow(
+                      initials: formatTime(s.occurredAt),
+                      title: name,
+                      subtitle: formatDate(s.occurredAt),
+                      selected: s.id == _sale?.id,
+                      trailing: StatusChip(
+                        label: formatMoney(s.totalMinor, currency),
+                        tone: s.payment == PaymentType.debt.wire
+                            ? StatusTone.warning
+                            : StatusTone.accent,
+                      ),
+                      onTap: () => _selectSale(s, customers),
+                    );
+                  },
+                ),
+        ),
+      ],
+    );
     return Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        SizedBox(
-          width: DoayaSizes.listPaneWidth,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              GlassSearchField(
-                hint: l.pickInvoice,
-                onChanged: (v) => setState(() => _saleQuery = v),
-              ),
-              const SizedBox(height: DoayaSpacing.ml),
-              Expanded(
-                child: sales.isEmpty
-                    ? EmptyHint(l.noInvoices)
-                    : ListView.separated(
-                        itemCount: sales.length,
-                        separatorBuilder: (_, _) => const SizedBox(height: DoayaSpacing.s),
-                        itemBuilder: (context, i) {
-                          final s = sales[i];
-                          final name = s.customerId == null
-                              ? l.walkInCustomer
-                              : customers[s.customerId]?.name ?? l.none;
-                          return CaseRow(
-                            initials: formatTime(s.occurredAt),
-                            title: name,
-                            subtitle: formatDate(s.occurredAt),
-                            selected: s.id == _sale?.id,
-                            trailing: StatusChip(
-                              label: formatMoney(s.totalMinor, currency),
-                              tone: s.payment == PaymentType.debt.wire
-                                  ? StatusTone.warning
-                                  : StatusTone.accent,
-                            ),
-                            onTap: () => _selectSale(s, customers),
-                          );
-                        },
-                      ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(width: DoayaSpacing.xl),
-        Expanded(
-          child: _sale == null
-              ? EmptyHint(l.pickInvoice)
-              : ListView(
-                  children: [
-                    for (final line in lines)
-                      Builder(
-                        builder: (context) {
-                          final p = products[line.productId];
-                          final maxUnits = (returnable[line.id] ?? 0) ~/ line.piecesPerUnit;
-                          final unit = line.piecesPerUnit == 1 && (p?.unitsPerPack ?? 1) > 1
-                              ? l.unitStrip
-                              : l.unitBox;
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
-                            child: GlassSurface(
-                              shadow: false,
-                              borderRadius: BorderRadius.circular(DoayaRadii.tile),
-                              padding: const EdgeInsets.all(DoayaSpacing.ml),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        LatinText(
-                                          p?.tradeName ?? l.none,
-                                          style: DoayaTypography.label,
-                                        ),
-                                        Text(
-                                          '${l.lineItem(unit, formatQty(line.quantity))}، '
-                                          '${l.returnable(formatQty(maxUnits))}',
-                                          style: DoayaTypography.caption.copyWith(
-                                            color: DoayaColors.textSecondary,
+        if (phone && _sale == null)
+          Expanded(child: list)
+        else if (!phone)
+          SizedBox(width: DoayaSizes.listPaneWidth, child: list),
+        if (!phone) const SizedBox(width: DoayaSpacing.xl),
+        if (!phone || _sale != null)
+          Expanded(
+            child: _sale == null
+                ? EmptyHint(l.pickInvoice)
+                : ListView(
+                    children: [
+                      if (phone)
+                        Align(
+                          alignment: AlignmentDirectional.centerStart,
+                          child: RoundIconButton(
+                            icon: DoayaIcons.back,
+                            tooltip: l.back,
+                            onPressed: () => setState(() => _sale = null),
+                          ),
+                        ),
+                      for (final line in lines)
+                        Builder(
+                          builder: (context) {
+                            final p = products[line.productId];
+                            final maxUnits = (returnable[line.id] ?? 0) ~/ line.piecesPerUnit;
+                            final unit = line.piecesPerUnit == 1 && (p?.unitsPerPack ?? 1) > 1
+                                ? l.unitStrip
+                                : l.unitBox;
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
+                              child: GlassSurface(
+                                shadow: false,
+                                borderRadius: BorderRadius.circular(DoayaRadii.tile),
+                                padding: const EdgeInsets.all(DoayaSpacing.ml),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          LatinText(
+                                            p?.tradeName ?? l.none,
+                                            style: DoayaTypography.label,
                                           ),
-                                        ),
-                                      ],
+                                          Text(
+                                            '${l.lineItem(unit, formatQty(line.quantity))}، '
+                                            '${l.returnable(formatQty(maxUnits))}',
+                                            style: DoayaTypography.caption.copyWith(
+                                              color: DoayaColors.textSecondary,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                  Text(
-                                    formatMoney(line.unitPriceMinor, currency),
-                                    style: DoayaTypography.caption,
-                                  ),
-                                  const SizedBox(width: DoayaSpacing.l),
-                                  QtyStepper(
-                                    value: _qty[line.id] ?? 0,
-                                    max: maxUnits,
-                                    onChanged: (v) => setState(() => _qty[line.id] = v),
-                                  ),
-                                ],
+                                    Text(
+                                      formatMoney(line.unitPriceMinor, currency),
+                                      style: DoayaTypography.caption,
+                                    ),
+                                    const SizedBox(width: DoayaSpacing.l),
+                                    QtyStepper(
+                                      value: _qty[line.id] ?? 0,
+                                      max: maxUnits,
+                                      onChanged: (v) => setState(() => _qty[line.id] = v),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
-                  ],
-                ),
-        ),
+                            );
+                          },
+                        ),
+                    ],
+                  ),
+          ),
       ],
     );
   }
@@ -443,7 +464,7 @@ class _ReturnScreenState extends ConsumerState<ReturnScreen> {
             const SizedBox(height: DoayaSpacing.sm),
             StatusChip(label: _customer!.name, icon: DoayaIcons.person),
           ],
-          const Spacer(),
+          if (isPhoneLayout(context)) const SizedBox(height: DoayaSpacing.l) else const Spacer(),
           Row(
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,
