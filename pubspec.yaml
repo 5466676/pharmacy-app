@@ -1,0 +1,12 @@
+name: doaya_workspace
+description: Doaya monorepo pub workspace root.
+publish_to: none
+
+environment:
+  sdk: ^3.13.0
+
+workspace:
+  - apps/pharmacy
+  - packages/doaya_core
+  - packages/doaya_ui
+  - packages/doaya_ui/example

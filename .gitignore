@@ -1,0 +1,17 @@
+# Dart / Flutter
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+*.iml
+.idea/
+.vscode/
+coverage/
+# Python
+__pycache__/
+*.pyc
+.venv/
+.env
+# OS
+.DS_Store

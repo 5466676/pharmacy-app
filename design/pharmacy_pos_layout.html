@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>دوايا · شاشة البيع</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@500;600;700&amp;family=Readex+Pro:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Readex Pro',system-ui,sans-serif;background:#EEF5F2;color:#0F3D38}
+button,input{font-family:inherit}
+</style>
+</helmet>
+<div dir="rtl" style="width: 1280px; height: 880px; box-sizing: border-box; background: #EEF5F2; padding: 20px; font-family: 'Readex Pro', system-ui, sans-serif; color: #0F3D38">
+<div style="width: 100%; height: 100%; background: #F7FBF9; border-radius: 32px; border: 1px solid #FFFFFF; box-shadow: 0 20px 48px rgba(15,61,56,0.08); display: flex; overflow: hidden">
+
+<aside style="width: 84px; flex-shrink: 0; padding: 22px 0; display: flex; flex-direction: column; align-items: center; gap: 10px; border-left: 1px solid #E3EEEA">
+<svg width="36" height="36" viewBox="0 0 100 100" aria-label="دوايا" style="margin-bottom: 14px"><g transform="rotate(-45 50 50)"><path d="M50 32 H32 A18 18 0 0 0 32 68 H50 Z" fill="#0F3D38"></path><path d="M50 32 H68 A18 18 0 0 1 68 68 H50 Z" fill="#7FD1B9"></path></g><rect x="58.3" y="32.7" width="6" height="12" rx="1.5" fill="#F7FBF9"></rect><rect x="55.3" y="35.7" width="12" height="6" rx="1.5" fill="#F7FBF9"></rect></svg>
+<a href="D3Desk.dc.html" aria-label="لوحة التحكم" style="width: 48px; height: 48px; border-radius: 24px; background: #E3EEEA; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0F3D38" stroke-width="1.8" stroke-linecap="round"><path d="M4 11l8-7 8 7v9H4z"></path></svg></a>
+<button aria-label="البيع" style="width: 48px; height: 48px; border-radius: 24px; border: none; background: #0F3D38; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2l2.5 11h11L21 8H6.5"></path></svg></button>
+<a href="D4Case.dc.html" aria-label="حالات المساعد" style="width: 48px; height: 48px; border-radius: 24px; background: #E3EEEA; display: flex; align-items: center; justify-content: center; position: relative"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0F3D38" stroke-width="1.8" stroke-linecap="round"><path d="M4 5h16v11H9l-5 4z"></path></svg><span style="position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 9px; background: #A9A3EE; color: #FFFFFF; font-size: 10px; display: flex; align-items: center; justify-content: center">٣</span></a>
+<button aria-label="المخزون" style="width: 48px; height: 48px; border-radius: 24px; border: none; background: #E3EEEA; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0F3D38" stroke-width="1.8" stroke-linecap="round"><rect x="6" y="7" width="12" height="14" rx="2"></rect><path d="M8 3h8v4H8z"></path></svg></button>
+<button aria-label="الديون" style="width: 48px; height: 48px; border-radius: 24px; border: none; background: #E3EEEA; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0F3D38" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg></button>
+</aside>
+
+<main style="flex-grow: 1; padding: 24px; display: flex; flex-direction: column; gap: 16px; min-width: 0">
+<div style="display: flex; align-items: center; gap: 12px">
+<h1 style="margin: 0; font-family: 'Alexandria', 'Readex Pro', sans-serif; font-size: 26px; font-weight: 700; flex-grow: 1">بيع جديد</h1>
+<span style="height: 38px; padding: 0 14px; border-radius: 999px; background: #E6F4EC; color: #1F6F43; font-size: 13px; display: flex; align-items: center; gap: 6px"><span style="width: 7px; height: 7px; border-radius: 4px; background: #2E9C74"></span>قارئ الباركود جاهز</span>
+</div>
+
+<div style="height: 60px; border-radius: 999px; background: #FFFFFF; border: 2px solid #0F3D38; display: flex; align-items: center; padding: 0 8px 0 8px; gap: 8px">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0F3D38" stroke-width="1.8" stroke-linecap="round" style="margin-right: 12px"><path d="M4 6v12M7 6v12M11 6v12M14 6v12M18 6v12M20 6v12"></path></svg>
+<label for="posq" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">بحث عن دوا</label>
+<input id="posq" value="amox" style="flex-grow: 1; border: none; background: transparent; height: 50px; font-size: 17px; color: #0F3D38" dir="ltr">
+<span style="font-size: 12px; color: #8AA19C; padding-left: 12px">امسح أو اكتب الاسم</span>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="background: #FFFFFF; border-radius: 22px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; border: 1.5px solid #7FD1B9">
+<div style="width: 46px; height: 46px; border-radius: 14px; background: #EEF6F3; display: flex; align-items: center; justify-content: center"><svg width="22" height="28" viewBox="0 0 56 72" aria-hidden="true"><rect x="14" y="2" width="28" height="12" rx="3" fill="#0F3D38"></rect><rect x="8" y="14" width="40" height="56" rx="8" fill="#FFFFFF" stroke="#CFE0DA"></rect><rect x="8" y="30" width="40" height="20" fill="#C4EADC"></rect></svg></div>
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600" dir="ltr">Amoxicillin 500 mg · 16 caps</span><span style="font-size: 12px; color: #6E8883">[الشركة المصنعة] · رف B3</span></div>
+<span style="font-size: 12px; color: #1F6F43; background: #E6F4EC; border-radius: 999px; padding: 4px 12px">متوفر · ٢٤</span>
+<span style="font-size: 15px; font-weight: 600; min-width: 90px; text-align: left">[السعر]</span>
+<button style="height: 44px; padding: 0 18px; border-radius: 999px; border: none; background: #0F3D38; color: #FFFFFF; font-size: 14px; cursor: pointer">أضف</button>
+</div>
+<div style="background: #FFFFFF; border-radius: 22px; padding: 14px 16px; display: flex; align-items: center; gap: 14px">
+<div style="width: 46px; height: 46px; border-radius: 14px; background: #EEF6F3; display: flex; align-items: center; justify-content: center"><svg width="22" height="28" viewBox="0 0 56 72" aria-hidden="true"><rect x="14" y="2" width="28" height="12" rx="3" fill="#7FD1B9"></rect><rect x="8" y="14" width="40" height="56" rx="8" fill="#FFFFFF" stroke="#CFE0DA"></rect><rect x="8" y="30" width="40" height="20" fill="#E3F4B8"></rect></svg></div>
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600" dir="ltr">Amoxicillin 250 mg · Syrup</span><span style="font-size: 12px; color: #6E8883">[الشركة المصنعة] · رف C1</span></div>
+<span style="font-size: 12px; color: #8A5200; background: #FDF1DC; border-radius: 999px; padding: 4px 12px">باقي ٣</span>
+<span style="font-size: 15px; font-weight: 600; min-width: 90px; text-align: left">[السعر]</span>
+<button style="height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid #CFE0DA; background: #FFFFFF; color: #0F3D38; font-size: 14px; cursor: pointer">أضف</button>
+</div>
+<div style="background: #FFFFFF; border-radius: 22px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; opacity: 1">
+<div style="width: 46px; height: 46px; border-radius: 14px; background: #F4F4F2; display: flex; align-items: center; justify-content: center"><svg width="22" height="28" viewBox="0 0 56 72" aria-hidden="true"><rect x="14" y="2" width="28" height="12" rx="3" fill="#B8C4C1"></rect><rect x="8" y="14" width="40" height="56" rx="8" fill="#FFFFFF" stroke="#DADFDD"></rect></svg></div>
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600; color: #6E8883" dir="ltr">Amoxicillin + Clavulanate 1 g</span><span style="font-size: 12px; color: #1E7F6E">بديل متوفر: [اسم البديل] بنفس المادة الفعالة</span></div>
+<span style="font-size: 12px; color: #A32318; background: #FDECEA; border-radius: 999px; padding: 4px 12px">نفد</span>
+<button style="height: 44px; padding: 0 18px; border-radius: 999px; border: none; background: #DCEFE7; color: #0F3D38; font-size: 14px; cursor: pointer">اعرض البديل</button>
+</div>
+</div>
+
+<div style="margin-top: auto; display: flex; gap: 10px">
+<span style="font-size: 12px; color: #8AA19C">اختصارات:</span>
+<span style="font-size: 12px; background: #FFFFFF; border: 1px solid #E3EEEA; border-radius: 8px; padding: 2px 8px" dir="ltr">F2</span><span style="font-size: 12px; color: #6E8883">بحث</span>
+<span style="font-size: 12px; background: #FFFFFF; border: 1px solid #E3EEEA; border-radius: 8px; padding: 2px 8px" dir="ltr">F8</span><span style="font-size: 12px; color: #6E8883">دين</span>
+<span style="font-size: 12px; background: #FFFFFF; border: 1px solid #E3EEEA; border-radius: 8px; padding: 2px 8px" dir="ltr">Enter</span><span style="font-size: 12px; color: #6E8883">إتمام</span>
+</div>
+</main>
+
+<section style="width: 380px; flex-shrink: 0; background: #FFFFFF; border-right: 1px solid #E3EEEA; padding: 24px 22px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-family: 'Alexandria', 'Readex Pro', sans-serif; font-size: 18px; font-weight: 600">الفاتورة</span><span style="font-size: 12px; color: #8AA19C">#[رقم]</span></div>
+
+<div style="display: flex; gap: 6px; background: #EEF5F2; border-radius: 999px; padding: 4px">
+<button style="flex-grow: 1; height: 38px; border: none; border-radius: 999px; background: #FFFFFF; color: #0F3D38; font-size: 13px; font-weight: 500; cursor: pointer; box-shadow: 0 1px 3px rgba(15,61,56,0.1)">زبون عابر</button>
+<button style="flex-grow: 1; height: 38px; border: none; border-radius: 999px; background: none; color: #5E7A75; font-size: 13px; cursor: pointer">زبون مسجّل</button>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px; flex-grow: 1">
+<div style="display: flex; align-items: center; gap: 10px; padding-bottom: 10px; border-bottom: 1px solid #EEF3F1">
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 500" dir="ltr">Amoxicillin 500</span><span style="font-size: 12px; color: #6E8883">[السعر] للعلبة</span></div>
+<div style="display: flex; align-items: center; gap: 8px; background: #EEF5F2; border-radius: 999px; padding: 3px"><button aria-label="نقص" style="width: 30px; height: 30px; border-radius: 15px; border: none; background: #FFFFFF; cursor: pointer; font-size: 16px">−</button><span style="font-size: 14px; font-weight: 600; min-width: 14px; text-align: center">١</span><button aria-label="زيد" style="width: 30px; height: 30px; border-radius: 15px; border: none; background: #0F3D38; color: #FFFFFF; cursor: pointer; font-size: 16px">+</button></div>
+</div>
+<div style="display: flex; align-items: center; gap: 10px; padding-bottom: 10px; border-bottom: 1px solid #EEF3F1">
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 500" dir="ltr">Paracetamol 500</span><span style="font-size: 12px; color: #6E8883">[السعر] للعلبة</span></div>
+<div style="display: flex; align-items: center; gap: 8px; background: #EEF5F2; border-radius: 999px; padding: 3px"><button aria-label="نقص" style="width: 30px; height: 30px; border-radius: 15px; border: none; background: #FFFFFF; cursor: pointer; font-size: 16px">−</button><span style="font-size: 14px; font-weight: 600; min-width: 14px; text-align: center">٢</span><button aria-label="زيد" style="width: 30px; height: 30px; border-radius: 15px; border: none; background: #0F3D38; color: #FFFFFF; cursor: pointer; font-size: 16px">+</button></div>
+</div>
+</div>
+
+<div style="background: #F7FBF9; border-radius: 20px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; justify-content: space-between; font-size: 13px; color: #5E7A75"><span>المجموع الفرعي</span><span>[المبلغ]</span></div>
+<div style="display: flex; justify-content: space-between; font-size: 13px; color: #5E7A75"><span>حسم</span><span>—</span></div>
+<div style="display: flex; justify-content: space-between; align-items: baseline; padding-top: 6px; border-top: 1px dashed #CFE0DA"><span style="font-size: 15px; font-weight: 600">الإجمالي</span><span style="font-family: 'Alexandria', 'Readex Pro', sans-serif; font-size: 26px; font-weight: 700">[المبلغ] <span style="font-size: 13px; font-weight: 400; color: #5E7A75">ل.س</span></span></div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<button style="height: 48px; border-radius: 999px; border: 2px solid #0F3D38; background: #DCEFE7; color: #0F3D38; font-size: 14px; font-weight: 600; cursor: pointer">نقدي</button>
+<button style="height: 48px; border-radius: 999px; border: 1px solid #CFE0DA; background: #FFFFFF; color: #0F3D38; font-size: 14px; cursor: pointer">دين</button>
+</div>
+<button style="height: 60px; border-radius: 999px; border: none; background: #0F3D38; color: #FFFFFF; font-size: 17px; font-weight: 600; cursor: pointer">إتمام البيع</button>
+</section>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":880}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

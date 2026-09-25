@@ -1,0 +1,20 @@
+include: package:flutter_lints/flutter.yaml
+
+formatter:
+  page_width: 100
+
+analyzer:
+  exclude:
+    - "**/l10n/app_localizations*.dart"
+    - build/**
+  language:
+    strict-casts: true
+    strict-raw-types: true
+
+linter:
+  rules:
+    - prefer_const_constructors
+    - prefer_const_declarations
+    - prefer_final_locals
+    - always_declare_return_types
+    - avoid_print

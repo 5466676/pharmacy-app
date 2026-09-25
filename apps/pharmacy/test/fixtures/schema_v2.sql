@@ -1,0 +1,48 @@
+CREATE TABLE "customers" ("id" TEXT NOT NULL, "name" TEXT NOT NULL, "phone" TEXT NULL, "notes" TEXT NULL, "created_at" TEXT NOT NULL, "updated_at" TEXT NOT NULL, PRIMARY KEY ("id"));
+CREATE TABLE "debt_events" ("id" TEXT NOT NULL, "type" TEXT NOT NULL, "customer_id" TEXT NOT NULL, "amount_minor" INTEGER NOT NULL, "currency_code" TEXT NOT NULL, "sale_id" TEXT NULL, "note" TEXT NULL, "device_id" TEXT NOT NULL, "employee_id" TEXT NOT NULL, "occurred_at" TEXT NOT NULL, "synced_at" TEXT NULL, PRIMARY KEY ("id"));
+CREATE TABLE "devices" ("id" TEXT NOT NULL, "name" TEXT NOT NULL, "is_this_device" INTEGER NOT NULL DEFAULT 0 CHECK ("is_this_device" IN (0, 1)), "created_at" TEXT NOT NULL, PRIMARY KEY ("id"));
+CREATE TABLE "employees" ("id" TEXT NOT NULL, "name" TEXT NOT NULL, "role" TEXT NOT NULL, "pin_hash" TEXT NOT NULL, "pin_salt" TEXT NOT NULL, "active" INTEGER NOT NULL DEFAULT 1 CHECK ("active" IN (0, 1)), "updated_at" TEXT NOT NULL, PRIMARY KEY ("id"));
+CREATE TABLE "product_barcodes" ("barcode" TEXT NOT NULL, "product_id" TEXT NOT NULL REFERENCES products (id), PRIMARY KEY ("barcode"));
+CREATE TABLE "products" ("id" TEXT NOT NULL, "trade_name" TEXT NOT NULL, "arabic_name" TEXT NULL, "active_ingredient" TEXT NOT NULL, "strength" TEXT NULL, "form" TEXT NULL, "manufacturer" TEXT NULL, "shelf" TEXT NULL, "price_minor" INTEGER NOT NULL, "prescription_only" INTEGER NOT NULL DEFAULT 0 CHECK ("prescription_only" IN (0, 1)), "low_stock_threshold" INTEGER NOT NULL DEFAULT 5, "units_per_pack" INTEGER NOT NULL DEFAULT 1, "strip_price_minor" INTEGER NULL, "active" INTEGER NOT NULL DEFAULT 1 CHECK ("active" IN (0, 1)), "created_at" TEXT NOT NULL, "updated_at" TEXT NOT NULL, "updated_by_device" TEXT NOT NULL, PRIMARY KEY ("id"));
+CREATE TABLE "return_lines" ("id" TEXT NOT NULL, "return_id" TEXT NOT NULL REFERENCES returns (id), "product_id" TEXT NOT NULL, "quantity" INTEGER NOT NULL, "unit_price_minor" INTEGER NOT NULL, "pieces_per_unit" INTEGER NOT NULL, "sale_line_id" TEXT NULL, PRIMARY KEY ("id"));
+CREATE TABLE "returns" ("id" TEXT NOT NULL, "sale_id" TEXT NULL, "customer_id" TEXT NULL, "refund" TEXT NOT NULL, "currency_code" TEXT NOT NULL, "total_minor" INTEGER NOT NULL, "device_id" TEXT NOT NULL, "employee_id" TEXT NOT NULL, "occurred_at" TEXT NOT NULL, "synced_at" TEXT NULL, PRIMARY KEY ("id"));
+CREATE TABLE "sale_lines" ("id" TEXT NOT NULL, "sale_id" TEXT NOT NULL REFERENCES sales (id), "product_id" TEXT NOT NULL, "quantity" INTEGER NOT NULL, "unit_price_minor" INTEGER NOT NULL, "pieces_per_unit" INTEGER NOT NULL DEFAULT 1, PRIMARY KEY ("id"));
+CREATE TABLE "sales" ("id" TEXT NOT NULL, "customer_id" TEXT NULL, "payment" TEXT NOT NULL, "currency_code" TEXT NOT NULL, "subtotal_minor" INTEGER NOT NULL, "discount_minor" INTEGER NOT NULL, "total_minor" INTEGER NOT NULL, "device_id" TEXT NOT NULL, "employee_id" TEXT NOT NULL, "occurred_at" TEXT NOT NULL, "synced_at" TEXT NULL, PRIMARY KEY ("id"));
+CREATE TABLE "settings" ("key" TEXT NOT NULL, "value" TEXT NOT NULL, PRIMARY KEY ("key"));
+CREATE TABLE "stock_events" ("id" TEXT NOT NULL, "type" TEXT NOT NULL, "product_id" TEXT NOT NULL, "batch_id" TEXT NOT NULL, "quantity" INTEGER NOT NULL, "expiry" TEXT NULL, "unit_cost_minor" INTEGER NULL, "sale_id" TEXT NULL, "note" TEXT NULL, "device_id" TEXT NOT NULL, "employee_id" TEXT NOT NULL, "occurred_at" TEXT NOT NULL, "synced_at" TEXT NULL, PRIMARY KEY ("id"));
+CREATE INDEX debt_events_customer ON debt_events (customer_id);
+CREATE INDEX product_barcodes_product ON product_barcodes (product_id);
+CREATE INDEX products_ingredient ON products (active_ingredient);
+CREATE INDEX return_lines_sale_line ON return_lines (sale_line_id);
+CREATE INDEX sale_lines_sale ON sale_lines (sale_id);
+CREATE INDEX sales_occurred ON sales (occurred_at);
+CREATE INDEX stock_events_product ON stock_events (product_id);
+CREATE INDEX stock_events_unsynced ON stock_events (synced_at) WHERE synced_at IS NULL;
+CREATE TRIGGER debt_events_no_delete BEFORE DELETE ON debt_events
+        BEGIN SELECT RAISE(ABORT, 'append-only: debt_events'); END;
+CREATE TRIGGER debt_events_no_update BEFORE UPDATE ON debt_events
+        WHEN NOT (OLD.id IS NEW.id AND OLD.type IS NEW.type AND OLD.customer_id IS NEW.customer_id AND OLD.amount_minor IS NEW.amount_minor AND OLD.currency_code IS NEW.currency_code AND OLD.sale_id IS NEW.sale_id AND OLD.note IS NEW.note AND OLD.device_id IS NEW.device_id AND OLD.employee_id IS NEW.employee_id AND OLD.occurred_at IS NEW.occurred_at)
+        BEGIN SELECT RAISE(ABORT, 'append-only: debt_events'); END;
+CREATE TRIGGER return_lines_no_delete BEFORE DELETE ON return_lines
+        BEGIN SELECT RAISE(ABORT, 'append-only: return_lines'); END;
+CREATE TRIGGER return_lines_no_update BEFORE UPDATE ON return_lines
+      BEGIN SELECT RAISE(ABORT, 'append-only: return_lines'); END;
+CREATE TRIGGER returns_no_delete BEFORE DELETE ON returns
+        BEGIN SELECT RAISE(ABORT, 'append-only: returns'); END;
+CREATE TRIGGER returns_no_update BEFORE UPDATE ON returns
+      WHEN NOT (OLD.id IS NEW.id AND OLD.sale_id IS NEW.sale_id AND OLD.customer_id IS NEW.customer_id AND OLD.refund IS NEW.refund AND OLD.currency_code IS NEW.currency_code AND OLD.total_minor IS NEW.total_minor AND OLD.device_id IS NEW.device_id AND OLD.employee_id IS NEW.employee_id AND OLD.occurred_at IS NEW.occurred_at)
+      BEGIN SELECT RAISE(ABORT, 'append-only: returns'); END;
+CREATE TRIGGER sale_lines_no_delete BEFORE DELETE ON sale_lines
+        BEGIN SELECT RAISE(ABORT, 'append-only: sale_lines'); END;
+CREATE TRIGGER sale_lines_no_update BEFORE UPDATE ON sale_lines
+      BEGIN SELECT RAISE(ABORT, 'append-only: sale_lines'); END;
+CREATE TRIGGER sales_no_delete BEFORE DELETE ON sales
+        BEGIN SELECT RAISE(ABORT, 'append-only: sales'); END;
+CREATE TRIGGER sales_no_update BEFORE UPDATE ON sales
+        WHEN NOT (OLD.id IS NEW.id AND OLD.customer_id IS NEW.customer_id AND OLD.payment IS NEW.payment AND OLD.currency_code IS NEW.currency_code AND OLD.subtotal_minor IS NEW.subtotal_minor AND OLD.discount_minor IS NEW.discount_minor AND OLD.total_minor IS NEW.total_minor AND OLD.device_id IS NEW.device_id AND OLD.employee_id IS NEW.employee_id AND OLD.occurred_at IS NEW.occurred_at)
+        BEGIN SELECT RAISE(ABORT, 'append-only: sales'); END;
+CREATE TRIGGER stock_events_no_delete BEFORE DELETE ON stock_events
+        BEGIN SELECT RAISE(ABORT, 'append-only: stock_events'); END;
+CREATE TRIGGER stock_events_no_update BEFORE UPDATE ON stock_events
+        WHEN NOT (OLD.id IS NEW.id AND OLD.type IS NEW.type AND OLD.product_id IS NEW.product_id AND OLD.batch_id IS NEW.batch_id AND OLD.quantity IS NEW.quantity AND OLD.expiry IS NEW.expiry AND OLD.unit_cost_minor IS NEW.unit_cost_minor AND OLD.sale_id IS NEW.sale_id AND OLD.note IS NEW.note AND OLD.device_id IS NEW.device_id AND OLD.employee_id IS NEW.employee_id AND OLD.occurred_at IS NEW.occurred_at)
+        BEGIN SELECT RAISE(ABORT, 'append-only: stock_events'); END;

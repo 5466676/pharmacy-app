@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>دوايا · لوحة الإدارة</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@500;600;700&amp;family=Readex+Pro:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Readex Pro',system-ui,sans-serif;background:#0F3D38;color:#0F3D38}
+button,input{font-family:inherit}
+</style>
+</helmet>
+<div dir="rtl" style="width: 1280px; height: 880px; box-sizing: border-box; background: #0F3D38; padding: 20px; font-family: 'Readex Pro', system-ui, sans-serif; color: #0F3D38">
+<div style="width: 100%; height: 100%; background: #F7FBF9; border-radius: 32px; display: flex; overflow: hidden">
+
+<aside style="width: 230px; flex-shrink: 0; background: #0F3D38; padding: 22px 16px; display: flex; flex-direction: column; gap: 4px">
+<div style="display: flex; align-items: center; gap: 8px; padding: 0 8px 6px">
+<svg width="34" height="34" viewBox="0 0 100 100" aria-label="دوايا"><g transform="rotate(-45 50 50)"><path d="M50 32 H32 A18 18 0 0 0 32 68 H50 Z" fill="#F7FBF9"></path><path d="M50 32 H68 A18 18 0 0 1 68 68 H50 Z" fill="#7FD1B9"></path></g><rect x="58.3" y="32.7" width="6" height="12" rx="1.5" fill="#0F3D38"></rect><rect x="55.3" y="35.7" width="12" height="6" rx="1.5" fill="#0F3D38"></rect></svg>
+<span style="font-family: 'Alexandria', 'Readex Pro', sans-serif; font-size: 22px; font-weight: 700; color: #F7FBF9">دوايا</span>
+</div>
+<span style="font-size: 11px; color: #7FD1B9; padding: 0 12px 18px">لوحة الإدارة</span>
+<button style="height: 44px; border: none; border-radius: 999px; background: #F7FBF9; color: #0F3D38; font-size: 14px; font-weight: 500; text-align: right; padding: 0 16px; cursor: pointer">نظرة عامة</button>
+<button style="height: 44px; border: none; border-radius: 999px; background: none; color: #BFD9D2; font-size: 14px; text-align: right; padding: 0 16px; cursor: pointer">الصيدليات</button>
+<button style="height: 44px; border: none; border-radius: 999px; background: none; color: #BFD9D2; font-size: 14px; text-align: right; padding: 0 16px; cursor: pointer">المرضى والاشتراكات</button>
+<button style="height: 44px; border: none; border-radius: 999px; background: none; color: #BFD9D2; font-size: 14px; text-align: right; padding: 0 16px; cursor: pointer; display: flex; align-items: center; justify-content: space-between">مراجعة المحادثات <span style="font-size: 11px; background: #FCE3C6; color: #7A4300; border-radius: 999px; padding: 1px 8px">٥</span></button>
+<button style="height: 44px; border: none; border-radius: 999px; background: none; color: #BFD9D2; font-size: 14px; text-align: right; padding: 0 16px; cursor: pointer">قاعدة الأدوية</button>
+<button style="height: 44px; border: none; border-radius: 999px; background: none; color: #BFD9D2; font-size: 14px; text-align: right; padding: 0 16px; cursor: pointer">المدفوعات</button>
+<button style="height: 44px; border: none; border-radius: 999px; background: none; color: #BFD9D2; font-size: 14px; text-align: right; padding: 0 16px; cursor: pointer">الإعدادات</button>
+</aside>
+
+<main style="flex-grow: 1; padding: 26px; display: flex; flex-direction: column; gap: 16px; min-width: 0">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<h1 style="margin: 0; font-family: 'Alexandria', 'Readex Pro', sans-serif; font-size: 28px; font-weight: 700">نظرة عامة على المنصة</h1>
+<span style="height: 38px; padding: 0 16px; border-radius: 999px; border: 1px solid #E3EEEA; background: #FFFFFF; font-size: 13px; display: flex; align-items: center">آخر ٣٠ يوم</span>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px">
+<div style="background: #C4EADC; border-radius: 22px; padding: 16px; display: flex; flex-direction: column; gap: 8px; color: #16513A"><span style="font-size: 12px">صيدليات مشتركة</span><span style="font-family: 'Alexandria', 'Readex Pro', sans-serif; font-size: 26px; font-weight: 700">[العدد]</span><span style="font-size: 11px">[الجديدة هالشهر]</span></div>
+<div style="background: #E3F4B8; border-radius: 22px; padding: 16px; display: flex; flex-direction: column; gap: 8px; color: #3F5310"><span style="font-size: 12px">مرضى مشتركين</span><span style="font-family: 'Alexandria', 'Readex Pro', sans-serif; font-size: 26px; font-weight: 700">[العدد]</span><span style="font-size: 11px">[نسبة التجديد]</span></div>
+<div style="background: #D8D5FA; border-radius: 22px; padding: 16px; display: flex; flex-direction: column; gap: 8px; color: #36307A"><span style="font-size: 12px">استشارات اليوم</span><span style="font-family: 'Alexandria', 'Readex Pro', sans-serif; font-size: 26px; font-weight: 700">[العدد]</span><span style="font-size: 11px">[متوسط زمن الرد]</span></div>
+<div style="background: #FCE3C6; border-radius: 22px; padding: 16px; display: flex; flex-direction: column; gap: 8px; color: #7A4300"><span style="font-size: 12px">إيرادات الاشتراكات</span><span style="font-family: 'Alexandria', 'Readex Pro', sans-serif; font-size: 26px; font-weight: 700">[المبلغ]</span><span style="font-size: 11px">حصة الصيدليات: [المبلغ]</span></div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; flex-grow: 1">
+<div style="grid-column: span 3; background: #FFFFFF; border-radius: 26px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-family: 'Alexandria', 'Readex Pro', sans-serif; font-size: 17px; font-weight: 600">الصيدليات</span><span style="height: 32px; padding: 0 14px; border-radius: 999px; border: 1px solid #E3EEEA; font-size: 12px; display: flex; align-items: center">بحث...</span></div>
+<div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; font-size: 12px; color: #8AA19C; padding-bottom: 6px; border-bottom: 1px solid #EEF3F1"><span>الصيدلية</span><span>المنطقة</span><span>المرضى</span><span>زمن الرد</span><span>الحالة</span></div>
+<div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; font-size: 13px; align-items: center"><span style="font-weight: 500">[صيدلية ١]</span><span>[المنطقة]</span><span>[العدد]</span><span>[دقايق]</span><span><span style="font-size: 11px; color: #1F6F43; background: #E6F4EC; border-radius: 999px; padding: 3px 10px">فعّالة</span></span></div>
+<div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; font-size: 13px; align-items: center"><span style="font-weight: 500">[صيدلية ٢]</span><span>[المنطقة]</span><span>[العدد]</span><span>[دقايق]</span><span><span style="font-size: 11px; color: #8A5200; background: #FDF1DC; border-radius: 999px; padding: 3px 10px">رد بطيء</span></span></div>
+<div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; font-size: 13px; align-items: center"><span style="font-weight: 500">[صيدلية ٣]</span><span>[المنطقة]</span><span>[العدد]</span><span>—</span><span><span style="font-size: 11px; color: #36307A; background: #D8D5FA; border-radius: 999px; padding: 3px 10px">بانتظار التفعيل</span></span></div>
+<div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; font-size: 13px; align-items: center"><span style="font-weight: 500">[صيدلية ٤]</span><span>[المنطقة]</span><span>[العدد]</span><span>[دقايق]</span><span><span style="font-size: 11px; color: #A32318; background: #FDECEA; border-radius: 999px; padding: 3px 10px">اشتراك منتهي</span></span></div>
+</div>
+
+<div style="grid-column: span 2; background: #FFFFFF; border-radius: 26px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-family: 'Alexandria', 'Readex Pro', sans-serif; font-size: 17px; font-weight: 600">محادثات للمراجعة</span><span style="font-size: 12px; color: #7A4300; background: #FCE3C6; border-radius: 999px; padding: 3px 10px">٥</span></div>
+<span style="font-size: 12px; color: #6E8883; line-height: 1.6">ردود المساعد يلي عدّلها صيدلي أو يلي فيها علامات خطر، لتحسين جودة المساعد.</span>
+<div style="background: #FDECEA; border-radius: 16px; padding: 12px; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 13px; font-weight: 500; color: #7A1A12">توجيه للطوارئ · ألم صدر</span><span style="font-size: 11px; color: #A32318">[صيدلية ١] · من ساعة</span></div>
+<div style="background: #F7FBF9; border-radius: 16px; padding: 12px; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 13px; font-weight: 500">صيدلي عدّل رد عن جرعة أطفال</span><span style="font-size: 11px; color: #6E8883">[صيدلية ٢] · من ٣ ساعات</span></div>
+<div style="background: #F7FBF9; border-radius: 16px; padding: 12px; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 13px; font-weight: 500">سؤال ما عرف المساعد يجاوبه</span><span style="font-size: 11px; color: #6E8883">[صيدلية ٤] · مبارح</span></div>
+<button style="margin-top: auto; height: 46px; border-radius: 999px; border: none; background: #0F3D38; color: #FFFFFF; font-size: 14px; cursor: pointer">راجع الكل</button>
+</div>
+</div>
+</main>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":880}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

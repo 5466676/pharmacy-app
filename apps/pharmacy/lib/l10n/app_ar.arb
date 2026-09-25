@@ -1,0 +1,662 @@
+{
+  "@@locale": "ar",
+  "appName": "دوايا",
+  "save": "حفظ",
+  "cancel": "إلغاء",
+  "confirm": "تأكيد",
+  "close": "إغلاق",
+  "edit": "تعديل",
+  "add": "إضافة",
+  "back": "رجوع",
+  "search": "بحث",
+  "optional": "اختياري",
+  "required": "مطلوب",
+  "invalidNumber": "رقم غير صحيح",
+  "units": "{count} علبة",
+  "@units": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "none": "—",
+  "offline": "يعمل بدون إنترنت",
+  "signOut": "تبديل الموظف",
+  "owner": "مالك",
+  "employee": "موظف",
+  "setupTitle": "أهلين بدوايا",
+  "setupSubtitle": "خلّينا نجهّز هالجهاز للصيدلية. كل شي بينحفظ على الجهاز وبيشتغل بدون إنترنت.",
+  "pharmacyNameLabel": "اسم الصيدلية",
+  "deviceNameLabel": "اسم هالجهاز",
+  "deviceNameHint": "مثلاً: لابتوب الكاونتر",
+  "ownerNameLabel": "اسمك (المالك)",
+  "pinLabel": "رمز الدخول (4 أرقام)",
+  "pinConfirmLabel": "أعد الرمز",
+  "pinMismatch": "الرمزين مو متطابقين",
+  "pinInvalid": "الرمز لازم يكون 4 أرقام",
+  "startButton": "ابدأ",
+  "loginTitle": "مين عم يشتغل هلق؟",
+  "loginEnterPin": "أدخل رمز {name}",
+  "@loginEnterPin": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "wrongPin": "الرمز غلط",
+  "changeEmployee": "غيّر الموظف",
+  "navDashboard": "لوحة التحكم",
+  "navPos": "البيع",
+  "navInventory": "الأدوية والمخزون",
+  "navDebts": "الزبائن والديون",
+  "navSettings": "الإعدادات",
+  "navSectionMain": "الصيدلية",
+  "navSectionAdmin": "الإدارة",
+  "greeting": "أهلين {name}",
+  "@greeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "newSale": "بيع جديد",
+  "statSalesToday": "مبيعات اليوم",
+  "statSalesCount": "{count} عملية",
+  "@statSalesCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "statOpenDebts": "ديون مفتوحة",
+  "statCustomersCount": "{count} زبون",
+  "@statCustomersCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "statNearExpiry": "قرب تنتهي صلاحيته",
+  "statWithinDays": "خلال {days} يوم",
+  "@statWithinDays": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "statLowStock": "مخزون قليل",
+  "statProductsCount": "{count} صنف",
+  "@statProductsCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "recentSales": "آخر المبيعات",
+  "noSalesYet": "ما في مبيعات لسا",
+  "colTime": "الوقت",
+  "colTotal": "المبلغ",
+  "colPayment": "الدفع",
+  "colEmployee": "الموظف",
+  "colDevice": "الجهاز",
+  "colCustomer": "الزبون",
+  "paymentCash": "نقدي",
+  "paymentDebt": "دين",
+  "walkInCustomer": "زبون عابر",
+  "nearExpiryAlerts": "كميات قريبة الانتهاء",
+  "nearExpiryAlertLine": "{qty} من {product} بتنتهي {date}",
+  "@nearExpiryAlertLine": {
+    "placeholders": {
+      "qty": {
+        "type": "String"
+      },
+      "product": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "noNearExpiry": "ما في شي قريب ينتهي",
+  "expiredLabel": "منتهي",
+  "posTitle": "بيع جديد",
+  "posSearchHint": "ابحث بالاسم أو المادة الفعالة أو امسح الباركود",
+  "scannerReady": "قارئ الباركود جاهز",
+  "addToCart": "أضف",
+  "inStock": "متوفر: {count}",
+  "@inStock": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "lowLeft": "باقي {count}",
+  "@lowLeft": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "outOfStock": "نفد",
+  "showAlternatives": "اعرض البديل",
+  "alternativesTitle": "بدائل بنفس المادة الفعالة",
+  "noAlternatives": "ما في بديل متوفر",
+  "alternativeHint": "بديل متوفر: {name}",
+  "@alternativeHint": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "invoice": "الفاتورة",
+  "cartEmpty": "امسح باركود أو ابحث لتضيف أصناف",
+  "perUnit": "{price} للعلبة",
+  "@perUnit": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "subtotal": "المجموع الفرعي",
+  "discount": "حسم",
+  "total": "الإجمالي",
+  "completeSale": "إتمام البيع",
+  "registeredCustomer": "زبون مسجّل",
+  "chooseCustomer": "اختار زبون",
+  "newCustomer": "زبون جديد",
+  "customerNameLabel": "اسم الزبون",
+  "phoneLabel": "رقم الموبايل",
+  "notesLabel": "ملاحظات",
+  "shortcuts": "اختصارات:",
+  "shortcutSearch": "بحث",
+  "shortcutDebt": "دين",
+  "shortcutComplete": "إتمام",
+  "saleDone": "تمّ البيع: {total}",
+  "@saleDone": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "barcodeNotFound": "ما لقينا صنف بهالباركود: {code}",
+  "@barcodeNotFound": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "errEmptyCart": "الفاتورة فاضية",
+  "errDebtNeedsCustomer": "البيع بالدين بدو زبون مسجّل",
+  "errDiscount": "الحسم أكبر من المجموع",
+  "errStock": "الكمية مو متوفرة بالمخزون",
+  "errBadQty": "كمية غير صحيحة",
+  "nearExpiryNudge": "في {qty} بتنتهي {date}، بيع منها أول",
+  "@nearExpiryNudge": {
+    "placeholders": {
+      "qty": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "prescriptionOnly": "بوصفة",
+  "inventoryTitle": "الأدوية والمخزون",
+  "addProduct": "صنف جديد",
+  "filterAll": "الكل",
+  "filterLow": "مخزون قليل",
+  "filterNearExpiry": "قريب الانتهاء",
+  "filterOut": "نفد",
+  "colProduct": "الصنف",
+  "colIngredient": "المادة الفعالة",
+  "colStock": "المخزون",
+  "colPrice": "السعر",
+  "colNearestExpiry": "أقرب انتهاء",
+  "colShelf": "الرف",
+  "noProducts": "ما في أصناف لسا. ضيف أول صنف.",
+  "productFormNew": "صنف جديد",
+  "productFormEdit": "تعديل الصنف",
+  "tradeNameLabel": "الاسم التجاري (لاتيني)",
+  "arabicNameLabel": "الاسم بالعربي",
+  "ingredientLabel": "المادة الفعالة",
+  "strengthLabel": "التركيز",
+  "formLabel": "الشكل",
+  "manufacturerLabel": "الشركة المصنعة",
+  "shelfLabel": "الرف",
+  "priceLabel": "سعر البيع ({symbol})",
+  "@priceLabel": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "lowThresholdLabel": "تنبيه المخزون القليل عند",
+  "barcodesLabel": "الباركود (افصل بفاصلة)",
+  "prescriptionLabel": "بحاجة وصفة",
+  "duplicateBarcode": "الباركود {code} مستعمل لصنف تاني",
+  "@duplicateBarcode": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "productDetail": "تفاصيل الصنف",
+  "batches": "الدفعات",
+  "batchReceived": "استلام {date}",
+  "@batchReceived": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "noExpiry": "بدون تاريخ",
+  "expiresOn": "ينتهي {date}",
+  "@expiresOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "receiveStock": "استلام بضاعة",
+  "quantityLabel": "الكمية",
+  "expiryLabel": "تاريخ الانتهاء",
+  "expiryHint": "اختياري · يوم/شهر/سنة",
+  "unitCostLabel": "سعر الشراء للعلبة",
+  "adjustStock": "تعديل جرد",
+  "adjustHelp": "اكتب الكمية الفعلية الموجودة بالرف",
+  "actualQtyLabel": "الكمية الفعلية",
+  "removeExpired": "إزالة كمية منتهية",
+  "removeExpiredConfirm": "رح نشيل {qty} من المخزون كمنتهية الصلاحية.",
+  "@removeExpiredConfirm": {
+    "placeholders": {
+      "qty": {
+        "type": "String"
+      }
+    }
+  },
+  "invalidDate": "تاريخ غير صحيح",
+  "history": "الحركات",
+  "evReceived": "استلام",
+  "evSold": "بيع",
+  "evReturned": "مرتجع",
+  "evAdjusted": "تعديل جرد",
+  "evExpiredRemoved": "إزالة منتهي",
+  "debtsTitle": "الزبائن والديون",
+  "addCustomer": "زبون جديد",
+  "balance": "الرصيد",
+  "owes": "عليه {amount}",
+  "@owes": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "settled": "مسدّد",
+  "recordPayment": "تسجيل دفعة",
+  "amountLabel": "المبلغ ({symbol})",
+  "@amountLabel": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "debtAdded": "دين من بيع",
+  "paymentReceived": "دفعة",
+  "noCustomers": "ما في زبائن لسا",
+  "filterOwing": "عليهم ديون",
+  "totalOpenDebts": "مجموع الديون المفتوحة",
+  "paymentTooLarge": "المبلغ أكبر من الدين",
+  "settingsTitle": "الإعدادات",
+  "pharmacySection": "الصيدلية",
+  "currencySection": "العملة",
+  "currencyCodeLabel": "رمز العملة (ISO)",
+  "currencySymbolLabel": "الرمز الظاهر",
+  "currencyDecimalsLabel": "عدد الخانات العشرية",
+  "currencyHelp": "الافتراضي الليرة السورية الجديدة. غيّرها إذا بتسعّر بعملة تانية.",
+  "nearExpiryDaysLabel": "نبّهني قبل الانتهاء بـ (يوم)",
+  "employeesSection": "الموظفين",
+  "addEmployee": "موظف جديد",
+  "employeeNameLabel": "اسم الموظف",
+  "deactivate": "إيقاف",
+  "activate": "تفعيل",
+  "inactive": "موقوف",
+  "thisDevice": "هالجهاز",
+  "saved": "انحفظ",
+  "ownerOnly": "هالقسم للمالك بس",
+  "loadDemo": "عبّي بيانات تجريبية",
+  "demoLoaded": "انضافت بيانات تجريبية",
+  "navStaff": "حسابات الموظفين",
+  "staffTitle": "حسابات الموظفين",
+  "periodToday": "اليوم",
+  "periodWeek": "هالأسبوع",
+  "periodMonth": "هالشهر",
+  "staffTotalSales": "مجموع المبيعات",
+  "staffCashSales": "نقدي",
+  "staffDebtSales": "بالدين",
+  "staffPayments": "دفعات ديون قبضها",
+  "staffCashToHandIn": "المفروض يسلّم نقدي",
+  "staffDiscounts": "حسومات",
+  "staffUnits": "علب مباعة",
+  "staffSalesCount": "{count} فاتورة",
+  "@staffSalesCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "staffNoActivity": "ما في مبيعات بهالفترة",
+  "staffTopProducts": "أكثر شي باعه",
+  "staffInvoices": "فواتيره",
+  "lineItem": "{product} × {qty}",
+  "@lineItem": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "qty": {
+        "type": "String"
+      }
+    }
+  },
+  "staffCashHint": "النقدي = المبيعات النقدية + دفعات الديون − المرتجع النقدي",
+  "unitBox": "علبة",
+  "unitStrip": "ظرف",
+  "packsAndStrips": "{packs} علبة + {strips} ظرف",
+  "@packsAndStrips": {
+    "placeholders": {
+      "packs": {
+        "type": "String"
+      },
+      "strips": {
+        "type": "String"
+      }
+    }
+  },
+  "stripsOnly": "{strips} ظرف",
+  "@stripsOnly": {
+    "placeholders": {
+      "strips": {
+        "type": "String"
+      }
+    }
+  },
+  "unitsPerPackLabel": "عدد الظروف بالعلبة",
+  "unitsPerPackHelp": "1 = بيع بالعلبة بس",
+  "stripPriceLabel": "سعر الظرف ({symbol})",
+  "@stripPriceLabel": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "unitsPerPackLocked": "ما فيك تغيّر عدد الظروف بعد ما صار في حركة مخزون لهالصنف",
+  "receiveQtyBoxes": "الكمية (علب)",
+  "looseStripsLabel": "ظروف فرط",
+  "addBox": "علبة",
+  "addStrip": "ظرف",
+  "returnsButton": "مرتجع",
+  "returnsTitle": "مرتجع",
+  "returnFromInvoice": "من فاتورة",
+  "returnFree": "مرتجع حر",
+  "pickInvoice": "اختار الفاتورة",
+  "noInvoices": "ما في فواتير",
+  "returnable": "قابل للإرجاع: {qty}",
+  "@returnable": {
+    "placeholders": {
+      "qty": {
+        "type": "String"
+      }
+    }
+  },
+  "refundMethod": "طريقة الإرجاع",
+  "refundCash": "نقدي من الصندوق",
+  "refundDebtCredit": "خصم من دين الزبون",
+  "returnTotal": "مبلغ المرتجع",
+  "confirmReturn": "تأكيد المرتجع",
+  "returnDone": "انسجّل المرتجع: {total}",
+  "@returnDone": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "errReturnEmpty": "ما اخترت شي للإرجاع",
+  "errReturnTooMany": "الكمية أكتر من يلي انباع",
+  "errReturnNeedsCustomer": "الخصم من الدين بدو زبون",
+  "errReturnCreditTooBig": "المبلغ أكبر من دين الزبون",
+  "errReturnUnknown": "هالصنف ما إله مخزون سابق",
+  "unitPriceLabel": "سعر الوحدة",
+  "debtCredited": "مرتجع (خصم)",
+  "staffReturns": "مرتجعات",
+  "staffCashRefunds": "مرتجع نقدي",
+  "perStrip": "{price} للظرف",
+  "@perStrip": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "navTill": "الصندوق",
+  "paymentTransfer": "تحويل",
+  "paymentTransferHint": "شام كاش أو أي تحويل إلكتروني (ما بيدخل الصندوق)",
+  "discountLabel": "حسم ({symbol})",
+  "@discountLabel": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "tenderedLabel": "المبلغ المقبوض ({symbol})",
+  "@tenderedLabel": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "changeDue": "الباقي للزبون",
+  "errTendered": "المبلغ المقبوض أقل من الإجمالي",
+  "tillClosedBanner": "الصندوق مسكّر. افتحه لتبدأ البيع.",
+  "openTill": "افتح الصندوق",
+  "openingFloatLabel": "المبلغ الموجود بالصندوق هلق ({symbol})",
+  "@openingFloatLabel": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "tillTitle": "الصندوق",
+  "tillOpenedAt": "مفتوح من {time}",
+  "@tillOpenedAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "tillFloat": "رصيد الافتتاح",
+  "tillCashSales": "مبيعات نقدية",
+  "tillDebtPayments": "دفعات ديون",
+  "tillCashRefunds": "مرتجع نقدي",
+  "tillCashIn": "إضافة نقد",
+  "tillCashOut": "سحب نقد",
+  "tillTransfers": "تحويلات (خارج الصندوق)",
+  "tillExpected": "المفروض بالصندوق",
+  "addCash": "إضافة نقد",
+  "withdrawCash": "سحب نقد",
+  "reasonLabel": "السبب",
+  "closeTill": "إغلاق الصندوق",
+  "countedLabel": "العدّ الفعلي ({symbol})",
+  "@countedLabel": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "countHelp": "عدّ المصاري يلي بالصندوق واكتب المبلغ",
+  "shortage": "عجز {amount}",
+  "@shortage": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "surplus": "زيادة {amount}",
+  "@surplus": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "balanced": "مطابق",
+  "tillClosedResult": "انسكّر الصندوق",
+  "tillIsClosed": "الصندوق مسكّر",
+  "shiftsTitle": "الورديات",
+  "noShifts": "ما في ورديات بهالفترة",
+  "shiftOpenNow": "مفتوح",
+  "shiftLine": "من {from} لـ {to}",
+  "@shiftLine": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "staffTransferSales": "تحويلات",
+  "evReturnedToSupplier": "مرتجع للمستودع",
+  "navPurchases": "المشتريات",
+  "purchasesTitle": "المشتريات",
+  "tabInvoices": "فواتير الشراء",
+  "tabSuppliers": "الموردين",
+  "newPurchase": "فاتورة شراء",
+  "addSupplier": "مورد جديد",
+  "supplierNameLabel": "اسم المستودع / المورد",
+  "repNameLabel": "اسم المندوب",
+  "noSuppliers": "ما في موردين لسا",
+  "noPurchases": "ما في فواتير شراء لسا",
+  "chooseSupplier": "اختار المورد",
+  "supplierInvoiceNoLabel": "رقم فاتورة المورد",
+  "colQty": "الكمية",
+  "colBonus": "بونص",
+  "colUnitPrice": "سعر الشراء",
+  "colDiscountPct": "حسم %",
+  "colExpiry": "الانتهاء",
+  "colSalePrice": "سعر المبيع",
+  "colLineTotal": "المجموع",
+  "colSupplier": "المورد",
+  "colInvoiceNo": "رقم الفاتورة",
+  "purchaseSearchHint": "امسح باركود أو ابحث عن صنف لتضيفه للفاتورة",
+  "gross": "الإجمالي قبل الحسم",
+  "lineDiscounts": "حسومات الأسطر",
+  "invoiceDiscountLabel": "حسم على الفاتورة",
+  "transportLabel": "مصاريف نقل",
+  "purchaseTotal": "صافي الفاتورة",
+  "payCash": "نقدي",
+  "payCredit": "دين على الصيدلية",
+  "paidFromLabel": "من وين الدفع؟",
+  "fromDrawer": "من الصندوق",
+  "fromOutside": "من برّا الصندوق",
+  "savePurchase": "حفظ الفاتورة",
+  "purchaseSaved": "انحفظت فاتورة الشراء",
+  "errPurchaseEmpty": "ما في أصناف بالفاتورة",
+  "errPurchaseLine": "في سطر ناقص أو غلط",
+  "errPurchaseDiscount": "الحسم أكبر من الفاتورة",
+  "errNeedSupplier": "اختار المورد أول",
+  "balanceOwed": "علينا للمورد",
+  "oldestDebt": "أقدم دين",
+  "daysAgo": "من {days} يوم",
+  "statement": "كشف الحساب",
+  "paySupplier": "دفعة للمورد",
+  "returnToSupplier": "مرتجع للمستودع",
+  "evPurchaseOnCredit": "فاتورة شراء (دين)",
+  "evPaymentMade": "دفعة",
+  "evReturnCredited": "مرتجع",
+  "colDate": "التاريخ",
+  "colMovement": "الحركة",
+  "colAmount": "المبلغ",
+  "colBalance": "الرصيد",
+  "batchLabel": "الدفعة",
+  "piecesLabel": "الكمية (قطعة)",
+  "creditValueLabel": "قيمة المرتجع ({symbol})",
+  "refundCreditAccount": "خصم من حساب المورد",
+  "refundCashFromSupplier": "استرجاع نقدي",
+  "returnSaved": "انسجّل المرتجع للمستودع",
+  "noBatches": "ما في كمية بهالصنف",
+  "bestPrice": "أرخص سعر: {price} من {supplier}",
+  "lastPrice": "آخر سعر: {price}",
+  "ownerOnlyAmounts": "المبالغ والأرصدة للمالك بس",
+  "dateFormatHint": "1/6/2028",
+  "errDrawerClosed": "الصندوق مسكّر، افتحه أول أو اختار الدفع من برّا الصندوق",
+  "purchaseBy": "دخّلها {name}",
+  "@daysAgo": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "@creditValueLabel": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "@bestPrice": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      },
+      "supplier": {
+        "type": "String"
+      }
+    }
+  },
+  "@lastPrice": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "@purchaseBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  }
+}
