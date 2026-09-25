@@ -618,6 +618,8 @@
   "bestPrice": "أرخص سعر: {price} من {supplier}",
   "lastPrice": "آخر سعر: {price}",
   "ownerOnlyAmounts": "المبالغ والأرصدة للمالك بس",
+  "dateFormatHint": "1/6/2028",
+  "errDrawerClosed": "الصندوق مسكّر، افتحه أول أو اختار الدفع من برّا الصندوق",
   "purchaseBy": "دخّلها {name}",
   "@daysAgo": {
     "placeholders": {

@@ -2096,6 +2096,18 @@ abstract class AppLocalizations {
   /// **'المبالغ والأرصدة للمالك بس'**
   String get ownerOnlyAmounts;
 
+  /// No description provided for @dateFormatHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'1/6/2028'**
+  String get dateFormatHint;
+
+  /// No description provided for @errDrawerClosed.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصندوق مسكّر، افتحه أول أو اختار الدفع من برّا الصندوق'**
+  String get errDrawerClosed;
+
   /// No description provided for @purchaseBy.
   ///
   /// In ar, this message translates to:

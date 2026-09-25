@@ -446,8 +446,11 @@ void main() {
       await unmount(tester);
     });
 
-    Future<(DeviceRow, SupplierRow)> seedSupplier(WidgetTester tester) async {
-      await seed(tester);
+    Future<(DeviceRow, SupplierRow)> seedSupplier(
+      WidgetTester tester, {
+      bool openTill = true,
+    }) async {
+      await seed(tester, openTill: openTill);
       late SupplierRow supplier;
       late DeviceRow device;
       await tester.runAsync(() async {
@@ -549,15 +552,33 @@ void main() {
         await settle(tester);
         expect(find.text('60 ل.س'), findsWidgets);
         final shift = await tester.runAsync(() async {
-        final till = TillRepository(db);
-        final stamp = Session(deviceId: device.id, employeeId: owner.id);
-        return till.summary((await till.openShiftId(stamp))!);
-      });
+          final till = TillRepository(db);
+          final stamp = Session(deviceId: device.id, employeeId: owner.id);
+          return till.summary((await till.openShiftId(stamp))!);
+        });
         expect(shift!.movements.drawerPurchases, 4000);
         expect(shift.expected, 10000 - 4000);
         await unmount(tester);
       },
     );
+
+    testWidgets('closed till: paying a supplier from the drawer is refused', (tester) async {
+      final (device, supplier) = await seedSupplier(tester, openTill: false);
+      await pumpApp(tester);
+      container.read(sessionProvider.notifier).signIn(device, owner);
+      await settle(tester);
+      container.read(routerProvider).go(Routes.supplier(supplier.id));
+      await settle(tester);
+      await tester.tap(find.text('دفعة للمورد'));
+      await settle(tester);
+      await tester.enterText(find.byType(TextFormField).first, '40');
+      await tester.tap(find.text('تأكيد'));
+      await settle(tester);
+      expect(find.textContaining('الصندوق مسكّر'), findsOneWidget);
+      final events = await tester.runAsync(() => db.select(db.supplierDebtEvents).get());
+      expect(events, isEmpty);
+      await unmount(tester);
+    });
 
     testWidgets('solid theme on desktop: no BackdropFilter anywhere', (tester) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.windows;

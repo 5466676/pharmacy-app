@@ -1097,6 +1097,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get ownerOnlyAmounts => 'المبالغ والأرصدة للمالك بس';
 
   @override
+  String get dateFormatHint => '1/6/2028';
+
+  @override
+  String get errDrawerClosed => 'الصندوق مسكّر، افتحه أول أو اختار الدفع من برّا الصندوق';
+
+  @override
   String purchaseBy(String name) {
     return 'دخّلها $name';
   }

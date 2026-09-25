@@ -100,6 +100,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
   @override
   void initState() {
     super.initState();
+    HardwareKeyboard.instance.addHandler(_onKey);
     if (widget.supplierId != null) {
       ref.read(accountingProvider).supplier(widget.supplierId!).then((s) {
         if (mounted) setState(() => _supplier = s);
@@ -107,8 +108,18 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
     }
   }
 
+  /// F9 saves wherever the focus is (after clicking a button too), unless a
+  /// dialog is open on top.
+  bool _onKey(KeyEvent e) {
+    if (e is! KeyDownEvent || e.logicalKey != LogicalKeyboardKey.f9) return false;
+    if (_busy || ModalRoute.of(context)?.isCurrent != true) return false;
+    _save();
+    return true;
+  }
+
   @override
   void dispose() {
+    HardwareKeyboard.instance.removeHandler(_onKey);
     _debounce?.cancel();
     for (final c in [_invoiceNo, _invoiceDiscount, _transport, _search]) {
       c.dispose();
@@ -159,12 +170,13 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
     await _prefillPrice(line);
   }
 
-  /// Last price from this supplier (else from anyone) for the same unit; the
-  /// owner also sees the cheapest supplier.
+  /// Owner only (past purchase prices are owner-only): fills in the last
+  /// price from this supplier (else from anyone) for the same unit and shows
+  /// the cheapest supplier. Employees type prices from the paper invoice.
   Future<void> _prefillPrice(_Line line) async {
     final l = AppLocalizations.of(context);
     final currency = ref.read(currencyProvider);
-    final owner = ref.read(requireSessionProvider).isOwner;
+    if (!ref.read(requireSessionProvider).isOwner) return;
     final history = (await ref.read(accountingProvider).priceHistory(line.product.id))
         .where((h) => h.piecesPerUnit == line.piecesPerUnit)
         .toList();
@@ -172,18 +184,16 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
     final mine = history.where((h) => h.supplierId == _supplier?.id).firstOrNull;
     final last = mine ?? history.first;
     if (line.price.text.isEmpty) line.price.text = moneyInput(last.unitPriceMinor, currency);
-    if (owner) {
-      final suppliers = {
-        for (final s in ref.read(suppliersProvider).value ?? const <SupplierRow>[]) s.id: s.name,
-      };
-      final best = history.reduce((a, b) => b.unitPriceMinor < a.unitPriceMinor ? b : a);
-      line.hint = best.supplierId != last.supplierId && best.unitPriceMinor < last.unitPriceMinor
-          ? l.bestPrice(
-              formatMoney(best.unitPriceMinor, currency),
-              suppliers[best.supplierId] ?? l.none,
-            )
-          : l.lastPrice(formatMoney(last.unitPriceMinor, currency));
-    }
+    final suppliers = {
+      for (final s in ref.read(suppliersProvider).value ?? const <SupplierRow>[]) s.id: s.name,
+    };
+    final best = history.reduce((a, b) => b.unitPriceMinor < a.unitPriceMinor ? b : a);
+    line.hint = best.supplierId != last.supplierId && best.unitPriceMinor < last.unitPriceMinor
+        ? l.bestPrice(
+            formatMoney(best.unitPriceMinor, currency),
+            suppliers[best.supplierId] ?? l.none,
+          )
+        : l.lastPrice(formatMoney(last.unitPriceMinor, currency));
     setState(() {});
   }
 
@@ -214,6 +224,12 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
     final badSale = [for (var i = 0; i < _lines.length; i++) !_lines[i].strip && sale[i] == null];
     if (items.contains(null) || badSale.contains(true)) {
       toast(context, l.errPurchaseLine, error: true);
+      return;
+    }
+    if (_payment == PurchasePayment.cash &&
+        _paidFrom == PaidFrom.drawer &&
+        ref.read(currentShiftProvider).value == null) {
+      toast(context, l.errDrawerClosed, error: true);
       return;
     }
     final discount = _money(_invoiceDiscount, currency);
@@ -263,32 +279,30 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final currency = ref.watch(currencyProvider);
+    ref.watch(currentShiftProvider); // drawer payments need an open till
 
-    return CallbackShortcuts(
-      bindings: {const SingleActivator(LogicalKeyboardKey.f9): () => _busy ? null : _save()},
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          PageHeader(
-            leading: RoundIconButton(
-              icon: DoayaIcons.back,
-              tooltip: l.back,
-              onPressed: () => context.go(Routes.purchases),
-            ),
-            title: l.newPurchase,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        PageHeader(
+          leading: RoundIconButton(
+            icon: DoayaIcons.back,
+            tooltip: l.back,
+            onPressed: () => context.go(Routes.purchases),
           ),
-          Expanded(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Expanded(child: _linesPane(l, currency)),
-                const SizedBox(width: DoayaSpacing.huge),
-                SizedBox(width: DoayaSizes.invoiceWidth, child: _summary(l, currency)),
-              ],
-            ),
+          title: l.newPurchase,
+        ),
+        Expanded(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(child: _linesPane(l, currency)),
+              const SizedBox(width: DoayaSpacing.huge),
+              SizedBox(width: DoayaSizes.invoiceWidth, child: _summary(l, currency)),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -423,7 +437,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
                 field(
                   l.colExpiry,
                   line.expiry,
-                  hint: l.expiryHint,
+                  hint: l.dateFormatHint,
                   onSubmitted: line.strip ? (_) => _searchFocus.requestFocus() : null,
                 ),
                 if (!line.strip) ...[

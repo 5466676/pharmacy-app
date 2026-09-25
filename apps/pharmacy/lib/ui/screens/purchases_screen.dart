@@ -157,7 +157,7 @@ class PurchaseList extends ConsumerWidget {
               ],
             ],
           ),
-          onTap: () => showPurchaseDetail(context, p),
+          onTap: () => showPurchaseDetail(context, p, suppliers[p.supplierId]?.name),
         );
       },
     );
@@ -175,11 +175,11 @@ StatusChip _purchasePaymentChip(AppLocalizations l, PurchaseRow p) {
 }
 
 /// Read-only view of one purchase invoice. Prices only for the owner.
-Future<void> showPurchaseDetail(BuildContext context, PurchaseRow p) {
+Future<void> showPurchaseDetail(BuildContext context, PurchaseRow p, String? supplierName) {
   final l = AppLocalizations.of(context);
   return showDoayaDialog<void>(
     context: context,
-    title: l.newPurchase,
+    title: [l.newPurchase, ?supplierName, ?p.supplierInvoiceNo].join('، '),
     maxWidth: DoayaSizes.wideFormWidth,
     content: _PurchaseDetail(purchase: p),
     actions: [GlassPillButton(label: l.close, onPressed: () => Navigator.of(context).pop())],

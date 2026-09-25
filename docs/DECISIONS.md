@@ -98,3 +98,9 @@ The owner wants every number (prices, quantities, dates, times, the PIN keypad) 
 
 ## 2026-09-25 · English digits in stored text too (schema v4)
 Names, phones, notes, shelves, barcodes and settings are saved with English digits whatever keyboard typed them (`cleanText` / `toLatinDigits`, now in `doaya_core`). Search and filters normalize the query the same way. Migration v4 converts existing master data once, tested from the real v3 schema (`test/fixtures/schema_v3.sql`) and checked on a real database ("أوميغا ٣" → "أوميغا 3"). Ledger tables hold no free-text digits, so they're untouched.
+
+## 2026-09-25 · Purchasing screens: who sees what, and drawer payments
+- Everyone can enter purchase invoices (owner's decision). An employee sees the prices they type from the paper invoice, but never past purchase prices: auto-filling the last price, the cheapest-supplier hint, invoice totals in lists, line costs, supplier balances and statements are owner-only.
+- A new sale price typed on a box line updates the product's box price. Strip lines have no sale-price field; the strip price stays on the product form.
+- Anything paid from the drawer (a cash purchase, a supplier payment) or put into it (a supplier's cash refund) needs an open till, the same rule as selling, so every drawer movement belongs to a shift.
+- F9 saves the purchase invoice through a keyboard handler, not a focus-based shortcut: clicking a button (cash/credit…) took the focus away and F9 stopped working in the real app.

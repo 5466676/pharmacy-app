@@ -132,7 +132,7 @@ Note: I can build and test on Linux here, but **not produce a Windows `.exe`** i
 ### Still open
 - **Receipt printing**: thermal 58/80 mm? (not answered yet)
 
-## Phase 1.5 — Accounting · 🚧 in progress (plan approved 2026-09-25)
+## Phase 1.5 — Accounting · 🚧 steps 1–3 ready for review (plan approved 2026-09-25)
 
 Goal: turn the counter app into a complete pharmacy accounting system (inspired by Karma Soft / Al-Ameen, see `docs/ACCOUNTING_RESEARCH.md`), still fully offline and still built on append-only records so Phase 2 sync stays safe.
 
@@ -190,5 +190,22 @@ Health ministry price-list import · money accounts (drawer / Sham Cash / bank +
 7. Expenses + monthly P&L; the till takes expenses and cash purchases into account.
 8. Automatic backup.
 9. Real Linux build driven end to end + screenshots → **review**.
+
+### Done so far
+- [x] Step 1: `doaya_core` supplier ledger, cost allocation (bonus, discounts, transport), profit, stocktake, P&L (69 core tests).
+- [x] Step 2: schema v5 + migration tested from the real v4 schema + repositories; the till subtracts drawer purchases, supplier payments and expenses and adds supplier cash refunds.
+- [x] Step 3: **المشتريات** in the sidebar (everyone):
+  - **Purchase invoice**: scan/search → line (box or strip), quantity, bonus, purchase price, discount %, expiry, new sale price. Invoice discount, transport, cash or credit, and for cash: from the drawer or from outside. F9 saves from anywhere on the screen.
+  - The owner gets the last price filled in, and a hint when another supplier was cheaper.
+  - **Invoices list**: date, supplier, invoice number, who entered it. Totals and line costs are shown to the owner only.
+  - **Supplier page**: balance, age of the oldest unpaid invoice, statement with running balance (owner only); payment (drawer / outside); **return to supplier** by batch, credited to the account or refunded in cash (the owner gets the batch cost suggested as the value).
+  - Paying from the drawer (purchase, supplier payment, cash refund from a supplier) needs an open till, like selling.
+  - Tests: 58 app tests (invoice flow, supplier page employee/owner, closed-till block). Checked in the real Linux build: `docs/screenshots/phase1_5/`.
+
+### How to review (step 3)
+المشتريات → مورد جديد → فاتورة شراء → scan or search → type quantity, bonus, price… → F9. Then open the supplier: statement, "دفعة للمورد", "مرتجع للمستودع". Sign in as an employee to check the amounts are hidden.
+
+### Question for this review
+- **Receipt printing**: OK to add the `pdf` + `printing` packages (well-maintained, pure Dart/Flutter, no Google services, work offline with any system printer, including 80 mm thermal printers installed in Windows)? The button will be a small print icon on the completed sale, nothing more.
 
 ## Phase 2 — Backend + sync · not started

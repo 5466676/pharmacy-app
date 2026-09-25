@@ -35,6 +35,7 @@ class SupplierScreen extends ConsumerWidget {
     final balance = ledger.balance(supplierId);
     final open = ledger.openDebts(supplierId);
     final now = ref.watch(clockProvider)();
+    ref.watch(currentShiftProvider); // drawer payments need an open till
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -73,37 +74,44 @@ class SupplierScreen extends ConsumerWidget {
           ],
         ),
         if (owner) ...[
-          Row(
-            children: [
-              Expanded(
-                child: StatCard(
-                  icon: DoayaIcons.debts,
-                  label: l.balanceOwed,
-                  value: balance > 0 ? formatMoney(balance, currency) : l.settled,
-                  tone: balance > 0 ? StatusTone.warning : StatusTone.accent,
+          IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: StatCard(
+                    icon: DoayaIcons.debts,
+                    label: l.balanceOwed,
+                    value: balance > 0 ? formatMoney(balance, currency) : l.settled,
+                    tone: balance > 0 ? StatusTone.warning : StatusTone.accent,
+                  ),
                 ),
-              ),
-              const SizedBox(width: DoayaSpacing.l),
-              Expanded(
-                child: StatCard(
-                  icon: DoayaIcons.clock,
-                  label: l.oldestDebt,
-                  value: open.isEmpty ? l.none : l.daysAgo(formatQty(open.first.ageInDays(now))),
-                  caption: open.isEmpty ? null : formatDate(open.first.since),
-                  tone: StatusTone.neutral,
+                const SizedBox(width: DoayaSpacing.l),
+                Expanded(
+                  child: StatCard(
+                    icon: DoayaIcons.clock,
+                    label: l.oldestDebt,
+                    value: switch (open.firstOrNull?.ageInDays(now)) {
+                      null => l.none,
+                      0 => l.periodToday,
+                      final days => l.daysAgo(formatQty(days)),
+                    },
+                    caption: open.isEmpty ? null : formatDate(open.first.since),
+                    tone: StatusTone.neutral,
+                  ),
                 ),
-              ),
-              const SizedBox(width: DoayaSpacing.l),
-              Expanded(
-                child: StatCard(
-                  icon: DoayaIcons.person,
-                  label: l.repNameLabel,
-                  value: supplier.repName ?? l.none,
-                  caption: supplier.phone,
-                  tone: StatusTone.neutral,
+                const SizedBox(width: DoayaSpacing.l),
+                Expanded(
+                  child: StatCard(
+                    icon: DoayaIcons.person,
+                    label: l.repNameLabel,
+                    value: supplier.repName ?? l.none,
+                    caption: supplier.phone,
+                    tone: StatusTone.neutral,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           const SizedBox(height: DoayaSpacing.xl),
         ],
@@ -206,7 +214,11 @@ class SupplierScreen extends ConsumerWidget {
         SagePillButton(label: l.confirm, size: PillSize.small, onPressed: submit),
       ],
     );
-    if (ok != true) return;
+    if (ok != true || !context.mounted) return;
+    if (from == PaidFrom.drawer && ref.read(currentShiftProvider).value == null) {
+      toast(context, l.errDrawerClosed, error: true);
+      return;
+    }
     await ref
         .read(accountingProvider)
         .paySupplier(
@@ -352,6 +364,10 @@ class _SupplierReturnDialogState extends ConsumerState<_SupplierReturnDialog> {
       toast(context, l.errPurchaseLine, error: true);
       return;
     }
+    if (_cash && ref.read(currentShiftProvider).value == null) {
+      toast(context, l.errDrawerClosed, error: true);
+      return;
+    }
     setState(() => _busy = true);
     try {
       await ref
@@ -388,6 +404,8 @@ class _SupplierReturnDialogState extends ConsumerState<_SupplierReturnDialog> {
     final l = AppLocalizations.of(context);
     final currency = ref.watch(currencyProvider);
     final stock = ref.watch(stockProvider).value ?? StockLedger();
+    if (ref.watch(requireSessionProvider).isOwner) ref.watch(costBookProvider);
+    ref.watch(currentShiftProvider); // cash refunds go into the drawer
     final p = _product;
     final batches = p == null ? const <BatchStock>[] : stock.fefo(p.id);
 
@@ -419,7 +437,7 @@ class _SupplierReturnDialogState extends ConsumerState<_SupplierReturnDialog> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: DoayaSpacing.s),
                     child: CaseRow(
-                      initials: '',
+                      initials: initialsOf(r.tradeName),
                       title: r.tradeName,
                       subtitle: formatStock(l, stock.onHand(r.id), r.unitsPerPack),
                       onTap: () => setState(() {
