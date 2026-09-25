@@ -10,16 +10,16 @@ void main() {
   });
 
   test('arithmetic is exact', () {
-    final a = Money(4550, syp); // 45.50
-    expect((a + Money(50, syp)).minor, 4600);
+    const a = Money(4550, syp); // 45.50
+    expect((a + const Money(50, syp)).minor, 4600);
     expect(a.times(3).minor, 13650);
-    expect((a - Money(5000, syp)).isNegative, isTrue);
-    expect(Money(4500, syp).hasFraction, isFalse);
+    expect((a - const Money(5000, syp)).isNegative, isTrue);
+    expect(const Money(4500, syp).hasFraction, isFalse);
     expect(a.hasFraction, isTrue);
   });
 
   test('mixing currencies throws', () {
-    expect(() => Money(1, syp) + Money(1, Currency.usd), throwsArgumentError);
+    expect(() => const Money(1, syp) + const Money(1, Currency.usd), throwsArgumentError);
   });
 
   test('parses Latin and Arabic input', () {

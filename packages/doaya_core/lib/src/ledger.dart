@@ -79,6 +79,8 @@ class StockLedger {
 
   int get eventCount => _seen.length;
 
+  BatchStock? batch(String batchId) => _batches[batchId];
+
   Iterable<BatchStock> batchesOf(String productId) =>
       _batches.values.where((b) => b.productId == productId);
 
