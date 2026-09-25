@@ -74,6 +74,7 @@ class LedgerRepository {
     DateTime? expiry,
     int? unitCostMinor,
     String? note,
+    String? refId,
   }) async {
     final m = _meta(s);
     final e = StockEvent(
@@ -85,6 +86,7 @@ class LedgerRepository {
       expiry: expiry,
       unitCostMinor: unitCostMinor,
       note: note,
+      refId: refId,
     );
     await insertStockEvents([e]);
     return e;
@@ -97,6 +99,7 @@ class LedgerRepository {
     required String productId,
     required int delta,
     String? note,
+    String? refId,
   }) async {
     if (delta == 0) return const [];
     final stock = await loadStock();
@@ -108,7 +111,7 @@ class LedgerRepository {
         ..sort((a, b) => (b.receivedAt ?? DateTime(0)).compareTo(a.receivedAt ?? DateTime(0)));
       if (batches.isEmpty) {
         // Nothing received yet: open a batch instead of adjusting into nothing.
-        return [await receive(s, productId: productId, quantity: delta, note: note)];
+        return [await receive(s, productId: productId, quantity: delta, note: note, refId: refId)];
       }
       parts = [(batches.first.batchId, delta)];
     }
@@ -121,6 +124,7 @@ class LedgerRepository {
           batchId: batch,
           quantity: qty,
           note: note,
+          refId: refId,
         ),
     ];
     await insertStockEvents(events);
@@ -441,6 +445,7 @@ StockEvent stockFromRow(StockEventRow r) => StockEvent(
   unitCostMinor: r.unitCostMinor,
   saleId: r.saleId,
   note: r.note,
+  refId: r.refId,
 );
 
 StockEventsCompanion stockToRow(StockEvent e) => StockEventsCompanion.insert(
@@ -453,6 +458,7 @@ StockEventsCompanion stockToRow(StockEvent e) => StockEventsCompanion.insert(
   unitCostMinor: Value(e.unitCostMinor),
   saleId: Value(e.saleId),
   note: Value(e.note),
+  refId: Value(e.refId),
   deviceId: e.meta.deviceId,
   employeeId: e.meta.employeeId,
   occurredAt: e.meta.occurredAt,

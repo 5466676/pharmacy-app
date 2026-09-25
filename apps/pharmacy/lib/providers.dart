@@ -1,6 +1,7 @@
 import 'package:doaya_core/doaya_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'data/accounting_repository.dart';
 import 'data/catalog_repository.dart';
 import 'data/database.dart';
 import 'data/ledger_repository.dart';
@@ -31,6 +32,27 @@ final ledgerProvider = Provider(
     ids: ref.watch(idsProvider),
     clock: ref.watch(clockProvider),
   ),
+);
+
+final accountingProvider = Provider(
+  (ref) => AccountingRepository(
+    ref.watch(databaseProvider),
+    ref.watch(ledgerProvider),
+    ids: ref.watch(idsProvider),
+    clock: ref.watch(clockProvider),
+  ),
+);
+
+final suppliersProvider = StreamProvider<List<SupplierRow>>(
+  (ref) => ref.watch(accountingProvider).watchSuppliers(),
+);
+
+final supplierLedgerProvider = StreamProvider<SupplierLedger>(
+  (ref) => ref.watch(accountingProvider).watchSupplierLedger(),
+);
+
+final costBookProvider = StreamProvider<CostBook>(
+  (ref) => ref.watch(accountingProvider).watchCostBook(),
 );
 
 final tillProvider = Provider(

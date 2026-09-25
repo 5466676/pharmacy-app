@@ -189,6 +189,39 @@ class TillRepository {
                   t.refund.equals(RefundMethod.cash.wire),
             ))
             .get();
+    final purchases =
+        await (_db.select(_db.purchases)..where(
+              (t) =>
+                  t.employeeId.equals(employeeId) &
+                  t.deviceId.equals(deviceId) &
+                  t.paidFrom.equals(PaidFrom.drawer.wire),
+            ))
+            .get();
+    final supplierPayments =
+        await (_db.select(_db.supplierDebtEvents)..where(
+              (t) =>
+                  t.employeeId.equals(employeeId) &
+                  t.deviceId.equals(deviceId) &
+                  t.type.equals(SupplierDebtEventType.paymentMade.wire) &
+                  t.paidFrom.equals(PaidFrom.drawer.wire),
+            ))
+            .get();
+    final expenses =
+        await (_db.select(_db.expenseEvents)..where(
+              (t) =>
+                  t.employeeId.equals(employeeId) &
+                  t.deviceId.equals(deviceId) &
+                  t.paidFrom.equals(PaidFrom.drawer.wire),
+            ))
+            .get();
+    final supplierRefunds =
+        await (_db.select(_db.supplierReturns)..where(
+              (t) =>
+                  t.employeeId.equals(employeeId) &
+                  t.deviceId.equals(deviceId) &
+                  t.refundedInCash.equals(true),
+            ))
+            .get();
     int sum<T>(Iterable<T> rows, int Function(T) amount) => rows.fold(0, (a, r) => a + amount(r));
     final shiftSales = sales.where((x) => inShift(x.occurredAt));
     return ShiftMovements(
@@ -202,6 +235,14 @@ class TillRepository {
       ),
       debtPayments: sum(payments.where((x) => inShift(x.occurredAt)), (x) => x.amountMinor),
       cashRefunds: sum(refunds.where((x) => inShift(x.occurredAt)), (x) => x.totalMinor),
+      drawerPurchases:
+          sum(purchases.where((x) => inShift(x.occurredAt)), (x) => x.totalMinor) +
+          sum(supplierPayments.where((x) => inShift(x.occurredAt)), (x) => x.amountMinor),
+      drawerExpenses: sum(expenses.where((x) => inShift(x.occurredAt)), (x) => x.amountMinor),
+      supplierCashRefunds: sum(
+        supplierRefunds.where((x) => inShift(x.occurredAt)),
+        (x) => x.totalMinor,
+      ),
     );
   }
 }

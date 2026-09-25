@@ -119,6 +119,9 @@ class StockEvents extends Table {
   DateTimeColumn get occurredAt => dateTime()();
   DateTimeColumn get syncedAt => dateTime().nullable()();
 
+  /// Purchase / supplier return / stocktake that caused it. v5.
+  TextColumn get refId => text().nullable()();
+
   @override
   Set<Column> get primaryKey => {id};
 }
@@ -235,15 +238,188 @@ class TillEvents extends Table {
   Set<Column> get primaryKey => {id};
 }
 
-const _appendOnlyTables = [
-  'stock_events',
-  'sales',
-  'sale_lines',
-  'debt_events',
-  'returns',
-  'return_lines',
-  'till_events',
-];
+// ─── v5: suppliers, purchases, expenses, stocktakes, purchase orders ─────────
+
+@DataClassName('SupplierRow')
+class Suppliers extends Table {
+  TextColumn get id => text()();
+  TextColumn get name => text()();
+  TextColumn get phone => text().nullable()();
+  TextColumn get repName => text().nullable()();
+  TextColumn get notes => text().nullable()();
+  IntColumn get creditLimitMinor => integer().nullable()();
+  BoolColumn get active => boolean().withDefault(const Constant(true))();
+  DateTimeColumn get createdAt => dateTime()();
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+@DataClassName('PurchaseRow')
+class Purchases extends Table {
+  TextColumn get id => text()();
+  TextColumn get supplierId => text()();
+  TextColumn get supplierInvoiceNo => text().nullable()();
+
+  /// `cash` | `credit`.
+  TextColumn get payment => text()();
+
+  /// `drawer` | `outside` (cash only).
+  TextColumn get paidFrom => text().nullable()();
+  TextColumn get currencyCode => text()();
+  IntColumn get grossMinor => integer()();
+  IntColumn get lineDiscountsMinor => integer()();
+  IntColumn get invoiceDiscountMinor => integer()();
+  IntColumn get transportMinor => integer()();
+  IntColumn get totalMinor => integer()();
+  TextColumn get deviceId => text()();
+  TextColumn get employeeId => text()();
+  DateTimeColumn get occurredAt => dateTime()();
+  DateTimeColumn get syncedAt => dateTime().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+@DataClassName('PurchaseLineRow')
+class PurchaseLines extends Table {
+  TextColumn get id => text()();
+  TextColumn get purchaseId => text().references(Purchases, #id)();
+  TextColumn get productId => text()();
+  IntColumn get quantity => integer()();
+  IntColumn get bonus => integer()();
+  IntColumn get piecesPerUnit => integer()();
+  IntColumn get unitPriceMinor => integer()();
+  IntColumn get discountBasisPoints => integer()();
+
+  /// True cost of the line after all discounts and its transport share.
+  IntColumn get costMinor => integer()();
+
+  /// Batch opened by this line (its `received` event id).
+  TextColumn get batchId => text()();
+  DateTimeColumn get expiry => dateTime().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+@DataClassName('SupplierDebtEventRow')
+class SupplierDebtEvents extends Table {
+  TextColumn get id => text()();
+
+  /// `purchase_on_credit` | `payment_made` | `return_credited`.
+  TextColumn get type => text()();
+  TextColumn get supplierId => text()();
+  IntColumn get amountMinor => integer()();
+  TextColumn get currencyCode => text()();
+  TextColumn get refId => text().nullable()();
+  TextColumn get note => text().nullable()();
+
+  /// For `payment_made`: `drawer` | `outside`.
+  TextColumn get paidFrom => text().nullable()();
+  TextColumn get deviceId => text()();
+  TextColumn get employeeId => text()();
+  DateTimeColumn get occurredAt => dateTime()();
+  DateTimeColumn get syncedAt => dateTime().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+@DataClassName('SupplierReturnRow')
+class SupplierReturns extends Table {
+  TextColumn get id => text()();
+  TextColumn get supplierId => text()();
+  IntColumn get totalMinor => integer()();
+  BoolColumn get refundedInCash => boolean()();
+  TextColumn get note => text().nullable()();
+  TextColumn get deviceId => text()();
+  TextColumn get employeeId => text()();
+  DateTimeColumn get occurredAt => dateTime()();
+  DateTimeColumn get syncedAt => dateTime().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+@DataClassName('ExpenseEventRow')
+class ExpenseEvents extends Table {
+  TextColumn get id => text()();
+  TextColumn get category => text()();
+  IntColumn get amountMinor => integer()();
+  TextColumn get currencyCode => text()();
+
+  /// `drawer` | `outside`.
+  TextColumn get paidFrom => text()();
+  TextColumn get note => text().nullable()();
+  TextColumn get deviceId => text()();
+  TextColumn get employeeId => text()();
+  DateTimeColumn get occurredAt => dateTime()();
+  DateTimeColumn get syncedAt => dateTime().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// Stocktake session header (mutable: it gets closed/applied).
+@DataClassName('StocktakeRow')
+class Stocktakes extends Table {
+  TextColumn get id => text()();
+  TextColumn get scope => text().nullable()();
+  TextColumn get startedBy => text()();
+  DateTimeColumn get startedAt => dateTime()();
+  DateTimeColumn get appliedAt => dateTime().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+@DataClassName('StocktakeCountRow')
+class StocktakeCounts extends Table {
+  TextColumn get id => text()();
+  TextColumn get stocktakeId => text().references(Stocktakes, #id)();
+  TextColumn get productId => text()();
+  IntColumn get countedPieces => integer()();
+  IntColumn get systemPiecesAtCount => integer()();
+  TextColumn get deviceId => text()();
+  TextColumn get employeeId => text()();
+  DateTimeColumn get occurredAt => dateTime()();
+  DateTimeColumn get syncedAt => dateTime().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// Purchase order draft to a supplier (mutable until received).
+@DataClassName('PurchaseOrderRow')
+class PurchaseOrders extends Table {
+  TextColumn get id => text()();
+  TextColumn get supplierId => text()();
+
+  /// `draft` | `sent` | `received`.
+  TextColumn get status => text()();
+  TextColumn get note => text().nullable()();
+  DateTimeColumn get createdAt => dateTime()();
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+@DataClassName('PurchaseOrderLineRow')
+class PurchaseOrderLines extends Table {
+  TextColumn get id => text()();
+  TextColumn get orderId => text().references(PurchaseOrders, #id)();
+  TextColumn get productId => text()();
+  IntColumn get quantity => integer()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+// Append-only tables are guarded by triggers created in _createLedgerGuards,
+// _guardReturns, _guardTill and _guardAccounting.
 
 @DriftDatabase(
   tables: [
@@ -260,6 +436,16 @@ const _appendOnlyTables = [
     Returns,
     ReturnLines,
     TillEvents,
+    Suppliers,
+    Purchases,
+    PurchaseLines,
+    SupplierDebtEvents,
+    SupplierReturns,
+    ExpenseEvents,
+    Stocktakes,
+    StocktakeCounts,
+    PurchaseOrders,
+    PurchaseOrderLines,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -275,7 +461,7 @@ class AppDatabase extends _$AppDatabase {
   );
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -310,6 +496,31 @@ class AppDatabase extends _$AppDatabase {
         ''');
       }
       if (from < 4) await _latinDigitsInMasterData();
+      if (from < 5) {
+        // v5: accounting (suppliers, purchases, expenses, stocktakes, orders).
+        await m.addColumn(stockEvents, stockEvents.refId);
+        for (final TableInfo<Table, dynamic> t in [
+          suppliers,
+          purchases,
+          purchaseLines,
+          supplierDebtEvents,
+          supplierReturns,
+          expenseEvents,
+          stocktakes,
+          stocktakeCounts,
+          purchaseOrders,
+          purchaseOrderLines,
+        ]) {
+          await m.createTable(t);
+        }
+        // Re-create the stock_events guard so ref_id is frozen too.
+        await customStatement('DROP TRIGGER IF EXISTS stock_events_no_update');
+        await _guardUpdate('stock_events');
+        await _guardAccounting();
+        for (final s in _accountingIndexes) {
+          await customStatement(s);
+        }
+      }
     },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
@@ -360,7 +571,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<void> _createLedgerGuards() async {
-    for (final t in _appendOnlyTables.where((t) => !t.startsWith('return') && t != 'till_events')) {
+    for (final t in const ['stock_events', 'sales', 'sale_lines', 'debt_events']) {
       await customStatement('''
         CREATE TRIGGER ${t}_no_delete BEFORE DELETE ON $t
         BEGIN SELECT RAISE(ABORT, 'append-only: $t'); END;
@@ -380,6 +591,56 @@ class AppDatabase extends _$AppDatabase {
     ''');
     await _guardReturns();
     await _guardTill();
+    await _guardAccounting();
+  }
+
+  static const _accountingIndexes = [
+    'CREATE INDEX purchases_supplier ON purchases (supplier_id)',
+    'CREATE INDEX purchases_occurred ON purchases (occurred_at)',
+    'CREATE INDEX purchase_lines_purchase ON purchase_lines (purchase_id)',
+    'CREATE INDEX purchase_lines_product ON purchase_lines (product_id)',
+    'CREATE INDEX purchase_lines_batch ON purchase_lines (batch_id)',
+    'CREATE INDEX supplier_debt_events_supplier ON supplier_debt_events (supplier_id)',
+    'CREATE INDEX expense_events_occurred ON expense_events (occurred_at)',
+    'CREATE INDEX stocktake_counts_session ON stocktake_counts (stocktake_id)',
+    'CREATE INDEX stock_events_ref ON stock_events (ref_id)',
+  ];
+
+  Future<void> _guardUpdate(String table) => customStatement('''
+    CREATE TRIGGER ${table}_no_update BEFORE UPDATE ON $table
+    WHEN NOT (${_sameColumnsExceptSynced(table)})
+    BEGIN SELECT RAISE(ABORT, 'append-only: $table'); END;
+  ''');
+
+  /// v5 append-only tables: no DELETE; UPDATE only of `synced_at` (headers
+  /// and events) or never (line tables).
+  Future<void> _guardAccounting() async {
+    for (final t in const [
+      'purchases',
+      'purchase_lines',
+      'supplier_debt_events',
+      'supplier_returns',
+      'expense_events',
+      'stocktake_counts',
+    ]) {
+      await customStatement('''
+        CREATE TRIGGER ${t}_no_delete BEFORE DELETE ON $t
+        BEGIN SELECT RAISE(ABORT, 'append-only: $t'); END;
+      ''');
+    }
+    for (final t in const [
+      'purchases',
+      'supplier_debt_events',
+      'supplier_returns',
+      'expense_events',
+      'stocktake_counts',
+    ]) {
+      await _guardUpdate(t);
+    }
+    await customStatement('''
+      CREATE TRIGGER purchase_lines_no_update BEFORE UPDATE ON purchase_lines
+      BEGIN SELECT RAISE(ABORT, 'append-only: purchase_lines'); END;
+    ''');
   }
 
   Future<void> _guardTill() async {
@@ -416,7 +677,7 @@ class AppDatabase extends _$AppDatabase {
     final cols = switch (table) {
       'stock_events' => [
         'id', 'type', 'product_id', 'batch_id', 'quantity', 'expiry', 'unit_cost_minor', //
-        'sale_id', 'note', 'device_id', 'employee_id', 'occurred_at',
+        'sale_id', 'note', 'device_id', 'employee_id', 'occurred_at', 'ref_id',
       ],
       'sales' => [
         'id', 'customer_id', 'payment', 'currency_code', 'subtotal_minor', 'discount_minor', //
@@ -434,6 +695,27 @@ class AppDatabase extends _$AppDatabase {
         'id', 'type', 'shift_id', 'amount_minor', 'note', 'device_id', 'employee_id', //
         'occurred_at',
       ],
+      'purchases' => [
+        'id', 'supplier_id', 'supplier_invoice_no', 'payment', 'paid_from', 'currency_code', //
+        'gross_minor', 'line_discounts_minor', 'invoice_discount_minor', 'transport_minor',
+        'total_minor', 'device_id', 'employee_id', 'occurred_at',
+      ],
+      'supplier_debt_events' => [
+        'id', 'type', 'supplier_id', 'amount_minor', 'currency_code', 'ref_id', 'note', //
+        'paid_from', 'device_id', 'employee_id', 'occurred_at',
+      ],
+      'supplier_returns' => [
+        'id', 'supplier_id', 'total_minor', 'refunded_in_cash', 'note', 'device_id', //
+        'employee_id', 'occurred_at',
+      ],
+      'expense_events' => [
+        'id', 'category', 'amount_minor', 'currency_code', 'paid_from', 'note', 'device_id', //
+        'employee_id', 'occurred_at',
+      ],
+      'stocktake_counts' => [
+        'id', 'stocktake_id', 'product_id', 'counted_pieces', 'system_pieces_at_count', //
+        'device_id', 'employee_id', 'occurred_at',
+      ],
       _ => throw ArgumentError(table),
     };
     return cols.map((c) => 'OLD.$c IS NEW.$c').join(' AND ');
@@ -450,6 +732,7 @@ class AppDatabase extends _$AppDatabase {
       'CREATE INDEX product_barcodes_product ON product_barcodes (product_id)',
       'CREATE INDEX return_lines_sale_line ON return_lines (sale_line_id)',
       'CREATE INDEX till_events_shift ON till_events (shift_id)',
+      ..._accountingIndexes,
     ]) {
       await customStatement(s);
     }
