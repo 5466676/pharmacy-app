@@ -36,7 +36,7 @@ apps/pharmacy                                Flutter pharmacy app (Phase 1: offl
 apps/patient  apps/admin                     Flutter apps (Phase 3/4)
 packages/doaya_ui                            design system + component gallery (example/)
 packages/doaya_core                          pure-Dart ids, money, ledgers, FEFO, sales
-backend/                                     FastAPI (Phase 2)
+backend/                                     FastAPI server (Phase 2): runs on the pharmacy PC, LAN sync
 design/                                      reference HTML mockups — read-only
 docs/                                        SPEC, DECISIONS, PROGRESS
 ```
@@ -51,6 +51,7 @@ cd apps/pharmacy && dart run build_runner build   # after editing lib/data/datab
 cd apps/pharmacy && flutter test && flutter run -d linux   # or -d windows
 cd packages/doaya_ui/example && flutter run -d chrome   # component gallery (or -d windows / linux)
 flutter analyze                               # at repo root
+cd backend && .venv/bin/pytest && .venv/bin/ruff check .   # server (needs PostgreSQL, see backend/README.md)
 flutter build web --no-web-resources-cdn      # ALWAYS this flag: no Google CDNs (see DECISIONS)
 ```
 Prefer ":" or "،" over "·" next to numbers (clearer at the counter).

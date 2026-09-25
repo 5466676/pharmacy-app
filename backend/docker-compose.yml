@@ -1,0 +1,21 @@
+# For Linux servers and development. On the pharmacy's Windows PC the server
+# runs as a service instead (install guide in Phase 2, step 8).
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: doaya
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-doaya}
+      POSTGRES_DB: doaya
+    volumes: [dbdata:/var/lib/postgresql/data]
+    restart: unless-stopped
+  api:
+    build: .
+    environment:
+      DOAYA_DATABASE_URL: postgresql+psycopg://doaya:${DB_PASSWORD:-doaya}@db:5432/doaya
+      DOAYA_JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET}
+    ports: ["8000:8000", "47800:47800/udp"]
+    depends_on: [db]
+    restart: unless-stopped
+volumes:
+  dbdata:
