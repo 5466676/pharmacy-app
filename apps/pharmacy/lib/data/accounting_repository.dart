@@ -334,6 +334,139 @@ class AccountingRepository {
     );
   }
 
+  // ─── Shortages & purchase orders ─────────────────────────────────────────
+
+  /// Products to reorder (see [findShortages]); sales counted over the last
+  /// [windowDays].
+  Future<List<Shortage>> shortages({int windowDays = 30, int coverDays = 14}) async {
+    final products = await (_db.select(_db.products)..where((t) => t.active.equals(true))).get();
+    final stock = await _ledger.loadStock();
+    final since = _clock().toUtc().subtract(Duration(days: windowDays));
+    final moves =
+        await (_db.select(_db.stockEvents)..where(
+              (t) =>
+                  t.type.isIn([StockEventType.sold.wire, StockEventType.returned.wire]) &
+                  t.occurredAt.isBiggerOrEqualValue(since),
+            ))
+            .get();
+    final sold = <String, int>{};
+    for (final m in moves) {
+      sold[m.productId] = (sold[m.productId] ?? 0) - m.quantity;
+    }
+    return findShortages(
+      [
+        for (final p in products)
+          ShortageInput(
+            productId: p.id,
+            onHandPieces: stock.onHand(p.id),
+            minimumPieces: p.lowStockThreshold * (p.unitsPerPack < 1 ? 1 : p.unitsPerPack),
+            soldPiecesInWindow: sold[p.id] ?? 0,
+            piecesPerPack: p.unitsPerPack,
+          ),
+      ],
+      windowDays: windowDays,
+      coverDays: coverDays,
+    );
+  }
+
+  /// The latest purchase line of every product (who we bought it from last,
+  /// at what price per unit).
+  Future<Map<String, ({String supplierId, int unitPriceMinor, int piecesPerUnit})>>
+  lastPurchases() async {
+    final q =
+        _db.select(_db.purchaseLines).join([
+            innerJoin(_db.purchases, _db.purchases.id.equalsExp(_db.purchaseLines.purchaseId)),
+          ])
+          ..where(_db.purchaseLines.quantity.isBiggerThanValue(0))
+          ..orderBy([OrderingTerm.desc(_db.purchases.occurredAt)]);
+    final out = <String, ({String supplierId, int unitPriceMinor, int piecesPerUnit})>{};
+    for (final r in await q.get()) {
+      final l = r.readTable(_db.purchaseLines);
+      out.putIfAbsent(
+        l.productId,
+        () => (
+          supplierId: r.readTable(_db.purchases).supplierId,
+          unitPriceMinor: l.unitPriceMinor,
+          piecesPerUnit: l.piecesPerUnit,
+        ),
+      );
+    }
+    return out;
+  }
+
+  /// One draft order per supplier: supplierId → [(productId, boxes)].
+  Future<List<String>> createOrders(Map<String, List<(String, int)>> bySupplier) {
+    return _db.transaction(() async {
+      final ids = <String>[];
+      final now = _clock();
+      for (final MapEntry(key: supplierId, value: lines) in bySupplier.entries) {
+        final wanted = lines.where((x) => x.$2 > 0).toList();
+        if (wanted.isEmpty) continue;
+        final id = _ids.generate();
+        await _db
+            .into(_db.purchaseOrders)
+            .insert(
+              PurchaseOrdersCompanion.insert(
+                id: id,
+                supplierId: supplierId,
+                status: 'draft',
+                createdAt: now,
+                updatedAt: now,
+              ),
+            );
+        for (final (productId, qty) in wanted) {
+          await _db
+              .into(_db.purchaseOrderLines)
+              .insert(
+                PurchaseOrderLinesCompanion.insert(
+                  id: _ids.generate(),
+                  orderId: id,
+                  productId: productId,
+                  quantity: qty,
+                ),
+              );
+        }
+        ids.add(id);
+      }
+      return ids;
+    });
+  }
+
+  Stream<List<PurchaseOrderRow>> watchOrders() =>
+      (_db.select(_db.purchaseOrders)..orderBy([(t) => OrderingTerm.desc(t.createdAt)])).watch();
+
+  Stream<List<PurchaseOrderLineRow>> watchOrderLines() =>
+      _db.select(_db.purchaseOrderLines).watch();
+
+  Future<PurchaseOrderRow?> order(String id) =>
+      (_db.select(_db.purchaseOrders)..where((t) => t.id.equals(id))).getSingleOrNull();
+
+  Future<List<PurchaseOrderLineRow>> orderLines(String orderId) =>
+      (_db.select(_db.purchaseOrderLines)..where((t) => t.orderId.equals(orderId))).get();
+
+  /// Changes a line's quantity; 0 removes it.
+  Future<void> setOrderLineQuantity(String lineId, int quantity) async {
+    final q = _db.purchaseOrderLines;
+    if (quantity <= 0) {
+      await (_db.delete(q)..where((t) => t.id.equals(lineId))).go();
+    } else {
+      await (_db.update(q)..where((t) => t.id.equals(lineId))).write(
+        PurchaseOrderLinesCompanion(quantity: Value(quantity)),
+      );
+    }
+  }
+
+  /// `draft` → `sent` (copied to the supplier) → `received` (became an invoice).
+  Future<void> setOrderStatus(String orderId, String status) =>
+      (_db.update(_db.purchaseOrders)..where((t) => t.id.equals(orderId))).write(
+        PurchaseOrdersCompanion(status: Value(status), updatedAt: Value(_clock())),
+      );
+
+  Future<void> deleteOrder(String orderId) => _db.transaction(() async {
+    await (_db.delete(_db.purchaseOrderLines)..where((t) => t.orderId.equals(orderId))).go();
+    await (_db.delete(_db.purchaseOrders)..where((t) => t.id.equals(orderId))).go();
+  });
+
   // ─── Returns to supplier ──────────────────────────────────────────────────
 
   Future<CompletedSupplierReturn> returnToSupplier(

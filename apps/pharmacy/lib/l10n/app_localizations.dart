@@ -2239,6 +2239,150 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'تكلفة ناقصة'**
   String get costIncomplete;
+
+  /// No description provided for @tabShortages.
+  ///
+  /// In ar, this message translates to:
+  /// **'النواقص'**
+  String get tabShortages;
+
+  /// No description provided for @tabOrders.
+  ///
+  /// In ar, this message translates to:
+  /// **'الطلبيات'**
+  String get tabOrders;
+
+  /// No description provided for @reasonOutOfStock.
+  ///
+  /// In ar, this message translates to:
+  /// **'خالص'**
+  String get reasonOutOfStock;
+
+  /// No description provided for @reasonBelowMinimum.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحت الحد الأدنى'**
+  String get reasonBelowMinimum;
+
+  /// No description provided for @reasonSellingFast.
+  ///
+  /// In ar, this message translates to:
+  /// **'عم يخلص بسرعة'**
+  String get reasonSellingFast;
+
+  /// No description provided for @runsOutIn.
+  ///
+  /// In ar, this message translates to:
+  /// **'بيخلص خلال {days} يوم'**
+  String runsOutIn(String days);
+
+  /// No description provided for @orderQtyBoxes.
+  ///
+  /// In ar, this message translates to:
+  /// **'الطلب (علبة)'**
+  String get orderQtyBoxes;
+
+  /// No description provided for @noShortages.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما في نواقص، كل شي متوفر'**
+  String get noShortages;
+
+  /// No description provided for @createOrders.
+  ///
+  /// In ar, this message translates to:
+  /// **'اعمل الطلبيات ({count})'**
+  String createOrders(String count);
+
+  /// No description provided for @ordersCreated.
+  ///
+  /// In ar, this message translates to:
+  /// **'انعملت {count} طلبية'**
+  String ordersCreated(String count);
+
+  /// No description provided for @errShortageNeedsSupplier.
+  ///
+  /// In ar, this message translates to:
+  /// **'في أصناف بدون مورد: اختار المورد أو شيل التحديد عنها'**
+  String get errShortageNeedsSupplier;
+
+  /// No description provided for @noOrders.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما في طلبيات'**
+  String get noOrders;
+
+  /// No description provided for @orderDraft.
+  ///
+  /// In ar, this message translates to:
+  /// **'مسودة'**
+  String get orderDraft;
+
+  /// No description provided for @orderSent.
+  ///
+  /// In ar, this message translates to:
+  /// **'انبعتت'**
+  String get orderSent;
+
+  /// No description provided for @orderReceived.
+  ///
+  /// In ar, this message translates to:
+  /// **'استلمناها'**
+  String get orderReceived;
+
+  /// No description provided for @itemsCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} صنف'**
+  String itemsCount(String count);
+
+  /// No description provided for @orderTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلبية {supplier}'**
+  String orderTitle(String supplier);
+
+  /// No description provided for @copyOrder.
+  ///
+  /// In ar, this message translates to:
+  /// **'انسخ الطلبية'**
+  String get copyOrder;
+
+  /// No description provided for @orderCopied.
+  ///
+  /// In ar, this message translates to:
+  /// **'انسخت الطلبية: الصقها بواتساب أو تلغرام'**
+  String get orderCopied;
+
+  /// No description provided for @receiveOrder.
+  ///
+  /// In ar, this message translates to:
+  /// **'وصلت: فاتورة شراء'**
+  String get receiveOrder;
+
+  /// No description provided for @deleteOrder.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف'**
+  String get deleteOrder;
+
+  /// No description provided for @orderMessageHeader.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلبية من {pharmacy}'**
+  String orderMessageHeader(String pharmacy);
+
+  /// No description provided for @orderMessageDate.
+  ///
+  /// In ar, this message translates to:
+  /// **'التاريخ: {date}'**
+  String orderMessageDate(String date);
+
+  /// No description provided for @orderMessageThanks.
+  ///
+  /// In ar, this message translates to:
+  /// **'ويعطيكن العافية'**
+  String get orderMessageThanks;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -36,6 +36,8 @@ abstract final class Routes {
   static const purchases = '/purchases';
   static const newPurchase = '$purchases/new';
   static String newPurchaseFrom(String supplierId) => '$newPurchase?supplier=$supplierId';
+  static String purchaseFromOrder(String orderId) => '$newPurchase?order=$orderId';
+  static const shortages = '$purchases?tab=shortages';
   static String supplier(String id) => '$purchases/supplier/$id';
 
   static String product(String id) => '$inventory/product/$id';
@@ -95,12 +97,21 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: Routes.purchases,
-            pageBuilder: (_, _) => const NoTransitionPage(child: PurchasesScreen()),
+            pageBuilder: (_, s) => NoTransitionPage(
+              child: PurchasesScreen(
+                initialTab: PurchasesTab.values.firstWhere(
+                  (t) => t.name == s.uri.queryParameters['tab'],
+                  orElse: () => PurchasesTab.invoices,
+                ),
+              ),
+            ),
             routes: [
               GoRoute(
                 path: 'new',
-                builder: (_, s) =>
-                    PurchaseFormScreen(supplierId: s.uri.queryParameters['supplier']),
+                builder: (_, s) => PurchaseFormScreen(
+                  supplierId: s.uri.queryParameters['supplier'],
+                  orderId: s.uri.queryParameters['order'],
+                ),
               ),
               GoRoute(
                 path: 'supplier/:id',

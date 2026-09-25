@@ -75,9 +75,13 @@ class _Line {
 /// Purchase invoice entry: supplier, lines (quantity, bonus, price, discount,
 /// expiry, new sale price), invoice discount and transport, cash or credit.
 class PurchaseFormScreen extends ConsumerStatefulWidget {
-  const PurchaseFormScreen({super.key, this.supplierId});
+  const PurchaseFormScreen({super.key, this.supplierId, this.orderId});
 
   final String? supplierId;
+
+  /// A purchase order being received: its supplier and lines are filled in,
+  /// and it's marked received when the invoice is saved.
+  final String? orderId;
 
   @override
   ConsumerState<PurchaseFormScreen> createState() => _PurchaseFormScreenState();
@@ -106,6 +110,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
         if (mounted) setState(() => _supplier = s);
       });
     }
+    if (widget.orderId != null) _loadOrder(widget.orderId!);
   }
 
   /// F9 saves wherever the focus is (after clicking a button too), unless a
@@ -131,6 +136,22 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
     super.dispose();
   }
 
+  Future<void> _loadOrder(String orderId) async {
+    final acc = ref.read(accountingProvider);
+    final order = await acc.order(orderId);
+    if (order == null) return;
+    final supplier = await acc.supplier(order.supplierId);
+    final lines = await acc.orderLines(orderId);
+    final catalog = ref.read(catalogProvider);
+    if (!mounted) return;
+    setState(() => _supplier = supplier);
+    for (final x in lines) {
+      final p = await catalog.byId(x.productId);
+      if (p == null || !mounted) continue;
+      await _add(p, strip: false, quantity: x.quantity);
+    }
+  }
+
   Future<void> _runSearch(String q) async {
     final r = q.trim().isEmpty ? const <ProductRow>[] : await ref.read(catalogProvider).search(q);
     if (mounted) setState(() => _results = r);
@@ -153,13 +174,14 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
     await _add(r.first, strip: false);
   }
 
-  Future<void> _add(ProductRow p, {required bool strip}) async {
+  Future<void> _add(ProductRow p, {required bool strip, int quantity = 1}) async {
     final currency = ref.read(currencyProvider);
     final line = _Line(
       p,
       strip: strip,
       salePrice: moneyInput(strip ? (p.stripPriceMinor ?? p.priceMinor) : p.priceMinor, currency),
     );
+    line.qty.text = '$quantity';
     setState(() {
       _lines.add(line);
       _results = const [];
@@ -259,6 +281,9 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
             supplierInvoiceNo: _invoiceNo.text,
             newSalePrices: newPrices,
           );
+      if (widget.orderId != null) {
+        await ref.read(accountingProvider).setOrderStatus(widget.orderId!, 'received');
+      }
       if (!mounted) return;
       toast(context, l.purchaseSaved);
       context.go(Routes.purchases);

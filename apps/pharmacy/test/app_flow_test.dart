@@ -623,6 +623,73 @@ void main() {
       await unmount(tester);
     });
 
+    testWidgets('shortage → order per supplier → copied for WhatsApp → received as an invoice', (
+      tester,
+    ) async {
+      String? copied;
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform, (
+        call,
+      ) async {
+        if (call.method == 'Clipboard.setData') {
+          copied = (call.arguments as Map)['text'] as String;
+        }
+        return null;
+      });
+      addTearDown(
+        () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          SystemChannels.platform,
+          null,
+        ),
+      );
+      final (device, supplier) = await seedSupplier(tester);
+      await pumpApp(tester);
+      container.read(sessionProvider.notifier).signIn(device, owner);
+      await settle(tester);
+      container.read(routerProvider).go(Routes.shortages);
+      await settle(tester);
+      // 5 boxes on hand, minimum 5 → under the minimum; 1 box suggested.
+      expect(find.text('تحت الحد الأدنى'), findsOneWidget);
+
+      await tester.tap(find.text('اعمل الطلبيات (1)'));
+      await settle(tester);
+      expect(find.textContaining('في أصناف بدون مورد'), findsOneWidget);
+
+      await tester.tap(find.text('اختار المورد'));
+      await settle(tester);
+      await tester.tap(find.text('مستودع النور'));
+      await settle(tester);
+      await tester.tap(find.text('اعمل الطلبيات (1)'));
+      await settle(tester);
+      expect(find.text('مسودة'), findsOneWidget); // switched to the orders tab
+
+      await tester.tap(find.text('مستودع النور'));
+      await settle(tester);
+      await tester.tap(find.text('انسخ الطلبية'));
+      await settle(tester);
+      expect(copied, contains('1. Amoxil 500 mg: 1 علبة'));
+      expect(copied, contains('طلبية من'));
+      expect(find.text('انبعتت'), findsWidgets);
+
+      await tester.tap(find.text('وصلت: فاتورة شراء'));
+      await settle(tester);
+      expect(find.text('Amoxil 500 mg'), findsOneWidget); // line filled in
+      await tester.enterText(
+        find.descendant(
+          of: find.widgetWithText(GlassTextField, 'سعر الشراء'),
+          matching: find.byType(TextField),
+        ),
+        '30',
+      );
+      await tester.sendKeyEvent(LogicalKeyboardKey.f9);
+      await settle(tester);
+      expect(find.text('انحفظت فاتورة الشراء'), findsOneWidget);
+      final stock = await tester.runAsync(() => LedgerRepository(db).loadStock());
+      expect(stock!.onHand(amox.id), 6);
+      final order = await tester.runAsync(() => db.select(db.purchaseOrders).getSingle());
+      expect(order!.status, 'received');
+      await unmount(tester);
+    });
+
     testWidgets('solid theme on desktop: no BackdropFilter anywhere', (tester) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.windows;
       await signInAndOpenPos(tester);

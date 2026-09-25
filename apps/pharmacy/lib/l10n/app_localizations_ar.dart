@@ -1177,4 +1177,90 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get costIncomplete => 'تكلفة ناقصة';
+
+  @override
+  String get tabShortages => 'النواقص';
+
+  @override
+  String get tabOrders => 'الطلبيات';
+
+  @override
+  String get reasonOutOfStock => 'خالص';
+
+  @override
+  String get reasonBelowMinimum => 'تحت الحد الأدنى';
+
+  @override
+  String get reasonSellingFast => 'عم يخلص بسرعة';
+
+  @override
+  String runsOutIn(String days) {
+    return 'بيخلص خلال $days يوم';
+  }
+
+  @override
+  String get orderQtyBoxes => 'الطلب (علبة)';
+
+  @override
+  String get noShortages => 'ما في نواقص، كل شي متوفر';
+
+  @override
+  String createOrders(String count) {
+    return 'اعمل الطلبيات ($count)';
+  }
+
+  @override
+  String ordersCreated(String count) {
+    return 'انعملت $count طلبية';
+  }
+
+  @override
+  String get errShortageNeedsSupplier => 'في أصناف بدون مورد: اختار المورد أو شيل التحديد عنها';
+
+  @override
+  String get noOrders => 'ما في طلبيات';
+
+  @override
+  String get orderDraft => 'مسودة';
+
+  @override
+  String get orderSent => 'انبعتت';
+
+  @override
+  String get orderReceived => 'استلمناها';
+
+  @override
+  String itemsCount(String count) {
+    return '$count صنف';
+  }
+
+  @override
+  String orderTitle(String supplier) {
+    return 'طلبية $supplier';
+  }
+
+  @override
+  String get copyOrder => 'انسخ الطلبية';
+
+  @override
+  String get orderCopied => 'انسخت الطلبية: الصقها بواتساب أو تلغرام';
+
+  @override
+  String get receiveOrder => 'وصلت: فاتورة شراء';
+
+  @override
+  String get deleteOrder => 'حذف';
+
+  @override
+  String orderMessageHeader(String pharmacy) {
+    return 'طلبية من $pharmacy';
+  }
+
+  @override
+  String orderMessageDate(String date) {
+    return 'التاريخ: $date';
+  }
+
+  @override
+  String get orderMessageThanks => 'ويعطيكن العافية';
 }

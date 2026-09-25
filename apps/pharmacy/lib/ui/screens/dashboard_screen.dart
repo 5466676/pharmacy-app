@@ -109,7 +109,7 @@ class DashboardScreen extends ConsumerWidget {
                 value: formatQty(low.length),
                 caption: l.statProductsCount(formatQty(low.length)),
                 tone: low.isEmpty ? StatusTone.neutral : StatusTone.danger,
-                onTap: () => context.go(Routes.inventory),
+                onTap: () => context.go(Routes.shortages),
               ),
               // Owner only: profit and what we owe suppliers.
               if (session.isOwner) ...[

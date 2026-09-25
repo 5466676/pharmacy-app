@@ -157,6 +157,35 @@ void main() {
       expect(stockValue(await ledger.loadStock(), await acc.costBook()).costMinor, 25000);
     });
 
+    test('shortages and purchase orders: create per supplier, edit, receive, delete', () async {
+      // Amoxil: none in stock, minimum 5 boxes → out of stock, 6 boxes suggested.
+      var list = await acc.shortages();
+      expect(list.single.productId, amox.id);
+      expect((list.single.reason, list.single.suggestedPacks), (ShortageReason.outOfStock, 6));
+      expect(await acc.lastPurchases(), isEmpty);
+
+      await buy(); // 12 pieces from Ibn Sina at 30.00
+      list = await acc.shortages();
+      expect(list, isEmpty); // 12 > minimum 5
+      expect((await acc.lastPurchases())[amox.id]!.supplierId, ibnSina.id);
+
+      final ids = await acc.createOrders({
+        ibnSina.id: [(amox.id, 6)],
+        'empty-supplier': [(amox.id, 0)], // nothing wanted → no order
+      });
+      expect(ids, hasLength(1));
+      final line = (await acc.orderLines(ids.single)).single;
+      expect(line.quantity, 6);
+      await acc.setOrderLineQuantity(line.id, 8);
+      expect((await acc.orderLines(ids.single)).single.quantity, 8);
+      await acc.setOrderStatus(ids.single, 'sent');
+      expect((await acc.order(ids.single))!.status, 'sent');
+      await acc.setOrderLineQuantity(line.id, 0);
+      expect(await acc.orderLines(ids.single), isEmpty);
+      await acc.deleteOrder(ids.single);
+      expect(await acc.order(ids.single), isNull);
+    });
+
     test('payment and return to supplier update the statement', () async {
       final p = await buy();
       await acc.paySupplier(
