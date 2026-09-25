@@ -9,10 +9,19 @@ import 'device_backup.dart';
 
 /// Where backups go until the owner picks a folder: "Doaya Backups" in the
 /// user's Documents (visible, and often copied off the PC by OneDrive).
-final defaultBackupFolderProvider = FutureProvider<String>(
-  (ref) async =>
-      '${(await getApplicationDocumentsDirectory()).path}${Platform.pathSeparator}Doaya Backups',
-);
+/// Never fails: Linux without `xdg-user-dir` has no "Documents" answer, so
+/// it falls back to ~/Documents, then to the app's own folder.
+final defaultBackupFolderProvider = FutureProvider<String>((ref) async {
+  const name = 'Doaya Backups';
+  final sep = Platform.pathSeparator;
+  try {
+    return '${(await getApplicationDocumentsDirectory()).path}$sep$name';
+  } on Object {
+    final home = Platform.environment['HOME'] ?? Platform.environment['USERPROFILE'];
+    if (home != null) return '$home${sep}Documents$sep$name';
+    return '${(await getApplicationSupportDirectory()).path}$sep$name';
+  }
+});
 
 final deviceBackupProvider = FutureProvider<DeviceBackup>(
   (ref) async => DeviceBackup(

@@ -214,10 +214,12 @@ class _Statement extends ConsumerWidget {
     final pnl = ref.watch(_pnlProvider(month)).value;
     if (pnl == null) return Panel(title: l.pnlTitle, child: const SizedBox.shrink());
 
+    // [strong]: a subtotal; [big]: the bottom line.
     Widget line(
       String label,
       int minor, {
       bool strong = false,
+      bool big = false,
       bool signed = false,
       Color? color,
     }) => Padding(
@@ -234,7 +236,9 @@ class _Statement extends ConsumerWidget {
           ),
           Text(
             signed ? formatSignedMoney(minor, currency) : formatMoney(minor, currency),
-            style: (strong ? DoayaTypography.price : DoayaTypography.label).copyWith(color: color),
+            style: (big ? DoayaTypography.price : DoayaTypography.label).copyWith(
+              color: color ?? (strong ? DoayaColors.textPrimary : DoayaColors.textSecondary),
+            ),
           ),
         ],
       ),
@@ -267,6 +271,7 @@ class _Statement extends ConsumerWidget {
             net >= 0 ? l.pnlNetProfit : l.pnlNetLoss,
             net,
             strong: true,
+            big: true,
             signed: true,
             color: net >= 0 ? DoayaColors.price : DoayaColors.dangerText,
           ),

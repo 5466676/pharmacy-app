@@ -132,7 +132,7 @@ Note: I can build and test on Linux here, but **not produce a Windows `.exe`** i
 ### Still open
 - **Receipt printing**: thermal 58/80 mm? (not answered yet)
 
-## Phase 1.5 — Accounting · ▶ steps 1–6 done; 7–9 resumed (owner, 2026-09-25)
+## Phase 1.5 — Accounting · ✅ all 9 steps done, ready for review (2026-09-25)
 
 Goal: turn the counter app into a complete pharmacy accounting system (inspired by Karma Soft / Al-Ameen, see `docs/ACCOUNTING_RESEARCH.md`), still fully offline and still built on append-only records so Phase 2 sync stays safe.
 
@@ -252,7 +252,13 @@ Health ministry price-list import · money accounts (drawer / Sham Cash / bank +
   - Settings → **النسخ الاحتياطي على هالجهاز**: the last backup, «خذ نسخة هلق», the folder, and the latest copies with «استرجع».
   - **Restore** takes effect at the next start, before the database opens. The current database is kept aside as `.before-restore`.
   - On a device linked to the server, restore is not offered: re-joining the pharmacy brings everything back (see DECISIONS).
-  - Tests: complete readable copy; not again within 24 h; keep N; another folder; two in one second; restore applied once with the WAL removed and the old database kept. App 86.
+  - Tests: complete readable copy; not again within 24 h; keep N; another folder; two in one second; restore applied once with the WAL removed and the old database kept; the controller backs up when due at start and on demand. App 87.
+- [x] Step 9: **real Linux release build**, on a month of data (demo products, a purchase on credit, daily sales by Rana and Sami, rent / salaries / generator / a custom «تنظيف» expense, last month's rent). Screenshots `docs/screenshots/phase1_5/17–23`:
+  - Rana (employee) records electricity from the drawer, and the till drops 200 → 165 with a «مصاريف من الصندوق» line.
+  - The owner opens المصاريف: the month's P&L with every kind, unknown cost flagged, a net loss in red, and the month switch (آب shows only its rent).
+  - The owner adds 999 from outside, then restores the morning backup and restarts. The 999 is gone, and the old database is kept aside.
+  - **Bug found and fixed**: on Linux without `xdg-user-dir`, the Documents folder can't be found, and Riverpod kept retrying the failing provider, so the backup stuck at «عم ناخد نسخة». The default folder now falls back to ~/Documents, then to the app folder.
+  - Only the bottom line of the P&L uses the big figure font. Subtotals are bold.
 
 ### How to review (step 3)
 المشتريات → مورد جديد → فاتورة شراء → scan or search → type quantity, bonus, price… → F9. Then open the supplier: statement, "دفعة للمورد", "مرتجع للمستودع". Sign in as an employee to check the amounts are hidden.

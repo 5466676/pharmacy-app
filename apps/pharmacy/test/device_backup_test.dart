@@ -1,10 +1,13 @@
 import 'dart:io';
 
+import 'package:doaya_pharmacy/data/backup_controller.dart';
 import 'package:doaya_pharmacy/data/catalog_repository.dart';
 import 'package:doaya_pharmacy/data/database.dart';
 import 'package:doaya_pharmacy/data/device_backup.dart';
+import 'package:doaya_pharmacy/providers.dart';
 import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:drift/native.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -75,5 +78,27 @@ void main() {
     expect(File('${current.path}-wal').existsSync(), isFalse);
     // Only once.
     expect(await DeviceBackup.applyPendingRestore(data.path, 'doaya_pharmacy'), isFalse);
+  });
+
+  test('controller: backs up when due at start, then on demand, and reports', () async {
+    final c = ProviderContainer(
+      overrides: [
+        databaseProvider.overrideWithValue(db),
+        defaultBackupFolderProvider.overrideWith((ref) async => '${tmp.path}/auto'),
+        backupCheckEveryProvider.overrideWithValue(const Duration(hours: 1)),
+        clockProvider.overrideWithValue(() => now),
+      ],
+    );
+    addTearDown(c.dispose);
+    c.listen(backupProvider, (_, _) {});
+    for (var i = 0; i < 50 && c.read(backupProvider).files.isEmpty; i++) {
+      await Future<void>.delayed(const Duration(milliseconds: 20));
+    }
+    expect(c.read(backupProvider).files, hasLength(1));
+    expect(c.read(backupProvider).busy, isFalse);
+    now = now.add(const Duration(seconds: 1));
+    await c.read(backupProvider.notifier).backupNow();
+    expect(c.read(backupProvider).files, hasLength(2));
+    expect(c.read(backupProvider).last, now.toUtc());
   });
 }
