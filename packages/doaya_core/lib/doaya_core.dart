@@ -10,5 +10,6 @@ export 'src/purchases.dart';
 export 'src/returns.dart';
 export 'src/sale.dart';
 export 'src/shortages.dart';
+export 'src/sync.dart';
 export 'src/text.dart';
 export 'src/till.dart';
