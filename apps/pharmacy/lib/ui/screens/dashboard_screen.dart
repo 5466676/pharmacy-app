@@ -118,9 +118,10 @@ class DashboardScreen extends ConsumerWidget {
                   label: l.statProfitToday,
                   value: formatSignedMoney(profit.profitMinor, currency),
                   caption: profit.complete
-                      ? (profit.marginBasisPoints == null
-                            ? null
-                            : l.marginCaption(formatMargin(profit.marginBasisPoints!)))
+                      ? switch (formatMargin(profit)) {
+                          null => null,
+                          final m => l.marginCaption(m),
+                        }
                       : l.costIncomplete,
                   tone: profit.complete ? StatusTone.success : StatusTone.warning,
                   onTap: () => context.go(Routes.reports),
@@ -129,6 +130,7 @@ class DashboardScreen extends ConsumerWidget {
                   icon: DoayaIcons.receive,
                   label: l.statSupplierDebts,
                   value: formatMoney(suppliers.totalOwed, currency),
+                  caption: l.suppliersOwedCount(formatQty(suppliers.owedCount)),
                   tone: StatusTone.neutral,
                   onTap: () => context.go(Routes.purchases),
                 ),

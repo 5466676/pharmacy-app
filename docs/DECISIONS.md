@@ -104,3 +104,6 @@ Names, phones, notes, shelves, barcodes and settings are saved with English digi
 - A new sale price typed on a box line updates the product's box price. Strip lines have no sale-price field; the strip price stays on the product form.
 - Anything paid from the drawer (a cash purchase, a supplier payment) or put into it (a supplier's cash refund) needs an open till, the same rule as selling, so every drawer movement belongs to a shift.
 - F9 saves the purchase invoice through a keyboard handler, not a focus-based shortcut: clicking a button (cash/credit…) took the focus away and F9 stopped working in the real app.
+
+## 2026-09-25 · Profit is computed from events, per period
+Profit of a period = sales in it (after discount, spread over lines by `allocateProportionally`) − refunds in it, minus the cost of `sold` events + the cost given back by `returned` events in it. Cost comes from the batch each piece left (purchase line cost ÷ pieces). A return counts in the period it happens, not the sale's, so closed periods never change. Pieces from batches without a purchase cost are reported as a count, never valued with a guess, and no margin is shown while any cost is missing.

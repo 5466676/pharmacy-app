@@ -12,8 +12,14 @@ import '../widgets.dart';
 
 enum _Group { product, employee, day }
 
-/// "15.5%" from basis points.
-String formatMargin(int basisPoints) => formatNumber(basisPoints / 100, decimals: 1);
+/// "15.5%" from basis points, isolated LTR so the % stays on the right
+/// inside Arabic text. Null when there's nothing to show (no revenue, or
+/// some cost unknown: a margin would look better than it is).
+String? formatMargin(ProfitSummary p) {
+  final bp = p.marginBasisPoints;
+  if (bp == null || !p.complete) return null;
+  return ltrIsolate('${formatNumber(bp / 100, decimals: 1)}%');
+}
 
 /// Owner only: revenue, cost of goods, profit and margin for a period,
 /// grouped by product, employee or day; stock value at cost.
@@ -77,9 +83,12 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                   icon: DoayaIcons.reports,
                   label: l.grossProfit,
                   value: formatSignedMoney(total.profitMinor, currency),
-                  caption: total.marginBasisPoints == null
-                      ? null
-                      : l.marginCaption(formatMargin(total.marginBasisPoints!)),
+                  caption: total.complete
+                      ? switch (formatMargin(total)) {
+                          null => null,
+                          final m => l.marginCaption(m),
+                        }
+                      : l.costIncomplete,
                   tone: total.profitMinor >= 0 ? StatusTone.success : StatusTone.danger,
                 ),
                 StatCard(
@@ -199,7 +208,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                     color: p.profitMinor >= 0 ? DoayaColors.price : DoayaColors.dangerText,
                   ),
                 ),
-                num(p.marginBasisPoints == null ? '' : '${formatMargin(p.marginBasisPoints!)}%'),
+                num(formatMargin(p) ?? ''),
               ],
             ),
           ),

@@ -132,7 +132,7 @@ Note: I can build and test on Linux here, but **not produce a Windows `.exe`** i
 ### Still open
 - **Receipt printing**: thermal 58/80 mm? (not answered yet)
 
-## Phase 1.5 — Accounting · 🚧 steps 1–3 ready for review (plan approved 2026-09-25)
+## Phase 1.5 — Accounting · 🚧 steps 1–4 done (plan approved 2026-09-25)
 
 Goal: turn the counter app into a complete pharmacy accounting system (inspired by Karma Soft / Al-Ameen, see `docs/ACCOUNTING_RESEARCH.md`), still fully offline and still built on append-only records so Phase 2 sync stays safe.
 
@@ -201,6 +201,14 @@ Health ministry price-list import · money accounts (drawer / Sham Cash / bank +
   - **Supplier page**: balance, age of the oldest unpaid invoice, statement with running balance (owner only); payment (drawer / outside); **return to supplier** by batch, credited to the account or refunded in cash (the owner gets the batch cost suggested as the value).
   - Paying from the drawer (purchase, supplier payment, cash refund from a supplier) needs an open till, like selling.
   - Tests: 58 app tests (invoice flow, supplier page employee/owner, closed-till block). Checked in the real Linux build: `docs/screenshots/phase1_5/`.
+
+- [x] Step 4: **الأرباح** (owner only, in the admin section):
+  - Net sales, cost of goods sold, profit with margin, stock value at cost, for today, this week or this month.
+  - Grouped by product, by employee or by day, sorted by profit.
+  - A sale's discount is spread over its lines. A customer return subtracts its refund and gives its cost back, in the period it happens.
+  - Pieces sold from stock received before purchase invoices existed have no cost. They're counted and flagged ("تكلفة ناقصة" plus a notice), never guessed, and the margin is hidden until the cost is complete.
+  - Dashboard (owner): today's profit and what we owe suppliers.
+  - Tests: 72 core, 60 app. Screenshots `docs/screenshots/phase1_5/07–09`.
 
 ### How to review (step 3)
 المشتريات → مورد جديد → فاتورة شراء → scan or search → type quantity, bonus, price… → F9. Then open the supplier: statement, "دفعة للمورد", "مرتجع للمستودع". Sign in as an employee to check the amounts are hidden.

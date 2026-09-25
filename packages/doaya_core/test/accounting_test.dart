@@ -146,6 +146,7 @@ void main() {
       expect(l.balance('s'), 5000);
       expect(l.statement('s').map((x) => x.$2), [10000, 6000, 5000]);
       expect(l.totalOwed, 5000);
+      expect(l.owedCount, 1);
     });
 
     test('debt age: payments settle the oldest purchase first', () {

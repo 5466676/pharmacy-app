@@ -664,7 +664,7 @@
   "netSales": "صافي المبيعات",
   "costOfGoods": "تكلفة البضاعة المباعة",
   "grossProfit": "الربح",
-  "marginCaption": "هامش الربح {pct}%",
+  "marginCaption": "هامش الربح {pct}",
   "@marginCaption": {"placeholders": {"pct": {"type": "String"}}},
   "stockValueAtCost": "قيمة المخزون بالتكلفة",
   "piecesWithoutCost": "{pieces} قطعة بدون تكلفة",
@@ -681,5 +681,7 @@
   "noReportData": "ما في مبيعات بهالفترة",
   "statProfitToday": "ربح اليوم",
   "statSupplierDebts": "علينا للموردين",
+  "suppliersOwedCount": "{count} مورد",
+  "@suppliersOwedCount": {"placeholders": {"count": {"type": "String"}}},
   "costIncomplete": "تكلفة ناقصة"
 }

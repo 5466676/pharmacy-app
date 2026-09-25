@@ -2147,7 +2147,7 @@ abstract class AppLocalizations {
   /// No description provided for @marginCaption.
   ///
   /// In ar, this message translates to:
-  /// **'هامش الربح {pct}%'**
+  /// **'هامش الربح {pct}'**
   String marginCaption(String pct);
 
   /// No description provided for @stockValueAtCost.
@@ -2227,6 +2227,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'علينا للموردين'**
   String get statSupplierDebts;
+
+  /// No description provided for @suppliersOwedCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} مورد'**
+  String suppliersOwedCount(String count);
 
   /// No description provided for @costIncomplete.
   ///

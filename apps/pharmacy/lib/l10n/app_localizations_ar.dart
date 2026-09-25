@@ -1124,7 +1124,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String marginCaption(String pct) {
-    return 'هامش الربح $pct%';
+    return 'هامش الربح $pct';
   }
 
   @override
@@ -1169,6 +1169,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get statSupplierDebts => 'علينا للموردين';
+
+  @override
+  String suppliersOwedCount(String count) {
+    return '$count مورد';
+  }
 
   @override
   String get costIncomplete => 'تكلفة ناقصة';
