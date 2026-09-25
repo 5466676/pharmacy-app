@@ -1,6 +1,6 @@
 # Progress
 
-## Phase 0 — Foundation · ✅ ready for review
+## Phase 0 — Foundation · ✅ approved (2026-09-25)
 
 ### Plan
 1. Monorepo skeleton + `CLAUDE.md` + `docs/` (SPEC, DECISIONS, PROGRESS); copy mockups into `/design`.
@@ -39,5 +39,53 @@
 - Product images in the gallery are placeholder icons. Where will real product photos come from (pharmacy uploads, a shared catalogue)? That affects the Phase 1 schema.
 - Currency is written as "ل.س" after the number. Do you want "ل.س." or "ليرة" instead, and should prices ever show decimals?
 
-## Phase 1 — Pharmacy core (offline) · not started
-Plan will be written here and submitted for approval before starting.
+## Phase 1 — Pharmacy core (offline) · 📝 plan awaiting approval
+
+Goal: the pharmacy desktop app sells, receives stock, tracks expiry and debts with **no internet and no server**. Everything is written as sync-ready events so Phase 2 only adds transport.
+
+### Architecture
+- `packages/doaya_core` (pure Dart, no Flutter): event types, ledger math (stock, batches, debts), UUIDv7, money, sale rules. **Tests first.**
+- `apps/pharmacy` (Flutter: Windows primary; Linux for dev; Android later in Phase 2): drift DB, Riverpod state, go_router, `DoayaTheme.solid()` on desktop.
+
+### Data model (drift / SQLite)
+Master data (mutable, last-writer-wins by `updated_at` + device when synced):
+- `products`: id, trade name (Latin), Arabic name (optional), **active ingredient**, strength, form, manufacturer, shelf, sale price, prescription-only flag, low-stock threshold
+- `product_barcodes`: product ↔ many barcodes
+- `customers`: name, phone, notes
+- `employees`: name, role (`owner` / `employee`), PIN hash, active
+- `device`: this machine's id + name (generated on first run)
+
+Append-only ledgers (never updated or deleted; each row: UUIDv7 id, device id, employee id, local timestamp, `synced_at`):
+- `stock_events`: `received` / `sold` / `returned` / `adjusted` / `expired_removed`, product, **batch (lot no. + expiry date)**, signed quantity, unit cost (on receive), sale id
+- `sales` + `sale_lines`: immutable once completed (who, which device, payment `cash` / `debt`, discount, total)
+- `debt_events`: `debt_added` / `payment_received`, customer, amount, sale id
+
+Derived (computed, never stored as truth): stock per product = Σ events; stock per batch; near-expiry list; low-stock list; customer balance = Σ debt events.
+
+Selling picks batches **FEFO** (first-expiring first). A sale is one DB transaction: sale + lines + `sold` events (+ `debt_added` if on debt).
+
+### Screens (layouts from `/design`, dark tokens)
+1. First run: device name + owner account. Employee picker + PIN at the counter.
+2. **POS**: search / barcode (scanner = keyboard input, Enter adds), cart, walk-in vs registered customer, cash / debt, alternatives with the same active ingredient when out of stock. Shortcuts **F2** search · **F8** debt · **Enter** complete.
+3. **Inventory**: list + search, product form, receive stock (batch + expiry), adjust, remove expired; filters **low stock** and **near expiry**.
+4. **Customers & debts**: balances, history, record payment.
+5. **Dashboard**: today's sales, open debts, near-expiry count, recent sales (who / which device).
+6. Settings: employees, device name, thresholds.
+
+### Steps (a commit after each)
+1. `doaya_core`: UUIDv7, money, event models, ledger + FEFO + debt math, with full unit tests.
+2. drift schema + repositories + tests on in-memory SQLite (sale transaction, idempotent event insert by id).
+3. App shell: routing, solid desktop shell, employee login.
+4. Inventory + receive stock + expiry/low-stock views.
+5. POS with keyboard shortcuts + barcode input (widget tests).
+6. Customers & debts, dashboard.
+7. Demo seed data, Linux build + screenshots for review.
+
+Note: I can build and test on Linux here, but **not produce a Windows `.exe`** in this environment. The code is platform-neutral; the Windows build is one command on a Windows machine (documented in CLAUDE.md).
+
+### Needs your decision before starting
+- New dependencies (see chat).
+- Counter login style, money precision, and batch-level expiry (see chat).
+- Product photos: not needed at the counter. Deferred to Phase 3 (patient app).
+
+## Phase 2 — Backend + sync · not started
