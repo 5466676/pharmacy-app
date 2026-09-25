@@ -135,6 +135,7 @@ class _FakeRemote implements SyncRemote {
         for (final e in api._devices.entries)
           {'id': e.key, 'name': e.value.name, 'revoked': e.value.revoked, 'last_seen_at': null},
       ],
+      'backups' => {'latest': '2026-09-25T02:00:00Z', 'count': 1, 'error': null},
       'users' => [
         for (final e in api._accounts.entries)
           {'phone': e.key, 'name': e.value.name, 'employee_id': e.value.employeeId},

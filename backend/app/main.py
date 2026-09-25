@@ -6,9 +6,10 @@ from fastapi import FastAPI
 from sqlalchemy import select, text
 
 from . import __version__, accounts, sync
+from .backup import BackupScheduler, latest_backup_time, list_backups
 from .config import Settings, get_settings
 from .db import Database
-from .deps import DbSession
+from .deps import DbSession, Owner
 from .discovery import DiscoveryResponder
 from .models import Pharmacy
 from .security import LoginLimiter
@@ -27,9 +28,11 @@ def ensure_secret(settings: Settings) -> Settings:
     return settings.model_copy(update={"jwt_secret": path.read_text().strip()})
 
 
-def create_app(settings: Settings | None = None, *, discovery: bool = False) -> FastAPI:
-    """[discovery] starts the Wi-Fi discovery responder (the real server;
-    tests leave it off)."""
+def create_app(
+    settings: Settings | None = None, *, discovery: bool = False, backups: bool = False
+) -> FastAPI:
+    """[discovery] starts the Wi-Fi discovery responder and [backups] the
+    daily database backup (the real server; tests leave them off)."""
     settings = ensure_secret(settings or get_settings())
 
     @asynccontextmanager
@@ -44,9 +47,13 @@ def create_app(settings: Settings | None = None, *, discovery: bool = False) -> 
             responder = DiscoveryResponder(
                 settings.discovery_port, settings.http_port, pharmacy_name
             ).start()
+        scheduler = BackupScheduler(settings).start() if backups else None
+        app.state.backups = scheduler
         yield
         if responder:
             responder.stop()
+        if scheduler:
+            scheduler.stop()
 
     app = FastAPI(title="Doaya", version=__version__, lifespan=lifespan)
     app.state.settings = settings
@@ -60,9 +67,20 @@ def create_app(settings: Settings | None = None, *, discovery: bool = False) -> 
         db.execute(text("SELECT 1"))
         return {"status": "ok", "service": "doaya", "version": __version__}
 
+    @app.get("/backups")
+    def backups_state(_: Owner) -> dict:
+        """For the owner: when the server last backed up the database."""
+        last = latest_backup_time(settings)
+        scheduler = getattr(app.state, "backups", None)
+        return {
+            "latest": last.isoformat() if last else None,
+            "count": len(list_backups(settings)),
+            "error": scheduler.last_error if scheduler else None,
+        }
+
     return app
 
 
 def server_app() -> FastAPI:
     """What uvicorn runs on the pharmacy PC: the API plus Wi-Fi discovery."""
-    return create_app(discovery=True)
+    return create_app(discovery=True, backups=True)

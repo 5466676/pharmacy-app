@@ -417,6 +417,25 @@ class _Linked extends ConsumerWidget {
                   backgroundColor: DoayaColors.divider,
                 ),
               ],
+              if (link.isOwner)
+                if (ref.watch(_serverBackupProvider).value case final b?) ...[
+                  const SizedBox(height: DoayaSpacing.xs),
+                  Text(
+                    b['error'] != null
+                        ? l.serverBackupError
+                        : b['latest'] == null
+                        ? l.serverBackupNone
+                        : () {
+                            final t = DateTime.parse(b['latest']! as String);
+                            return l.serverBackupLast('${formatDate(t)}، ${formatTime(t)}');
+                          }(),
+                    style: DoayaTypography.bodySmall.copyWith(
+                      color: b['error'] != null || b['latest'] == null
+                          ? DoayaColors.warningText
+                          : DoayaColors.textSecondary,
+                    ),
+                  ),
+                ],
               if (status.phase == SyncPhase.unlinked) ...[
                 const SizedBox(height: DoayaSpacing.sm),
                 NoticeBanner(message: l.unlinkedHelp, tone: StatusTone.danger),
@@ -472,6 +491,17 @@ final _devicesProvider = FutureProvider.autoDispose<List<Map<String, Object?>>>(
   final c = ref.watch(syncProvider.notifier).client;
   if (c == null) return const [];
   return ((await c.getJson('devices')) as List).cast<Map<String, Object?>>();
+});
+
+final _serverBackupProvider = FutureProvider.autoDispose<Map<String, Object?>?>((ref) async {
+  ref.watch(syncProvider.select((s) => s.lastSyncAt));
+  final c = ref.watch(syncProvider.notifier).client;
+  if (c == null) return null;
+  try {
+    return (await c.getJson('backups'))! as Map<String, Object?>;
+  } on Object {
+    return null; // older server or offline: just don't show it
+  }
 });
 
 final _accountsProvider = FutureProvider.autoDispose<List<Map<String, Object?>>>((ref) async {

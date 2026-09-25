@@ -129,6 +129,7 @@ void main() {
     expect(api.server.latest, greaterThan(5)); // history uploaded
     expect(find.textContaining('متزامن'), findsWidgets);
     expect(find.text('مربوط بـ صيدلية الشفاء'), findsOneWidget);
+    expect(find.textContaining('آخر نسخة احتياطية على السيرفر'), findsOneWidget);
     final outbox = await tester.runAsync(() => DriftSyncStore(db, deviceId: dev.id).outboxCount());
     expect(outbox, 0);
 

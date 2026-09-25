@@ -2900,6 +2900,24 @@ abstract class AppLocalizations {
   /// **'المزيد'**
   String get navMore;
 
+  /// No description provided for @serverBackupLast.
+  ///
+  /// In ar, this message translates to:
+  /// **'آخر نسخة احتياطية على السيرفر: {time}'**
+  String serverBackupLast(String time);
+
+  /// No description provided for @serverBackupNone.
+  ///
+  /// In ar, this message translates to:
+  /// **'السيرفر لسا ما عمل نسخة احتياطية'**
+  String get serverBackupNone;
+
+  /// No description provided for @serverBackupError.
+  ///
+  /// In ar, this message translates to:
+  /// **'في مشكلة بالنسخ الاحتياطي على السيرفر: شوف دليل التركيب'**
+  String get serverBackupError;
+
   /// No description provided for @navInventoryShort.
   ///
   /// In ar, this message translates to:

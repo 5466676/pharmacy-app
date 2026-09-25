@@ -5,14 +5,19 @@
     python -m app.cli list
     python -m app.cli set-status <pharmacy-id> active|suspended
     python -m app.cli reset-password <phone> <new-password>
+    python -m app.cli backup                 # a backup now (also done daily)
+    python -m app.cli list-backups
+    python -m app.cli restore <file.dump>    # replaces the database's content
 """
 
 import argparse
 import sys
+from pathlib import Path
 
 from sqlalchemy import select
 
-from .config import get_settings
+from .backup import backup_now, list_backups, restore
+from .config import Settings, get_settings
 from .db import Database
 from .models import Pharmacy, User
 from .security import hash_password, new_id, normalize_phone
@@ -33,9 +38,27 @@ def main(argv: list[str] | None = None, database_url: str | None = None) -> int:
     r = sub.add_parser("reset-password")
     r.add_argument("phone")
     r.add_argument("password")
+    sub.add_parser("backup")
+    sub.add_parser("list-backups")
+    rs = sub.add_parser("restore")
+    rs.add_argument("file")
     args = parser.parse_args(argv)
 
-    db = Database(database_url or get_settings().database_url)
+    settings: Settings = get_settings()
+    if database_url:
+        settings = settings.model_copy(update={"database_url": database_url})
+    if args.cmd == "backup":
+        print(backup_now(settings))
+        return 0
+    if args.cmd == "list-backups":
+        for f in list_backups(settings):
+            print(f)
+        return 0
+    if args.cmd == "restore":
+        restore(settings, Path(args.file))
+        return 0
+
+    db = Database(settings.database_url)
     with db.sessions() as session:
         if args.cmd == "create-pharmacy":
             phone = normalize_phone(args.owner_phone)

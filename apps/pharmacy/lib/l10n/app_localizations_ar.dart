@@ -1562,6 +1562,17 @@ class AppLocalizationsAr extends AppLocalizations {
   String get navMore => 'المزيد';
 
   @override
+  String serverBackupLast(String time) {
+    return 'آخر نسخة احتياطية على السيرفر: $time';
+  }
+
+  @override
+  String get serverBackupNone => 'السيرفر لسا ما عمل نسخة احتياطية';
+
+  @override
+  String get serverBackupError => 'في مشكلة بالنسخ الاحتياطي على السيرفر: شوف دليل التركيب';
+
+  @override
   String get navInventoryShort => 'المخزون';
 
   @override
