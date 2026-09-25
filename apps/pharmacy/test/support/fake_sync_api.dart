@@ -13,8 +13,15 @@ class FakeSyncApi implements SyncApi {
   /// The PC is off / not on the Wi-Fi.
   bool offline = false;
 
-  void _reachable() {
+  /// The fingerprint of the server's certificate; changing it plays a
+  /// reinstalled server (or an impostor) at the same address.
+  String certificate = 'c0ffee' * 10 + 'beef';
+
+  /// Fails like a pinned client does when [url] doesn't pin [certificate].
+  void _reachable([Uri? url]) {
     if (offline) throw const SyncNetworkException('offline');
+    final pin = url == null ? null : serverPin(url);
+    if (pin != null && pin != certificate) throw const SyncCertificateException();
   }
 
   void addAccount(String phone, String password, {required String name, String? employeeId}) =>
@@ -49,7 +56,8 @@ class FakeSyncApi implements SyncApi {
   }
 
   @override
-  Future<bool> ping(Uri url) async => !offline;
+  Future<Uri?> probe(Uri url) async =>
+      offline ? null : (serverPin(url) == null ? pinServer(url, certificate) : url);
 
   @override
   Future<bool> needsSetup(Uri url) async {
@@ -98,17 +106,18 @@ class FakeSyncApi implements SyncApi {
 
   @override
   SyncRemote remote(Uri url, {required String deviceId, required String deviceToken}) =>
-      _FakeRemote(this, deviceId, deviceToken);
+      _FakeRemote(this, url, deviceId, deviceToken);
 }
 
 class _FakeRemote implements SyncRemote {
-  _FakeRemote(this.api, this.deviceId, this.token);
+  _FakeRemote(this.api, this.url, this.deviceId, this.token);
   final FakeSyncApi api;
+  final Uri url;
   final String deviceId;
   final String token;
 
   void _check() {
-    api._reachable();
+    api._reachable(url);
     final d = api._devices[deviceId];
     if (d == null || d.revoked || d.token != token) {
       throw const SyncApiException(401, 'device_unlinked');
@@ -135,6 +144,7 @@ class _FakeRemote implements SyncRemote {
         for (final e in api._devices.entries)
           {'id': e.key, 'name': e.value.name, 'revoked': e.value.revoked, 'last_seen_at': null},
       ],
+      'backups' => {'latest': '2026-09-25T02:00:00Z', 'count': 1, 'error': null},
       'users' => [
         for (final e in api._accounts.entries)
           {'phone': e.key, 'name': e.value.name, 'employee_id': e.value.employeeId},

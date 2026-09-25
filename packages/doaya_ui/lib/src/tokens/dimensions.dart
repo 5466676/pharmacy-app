@@ -94,6 +94,10 @@ abstract final class DoayaSizes {
   /// Width breakpoint above which the gallery / apps use a desktop layout.
   static const double desktopBreakpoint = 900;
 
+  /// Below this width the pharmacy app switches to its phone layout
+  /// (bottom navigation, single-column screens).
+  static const double phoneLayoutWidth = 700;
+
   /// Max content width for phone-style layouts on wide screens.
   static const double phoneMaxWidth = 480;
 }

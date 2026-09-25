@@ -61,6 +61,51 @@ class DashboardScreen extends ConsumerWidget {
         ? ref.watch(supplierLedgerProvider).value ?? SupplierLedger()
         : SupplierLedger();
 
+    final phone = isPhoneLayout(context);
+    final salesPanel = Panel(
+      title: l.recentSales,
+      child: recent.isEmpty
+          ? EmptyHint(l.noSalesYet)
+          : Column(
+              children: [
+                _SalesHeader(l: l),
+                for (final s in recent)
+                  _SaleRowView(
+                    sale: s,
+                    currency: currency,
+                    employee: employees[s.employeeId]?.name ?? l.none,
+                    device: devices[s.deviceId]?.name ?? l.none,
+                    customer: s.customerId == null
+                        ? l.walkInCustomer
+                        : customers[s.customerId]?.name ?? l.none,
+                    l: l,
+                  ),
+              ],
+            ),
+    );
+    final nearPanel = Panel(
+      title: l.nearExpiryAlerts,
+      child: near.isEmpty
+          ? EmptyHint(l.noNearExpiry)
+          : Column(
+              children: [
+                for (final b in near.take(8))
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
+                    child: NoticeBanner(
+                      tone: b.expiry!.isBefore(now) ? StatusTone.danger : StatusTone.warning,
+                      icon: DoayaIcons.expiry,
+                      message: l.nearExpiryAlertLine(
+                        formatStock(l, b.quantity, products[b.productId]!.unitsPerPack),
+                        ltrIsolate(products[b.productId]!.tradeName),
+                        formatDate(b.expiry!),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+    );
+
     return ListView(
       children: [
         PageHeader(
@@ -77,7 +122,8 @@ class DashboardScreen extends ConsumerWidget {
         LayoutBuilder(
           builder: (context, c) {
             const gap = DoayaSpacing.l;
-            final w = (c.maxWidth - gap * 3) / 4;
+            final perRow = isPhoneLayout(context) ? 2 : 4;
+            final w = (c.maxWidth - gap * (perRow - 1)) / perRow;
             final cards = [
               StatCard(
                 icon: DoayaIcons.sales,
@@ -144,66 +190,76 @@ class DashboardScreen extends ConsumerWidget {
           },
         ),
         const SizedBox(height: DoayaSpacing.xl),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              flex: 3,
-              child: Panel(
-                title: l.recentSales,
-                child: recent.isEmpty
-                    ? EmptyHint(l.noSalesYet)
-                    : Column(
-                        children: [
-                          _SalesHeader(l: l),
-                          for (final s in recent)
-                            _SaleRowView(
-                              sale: s,
-                              currency: currency,
-                              employee: employees[s.employeeId]?.name ?? l.none,
-                              device: devices[s.deviceId]?.name ?? l.none,
-                              customer: s.customerId == null
-                                  ? l.walkInCustomer
-                                  : customers[s.customerId]?.name ?? l.none,
-                              l: l,
-                            ),
-                        ],
-                      ),
-              ),
-            ),
-            const SizedBox(width: DoayaSpacing.xl),
-            Expanded(
-              flex: 2,
-              child: Panel(
-                title: l.nearExpiryAlerts,
-                child: near.isEmpty
-                    ? EmptyHint(l.noNearExpiry)
-                    : Column(
-                        children: [
-                          for (final b in near.take(8))
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
-                              child: NoticeBanner(
-                                tone: b.expiry!.isBefore(now)
-                                    ? StatusTone.danger
-                                    : StatusTone.warning,
-                                icon: DoayaIcons.expiry,
-                                message: l.nearExpiryAlertLine(
-                                  formatStock(l, b.quantity, products[b.productId]!.unitsPerPack),
-                                  ltrIsolate(products[b.productId]!.tradeName),
-                                  formatDate(b.expiry!),
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-              ),
-            ),
-          ],
-        ),
+        if (phone) ...[
+          Panel(
+            title: l.recentSales,
+            child: recent.isEmpty
+                ? EmptyHint(l.noSalesYet)
+                : Column(
+                    children: [
+                      for (final s in recent)
+                        _SaleLine(
+                          sale: s,
+                          currency: currency,
+                          l: l,
+                          who: [
+                            s.customerId == null
+                                ? l.walkInCustomer
+                                : customers[s.customerId]?.name ?? l.none,
+                            employees[s.employeeId]?.name ?? l.none,
+                          ].join('، '),
+                        ),
+                    ],
+                  ),
+          ),
+          const SizedBox(height: DoayaSpacing.l),
+          nearPanel,
+        ] else
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(flex: 3, child: salesPanel),
+              const SizedBox(width: DoayaSpacing.xl),
+              Expanded(flex: 2, child: nearPanel),
+            ],
+          ),
       ],
     );
   }
+}
+
+/// Phone: one recent sale on two lines.
+class _SaleLine extends StatelessWidget {
+  const _SaleLine({required this.sale, required this.currency, required this.l, required this.who});
+
+  final SaleRow sale;
+  final Currency currency;
+  final AppLocalizations l;
+  final String who;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
+    child: Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(formatMoney(sale.totalMinor, currency), style: DoayaTypography.label),
+              Text(
+                '${formatTime(sale.occurredAt)}، $who',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: DoayaTypography.caption.copyWith(color: DoayaColors.textSecondary),
+              ),
+            ],
+          ),
+        ),
+        paymentChip(l, sale.payment),
+      ],
+    ),
+  );
 }
 
 class _SalesHeader extends StatelessWidget {

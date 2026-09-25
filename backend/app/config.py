@@ -19,6 +19,11 @@ class Settings(BaseSettings):
 
     # The app finds the server on the local network by UDP broadcast.
     discovery_port: int = 47800
+
+    # Daily PostgreSQL backups into <data_dir>/backups (pg_dump from this
+    # folder, or from PATH when empty).
+    pg_bin_dir: str = ""
+    backup_keep: int = 30
     http_port: int = 8000
 
 

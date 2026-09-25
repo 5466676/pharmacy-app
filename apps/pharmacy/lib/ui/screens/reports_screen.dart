@@ -59,53 +59,66 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
               ),
           ],
         ),
-        IntrinsicHeight(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              for (final (i, card) in [
-                StatCard(
-                  icon: DoayaIcons.sales,
-                  label: l.netSales,
-                  value: formatMoney(total.revenueMinor, currency),
-                  tone: StatusTone.neutral,
-                ),
-                StatCard(
-                  icon: DoayaIcons.receive,
-                  label: l.costOfGoods,
-                  value: formatMoney(total.costMinor, currency),
-                  caption: total.complete
-                      ? null
-                      : l.piecesWithoutCost(formatQty(total.unknownCostPieces)),
-                  tone: StatusTone.neutral,
-                ),
-                StatCard(
-                  icon: DoayaIcons.reports,
-                  label: l.grossProfit,
-                  value: formatSignedMoney(total.profitMinor, currency),
-                  caption: total.complete
-                      ? switch (formatMargin(total)) {
-                          null => null,
-                          final m => l.marginCaption(m),
-                        }
-                      : l.costIncomplete,
-                  tone: total.profitMinor >= 0 ? StatusTone.success : StatusTone.danger,
-                ),
-                StatCard(
-                  icon: DoayaIcons.inventory,
-                  label: l.stockValueAtCost,
-                  value: formatMoney(value.costMinor, currency),
-                  caption: value.unknownCostPieces == 0
-                      ? null
-                      : l.piecesWithoutCost(formatQty(value.unknownCostPieces)),
-                  tone: StatusTone.neutral,
-                ),
-              ].indexed) ...[
-                if (i > 0) const SizedBox(width: DoayaSpacing.l),
-                Expanded(child: card),
-              ],
-            ],
-          ),
+        LayoutBuilder(
+          builder: (context, c) {
+            final cards = [
+              StatCard(
+                icon: DoayaIcons.sales,
+                label: l.netSales,
+                value: formatMoney(total.revenueMinor, currency),
+                tone: StatusTone.neutral,
+              ),
+              StatCard(
+                icon: DoayaIcons.receive,
+                label: l.costOfGoods,
+                value: formatMoney(total.costMinor, currency),
+                caption: total.complete
+                    ? null
+                    : l.piecesWithoutCost(formatQty(total.unknownCostPieces)),
+                tone: StatusTone.neutral,
+              ),
+              StatCard(
+                icon: DoayaIcons.reports,
+                label: l.grossProfit,
+                value: formatSignedMoney(total.profitMinor, currency),
+                caption: total.complete
+                    ? switch (formatMargin(total)) {
+                        null => null,
+                        final m => l.marginCaption(m),
+                      }
+                    : l.costIncomplete,
+                tone: total.profitMinor >= 0 ? StatusTone.success : StatusTone.danger,
+              ),
+              StatCard(
+                icon: DoayaIcons.inventory,
+                label: l.stockValueAtCost,
+                value: formatMoney(value.costMinor, currency),
+                caption: value.unknownCostPieces == 0
+                    ? null
+                    : l.piecesWithoutCost(formatQty(value.unknownCostPieces)),
+                tone: StatusTone.neutral,
+              ),
+            ];
+            if (isPhoneLayout(context)) {
+              final w = (c.maxWidth - DoayaSpacing.l) / 2;
+              return Wrap(
+                spacing: DoayaSpacing.l,
+                runSpacing: DoayaSpacing.l,
+                children: [for (final card in cards) SizedBox(width: w, child: card)],
+              );
+            }
+            return IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  for (final (i, card) in cards.indexed) ...[
+                    if (i > 0) const SizedBox(width: DoayaSpacing.l),
+                    Expanded(child: card),
+                  ],
+                ],
+              ),
+            );
+          },
         ),
         if (!total.complete) ...[
           const SizedBox(height: DoayaSpacing.l),
@@ -115,21 +128,24 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
           ),
         ],
         const SizedBox(height: DoayaSpacing.xl),
-        Row(
-          children: [
-            for (final (g, label) in [
-              (_Group.product, l.byProduct),
-              (_Group.employee, l.byEmployee),
-              (_Group.day, l.byDay),
-            ]) ...[
-              GlassPillButton(
-                label: label,
-                selected: _group == g,
-                onPressed: () => setState(() => _group = g),
-              ),
-              const SizedBox(width: DoayaSpacing.s),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              for (final (g, label) in [
+                (_Group.product, l.byProduct),
+                (_Group.employee, l.byEmployee),
+                (_Group.day, l.byDay),
+              ]) ...[
+                GlassPillButton(
+                  label: label,
+                  selected: _group == g,
+                  onPressed: () => setState(() => _group = g),
+                ),
+                const SizedBox(width: DoayaSpacing.s),
+              ],
             ],
-          ],
+          ),
         ),
         const SizedBox(height: DoayaSpacing.l),
         Panel(child: report == null ? const SizedBox.shrink() : _table(l, currency, report)),
@@ -170,6 +186,43 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
       child: Text(text, textAlign: TextAlign.end, style: style ?? DoayaTypography.bodySmall),
     );
 
+    if (isPhoneLayout(context)) {
+      // Phone: each row on two lines, name + profit, then sales and cost.
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (final (name, p) in rows)
+            Padding(
+              padding: const EdgeInsets.only(bottom: DoayaSpacing.ml),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(child: name),
+                      Text(
+                        formatSignedMoney(p.profitMinor, currency),
+                        style: DoayaTypography.label.copyWith(
+                          color: p.profitMinor >= 0 ? DoayaColors.price : DoayaColors.dangerText,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Text(
+                    [
+                      '${l.colRevenue}: ${formatMoney(p.revenueMinor, currency)}',
+                      '${l.colCost}: ${formatMoney(p.costMinor, currency)}',
+                      if (formatMargin(p) case final m?) '${l.colMargin}: $m',
+                      if (!p.complete) l.costIncomplete,
+                    ].join('، '),
+                    style: head,
+                  ),
+                ],
+              ),
+            ),
+        ],
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [

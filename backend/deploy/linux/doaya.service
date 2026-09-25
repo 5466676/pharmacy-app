@@ -1,0 +1,17 @@
+# Doaya server on a Linux PC:
+#   sudo cp deploy/linux/doaya.service /etc/systemd/system/
+#   (edit User= and the paths), then: sudo systemctl enable --now doaya
+[Unit]
+Description=Doaya pharmacy server
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+User=doaya
+WorkingDirectory=/opt/pharmacy-app/backend
+ExecStart=/opt/pharmacy-app/backend/.venv/bin/python -m app.serve
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:doaya_core/doaya_core.dart';
+
 /// A Doaya server that answered on the local network.
 class FoundServer {
   const FoundServer({required this.url, this.pharmacyName});
@@ -35,9 +37,17 @@ Future<List<FoundServer>> discoverServers({
       final j = jsonDecode(utf8.decode(d.data)) as Map<String, Object?>;
       if (j['service'] != 'doaya') return;
       final httpPort = (j['http_port'] as int?) ?? defaultHttpPort;
+      // An https server announces its certificate: the address pins it.
+      final fingerprint = j['fingerprint'] as String?;
+      final url = Uri(
+        scheme: fingerprint == null ? 'http' : 'https',
+        host: d.address.address,
+        port: httpPort,
+        path: '/',
+      );
       found.add(
         FoundServer(
-          url: Uri(scheme: 'http', host: d.address.address, port: httpPort, path: '/'),
+          url: fingerprint == null ? url : pinServer(url, fingerprint),
           pharmacyName: j['pharmacy'] as String?,
         ),
       );
@@ -60,11 +70,11 @@ Future<List<FoundServer>> discoverServers({
 }
 
 /// The server address typed by hand: "192.168.1.10", "192.168.1.10:8000"
-/// or a full URL. Null when it can't be one.
+/// or a full URL. HTTPS unless "http://" is typed. Null when it can't be one.
 Uri? parseServerAddress(String input) {
   var s = input.trim();
   if (s.isEmpty) return null;
-  if (!s.contains('://')) s = 'http://$s';
+  if (!s.contains('://')) s = 'https://$s';
   final u = Uri.tryParse(s);
   if (u == null || u.host.isEmpty) return null;
   return Uri(scheme: u.scheme, host: u.host, port: u.hasPort ? u.port : defaultHttpPort, path: '/');

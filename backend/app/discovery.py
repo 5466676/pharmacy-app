@@ -13,9 +13,17 @@ from collections.abc import Callable
 QUESTION = b"DOAYA?"
 
 
-def answer(http_port: int, pharmacy_name: str | None) -> bytes:
+def answer(http_port: int, pharmacy_name: str | None, fingerprint: str | None = None) -> bytes:
+    """[fingerprint] is the SHA-256 of the server's TLS certificate: devices
+    pin it on first contact and then refuse any other certificate."""
     return json.dumps(
-        {"service": "doaya", "http_port": http_port, "pharmacy": pharmacy_name},
+        {
+            "service": "doaya",
+            "http_port": http_port,
+            "pharmacy": pharmacy_name,
+            "scheme": "https" if fingerprint else "http",
+            "fingerprint": fingerprint,
+        },
         ensure_ascii=False,
     ).encode()
 
@@ -23,8 +31,15 @@ def answer(http_port: int, pharmacy_name: str | None) -> bytes:
 class DiscoveryResponder:
     """A small UDP listener thread; `stop()` ends it."""
 
-    def __init__(self, port: int, http_port: int, pharmacy_name: Callable[[], str | None]) -> None:
+    def __init__(
+        self,
+        port: int,
+        http_port: int,
+        pharmacy_name: Callable[[], str | None],
+        fingerprint: str | None = None,
+    ) -> None:
         self.http_port = http_port
+        self.fingerprint = fingerprint
         self.pharmacy_name = pharmacy_name
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -56,4 +71,4 @@ class DiscoveryResponder:
                     name = self.pharmacy_name()
                 except Exception:  # the database may be down; still answer
                     name = None
-                self.sock.sendto(answer(self.http_port, name), addr)
+                self.sock.sendto(answer(self.http_port, name, self.fingerprint), addr)

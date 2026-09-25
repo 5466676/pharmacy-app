@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'providers.dart';
 import 'ui/screens/dashboard_screen.dart';
 import 'ui/screens/debts_screen.dart';
+import 'ui/screens/expenses_screen.dart';
 import 'ui/screens/inventory_screen.dart';
 import 'ui/screens/login_screen.dart';
 import 'ui/screens/pos_screen.dart';
@@ -35,7 +36,9 @@ abstract final class Routes {
   static const returns = '/pos/return';
   static const settings = '/settings';
   static const reports = '/reports';
+  static const expenses = '/expenses';
   static const sync = '/sync';
+  static const more = '/more';
   static const purchases = '/purchases';
   static const newPurchase = '$purchases/new';
   static String newPurchaseFrom(String supplierId) => '$newPurchase?supplier=$supplierId';
@@ -135,6 +138,14 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: Routes.reports,
             pageBuilder: (_, _) => const NoTransitionPage(child: ReportsScreen()),
+          ),
+          GoRoute(
+            path: Routes.expenses,
+            pageBuilder: (_, _) => const NoTransitionPage(child: ExpensesScreen()),
+          ),
+          GoRoute(
+            path: Routes.more,
+            pageBuilder: (_, _) => const NoTransitionPage(child: MoreScreen()),
           ),
           GoRoute(
             path: Routes.sync,

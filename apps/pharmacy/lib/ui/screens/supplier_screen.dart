@@ -38,94 +38,124 @@ class SupplierScreen extends ConsumerWidget {
     final now = ref.watch(clockProvider)();
     ref.watch(currentShiftProvider); // drawer payments need an open till
 
+    final cards = [
+      StatCard(
+        icon: DoayaIcons.debts,
+        label: l.balanceOwed,
+        value: balance > 0 ? formatMoney(balance, currency) : l.settled,
+        tone: balance > 0 ? StatusTone.warning : StatusTone.accent,
+      ),
+      StatCard(
+        icon: DoayaIcons.clock,
+        label: l.oldestDebt,
+        value: switch (open.firstOrNull?.ageInDays(now)) {
+          null => l.none,
+          0 => l.periodToday,
+          final days => l.daysAgo(formatQty(days)),
+        },
+        caption: open.isEmpty ? null : formatDate(open.first.since),
+        tone: StatusTone.neutral,
+      ),
+      StatCard(
+        icon: DoayaIcons.person,
+        label: l.repNameLabel,
+        value: supplier.repName ?? l.none,
+        caption: supplier.phone,
+        tone: StatusTone.neutral,
+      ),
+    ];
+    final header = PageHeader(
+      leading: RoundIconButton(
+        icon: DoayaIcons.back,
+        tooltip: l.back,
+        onPressed: () => context.go(Routes.purchases),
+      ),
+      title: supplier.name,
+      actions: [
+        RoundIconButton(
+          icon: DoayaIcons.edit,
+          tooltip: l.editSupplier,
+          onPressed: () => showAddSupplierDialog(context, ref, existing: supplier),
+        ),
+        if (whatsappNumber(supplier.phone) case final number?)
+          RoundIconButton(
+            icon: DoayaIcons.chat,
+            tooltip: l.openChat,
+            onPressed: () async {
+              if (!await ref.read(whatsappProvider)(number) && context.mounted) {
+                toast(context, l.whatsappFailed, error: true);
+              }
+            },
+          ),
+        GlassPillButton(
+          label: l.returnToSupplier,
+          icon: DoayaIcons.returns,
+          size: PillSize.medium,
+          onPressed: () => showDialog<void>(
+            context: context,
+            useRootNavigator: false,
+            barrierColor: DoayaColors.scrim,
+            builder: (_) => _SupplierReturnDialog(supplier: supplier),
+          ),
+        ),
+        GlassPillButton(
+          label: l.paySupplier,
+          icon: DoayaIcons.payment,
+          size: PillSize.medium,
+          onPressed: () => _pay(context, ref, supplier, currency),
+        ),
+        SagePillButton(
+          label: l.newPurchase,
+          icon: DoayaIcons.receive,
+          size: PillSize.medium,
+          onPressed: () => context.go(Routes.newPurchaseFrom(supplierId)),
+        ),
+      ],
+    );
+    if (isPhoneLayout(context)) {
+      // Phone: one scrolling column.
+      return ListView(
+        children: [
+          header,
+          if (owner) ...[
+            LayoutBuilder(
+              builder: (context, c) => Wrap(
+                spacing: DoayaSpacing.l,
+                runSpacing: DoayaSpacing.l,
+                children: [
+                  for (final card in cards)
+                    SizedBox(width: (c.maxWidth - DoayaSpacing.l) / 2, child: card),
+                ],
+              ),
+            ),
+            const SizedBox(height: DoayaSpacing.l),
+            Panel(
+              title: l.statement,
+              child: _Statement(lines: ledger.statement(supplierId), shrinkWrap: true),
+            ),
+            const SizedBox(height: DoayaSpacing.l),
+          ],
+          Panel(
+            title: l.tabInvoices,
+            child: PurchaseList(supplierId: supplierId, shrinkWrap: true),
+          ),
+        ],
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        PageHeader(
-          leading: RoundIconButton(
-            icon: DoayaIcons.back,
-            tooltip: l.back,
-            onPressed: () => context.go(Routes.purchases),
-          ),
-          title: supplier.name,
-          actions: [
-            RoundIconButton(
-              icon: DoayaIcons.edit,
-              tooltip: l.editSupplier,
-              onPressed: () => showAddSupplierDialog(context, ref, existing: supplier),
-            ),
-            if (whatsappNumber(supplier.phone) case final number?)
-              RoundIconButton(
-                icon: DoayaIcons.chat,
-                tooltip: l.openChat,
-                onPressed: () async {
-                  if (!await ref.read(whatsappProvider)(number) && context.mounted) {
-                    toast(context, l.whatsappFailed, error: true);
-                  }
-                },
-              ),
-            GlassPillButton(
-              label: l.returnToSupplier,
-              icon: DoayaIcons.returns,
-              size: PillSize.medium,
-              onPressed: () => showDialog<void>(
-                context: context,
-                useRootNavigator: false,
-                barrierColor: DoayaColors.scrim,
-                builder: (_) => _SupplierReturnDialog(supplier: supplier),
-              ),
-            ),
-            GlassPillButton(
-              label: l.paySupplier,
-              icon: DoayaIcons.payment,
-              size: PillSize.medium,
-              onPressed: () => _pay(context, ref, supplier, currency),
-            ),
-            SagePillButton(
-              label: l.newPurchase,
-              icon: DoayaIcons.receive,
-              size: PillSize.medium,
-              onPressed: () => context.go(Routes.newPurchaseFrom(supplierId)),
-            ),
-          ],
-        ),
+        header,
         if (owner) ...[
           IntrinsicHeight(
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Expanded(
-                  child: StatCard(
-                    icon: DoayaIcons.debts,
-                    label: l.balanceOwed,
-                    value: balance > 0 ? formatMoney(balance, currency) : l.settled,
-                    tone: balance > 0 ? StatusTone.warning : StatusTone.accent,
-                  ),
-                ),
+                Expanded(child: cards[0]),
                 const SizedBox(width: DoayaSpacing.l),
-                Expanded(
-                  child: StatCard(
-                    icon: DoayaIcons.clock,
-                    label: l.oldestDebt,
-                    value: switch (open.firstOrNull?.ageInDays(now)) {
-                      null => l.none,
-                      0 => l.periodToday,
-                      final days => l.daysAgo(formatQty(days)),
-                    },
-                    caption: open.isEmpty ? null : formatDate(open.first.since),
-                    tone: StatusTone.neutral,
-                  ),
-                ),
+                Expanded(child: cards[1]),
                 const SizedBox(width: DoayaSpacing.l),
-                Expanded(
-                  child: StatCard(
-                    icon: DoayaIcons.person,
-                    label: l.repNameLabel,
-                    value: supplier.repName ?? l.none,
-                    caption: supplier.phone,
-                    tone: StatusTone.neutral,
-                  ),
-                ),
+                Expanded(child: cards[2]),
               ],
             ),
           ),
@@ -249,9 +279,14 @@ class SupplierScreen extends ConsumerWidget {
 }
 
 class _Statement extends ConsumerWidget {
-  const _Statement({required this.lines});
+  const _Statement({required this.lines, this.shrinkWrap = false});
 
   final List<(SupplierDebtEvent, int)> lines;
+
+  /// Inside a scrolling page (phone): no own scrolling.
+  final bool shrinkWrap;
+
+  Widget _fill(Widget w) => shrinkWrap ? w : Expanded(child: w);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -275,8 +310,10 @@ class _Statement extends ConsumerWidget {
           ],
         ),
         const Divider(color: DoayaColors.divider),
-        Expanded(
-          child: ListView.builder(
+        _fill(
+          ListView.builder(
+            shrinkWrap: shrinkWrap,
+            physics: shrinkWrap ? const NeverScrollableScrollPhysics() : null,
             itemCount: rows.length,
             itemBuilder: (context, i) {
               final (e, running) = rows[i];

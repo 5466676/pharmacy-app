@@ -62,11 +62,16 @@ class ProductScreen extends ConsumerWidget {
           ],
         ),
         Panel(
-          child: Row(
+          child: Wrap(
+            spacing: DoayaSpacing.xl,
+            runSpacing: DoayaSpacing.sm,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              Expanded(child: ProductName(product: p)),
+              ConstrainedBox(
+                constraints: const BoxConstraints(minWidth: DoayaSizes.employeeTile * 2),
+                child: ProductName(product: p),
+              ),
               StockChip(product: p, onHand: stock.onHand(p.id)),
-              const SizedBox(width: DoayaSpacing.xl),
               Text(formatMoney(p.priceMinor, currency), style: DoayaTypography.price),
             ],
           ),
@@ -97,22 +102,19 @@ class ProductScreen extends ConsumerWidget {
                     for (final b in batches)
                       Padding(
                         padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
-                        child: Row(
+                        child: Wrap(
+                          spacing: DoayaSpacing.l,
+                          runSpacing: DoayaSpacing.xs,
+                          crossAxisAlignment: WrapCrossAlignment.center,
                           children: [
-                            Expanded(
-                              child: Text(
-                                l.batchReceived(formatDate(b.receivedAt ?? now)),
-                                style: DoayaTypography.bodySmall,
-                              ),
+                            Text(
+                              l.batchReceived(formatDate(b.receivedAt ?? now)),
+                              style: DoayaTypography.bodySmall,
                             ),
                             _ExpiryChip(expiry: b.expiry, now: now, window: window, l: l),
-                            const SizedBox(width: DoayaSpacing.l),
-                            SizedBox(
-                              width: DoayaSizes.priceColumn,
-                              child: Text(
-                                formatStock(l, b.quantity, p.unitsPerPack),
-                                style: DoayaTypography.label,
-                              ),
+                            Text(
+                              formatStock(l, b.quantity, p.unitsPerPack),
+                              style: DoayaTypography.label,
                             ),
                             if (b.expiry != null && !b.expiry!.isAfter(now.add(window)))
                               GlassPillButton(
@@ -538,13 +540,16 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                     field(l.barcodesLabel, _barcodes, optional: true, dir: TextDirection.ltr),
                   ),
                   gap,
-                  SwitchListTile(
-                    value: _rx,
-                    onChanged: (v) => setState(() => _rx = v),
-                    title: Text(l.prescriptionLabel, style: DoayaTypography.bodyMedium),
-                    activeThumbColor: DoayaColors.onSage,
-                    activeTrackColor: DoayaColors.accent,
-                    contentPadding: EdgeInsets.zero,
+                  Material(
+                    type: MaterialType.transparency,
+                    child: SwitchListTile(
+                      value: _rx,
+                      onChanged: (v) => setState(() => _rx = v),
+                      title: Text(l.prescriptionLabel, style: DoayaTypography.bodyMedium),
+                      activeThumbColor: DoayaColors.onSage,
+                      activeTrackColor: DoayaColors.accent,
+                      contentPadding: EdgeInsets.zero,
+                    ),
                   ),
                 ],
               ),

@@ -7,6 +7,7 @@ import '../../l10n/app_localizations.dart';
 import '../../providers.dart';
 import '../format.dart';
 import '../widgets.dart';
+import 'expenses_screen.dart';
 
 /// The signed-in employee's cash drawer: open with a float, live expected
 /// cash, cash in / out, close with a count (shows shortage / surplus).
@@ -98,6 +99,11 @@ class TillScreen extends ConsumerWidget {
               },
             ),
             GlassPillButton(
+              label: l.addExpense,
+              icon: DoayaIcons.payment,
+              onPressed: () => showAddExpense(context, ref),
+            ),
+            GlassPillButton(
               label: l.withdrawCash,
               icon: DoayaIcons.remove,
               onPressed: () async {
@@ -114,63 +120,69 @@ class TillScreen extends ConsumerWidget {
             ),
           ],
         ),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Panel(
-                child: Column(
-                  children: [
-                    row(l.tillFloat, money(s.openingFloat)),
-                    row(l.tillCashSales, formatSignedMoney(s.movements.cashSales, currency)),
-                    row(l.tillDebtPayments, formatSignedMoney(s.movements.debtPayments, currency)),
-                    row(l.tillCashRefunds, formatSignedMoney(-s.movements.cashRefunds, currency)),
-                    row(l.tillCashIn, formatSignedMoney(s.cashIn, currency)),
-                    row(l.tillCashOut, formatSignedMoney(-s.cashOut, currency)),
-                    const Divider(color: DoayaColors.divider),
-                    row(l.tillExpected, money(s.expected), strong: true, color: DoayaColors.price),
-                    const SizedBox(height: DoayaSpacing.sm),
-                    row(l.tillTransfers, money(s.movements.transferSales)),
-                  ],
-                ),
-              ),
+        SplitPanes(
+          main: Panel(
+            child: Column(
+              children: [
+                row(l.tillFloat, money(s.openingFloat)),
+                row(l.tillCashSales, formatSignedMoney(s.movements.cashSales, currency)),
+                row(l.tillDebtPayments, formatSignedMoney(s.movements.debtPayments, currency)),
+                row(l.tillCashRefunds, formatSignedMoney(-s.movements.cashRefunds, currency)),
+                row(l.tillCashIn, formatSignedMoney(s.cashIn, currency)),
+                row(l.tillCashOut, formatSignedMoney(-s.cashOut, currency)),
+                if (s.movements.drawerPurchases != 0)
+                  row(
+                    l.tillDrawerPurchases,
+                    formatSignedMoney(-s.movements.drawerPurchases, currency),
+                  ),
+                if (s.movements.drawerExpenses != 0)
+                  row(
+                    l.tillDrawerExpenses,
+                    formatSignedMoney(-s.movements.drawerExpenses, currency),
+                  ),
+                if (s.movements.supplierCashRefunds != 0)
+                  row(
+                    l.tillSupplierRefunds,
+                    formatSignedMoney(s.movements.supplierCashRefunds, currency),
+                  ),
+                const Divider(color: DoayaColors.divider),
+                row(l.tillExpected, money(s.expected), strong: true, color: DoayaColors.price),
+                const SizedBox(height: DoayaSpacing.sm),
+                row(l.tillTransfers, money(s.movements.transferSales)),
+              ],
             ),
-            const SizedBox(width: DoayaSpacing.xl),
-            SizedBox(
-              width: DoayaSizes.invoiceWidth,
-              child: Panel(
-                title: l.closeTill,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(
-                      l.countHelp,
-                      style: DoayaTypography.bodySmall.copyWith(color: DoayaColors.textSecondary),
-                    ),
-                    const SizedBox(height: DoayaSpacing.l),
-                    SagePillButton(
-                      label: l.closeTill,
-                      icon: DoayaIcons.check,
-                      expand: true,
-                      onPressed: () async {
-                        final r = await askAmount(
-                          context,
-                          title: l.closeTill,
-                          label: l.countedLabel(currency.symbol),
-                          help: l.countHelp,
-                          currency: currency,
-                        );
-                        if (r == null) return;
-                        final done = await till.closeShift(session, s.shiftId, countedMinor: r.$1);
-                        if (!context.mounted) return;
-                        await _showResult(context, done, currency);
-                      },
-                    ),
-                  ],
+          ),
+          side: Panel(
+            title: l.closeTill,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  l.countHelp,
+                  style: DoayaTypography.bodySmall.copyWith(color: DoayaColors.textSecondary),
                 ),
-              ),
+                const SizedBox(height: DoayaSpacing.l),
+                SagePillButton(
+                  label: l.closeTill,
+                  icon: DoayaIcons.check,
+                  expand: true,
+                  onPressed: () async {
+                    final r = await askAmount(
+                      context,
+                      title: l.closeTill,
+                      label: l.countedLabel(currency.symbol),
+                      help: l.countHelp,
+                      currency: currency,
+                    );
+                    if (r == null) return;
+                    final done = await till.closeShift(session, s.shiftId, countedMinor: r.$1);
+                    if (!context.mounted) return;
+                    await _showResult(context, done, currency);
+                  },
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ],
     );

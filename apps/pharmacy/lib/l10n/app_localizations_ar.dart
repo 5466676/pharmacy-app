@@ -1496,6 +1496,31 @@ class AppLocalizationsAr extends AppLocalizations {
   String get serverMissingHelp => 'ما عم نوصل للسيرفر. البيع شغّال عادي، والحركات ناطرة لحتى يرجع.';
 
   @override
+  String get statusWrongServer => 'السيرفر تغيّر';
+
+  @override
+  String get wrongServerHelp =>
+      'يلي عم يرد على عنوان السيرفر مو نفس السيرفر يلي انربط عليه هالجهاز (رمزه مختلف)، فوقّفنا المزامنة منشان ما تطلع البيانات لجهاز غريب. البيع شغّال عادي. إذا انعاد تركيب السيرفر، اربط الجهاز من جديد.';
+
+  @override
+  String get errWrongServer => 'رمز السيرفر مو نفسه يلي انربط عليه الجهاز';
+
+  @override
+  String get relinkButton => 'اربط من جديد';
+
+  @override
+  String get relinkConfirm =>
+      'رح ينفك ربط هالجهاز بالسيرفر لتربطه من جديد. البيانات يلي عليه بتضل، وبترتفع كلها مع الربط الجديد. أكيد؟';
+
+  @override
+  String serverCode(String code) {
+    return 'رمز السيرفر: $code';
+  }
+
+  @override
+  String get serverCodeHelp => 'لازم يطابق الرمز يلي طلع وقت تركيب السيرفر.';
+
+  @override
   String get devicesTitle => 'الأجهزة المربوطة';
 
   @override
@@ -1559,6 +1584,26 @@ class AppLocalizationsAr extends AppLocalizations {
   String get joinExisting => 'انضمام لصيدلية موجودة';
 
   @override
+  String get navMore => 'المزيد';
+
+  @override
+  String serverBackupLast(String time) {
+    return 'آخر نسخة احتياطية على السيرفر: $time';
+  }
+
+  @override
+  String get serverBackupNone => 'السيرفر لسا ما عمل نسخة احتياطية';
+
+  @override
+  String get serverBackupError => 'في مشكلة بالنسخ الاحتياطي على السيرفر: شوف دليل التركيب';
+
+  @override
+  String get navInventoryShort => 'المخزون';
+
+  @override
+  String get navDebtsShort => 'الديون';
+
+  @override
   String get newServer => 'سيرفر دوايا جديد (بلا صيدلية لسا)';
 
   @override
@@ -1573,4 +1618,161 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get joinNoEmployee => 'الحساب مو مربوط بموظف على هالصيدلية. اطلب من صاحب الصيدلية يربطه.';
+
+  @override
+  String get navExpenses => 'المصاريف';
+
+  @override
+  String get expensesTitle => 'المصاريف والأرباح والخسائر';
+
+  @override
+  String get addExpense => 'مصروف';
+
+  @override
+  String get addExpenseTitle => 'مصروف جديد';
+
+  @override
+  String get expenseCategoryLabel => 'شو نوع المصروف؟';
+
+  @override
+  String get expenseCustomLabel => 'اسم المصروف';
+
+  @override
+  String expenseCategory(String key) {
+    String _temp0 = intl.Intl.selectLogic(key, {
+      'rent': 'أجار',
+      'salaries': 'رواتب',
+      'electricity': 'كهربا',
+      'generator': 'أمبيرات',
+      'internet': 'إنترنت وموبايل',
+      'other': 'غير شي',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get tillDrawerPurchases => 'مشتريات من الصندوق';
+
+  @override
+  String get tillDrawerExpenses => 'مصاريف من الصندوق';
+
+  @override
+  String get tillSupplierRefunds => 'رجع من المستودعات نقداً';
+
+  @override
+  String monthName(String month) {
+    String _temp0 = intl.Intl.selectLogic(month, {
+      '1': 'كانون التاني',
+      '2': 'شباط',
+      '3': 'آذار',
+      '4': 'نيسان',
+      '5': 'أيار',
+      '6': 'حزيران',
+      '7': 'تموز',
+      '8': 'آب',
+      '9': 'أيلول',
+      '10': 'تشرين الأول',
+      '11': 'تشرين التاني',
+      '12': 'كانون الأول',
+      'other': '$month',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get previousMonth => 'الشهر يلي قبل';
+
+  @override
+  String get nextMonth => 'الشهر يلي بعد';
+
+  @override
+  String get pnlTitle => 'الأرباح والخسائر';
+
+  @override
+  String get pnlSales => 'المبيعات';
+
+  @override
+  String get pnlRefunds => 'مرتجعات الزباين';
+
+  @override
+  String get pnlNetSales => 'صافي المبيعات';
+
+  @override
+  String get pnlCostOfGoods => 'تكلفة البضاعة المباعة';
+
+  @override
+  String get pnlGrossProfit => 'ربح البضاعة';
+
+  @override
+  String get pnlExpenses => 'المصاريف';
+
+  @override
+  String get pnlNetProfit => 'صافي الربح';
+
+  @override
+  String get pnlNetLoss => 'صافي الخسارة';
+
+  @override
+  String get noExpenses => 'ما في مصاريف بهالشهر';
+
+  @override
+  String get expensesListTitle => 'مصاريف الشهر';
+
+  @override
+  String get expenseFromDrawerTag => 'من الصندوق';
+
+  @override
+  String get expenseFromOutsideTag => 'من برّا';
+
+  @override
+  String get expenseSaved => 'انسجّل المصروف';
+
+  @override
+  String get backupSection => 'النسخ الاحتياطي على هالجهاز';
+
+  @override
+  String get backupHelp =>
+      'كل يوم بتنعمل نسخة كاملة لحالها وبنخلّي آخر 30. الأحسن يكون المجلد على فلاشة، أو مجلد بينسخ لبرّا الكمبيوتر.';
+
+  @override
+  String get backupFolderLabel => 'مجلد النسخ';
+
+  @override
+  String get saveFolder => 'اعتمد المجلد';
+
+  @override
+  String get backupNow => 'خذ نسخة هلق';
+
+  @override
+  String get backingUp => 'عم ناخد نسخة';
+
+  @override
+  String backupLast(String when) {
+    return 'آخر نسخة: $when';
+  }
+
+  @override
+  String get backupNone => 'ما في نسخة لسا';
+
+  @override
+  String get backupFailed =>
+      'ما قدرنا ناخد النسخة (المجلد مو موجود أو الفلاشة مشلوحة؟). منرجع منجرّب لحالنا.';
+
+  @override
+  String get backupDone => 'انعملت النسخة';
+
+  @override
+  String get restoreButton => 'استرجع';
+
+  @override
+  String restoreConfirm(String when) {
+    return 'رح ترجع بيانات هالجهاز متل ما كانت بتاريخ $when، وكل شي صار بعدها على هالجهاز بيروح. البيانات الحالية بتنحفظ على جنب. أكيد؟';
+  }
+
+  @override
+  String get restoreRestart => 'جاهز. سكّر البرنامج وافتحه من جديد، وبيفتح على النسخة يلي اخترتها.';
+
+  @override
+  String get restoreLinkedNote =>
+      'هالجهاز مربوط بالسيرفر: إذا خرب، ركّبه من جديد واختار «انضمام لصيدلية موجودة» وبتنزل كل البيانات. الاسترجاع من نسخة هون للأجهزة يلي مو مربوطة.';
 }

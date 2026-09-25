@@ -104,12 +104,15 @@ class _ShortagesTabState extends ConsumerState<ShortagesTab> {
       children: [
         Row(
           children: [
-            const Spacer(),
-            SagePillButton(
-              label: l.createOrders(formatQty(ticked)),
-              icon: DoayaIcons.send,
-              size: PillSize.medium,
-              onPressed: _busy || ticked == 0 ? null : () => _create(list, last),
+            if (!isPhoneLayout(context)) const Spacer(),
+            Flexible(
+              child: SagePillButton(
+                label: l.createOrders(formatQty(ticked)),
+                icon: DoayaIcons.send,
+                size: PillSize.medium,
+                expand: isPhoneLayout(context),
+                onPressed: _busy || ticked == 0 ? null : () => _create(list, last),
+              ),
             ),
           ],
         ),
@@ -129,86 +132,108 @@ class _ShortagesTabState extends ConsumerState<ShortagesTab> {
                 ShortageReason.belowMinimum => (l.reasonBelowMinimum, StatusTone.warning),
                 ShortageReason.sellingFast => (l.reasonSellingFast, StatusTone.neutral),
               };
+              final check = Checkbox(
+                value: on,
+                activeColor: DoayaColors.accent,
+                onChanged: (v) => setState(
+                  () => v == true ? _unticked.remove(s.productId) : _unticked.add(s.productId),
+                ),
+              );
+              final reasonInfo = Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  StatusChip(label: reason, tone: tone),
+                  const SizedBox(height: DoayaSpacing.xxs),
+                  Text(
+                    [
+                      formatStock(l, s.onHandPieces, p.unitsPerPack),
+                      if (s.daysLeft != null && s.onHandPieces > 0)
+                        l.runsOutIn(formatQty(s.daysLeft!)),
+                    ].join('، '),
+                    style: DoayaTypography.caption.copyWith(color: DoayaColors.textSecondary),
+                  ),
+                ],
+              );
+              final qty = QtyStepper(
+                value: _qty[s.productId] ?? s.suggestedPacks,
+                max: 9999,
+                onChanged: (v) => setState(() {
+                  if (v <= 0) {
+                    _unticked.add(s.productId);
+                  } else {
+                    _qty[s.productId] = v;
+                  }
+                }),
+              );
+              final supplierPick = Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  GlassPillButton(
+                    label: supplier?.name ?? l.chooseSupplier,
+                    selected: supplier != null,
+                    expand: true,
+                    onPressed: () async {
+                      final picked = await showSupplierPicker(context);
+                      if (picked != null) {
+                        setState(() => _supplier[s.productId] = picked);
+                      }
+                    },
+                  ),
+                  if (owner && lp != null && lp.supplierId == supplier?.id)
+                    Padding(
+                      padding: const EdgeInsets.only(top: DoayaSpacing.xxs),
+                      child: Text(
+                        l.lastPrice(formatMoney(lp.unitPriceMinor, currency)),
+                        textAlign: TextAlign.center,
+                        style: DoayaTypography.caption.copyWith(color: DoayaColors.textSecondary),
+                      ),
+                    ),
+                ],
+              );
+              if (isPhoneLayout(context)) {
+                // Phone: name + quantity, the reason, then the supplier.
+                return GlassSurface(
+                  shadow: false,
+                  borderRadius: BorderRadius.circular(DoayaRadii.tile),
+                  padding: const EdgeInsets.all(DoayaSpacing.ml),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        children: [
+                          check,
+                          Expanded(
+                            child: ProductName(product: p, muted: !on),
+                          ),
+                          qty,
+                        ],
+                      ),
+                      const SizedBox(height: DoayaSpacing.xs),
+                      reasonInfo,
+                      const SizedBox(height: DoayaSpacing.sm),
+                      supplierPick,
+                    ],
+                  ),
+                );
+              }
               return GlassSurface(
                 shadow: false,
                 borderRadius: BorderRadius.circular(DoayaRadii.tile),
                 padding: const EdgeInsets.all(DoayaSpacing.ml),
                 child: Row(
                   children: [
-                    Checkbox(
-                      value: on,
-                      activeColor: DoayaColors.accent,
-                      onChanged: (v) => setState(
-                        () =>
-                            v == true ? _unticked.remove(s.productId) : _unticked.add(s.productId),
-                      ),
-                    ),
+                    check,
                     const SizedBox(width: DoayaSpacing.sm),
                     Expanded(
                       flex: 3,
                       child: ProductName(product: p, muted: !on),
                     ),
-                    Expanded(
-                      flex: 3,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          StatusChip(label: reason, tone: tone),
-                          const SizedBox(height: DoayaSpacing.xxs),
-                          Text(
-                            [
-                              formatStock(l, s.onHandPieces, p.unitsPerPack),
-                              if (s.daysLeft != null && s.onHandPieces > 0)
-                                l.runsOutIn(formatQty(s.daysLeft!)),
-                            ].join('، '),
-                            style: DoayaTypography.caption.copyWith(
-                              color: DoayaColors.textSecondary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    QtyStepper(
-                      value: _qty[s.productId] ?? s.suggestedPacks,
-                      max: 9999,
-                      onChanged: (v) => setState(() {
-                        if (v <= 0) {
-                          _unticked.add(s.productId);
-                        } else {
-                          _qty[s.productId] = v;
-                        }
-                      }),
-                    ),
+                    Expanded(flex: 3, child: reasonInfo),
+                    qty,
                     const SizedBox(width: DoayaSpacing.l),
                     SizedBox(
                       width: DoayaSizes.employeeTile + DoayaSpacing.huge,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          GlassPillButton(
-                            label: supplier?.name ?? l.chooseSupplier,
-                            selected: supplier != null,
-                            expand: true,
-                            onPressed: () async {
-                              final picked = await showSupplierPicker(context);
-                              if (picked != null) {
-                                setState(() => _supplier[s.productId] = picked);
-                              }
-                            },
-                          ),
-                          if (owner && lp != null && lp.supplierId == supplier?.id)
-                            Padding(
-                              padding: const EdgeInsets.only(top: DoayaSpacing.xxs),
-                              child: Text(
-                                l.lastPrice(formatMoney(lp.unitPriceMinor, currency)),
-                                textAlign: TextAlign.center,
-                                style: DoayaTypography.caption.copyWith(
-                                  color: DoayaColors.textSecondary,
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
+                      child: supplierPick,
                     ),
                   ],
                 ),

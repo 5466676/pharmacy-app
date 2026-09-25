@@ -1,6 +1,22 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Sync with the pharmacy's server on the local Wi-Fi. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <!-- Opening WhatsApp / the browser for purchase orders (Android 11+). -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <data android:scheme="whatsapp"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <data android:scheme="https"/>
+        </intent>
+    </queries>
+    <!-- The pharmacy's server speaks HTTPS with its own certificate, pinned
+         by the app (see docs/DECISIONS.md): no plain HTTP needed. -->
     <application
-        android:label="doaya_pharmacy"
+        android:label="دوايا"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

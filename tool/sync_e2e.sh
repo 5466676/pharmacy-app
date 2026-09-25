@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # End-to-end sync test: the real server (FastAPI + PostgreSQL) and two app
-# databases talking to it over HTTP. Needs PostgreSQL with the `doaya` role
+# databases talking to it over HTTPS (pinned self-made certificate). Needs PostgreSQL with the `doaya` role
 # (see backend/README.md) and the backend's .venv.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -13,11 +13,11 @@ psql -h localhost -U doaya -d postgres -qc "DROP DATABASE IF EXISTS ${DB}" -c "C
 cd "$ROOT/backend"
 DOAYA_DATABASE_URL="$URL" .venv/bin/alembic upgrade head >/dev/null
 DATA_DIR="$(mktemp -d)"
-DOAYA_DATABASE_URL="$URL" DOAYA_DATA_DIR="$DATA_DIR" \
-  .venv/bin/uvicorn app.main:server_app --factory --port "$PORT" --log-level warning &
+DOAYA_DATABASE_URL="$URL" DOAYA_DATA_DIR="$DATA_DIR" DOAYA_HTTP_PORT="$PORT" \
+  DOAYA_DISCOVERY_PORT=0 .venv/bin/python -m app.serve >"$DATA_DIR/server.log" 2>&1 &
 SERVER=$!
 trap 'kill $SERVER 2>/dev/null; rm -rf "$DATA_DIR"' EXIT
-for _ in $(seq 50); do curl --noproxy "*" -sf "http://localhost:${PORT}/health" >/dev/null && break; sleep 0.2; done
+for _ in $(seq 50); do curl --noproxy "*" -skf "https://localhost:${PORT}/health" >/dev/null && break; sleep 0.2; done
 
 cd "$ROOT/apps/pharmacy"
-DOAYA_SERVER_URL="http://localhost:${PORT}/" flutter test test/sync_server_e2e_test.dart
+DOAYA_SERVER_URL="https://localhost:${PORT}/" flutter test test/sync_server_e2e_test.dart

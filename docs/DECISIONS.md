@@ -140,3 +140,27 @@ The server doesn't recreate the app's ~25 tables. Each synced row is stored once
 - While pulled changes are applied, a flag in `sync_state` pauses the triggers, so they aren't queued back.
 - **Foreign keys are switched off while a pulled page is applied.** An edited parent (a product whose price changed) gets a newer sequence number than its older children (its barcodes), so a new device can receive the child first. The rows were consistent on the device that wrote them, and a test covers this case.
 - **The first upload** of a device that already has history (the counter PC creating the pharmacy) queues every row, parents first. Master rows keep their own `updated_at`; rows without one use 1970, so re-linking an old PC can never override newer edits already on the server.
+
+## 2026-09-25 · Encryption on the pharmacy Wi-Fi: HTTPS with a pinned self-made certificate
+- **Why**: the Wi-Fi password is shared with many people, and any phone on it could read plain HTTP: passwords at linking, device secrets, and every sale, debt and customer phone number. The owner approved the `cryptography` package for this.
+- **Server** (`app/tls.py`, `python -m app.serve`): on first start it makes its own certificate in the data folder (EC P-256, 20 years, SAN localhost / 127.0.0.1 / host name). The key is only readable by the server's account. There's no certificate authority for a LAN IP, so no one else can vouch for it.
+- **Devices pin it (trust on first use)**:
+  - Discovery answers carry `scheme: https` and the certificate's SHA-256.
+  - A typed address is https by default. Its certificate is read on a first `/health` call that sends nothing secret.
+  - The pin rides in the saved server address as a fragment (`https://192.168.1.10:8000/#sha256=…`). The whole app already passes that address around and saves it in `sync_state`, and fragments are never sent over the wire.
+  - The client (`package:doaya_core/pinned_client.dart`) trusts no certificate authority, only that exact certificate.
+- **People can check by eye**: the short code (`AB12-CD34`, the first 8 hex digits) is shown by the app when picking the server and on the sync screen. The installer prints it, and so does `python -m app.cli server-code`.
+- **Another certificate at that address**, from an impostor or a reinstalled server, gets the state «السيرفر تغيّر». Nothing is sent and selling goes on. «اربط من جديد» forgets the link (local data stays and is all uploaded again on the next link; the download starts over).
+- `http://` still works when typed explicitly (development, tests). Android no longer allows plain HTTP.
+
+## 2026-09-25 · Expenses and the device's own backups
+- **Expenses**: anyone can record one from the till, and it's taken from the drawer or from outside, chosen each time. The monthly P&L page is owner-only.
+  - Kinds are fixed keys (rent, salaries, electricity, generator, internet) shown in Arabic, or a name typed by hand, stored as typed.
+  - Expenses are append-only like every ledger. A mistake is corrected by the owner with an opposite entry later, never by deleting.
+- **P&L** = the profit report's sales (after discounts) with customer returns shown apart, − cost of goods (unknown cost flagged, never guessed), − expenses of the month.
+- **Device backups**:
+  - `VACUUM INTO` a folder once a day, newest 30 kept. The folder and last time live in the device-local `sync_state`, because each device has its own folder.
+  - The folder is a typed path, so no file-picker dependency is needed.
+  - A restore is scheduled and applied at the next start, before the database opens, and the old file is kept as `.before-restore`.
+  - **Restore is not offered on a device linked to a server**: the server doesn't send a device its own rows back. A linked device that lost data re-joins the pharmacy as a new device and downloads everything.
+

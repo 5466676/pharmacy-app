@@ -18,6 +18,34 @@ class SyncApiException implements Exception {
   String toString() => 'SyncApiException($status, $code)';
 }
 
+/// The server's certificate isn't the one this device pinned when it was
+/// linked: another machine answers at that address, or the server was
+/// reinstalled. Nothing is sent; the device must be linked again.
+class SyncCertificateException implements Exception {
+  const SyncCertificateException();
+
+  @override
+  String toString() => 'SyncCertificateException';
+}
+
+/// A server address carries the SHA-256 of the server's own certificate in
+/// its fragment (`https://192.168.1.10:8000/#sha256=…`). There is no
+/// certificate authority on a pharmacy's Wi-Fi, so each device pins the
+/// certificate it met when it was linked (discovery announces it) and
+/// refuses any other one. Fragments never go over the wire.
+Uri pinServer(Uri url, String fingerprint) => url.replace(fragment: 'sha256=$fingerprint');
+
+/// The fingerprint pinned in [url], if any.
+String? serverPin(Uri url) =>
+    url.fragment.startsWith('sha256=') ? url.fragment.substring('sha256='.length) : null;
+
+/// The short form people compare by eye (the server prints the same):
+/// `AB12-CD34`.
+String serverCode(String fingerprint) {
+  final f = fingerprint.substring(0, 8).toUpperCase();
+  return '${f.substring(0, 4)}-${f.substring(4)}';
+}
+
 /// What linking a device returns; the app keeps it to stay signed in.
 class LinkResult {
   const LinkResult({
@@ -101,6 +129,8 @@ class HttpSyncClient implements SyncRemote {
       );
       return r.statusCode == 200 && (jsonDecode(r.body) as Map)['service'] == 'doaya';
     } on SyncNetworkException {
+      return false;
+    } on SyncCertificateException {
       return false;
     }
   }
@@ -245,6 +275,8 @@ class HttpSyncClient implements SyncRemote {
     final c = client ?? http.Client();
     try {
       return await call(c).timeout(timeout);
+    } on SyncCertificateException {
+      rethrow;
     } on TimeoutException {
       throw const SyncNetworkException('timeout');
     } on http.ClientException catch (e) {

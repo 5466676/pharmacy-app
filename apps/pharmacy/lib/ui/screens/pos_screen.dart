@@ -300,6 +300,108 @@ class _PosScreenState extends ConsumerState<PosScreen> {
       );
     }
 
+    Widget invoice({required bool compact}) => _Invoice(
+      compact: compact,
+      l: l,
+      currency: currency,
+      items: _cart,
+      subtotal: subtotal,
+      payment: _payment,
+      registered: _registered,
+      customer: _customer,
+      busy: _busy,
+      nudgeFor: nudgeFor,
+      onQty: _setQty,
+      onRegistered: (r) => setState(() {
+        _registered = r;
+        if (!r) {
+          _customer = null;
+          _payment = PaymentType.cash;
+        }
+      }),
+      onPickCustomer: _pickCustomer,
+      onPayment: (p) => p == PaymentType.debt ? _toggleDebt() : setState(() => _payment = p),
+      onComplete: _complete,
+      discount: _discount,
+      tendered: _tendered,
+      discountMinor: _discountMinor(currency),
+      tenderedMinor: _tenderedMinor(currency),
+      onAmountsChanged: () => setState(() {}),
+      tillOpen: ref.watch(currentShiftProvider).value != null,
+      onOpenTill: _openTill,
+    );
+
+    Widget results() => ListView.separated(
+      itemCount: _results.length,
+      separatorBuilder: (_, _) => const SizedBox(height: DoayaSpacing.sm),
+      itemBuilder: (context, i) {
+        final p = _results[i];
+        final onHand = stock?.onHand(p.id) ?? 0;
+        return _ResultRow(
+          product: p,
+          onHand: onHand,
+          price: formatMoney(p.priceMinor, currency),
+          addLabel: onHand <= 0
+              ? l.showAlternatives
+              : (p.unitsPerPack > 1 ? l.addBox : l.addToCart),
+          nudge: nudgeFor(p.id),
+          prescriptionLabel: p.prescriptionOnly ? l.prescriptionOnly : null,
+          stripLabel: p.unitsPerPack > 1 && onHand > 0 ? l.addStrip : null,
+          onAddStrip: () {
+            _add(p, strip: true);
+            _search.clear();
+            setState(() => _results = const []);
+            _searchFocus.requestFocus();
+          },
+          onAdd: () {
+            if (onHand > 0) {
+              _add(p);
+              _search.clear();
+              setState(() => _results = const []);
+            } else {
+              _showAlternatives(p);
+            }
+            _searchFocus.requestFocus();
+          },
+        );
+      },
+    );
+
+    final phone = isPhoneLayout(context);
+    final search = GlassSearchField(
+      hint: l.posSearchHint,
+      controller: _search,
+      focusNode: _searchFocus,
+      emphasized: true,
+      height: DoayaSizes.inputBar,
+      onChanged: _onSearchChanged,
+      onSubmitted: _onSubmitted,
+      trailing: const Padding(
+        padding: EdgeInsetsDirectional.only(end: DoayaSpacing.ml),
+        child: Icon(DoayaIcons.barcode, color: DoayaColors.accent),
+      ),
+    );
+    if (phone) {
+      // One column: search on top; results while searching, else the invoice.
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          PageHeader(
+            title: l.posTitle,
+            actions: [
+              GlassPillButton(
+                label: l.returnsButton,
+                icon: DoayaIcons.returns,
+                onPressed: () => context.go(Routes.returns),
+              ),
+            ],
+          ),
+          search,
+          const SizedBox(height: DoayaSpacing.sm),
+          Expanded(child: _results.isNotEmpty ? results() : invoice(compact: true)),
+        ],
+      );
+    }
     return CallbackShortcuts(
       bindings: {
         const SingleActivator(LogicalKeyboardKey.f2): _searchFocus.requestFocus,
@@ -323,95 +425,15 @@ class _PosScreenState extends ConsumerState<PosScreen> {
                     ),
                   ],
                 ),
-                GlassSearchField(
-                  hint: l.posSearchHint,
-                  controller: _search,
-                  focusNode: _searchFocus,
-                  emphasized: true,
-                  height: DoayaSizes.inputBar,
-                  onChanged: _onSearchChanged,
-                  onSubmitted: _onSubmitted,
-                  trailing: const Padding(
-                    padding: EdgeInsetsDirectional.only(end: DoayaSpacing.ml),
-                    child: Icon(DoayaIcons.barcode, color: DoayaColors.accent),
-                  ),
-                ),
+                search,
                 const SizedBox(height: DoayaSpacing.l),
-                Expanded(
-                  child: ListView.separated(
-                    itemCount: _results.length,
-                    separatorBuilder: (_, _) => const SizedBox(height: DoayaSpacing.sm),
-                    itemBuilder: (context, i) {
-                      final p = _results[i];
-                      final onHand = stock?.onHand(p.id) ?? 0;
-                      return _ResultRow(
-                        product: p,
-                        onHand: onHand,
-                        price: formatMoney(p.priceMinor, currency),
-                        addLabel: onHand <= 0
-                            ? l.showAlternatives
-                            : (p.unitsPerPack > 1 ? l.addBox : l.addToCart),
-                        nudge: nudgeFor(p.id),
-                        prescriptionLabel: p.prescriptionOnly ? l.prescriptionOnly : null,
-                        stripLabel: p.unitsPerPack > 1 && onHand > 0 ? l.addStrip : null,
-                        onAddStrip: () {
-                          _add(p, strip: true);
-                          _search.clear();
-                          setState(() => _results = const []);
-                          _searchFocus.requestFocus();
-                        },
-                        onAdd: () {
-                          if (onHand > 0) {
-                            _add(p);
-                            _search.clear();
-                            setState(() => _results = const []);
-                          } else {
-                            _showAlternatives(p);
-                          }
-                          _searchFocus.requestFocus();
-                        },
-                      );
-                    },
-                  ),
-                ),
+                Expanded(child: results()),
                 _ShortcutsBar(l: l),
               ],
             ),
           ),
           const SizedBox(width: DoayaSpacing.huge),
-          SizedBox(
-            width: DoayaSizes.invoiceWidth,
-            child: _Invoice(
-              l: l,
-              currency: currency,
-              items: _cart,
-              subtotal: subtotal,
-              payment: _payment,
-              registered: _registered,
-              customer: _customer,
-              busy: _busy,
-              nudgeFor: nudgeFor,
-              onQty: _setQty,
-              onRegistered: (r) => setState(() {
-                _registered = r;
-                if (!r) {
-                  _customer = null;
-                  _payment = PaymentType.cash;
-                }
-              }),
-              onPickCustomer: _pickCustomer,
-              onPayment: (p) =>
-                  p == PaymentType.debt ? _toggleDebt() : setState(() => _payment = p),
-              onComplete: _complete,
-              discount: _discount,
-              tendered: _tendered,
-              discountMinor: _discountMinor(currency),
-              tenderedMinor: _tenderedMinor(currency),
-              onAmountsChanged: () => setState(() {}),
-              tillOpen: ref.watch(currentShiftProvider).value != null,
-              onOpenTill: _openTill,
-            ),
-          ),
+          SizedBox(width: DoayaSizes.invoiceWidth, child: invoice(compact: false)),
         ],
       ),
     );
@@ -444,6 +466,52 @@ class _ResultRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final out = onHand <= 0;
+    final add = out
+        ? GlassPillButton(label: addLabel, icon: DoayaIcons.swap, onPressed: onAdd)
+        : SagePillButton(label: addLabel, size: PillSize.small, onPressed: onAdd);
+    if (isPhoneLayout(context)) {
+      // Phone: name on top, then stock + price, then the buttons.
+      return GlassSurface(
+        shadow: false,
+        borderRadius: BorderRadius.circular(DoayaRadii.cardLarge),
+        padding: const EdgeInsets.all(DoayaSpacing.ml),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ProductName(product: product, muted: out),
+            if (nudge != null) ...[
+              const SizedBox(height: DoayaSpacing.xs),
+              StatusChip(label: nudge!, tone: StatusTone.warning, icon: DoayaIcons.expiry),
+            ],
+            const SizedBox(height: DoayaSpacing.sm),
+            Row(
+              children: [
+                Flexible(
+                  child: StockChip(product: product, onHand: onHand),
+                ),
+                if (prescriptionLabel != null) ...[
+                  const SizedBox(width: DoayaSpacing.s),
+                  Flexible(child: StatusChip(label: prescriptionLabel!)),
+                ],
+                const Spacer(),
+                Text(price, style: DoayaTypography.label),
+              ],
+            ),
+            const SizedBox(height: DoayaSpacing.sm),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                if (stripLabel != null) ...[
+                  GlassPillButton(label: stripLabel!, onPressed: onAddStrip),
+                  const SizedBox(width: DoayaSpacing.s),
+                ],
+                add,
+              ],
+            ),
+          ],
+        ),
+      );
+    }
     return GlassSurface(
       shadow: false,
       borderRadius: BorderRadius.circular(DoayaRadii.cardLarge),
@@ -490,9 +558,7 @@ class _ResultRow extends StatelessWidget {
             GlassPillButton(label: stripLabel!, onPressed: onAddStrip),
             const SizedBox(width: DoayaSpacing.s),
           ],
-          out
-              ? GlassPillButton(label: addLabel, icon: DoayaIcons.swap, onPressed: onAdd)
-              : SagePillButton(label: addLabel, size: PillSize.small, onPressed: onAdd),
+          add,
         ],
       ),
     );
@@ -546,6 +612,7 @@ class _ShortcutsBar extends StatelessWidget {
 
 class _Invoice extends StatelessWidget {
   const _Invoice({
+    this.compact = false,
     required this.l,
     required this.currency,
     required this.items,
@@ -591,6 +658,9 @@ class _Invoice extends StatelessWidget {
   final bool tillOpen;
   final VoidCallback onOpenTill;
 
+  /// Phone: the whole panel scrolls (the keyboard takes half the screen).
+  final bool compact;
+
   @override
   Widget build(BuildContext context) {
     final total = subtotal - discountMinor;
@@ -598,223 +668,226 @@ class _Invoice extends StatelessWidget {
         ? tenderedMinor! - total
         : null;
     final invalid = discountMinor > subtotal || (change != null && change < 0);
+    final content = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(l.invoice, style: DoayaTypography.lead),
+        const SizedBox(height: DoayaSpacing.l),
+        Row(
+          children: [
+            Expanded(
+              child: GlassPillButton(
+                label: l.walkInCustomer,
+                selected: !registered,
+                expand: true,
+                onPressed: () => onRegistered(false),
+              ),
+            ),
+            const SizedBox(width: DoayaSpacing.s),
+            Expanded(
+              child: GlassPillButton(
+                label: l.registeredCustomer,
+                selected: registered,
+                expand: true,
+                onPressed: () => onRegistered(true),
+              ),
+            ),
+          ],
+        ),
+        if (registered) ...[
+          const SizedBox(height: DoayaSpacing.sm),
+          GlassPillButton(
+            label: customer?.name ?? l.chooseCustomer,
+            icon: DoayaIcons.person,
+            selected: customer != null,
+            expand: true,
+            onPressed: onPickCustomer,
+          ),
+        ],
+        const SizedBox(height: DoayaSpacing.l),
+        _grow(
+          items.isEmpty
+              ? EmptyHint(l.cartEmpty)
+              : ListView.separated(
+                  shrinkWrap: compact,
+                  physics: compact ? const NeverScrollableScrollPhysics() : null,
+                  itemCount: items.length,
+                  separatorBuilder: (_, _) =>
+                      const Divider(color: DoayaColors.divider, height: DoayaSpacing.xl),
+                  itemBuilder: (context, i) {
+                    final item = items[i];
+                    final nudge = nudgeFor(item.product.id);
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  LatinText(
+                                    item.product.tradeName,
+                                    maxLines: 1,
+                                    style: DoayaTypography.label,
+                                  ),
+                                  Text(
+                                    item.strip
+                                        ? l.perStrip(formatMoney(item.unitPriceMinor, currency))
+                                        : l.perUnit(formatMoney(item.unitPriceMinor, currency)),
+                                    style: DoayaTypography.caption.copyWith(
+                                      color: DoayaColors.textSecondary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            _QtyStepper(quantity: item.quantity, onChanged: (q) => onQty(item, q)),
+                          ],
+                        ),
+                        if (nudge != null) ...[
+                          const SizedBox(height: DoayaSpacing.xs),
+                          Align(
+                            alignment: AlignmentDirectional.centerStart,
+                            child: StatusChip(
+                              label: nudge,
+                              tone: StatusTone.warning,
+                              icon: DoayaIcons.expiry,
+                            ),
+                          ),
+                        ],
+                      ],
+                    );
+                  },
+                ),
+        ),
+        const SizedBox(height: DoayaSpacing.ml),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: GlassTextField(
+                label: l.discountLabel(currency.symbol),
+                controller: discount,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                onChanged: (_) => onAmountsChanged(),
+              ),
+            ),
+            if (payment == PaymentType.cash) ...[
+              const SizedBox(width: DoayaSpacing.sm),
+              Expanded(
+                child: GlassTextField(
+                  label: l.tenderedLabel(currency.symbol),
+                  controller: tendered,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  onChanged: (_) => onAmountsChanged(),
+                  // Keyboard-first: type the amount received, press Enter.
+                  onSubmitted: (_) {
+                    if (tillOpen && !busy && items.isNotEmpty && !invalid) onComplete();
+                  },
+                ),
+              ),
+            ],
+          ],
+        ),
+        const SizedBox(height: DoayaSpacing.sm),
+        GlassSurface(
+          shadow: false,
+          borderRadius: BorderRadius.circular(DoayaRadii.card),
+          padding: const EdgeInsets.symmetric(
+            horizontal: DoayaSpacing.l,
+            vertical: DoayaSpacing.ml,
+          ),
+          child: Column(
+            children: [
+              _TotalRow(label: l.subtotal, value: formatMoney(subtotal, currency)),
+              if (discountMinor > 0)
+                _TotalRow(label: l.discount, value: formatSignedMoney(-discountMinor, currency)),
+              const Divider(color: DoayaColors.divider),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
+                  Expanded(child: Text(l.total, style: DoayaTypography.label)),
+                  Text(formatMoney(total, currency), style: DoayaTypography.price),
+                ],
+              ),
+              if (change != null)
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        change < 0 ? l.errTendered : l.changeDue,
+                        style: DoayaTypography.bodySmall.copyWith(
+                          color: change < 0 ? DoayaColors.dangerText : DoayaColors.accent,
+                        ),
+                      ),
+                    ),
+                    if (change >= 0)
+                      Text(
+                        formatMoney(change, currency),
+                        style: DoayaTypography.titleSmall.copyWith(color: DoayaColors.accent),
+                      ),
+                  ],
+                ),
+            ],
+          ),
+        ),
+        const SizedBox(height: DoayaSpacing.sm),
+        Row(
+          children: [
+            for (final (p, label, icon) in [
+              (PaymentType.cash, l.paymentCash, DoayaIcons.cash),
+              (PaymentType.debt, l.paymentDebt, DoayaIcons.debts),
+              (PaymentType.transfer, l.paymentTransfer, DoayaIcons.transfer),
+            ]) ...[
+              if (p != PaymentType.cash) const SizedBox(width: DoayaSpacing.s),
+              Expanded(
+                child: _maybeTooltip(
+                  p == PaymentType.transfer ? l.paymentTransferHint : null,
+                  GlassPillButton(
+                    label: label,
+                    // A narrow phone has room for the words only.
+                    icon: compact ? null : icon,
+                    size: PillSize.medium,
+                    selected: payment == p,
+                    expand: true,
+                    onPressed: () => onPayment(p),
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
+        const SizedBox(height: DoayaSpacing.sm),
+        if (tillOpen)
+          SagePillButton(
+            label: l.completeSale,
+            expand: true,
+            onPressed: busy || items.isEmpty || invalid ? null : onComplete,
+          )
+        else
+          NoticeBanner(
+            message: l.tillClosedBanner,
+            icon: DoayaIcons.cash,
+            action: SagePillButton(
+              label: l.openTill,
+              size: PillSize.medium,
+              expand: true,
+              onPressed: onOpenTill,
+            ),
+          ),
+      ],
+    );
     return GlassSurface(
       tone: SurfaceTone.strong,
       borderRadius: BorderRadius.circular(DoayaRadii.hero),
-      padding: const EdgeInsets.all(DoayaSpacing.xxl),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(l.invoice, style: DoayaTypography.lead),
-          const SizedBox(height: DoayaSpacing.l),
-          Row(
-            children: [
-              Expanded(
-                child: GlassPillButton(
-                  label: l.walkInCustomer,
-                  selected: !registered,
-                  expand: true,
-                  onPressed: () => onRegistered(false),
-                ),
-              ),
-              const SizedBox(width: DoayaSpacing.s),
-              Expanded(
-                child: GlassPillButton(
-                  label: l.registeredCustomer,
-                  selected: registered,
-                  expand: true,
-                  onPressed: () => onRegistered(true),
-                ),
-              ),
-            ],
-          ),
-          if (registered) ...[
-            const SizedBox(height: DoayaSpacing.sm),
-            GlassPillButton(
-              label: customer?.name ?? l.chooseCustomer,
-              icon: DoayaIcons.person,
-              selected: customer != null,
-              expand: true,
-              onPressed: onPickCustomer,
-            ),
-          ],
-          const SizedBox(height: DoayaSpacing.l),
-          Expanded(
-            child: items.isEmpty
-                ? EmptyHint(l.cartEmpty)
-                : ListView.separated(
-                    itemCount: items.length,
-                    separatorBuilder: (_, _) =>
-                        const Divider(color: DoayaColors.divider, height: DoayaSpacing.xl),
-                    itemBuilder: (context, i) {
-                      final item = items[i];
-                      final nudge = nudgeFor(item.product.id);
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    LatinText(
-                                      item.product.tradeName,
-                                      maxLines: 1,
-                                      style: DoayaTypography.label,
-                                    ),
-                                    Text(
-                                      item.strip
-                                          ? l.perStrip(formatMoney(item.unitPriceMinor, currency))
-                                          : l.perUnit(formatMoney(item.unitPriceMinor, currency)),
-                                      style: DoayaTypography.caption.copyWith(
-                                        color: DoayaColors.textSecondary,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              _QtyStepper(
-                                quantity: item.quantity,
-                                onChanged: (q) => onQty(item, q),
-                              ),
-                            ],
-                          ),
-                          if (nudge != null) ...[
-                            const SizedBox(height: DoayaSpacing.xs),
-                            Align(
-                              alignment: AlignmentDirectional.centerStart,
-                              child: StatusChip(
-                                label: nudge,
-                                tone: StatusTone.warning,
-                                icon: DoayaIcons.expiry,
-                              ),
-                            ),
-                          ],
-                        ],
-                      );
-                    },
-                  ),
-          ),
-          const SizedBox(height: DoayaSpacing.ml),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: GlassTextField(
-                  label: l.discountLabel(currency.symbol),
-                  controller: discount,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  onChanged: (_) => onAmountsChanged(),
-                ),
-              ),
-              if (payment == PaymentType.cash) ...[
-                const SizedBox(width: DoayaSpacing.sm),
-                Expanded(
-                  child: GlassTextField(
-                    label: l.tenderedLabel(currency.symbol),
-                    controller: tendered,
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    onChanged: (_) => onAmountsChanged(),
-                    // Keyboard-first: type the amount received, press Enter.
-                    onSubmitted: (_) {
-                      if (tillOpen && !busy && items.isNotEmpty && !invalid) onComplete();
-                    },
-                  ),
-                ),
-              ],
-            ],
-          ),
-          const SizedBox(height: DoayaSpacing.sm),
-          GlassSurface(
-            shadow: false,
-            borderRadius: BorderRadius.circular(DoayaRadii.card),
-            padding: const EdgeInsets.symmetric(
-              horizontal: DoayaSpacing.l,
-              vertical: DoayaSpacing.ml,
-            ),
-            child: Column(
-              children: [
-                _TotalRow(label: l.subtotal, value: formatMoney(subtotal, currency)),
-                if (discountMinor > 0)
-                  _TotalRow(label: l.discount, value: formatSignedMoney(-discountMinor, currency)),
-                const Divider(color: DoayaColors.divider),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                  textBaseline: TextBaseline.alphabetic,
-                  children: [
-                    Expanded(child: Text(l.total, style: DoayaTypography.label)),
-                    Text(formatMoney(total, currency), style: DoayaTypography.price),
-                  ],
-                ),
-                if (change != null)
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          change < 0 ? l.errTendered : l.changeDue,
-                          style: DoayaTypography.bodySmall.copyWith(
-                            color: change < 0 ? DoayaColors.dangerText : DoayaColors.accent,
-                          ),
-                        ),
-                      ),
-                      if (change >= 0)
-                        Text(
-                          formatMoney(change, currency),
-                          style: DoayaTypography.titleSmall.copyWith(color: DoayaColors.accent),
-                        ),
-                    ],
-                  ),
-              ],
-            ),
-          ),
-          const SizedBox(height: DoayaSpacing.sm),
-          Row(
-            children: [
-              for (final (p, label, icon) in [
-                (PaymentType.cash, l.paymentCash, DoayaIcons.cash),
-                (PaymentType.debt, l.paymentDebt, DoayaIcons.debts),
-                (PaymentType.transfer, l.paymentTransfer, DoayaIcons.transfer),
-              ]) ...[
-                if (p != PaymentType.cash) const SizedBox(width: DoayaSpacing.s),
-                Expanded(
-                  child: _maybeTooltip(
-                    p == PaymentType.transfer ? l.paymentTransferHint : null,
-                    GlassPillButton(
-                      label: label,
-                      icon: icon,
-                      size: PillSize.medium,
-                      selected: payment == p,
-                      expand: true,
-                      onPressed: () => onPayment(p),
-                    ),
-                  ),
-                ),
-              ],
-            ],
-          ),
-          const SizedBox(height: DoayaSpacing.sm),
-          if (tillOpen)
-            SagePillButton(
-              label: l.completeSale,
-              expand: true,
-              onPressed: busy || items.isEmpty || invalid ? null : onComplete,
-            )
-          else
-            NoticeBanner(
-              message: l.tillClosedBanner,
-              icon: DoayaIcons.cash,
-              action: SagePillButton(
-                label: l.openTill,
-                size: PillSize.medium,
-                expand: true,
-                onPressed: onOpenTill,
-              ),
-            ),
-        ],
-      ),
+      padding: EdgeInsets.all(compact ? DoayaSpacing.l : DoayaSpacing.xxl),
+      child: compact ? SingleChildScrollView(child: content) : content,
     );
   }
+
+  Widget _grow(Widget w) => compact ? w : Expanded(child: w);
 }
 
 Widget _maybeTooltip(String? message, Widget child) =>

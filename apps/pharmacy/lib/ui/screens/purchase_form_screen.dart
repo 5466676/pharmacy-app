@@ -318,12 +318,20 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
           title: l.newPurchase,
         ),
         Expanded(
-          child: Row(
+          child: Flex(
+            direction: isPhoneLayout(context) ? Axis.vertical : Axis.horizontal,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Expanded(child: _linesPane(l, currency)),
-              const SizedBox(width: DoayaSpacing.huge),
-              SizedBox(width: DoayaSizes.invoiceWidth, child: _summary(l, currency)),
+              if (isPhoneLayout(context)) ...[
+                // Phone: lines on top, the summary (and save) under them.
+                Expanded(flex: 3, child: _linesPane(l, currency)),
+                const SizedBox(height: DoayaSpacing.l),
+                Expanded(flex: 2, child: _summary(l, currency)),
+              ] else ...[
+                Expanded(child: _linesPane(l, currency)),
+                const SizedBox(width: DoayaSpacing.huge),
+                SizedBox(width: DoayaSizes.invoiceWidth, child: _summary(l, currency)),
+              ],
             ],
           ),
         ),
@@ -449,28 +457,37 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
               ],
             ),
             const SizedBox(height: DoayaSpacing.sm),
-            Row(
-              children: [
+            ...() {
+              final fields = [
                 field(l.colQty, line.qty, focus: line.qtyFocus, decimal: false),
-                const SizedBox(width: DoayaSpacing.s),
                 field(l.colBonus, line.bonus, decimal: false),
-                const SizedBox(width: DoayaSpacing.s),
                 field(l.colUnitPrice, line.price),
-                const SizedBox(width: DoayaSpacing.s),
                 field(l.colDiscountPct, line.discount),
-                const SizedBox(width: DoayaSpacing.s),
                 field(
                   l.colExpiry,
                   line.expiry,
                   hint: l.dateFormatHint,
                   onSubmitted: line.strip ? (_) => _searchFocus.requestFocus() : null,
                 ),
-                if (!line.strip) ...[
-                  const SizedBox(width: DoayaSpacing.s),
+                if (!line.strip)
                   field(l.colSalePrice, line.sale, onSubmitted: (_) => _searchFocus.requestFocus()),
+              ];
+              // Phone: three fields per row.
+              final perRow = isPhoneLayout(context) ? 3 : fields.length;
+              return [
+                for (var i = 0; i < fields.length; i += perRow) ...[
+                  if (i > 0) const SizedBox(height: DoayaSpacing.sm),
+                  Row(
+                    children: [
+                      for (final (j, f) in fields.skip(i).take(perRow).indexed) ...[
+                        if (j > 0) const SizedBox(width: DoayaSpacing.s),
+                        f,
+                      ],
+                    ],
+                  ),
                 ],
-              ],
-            ),
+              ];
+            }(),
           ],
         ),
       ),

@@ -159,7 +159,18 @@ class TillRepository {
   /// Re-emits whenever till events, sales, returns or payments change.
   Stream<void> watchChanges() => _db
       .tableUpdates(
-        TableUpdateQuery.onAllTables([_db.tillEvents, _db.sales, _db.returns, _db.debtEvents]),
+        TableUpdateQuery.onAllTables([
+          _db.tillEvents,
+          _db.sales,
+          _db.returns,
+          _db.debtEvents,
+          // Paid from / into the drawer: purchases, supplier payments and
+          // refunds, expenses.
+          _db.purchases,
+          _db.supplierDebtEvents,
+          _db.supplierReturns,
+          _db.expenseEvents,
+        ]),
       )
       .map((_) {});
 

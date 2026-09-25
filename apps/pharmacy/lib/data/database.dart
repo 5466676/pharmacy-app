@@ -479,11 +479,14 @@ class SyncState extends Table {
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
+  /// `<name>.sqlite` in the app's support directory.
+  static const fileName = 'doaya_pharmacy';
+
   /// The on-disk database in the app's private support directory (NOT the
   /// user's Documents folder, which Windows often syncs to OneDrive).
   factory AppDatabase.open() => AppDatabase(
     driftDatabase(
-      name: 'doaya_pharmacy',
+      name: fileName,
       native: const DriftNativeOptions(databaseDirectory: getApplicationSupportDirectory),
     ),
   );

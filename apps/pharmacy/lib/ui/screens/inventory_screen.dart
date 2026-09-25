@@ -63,6 +63,14 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
       ),
     );
 
+    final phone = isPhoneLayout(context);
+    final filters = [
+      filter(InventoryFilter.all, l.filterAll),
+      filter(InventoryFilter.low, l.filterLow),
+      filter(InventoryFilter.nearExpiry, l.filterNearExpiry),
+      filter(InventoryFilter.out, l.filterOut),
+    ];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -83,21 +91,31 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
             ),
           ],
         ),
-        Row(
-          children: [
-            SizedBox(
-              width: DoayaSizes.desktopSearchWidth,
-              child: GlassSearchField(hint: l.search, onChanged: (v) => setState(() => _query = v)),
-            ),
-            const SizedBox(width: DoayaSpacing.l),
-            filter(InventoryFilter.all, l.filterAll),
-            filter(InventoryFilter.low, l.filterLow),
-            filter(InventoryFilter.nearExpiry, l.filterNearExpiry),
-            filter(InventoryFilter.out, l.filterOut),
-          ],
-        ),
-        const SizedBox(height: DoayaSpacing.l),
-        _HeaderRow(l: l),
+        if (phone) ...[
+          GlassSearchField(hint: l.search, onChanged: (v) => setState(() => _query = v)),
+          const SizedBox(height: DoayaSpacing.sm),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(children: filters),
+          ),
+          const SizedBox(height: DoayaSpacing.sm),
+        ] else ...[
+          Row(
+            children: [
+              SizedBox(
+                width: DoayaSizes.desktopSearchWidth,
+                child: GlassSearchField(
+                  hint: l.search,
+                  onChanged: (v) => setState(() => _query = v),
+                ),
+              ),
+              const SizedBox(width: DoayaSpacing.l),
+              ...filters,
+            ],
+          ),
+          const SizedBox(height: DoayaSpacing.l),
+          _HeaderRow(l: l),
+        ],
         Expanded(
           child: list.isEmpty
               ? EmptyHint(l.noProducts)
@@ -120,45 +138,66 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                               horizontal: DoayaSpacing.xl,
                               vertical: DoayaSpacing.ml,
                             ),
-                            child: Row(
-                              children: [
-                                Expanded(flex: 4, child: ProductName(product: p)),
-                                Expanded(
-                                  flex: 2,
-                                  child: Align(
-                                    alignment: AlignmentDirectional.centerStart,
-                                    child: StockChip(product: p, onHand: stock.onHand(p.id)),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 2,
-                                  child: Align(
-                                    alignment: AlignmentDirectional.centerStart,
-                                    child: exp == null
-                                        ? Text(l.none, style: DoayaTypography.caption)
-                                        : StatusChip(
-                                            label: formatDate(exp),
-                                            tone: near ? StatusTone.warning : StatusTone.neutral,
+                            child: phone
+                                ? Row(
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            ProductName(product: p),
+                                            const SizedBox(height: DoayaSpacing.xs),
+                                            StockChip(product: p, onHand: stock.onHand(p.id)),
+                                          ],
+                                        ),
+                                      ),
+                                      Text(
+                                        formatMoney(p.priceMinor, currency),
+                                        style: DoayaTypography.label,
+                                      ),
+                                    ],
+                                  )
+                                : Row(
+                                    children: [
+                                      Expanded(flex: 4, child: ProductName(product: p)),
+                                      Expanded(
+                                        flex: 2,
+                                        child: Align(
+                                          alignment: AlignmentDirectional.centerStart,
+                                          child: StockChip(product: p, onHand: stock.onHand(p.id)),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 2,
+                                        child: Align(
+                                          alignment: AlignmentDirectional.centerStart,
+                                          child: exp == null
+                                              ? Text(l.none, style: DoayaTypography.caption)
+                                              : StatusChip(
+                                                  label: formatDate(exp),
+                                                  tone: near
+                                                      ? StatusTone.warning
+                                                      : StatusTone.neutral,
+                                                ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 2,
+                                        child: Text(
+                                          formatMoney(p.priceMinor, currency),
+                                          style: DoayaTypography.label,
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          p.shelf ?? l.none,
+                                          style: DoayaTypography.caption.copyWith(
+                                            color: DoayaColors.textSecondary,
                                           ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                                Expanded(
-                                  flex: 2,
-                                  child: Text(
-                                    formatMoney(p.priceMinor, currency),
-                                    style: DoayaTypography.label,
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    p.shelf ?? l.none,
-                                    style: DoayaTypography.caption.copyWith(
-                                      color: DoayaColors.textSecondary,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
                           ),
                         ),
                       ),
