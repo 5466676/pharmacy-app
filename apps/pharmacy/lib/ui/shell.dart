@@ -273,10 +273,13 @@ class MoreScreen extends ConsumerWidget {
             child: GlassSurface(
               shadow: false,
               borderRadius: BorderRadius.circular(DoayaRadii.tile),
-              child: ListTile(
-                leading: Icon(icon, color: DoayaColors.accent),
-                title: Text(label, style: DoayaTypography.label),
-                onTap: () => context.go(route),
+              child: Material(
+                type: MaterialType.transparency,
+                child: ListTile(
+                  leading: Icon(icon, color: DoayaColors.accent),
+                  title: Text(label, style: DoayaTypography.label),
+                  onTap: () => context.go(route),
+                ),
               ),
             ),
           ),
