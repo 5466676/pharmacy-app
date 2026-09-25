@@ -537,4 +537,12 @@ Screens from `design/patient_*.html`, same `doaya_ui` dark glass, RTL, English d
     - "no doctor needed" («ما في داعي تروح للدكتور»)
     - while normal questions and «لازم تروح للدكتور» pass
   - Dependencies added (approved): `httpx` (runtime), `websockets`, `python-multipart`. Server 154.
+- [x] Step 3: **consultation engine** (`app/consult/engine.py`): one patient message → rules → classifier → assistant → guard → summary.
+  - Rules hit → the emergency message with 110 / 112 and **no model call at all**. Self-harm gets its own gentler words.
+  - The assistant prompt (`assistant-v1`, versioned in every log) asks one short question at a time in Syrian Arabic, with up to 3 quick replies, and never names a medicine or a dose or says no doctor is needed. It knows the patient's profile so it doesn't ask again, and has a hook for curated knowledge-base notes (empty until Phase 4).
+  - When the assistant is `ready` (or after 8 patient messages), a **case summary** is built: a validated schema (symptoms, duration, age, sex, pregnancy, allergies, medicines, conditions, denied danger signs, notes), with one retry with the validation error.
+  - **The model down never blocks the patient**: a fallback turn offers to send the message straight to the pharmacist. With everything down the rules still stop emergencies.
+  - Every step returns log entries (`red_flag`, `assistant_reply` with model / prompt / raw, `guard_block`, `summary`, `llm_down`) for the API to store.
+  - 10 engine tests with a scripted model (a bare «اي» caught by the classifier; the guard replacing «خود بنادول حبتين كل 8 ساعات»). Server 164.
+  - A run against a real LM Studio model needs a machine with one; it's in the step 8 checklist for your PC.
 
