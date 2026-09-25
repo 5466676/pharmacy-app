@@ -351,6 +351,37 @@ class AccountingRepository {
     );
   }
 
+  /// Profit and loss of `[from, to)`: the profit report's sales and cost of
+  /// goods, with customer refunds shown apart, minus the period's expenses
+  /// (whether paid from the drawer or from outside).
+  Future<ProfitAndLoss> profitAndLossBetween(DateTime from, DateTime to) async {
+    final f = from.toUtc(), t = to.toUtc();
+    final report = await profitReport(from, to);
+    final returnLines =
+        await (_db.select(_db.returnLines).join([
+              innerJoin(_db.returns, _db.returns.id.equalsExp(_db.returnLines.returnId)),
+            ])..where(
+              _db.returns.occurredAt.isBiggerOrEqualValue(f) &
+                  _db.returns.occurredAt.isSmallerThanValue(t),
+            ))
+            .get();
+    final refunds = returnLines.fold(0, (sum, r) {
+      final l = r.readTable(_db.returnLines);
+      return sum + l.quantity * l.unitPriceMinor;
+    });
+    final expenses =
+        await (_db.select(_db.expenseEvents)..where(
+              (x) => x.occurredAt.isBiggerOrEqualValue(f) & x.occurredAt.isSmallerThanValue(t),
+            ))
+            .get();
+    return profitAndLoss(
+      salesMinor: report.total.revenueMinor + refunds,
+      refundsMinor: refunds,
+      goods: report.total,
+      expenses: expenses.map(expenseFromRow),
+    );
+  }
+
   // ─── Shortages & purchase orders ─────────────────────────────────────────
 
   /// Products to reorder (see [findShortages]); sales counted over the last

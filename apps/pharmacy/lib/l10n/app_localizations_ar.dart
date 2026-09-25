@@ -1618,4 +1618,112 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get joinNoEmployee => 'الحساب مو مربوط بموظف على هالصيدلية. اطلب من صاحب الصيدلية يربطه.';
+
+  @override
+  String get navExpenses => 'المصاريف';
+
+  @override
+  String get expensesTitle => 'المصاريف والأرباح والخسائر';
+
+  @override
+  String get addExpense => 'مصروف';
+
+  @override
+  String get addExpenseTitle => 'مصروف جديد';
+
+  @override
+  String get expenseCategoryLabel => 'شو نوع المصروف؟';
+
+  @override
+  String get expenseCustomLabel => 'اسم المصروف';
+
+  @override
+  String expenseCategory(String key) {
+    String _temp0 = intl.Intl.selectLogic(key, {
+      'rent': 'أجار',
+      'salaries': 'رواتب',
+      'electricity': 'كهربا',
+      'generator': 'أمبيرات',
+      'internet': 'إنترنت وموبايل',
+      'other': 'غير شي',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get tillDrawerPurchases => 'مشتريات من الصندوق';
+
+  @override
+  String get tillDrawerExpenses => 'مصاريف من الصندوق';
+
+  @override
+  String get tillSupplierRefunds => 'رجع من المستودعات نقداً';
+
+  @override
+  String monthName(String month) {
+    String _temp0 = intl.Intl.selectLogic(month, {
+      '1': 'كانون التاني',
+      '2': 'شباط',
+      '3': 'آذار',
+      '4': 'نيسان',
+      '5': 'أيار',
+      '6': 'حزيران',
+      '7': 'تموز',
+      '8': 'آب',
+      '9': 'أيلول',
+      '10': 'تشرين الأول',
+      '11': 'تشرين التاني',
+      '12': 'كانون الأول',
+      'other': '$month',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get previousMonth => 'الشهر يلي قبل';
+
+  @override
+  String get nextMonth => 'الشهر يلي بعد';
+
+  @override
+  String get pnlTitle => 'الأرباح والخسائر';
+
+  @override
+  String get pnlSales => 'المبيعات';
+
+  @override
+  String get pnlRefunds => 'مرتجعات الزباين';
+
+  @override
+  String get pnlNetSales => 'صافي المبيعات';
+
+  @override
+  String get pnlCostOfGoods => 'تكلفة البضاعة المباعة';
+
+  @override
+  String get pnlGrossProfit => 'ربح البضاعة';
+
+  @override
+  String get pnlExpenses => 'المصاريف';
+
+  @override
+  String get pnlNetProfit => 'صافي الربح';
+
+  @override
+  String get pnlNetLoss => 'صافي الخسارة';
+
+  @override
+  String get noExpenses => 'ما في مصاريف بهالشهر';
+
+  @override
+  String get expensesListTitle => 'مصاريف الشهر';
+
+  @override
+  String get expenseFromDrawerTag => 'من الصندوق';
+
+  @override
+  String get expenseFromOutsideTag => 'من برّا';
+
+  @override
+  String get expenseSaved => 'انسجّل المصروف';
 }

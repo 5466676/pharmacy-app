@@ -157,6 +157,61 @@ void main() {
       expect(stockValue(await ledger.loadStock(), await acc.costBook()).costMinor, 25000);
     });
 
+    test('profit & loss: sales − returns − cost of goods − expenses, only in the period', () async {
+      await buy(); // 25.00 a piece
+      final sale = await ledger.sell(
+        s,
+        cart: [CartLine(productId: amox.id, quantity: 3, unitPrice: const Money(4500, syp))],
+        currency: syp,
+        payment: PaymentType.cash,
+        discountMinor: 1500,
+      );
+      await ledger.processReturn(
+        s,
+        items: [
+          ReturnItem(
+            productId: amox.id,
+            quantity: 1,
+            unitPrice: const Money(4500, syp),
+            saleLineId: sale.lines.single.id,
+          ),
+        ],
+        currency: syp,
+        refund: RefundMethod.cash,
+        saleId: sale.id,
+      );
+      await acc.addExpense(
+        s,
+        category: 'electricity',
+        amount: const Money(2000, syp),
+        paidFrom: PaidFrom.drawer,
+      );
+      await acc.addExpense(
+        s,
+        category: 'rent',
+        amount: const Money(3000, syp),
+        paidFrom: PaidFrom.outside,
+      );
+      await acc.addExpense(
+        s,
+        category: 'rent',
+        amount: const Money(500, syp),
+        paidFrom: PaidFrom.outside,
+      );
+      final now = DateTime.now();
+      final pl = await acc.profitAndLossBetween(
+        now.subtract(const Duration(hours: 1)),
+        now.add(const Duration(hours: 1)),
+      );
+      expect((pl.salesMinor, pl.refundsMinor, pl.netSalesMinor), (12000, 4500, 7500));
+      expect((pl.costOfGoodsMinor, pl.grossProfitMinor), (5000, 2500));
+      expect(pl.expensesByCategory, {'electricity': 2000, 'rent': 3500});
+      expect(pl.netProfitMinor, 2500 - 5500);
+      expect(pl.unknownCostPieces, 0);
+      final empty = await acc.profitAndLossBetween(DateTime(2020), DateTime(2020, 2));
+      expect((empty.salesMinor, empty.expensesMinor, empty.netProfitMinor), (0, 0, 0));
+    });
+
     test('shortages and purchase orders: create per supplier, edit, receive, delete', () async {
       // Amoxil: none in stock, minimum 5 boxes → out of stock, 6 boxes suggested.
       var list = await acc.shortages();

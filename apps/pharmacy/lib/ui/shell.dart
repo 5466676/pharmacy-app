@@ -42,6 +42,8 @@ class AppShell extends ConsumerWidget {
     final adminItems = [
       if (session.isOwner)
         (Routes.reports, DoayaNavItem(icon: DoayaIcons.reports, label: l.navReports)),
+      if (session.isOwner)
+        (Routes.expenses, DoayaNavItem(icon: DoayaIcons.payment, label: l.navExpenses)),
       if (session.isOwner) (Routes.staff, DoayaNavItem(icon: DoayaIcons.staff, label: l.navStaff)),
       if (session.isOwner) (Routes.sync, DoayaNavItem(icon: DoayaIcons.sync, label: l.syncTitle)),
       if (session.isOwner)
@@ -259,6 +261,7 @@ class MoreScreen extends ConsumerWidget {
       (Routes.purchases, DoayaIcons.receive, l.navPurchases),
       (Routes.stocktake, DoayaIcons.adjust, l.stocktakeTitle),
       if (owner) (Routes.reports, DoayaIcons.reports, l.navReports),
+      if (owner) (Routes.expenses, DoayaIcons.payment, l.navExpenses),
       if (owner) (Routes.staff, DoayaIcons.staff, l.navStaff),
       (Routes.sync, DoayaIcons.sync, l.syncTitle),
       if (owner) (Routes.settings, DoayaIcons.settings, l.navSettings),

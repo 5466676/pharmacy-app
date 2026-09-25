@@ -791,6 +791,59 @@ void main() {
       await unmount(tester);
     });
 
+    testWidgets('expenses: an employee pays from the drawer; the owner sees the month P&L', (
+      tester,
+    ) async {
+      final (device, _) = await seedSupplier(tester);
+      late EmployeeRow rana;
+      await tester.runAsync(() async {
+        rana = await PeopleRepository(db).addEmployee(name: 'رنا', pin: '1111');
+        await TillRepository(db)
+            .openShift(Session(deviceId: device.id, employeeId: rana.id), floatMinor: 10000);
+      });
+      await pumpApp(tester);
+      Finder field(String label) => find.descendant(
+        of: find.widgetWithText(GlassTextField, label),
+        matching: find.byType(TextField),
+      );
+
+      container.read(sessionProvider.notifier).signIn(device, rana);
+      await settle(tester);
+      expect(find.text('المصاريف'), findsNothing); // owner only
+      container.read(routerProvider).go(Routes.till);
+      await settle(tester);
+      await tester.tap(find.text('مصروف'));
+      await settle(tester);
+      await tester.tap(find.text('كهربا'));
+      await tester.enterText(field('المبلغ (ل.س)'), '20');
+      await tester.tap(find.text('تأكيد'));
+      await settle(tester);
+      expect(find.text('مصاريف من الصندوق'), findsOneWidget);
+      expect(find.text('80 ل.س'), findsOneWidget); // float 100 − 20
+
+      container.read(sessionProvider.notifier).signIn(device, owner);
+      await settle(tester);
+      await tester.tap(find.text('المصاريف'));
+      await settle(tester);
+      expect(find.text('المصاريف والأرباح والخسائر'), findsOneWidget);
+      // A kind of its own, paid by the owner from outside.
+      await tester.tap(find.text('مصروف'));
+      await settle(tester);
+      await tester.tap(find.text('غير شي'));
+      await settle(tester);
+      await tester.enterText(field('اسم المصروف'), 'تنظيف');
+      await tester.enterText(field('المبلغ (ل.س)'), '5');
+      await tester.tap(find.text('من برّا الصندوق'));
+      await tester.tap(find.text('تأكيد'));
+      await settle(tester);
+      expect(find.text('كهربا'), findsWidgets);
+      expect(find.text('تنظيف'), findsWidgets);
+      expect(find.textContaining('رنا'), findsOneWidget);
+      expect(find.text('صافي الخسارة'), findsOneWidget);
+      expect(find.textContaining('25 ل.س'), findsWidgets);
+      await unmount(tester);
+    });
+
     testWidgets('solid theme on desktop: no BackdropFilter anywhere', (tester) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.windows;
       await signInAndOpenPos(tester);

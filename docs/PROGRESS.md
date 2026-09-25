@@ -132,7 +132,7 @@ Note: I can build and test on Linux here, but **not produce a Windows `.exe`** i
 ### Still open
 - **Receipt printing**: thermal 58/80 mm? (not answered yet)
 
-## Phase 1.5 — Accounting · ⏸ steps 1–6 done; 7–9 paused for Phase 2 (owner, 2026-09-25)
+## Phase 1.5 — Accounting · ▶ steps 1–6 done; 7–9 resumed (owner, 2026-09-25)
 
 Goal: turn the counter app into a complete pharmacy accounting system (inspired by Karma Soft / Al-Ameen, see `docs/ACCOUNTING_RESEARCH.md`), still fully offline and still built on append-only records so Phase 2 sync stays safe.
 
@@ -231,6 +231,20 @@ Health ministry price-list import · money accounts (drawer / Sham Cash / bank +
   - Lists of counted and not-yet-counted products; differences with their value at cost (owner).
   - The **owner** applies the session: one `adjusted` movement per difference, linked to the session. Past sessions are listed.
   - Tests: 76 core, 65 app. Screenshots `docs/screenshots/phase1_5/14–16`.
+
+- [x] Step 7: **المصاريف والأرباح والخسائر**:
+  - **«مصروف»** on the till screen (everyone) and on the expenses page (owner):
+    - the kind: rent, salaries, electricity, ampere/generator, internet, or «غير شي» with its own name
+    - the amount and an optional note
+    - **from the drawer** (needs an open till) or **from outside**
+  - The till now shows, when present: purchases paid from the drawer, expenses from the drawer, and cash refunds from suppliers. It also refreshes on them: a bug the new test caught.
+  - **المصاريف** (owner, in the sidebar) is a month's P&L with previous/next month:
+    - sales − customer returns = net sales
+    - − cost of goods = goods profit
+    - − expenses by kind = **net profit / loss**
+    - unknown cost flagged, as in the profit report
+    - next to it, the month's expenses with date, drawer/outside, who, and note
+  - Tests: P&L repository test (period bounds, returns, expenses by kind); widget test (an employee pays electricity from the drawer and the till drops; the owner adds a custom kind from outside and sees the net loss); expenses page at 360 px. App 82.
 
 ### How to review (step 3)
 المشتريات → مورد جديد → فاتورة شراء → scan or search → type quantity, bonus, price… → F9. Then open the supplier: statement, "دفعة للمورد", "مرتجع للمستودع". Sign in as an employee to check the amounts are hidden.
@@ -349,7 +363,19 @@ Patients aren't on the pharmacy's Wi-Fi, so the patient app will need a server r
   - The end-to-end test runs over real TLS: first-contact pinning, linking, syncing, and an impostor certificate refused before anything is sent. Details in DECISIONS.
 - Totals: server 34, core 95, design system 23, app 80 (+ the end-to-end script, over HTTPS).
 
-## Phase 3 — Patient app + AI · 📝 plan, waiting for approval
+## Phase 3 — Patient app + AI · ✅ plan approved (2026-09-25), starts after Phase 1.5 is finished
+
+### Owner answers (2026-09-25)
+1. **Hosting**: still being decided. Build it host-agnostic (Docker Compose), and run it locally for now.
+2. **The shelf** leaves the pharmacy: medicines and whether they're available, **optionally with product photos**. The patient types the quantity they want; **the pharmacist has the final say**.
+3. **AI model**: local, in **LM Studio** (OpenAI-compatible) to start.
+4. **Patients see price + available / not available** (no quantities).
+5. **Emergency numbers**: only ambulance and emergency, and only if confirmed from Syrian sources.
+6. **Notifications matter, especially dose reminders and case/order updates**, including when the app is closed. Reminders: scheduled local notifications. Updates with the app closed: a background mechanism without Google (options and any extra dependency asked at step 7).
+7. **Subscriptions off** for the pilot.
+- **Dependencies approved**: `httpx` (runtime), `websockets`, `python-multipart`; `web_socket_channel`, `flutter_local_notifications`, `image_picker`.
+- **Order**: first finish Phase 1.5 (steps 7–9), then Phase 3.
+
 
 Goal: a patient describes symptoms to an AI assistant in their own dialect, and gets a clear summary sent to **their chosen pharmacy**. The pharmacist decides the medicine and the dosage and marks it ready, and the patient is told and picks it up (pay at pickup). Patients can also browse that pharmacy's shelf and order for pickup. Safety rules (CLAUDE.md, SPEC §2.1) apply to every step.
 

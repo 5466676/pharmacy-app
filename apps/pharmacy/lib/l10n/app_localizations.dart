@@ -3001,6 +3001,168 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'الحساب مو مربوط بموظف على هالصيدلية. اطلب من صاحب الصيدلية يربطه.'**
   String get joinNoEmployee;
+
+  /// No description provided for @navExpenses.
+  ///
+  /// In ar, this message translates to:
+  /// **'المصاريف'**
+  String get navExpenses;
+
+  /// No description provided for @expensesTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'المصاريف والأرباح والخسائر'**
+  String get expensesTitle;
+
+  /// No description provided for @addExpense.
+  ///
+  /// In ar, this message translates to:
+  /// **'مصروف'**
+  String get addExpense;
+
+  /// No description provided for @addExpenseTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'مصروف جديد'**
+  String get addExpenseTitle;
+
+  /// No description provided for @expenseCategoryLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'شو نوع المصروف؟'**
+  String get expenseCategoryLabel;
+
+  /// No description provided for @expenseCustomLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم المصروف'**
+  String get expenseCustomLabel;
+
+  /// No description provided for @expenseCategory.
+  ///
+  /// In ar, this message translates to:
+  /// **'{key, select, rent{أجار} salaries{رواتب} electricity{كهربا} generator{أمبيرات} internet{إنترنت وموبايل} other{غير شي}}'**
+  String expenseCategory(String key);
+
+  /// No description provided for @tillDrawerPurchases.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشتريات من الصندوق'**
+  String get tillDrawerPurchases;
+
+  /// No description provided for @tillDrawerExpenses.
+  ///
+  /// In ar, this message translates to:
+  /// **'مصاريف من الصندوق'**
+  String get tillDrawerExpenses;
+
+  /// No description provided for @tillSupplierRefunds.
+  ///
+  /// In ar, this message translates to:
+  /// **'رجع من المستودعات نقداً'**
+  String get tillSupplierRefunds;
+
+  /// No description provided for @monthName.
+  ///
+  /// In ar, this message translates to:
+  /// **'{month, select, 1{كانون التاني} 2{شباط} 3{آذار} 4{نيسان} 5{أيار} 6{حزيران} 7{تموز} 8{آب} 9{أيلول} 10{تشرين الأول} 11{تشرين التاني} 12{كانون الأول} other{{month}}}'**
+  String monthName(String month);
+
+  /// No description provided for @previousMonth.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشهر يلي قبل'**
+  String get previousMonth;
+
+  /// No description provided for @nextMonth.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشهر يلي بعد'**
+  String get nextMonth;
+
+  /// No description provided for @pnlTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأرباح والخسائر'**
+  String get pnlTitle;
+
+  /// No description provided for @pnlSales.
+  ///
+  /// In ar, this message translates to:
+  /// **'المبيعات'**
+  String get pnlSales;
+
+  /// No description provided for @pnlRefunds.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرتجعات الزباين'**
+  String get pnlRefunds;
+
+  /// No description provided for @pnlNetSales.
+  ///
+  /// In ar, this message translates to:
+  /// **'صافي المبيعات'**
+  String get pnlNetSales;
+
+  /// No description provided for @pnlCostOfGoods.
+  ///
+  /// In ar, this message translates to:
+  /// **'تكلفة البضاعة المباعة'**
+  String get pnlCostOfGoods;
+
+  /// No description provided for @pnlGrossProfit.
+  ///
+  /// In ar, this message translates to:
+  /// **'ربح البضاعة'**
+  String get pnlGrossProfit;
+
+  /// No description provided for @pnlExpenses.
+  ///
+  /// In ar, this message translates to:
+  /// **'المصاريف'**
+  String get pnlExpenses;
+
+  /// No description provided for @pnlNetProfit.
+  ///
+  /// In ar, this message translates to:
+  /// **'صافي الربح'**
+  String get pnlNetProfit;
+
+  /// No description provided for @pnlNetLoss.
+  ///
+  /// In ar, this message translates to:
+  /// **'صافي الخسارة'**
+  String get pnlNetLoss;
+
+  /// No description provided for @noExpenses.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما في مصاريف بهالشهر'**
+  String get noExpenses;
+
+  /// No description provided for @expensesListTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'مصاريف الشهر'**
+  String get expensesListTitle;
+
+  /// No description provided for @expenseFromDrawerTag.
+  ///
+  /// In ar, this message translates to:
+  /// **'من الصندوق'**
+  String get expenseFromDrawerTag;
+
+  /// No description provided for @expenseFromOutsideTag.
+  ///
+  /// In ar, this message translates to:
+  /// **'من برّا'**
+  String get expenseFromOutsideTag;
+
+  /// No description provided for @expenseSaved.
+  ///
+  /// In ar, this message translates to:
+  /// **'انسجّل المصروف'**
+  String get expenseSaved;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

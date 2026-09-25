@@ -7,6 +7,7 @@ import '../../l10n/app_localizations.dart';
 import '../../providers.dart';
 import '../format.dart';
 import '../widgets.dart';
+import 'expenses_screen.dart';
 
 /// The signed-in employee's cash drawer: open with a float, live expected
 /// cash, cash in / out, close with a count (shows shortage / surplus).
@@ -98,6 +99,11 @@ class TillScreen extends ConsumerWidget {
               },
             ),
             GlassPillButton(
+              label: l.addExpense,
+              icon: DoayaIcons.payment,
+              onPressed: () => showAddExpense(context, ref),
+            ),
+            GlassPillButton(
               label: l.withdrawCash,
               icon: DoayaIcons.remove,
               onPressed: () async {
@@ -124,6 +130,21 @@ class TillScreen extends ConsumerWidget {
                 row(l.tillCashRefunds, formatSignedMoney(-s.movements.cashRefunds, currency)),
                 row(l.tillCashIn, formatSignedMoney(s.cashIn, currency)),
                 row(l.tillCashOut, formatSignedMoney(-s.cashOut, currency)),
+                if (s.movements.drawerPurchases != 0)
+                  row(
+                    l.tillDrawerPurchases,
+                    formatSignedMoney(-s.movements.drawerPurchases, currency),
+                  ),
+                if (s.movements.drawerExpenses != 0)
+                  row(
+                    l.tillDrawerExpenses,
+                    formatSignedMoney(-s.movements.drawerExpenses, currency),
+                  ),
+                if (s.movements.supplierCashRefunds != 0)
+                  row(
+                    l.tillSupplierRefunds,
+                    formatSignedMoney(s.movements.supplierCashRefunds, currency),
+                  ),
                 const Divider(color: DoayaColors.divider),
                 row(l.tillExpected, money(s.expected), strong: true, color: DoayaColors.price),
                 const SizedBox(height: DoayaSpacing.sm),
