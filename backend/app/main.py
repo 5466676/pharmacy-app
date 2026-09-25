@@ -4,7 +4,7 @@ from pathlib import Path
 from fastapi import FastAPI
 from sqlalchemy import text
 
-from . import __version__, accounts
+from . import __version__, accounts, sync
 from .config import Settings, get_settings
 from .db import Database
 from .deps import DbSession
@@ -31,6 +31,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.db = Database(settings.database_url)
     app.state.login_limiter = LoginLimiter()
     app.include_router(accounts.router)
+    app.include_router(sync.router)
 
     @app.get("/health")
     def health(db: DbSession) -> dict:

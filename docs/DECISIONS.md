@@ -125,3 +125,11 @@ The server doesn't recreate the app's ~25 tables. Each synced row is stored once
 - `/setup` creates the pharmacy and the owner, and only works while the server has no pharmacy yet: the first link from the counter PC. More pharmacies are added with `python -m app.cli create-pharmacy`.
 - Errors are short codes (`bad_credentials`, `device_unlinked`, `owner_only`…) that the app turns into Arabic messages.
 - Left unset, the token-signing secret is generated on first run and kept in `backend/data/jwt_secret`, so the pharmacy PC install needs no manual secret.
+
+## 2026-09-25 · Sync protocol (push / pull by cursor)
+- **Push** `POST /sync/push {changes:[{table,id,changed_at,data,deleted}]}` (up to 1,000). The device id comes from the token, never the body.
+  - Ledger tables: `INSERT … ON CONFLICT DO NOTHING`. Resending is harmless; a different body for the same id keeps the first version and reports a `conflict`; deleting is refused.
+  - Master tables: one `INSERT … ON CONFLICT DO UPDATE … WHERE (changed_at, device_id) < new`, so the newest edit wins whatever order edits arrive in, with the device id deciding exact ties. A winning edit gets a new sequence number, so everyone pulls it. Deletions are tombstones.
+  - Everything accepted, including a losing older edit, can be marked synced on the device.
+- **Pull** `GET /sync/pull?after=N&limit=…` returns changes from other devices after N, the next cursor, `more`, and `latest` (for a progress bar).
+- **No skipped changes**: pushes of one pharmacy take a transaction-level advisory lock, so their sequence numbers commit in order. Without it, a pull could pass seq 11 while seq 10 was still uncommitted and never see it. A test runs 6 concurrent pushes and checks that a paging reader sees all 120 rows.
