@@ -10,8 +10,10 @@ class Settings(BaseSettings):
 
     database_url: str = "postgresql+psycopg://doaya:doaya@localhost:5432/doaya"
 
-    # Signs access tokens. Must be set to a long random value in production.
-    jwt_secret: str = "change-me"
+    # Signs access tokens. Left empty, the server makes a strong one on first
+    # run and keeps it in `<data_dir>/jwt_secret` (the pharmacy PC install).
+    jwt_secret: str = ""
+    data_dir: str = "data"
     access_token_minutes: int = 15
     refresh_token_days: int = 180
 

@@ -1,26 +1,36 @@
-from typing import Annotated
+import secrets
+from pathlib import Path
 
-from fastapi import Depends, FastAPI, Request
+from fastapi import FastAPI
 from sqlalchemy import text
-from sqlalchemy.orm import Session
 
-from . import __version__
+from . import __version__, accounts
 from .config import Settings, get_settings
 from .db import Database
+from .deps import DbSession
+from .security import LoginLimiter
 
 
-def get_db(request: Request):
-    yield from request.app.state.db.session()
-
-
-DbSession = Annotated[Session, Depends(get_db)]
+def ensure_secret(settings: Settings) -> Settings:
+    """Uses the configured token secret, or one generated once and kept in
+    the data folder (so restarts don't sign every device out)."""
+    if settings.jwt_secret:
+        return settings
+    path = Path(settings.data_dir) / "jwt_secret"
+    if not path.exists():
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(secrets.token_urlsafe(48))
+        path.chmod(0o600)
+    return settings.model_copy(update={"jwt_secret": path.read_text().strip()})
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
-    settings = settings or get_settings()
+    settings = ensure_secret(settings or get_settings())
     app = FastAPI(title="Doaya", version=__version__)
     app.state.settings = settings
     app.state.db = Database(settings.database_url)
+    app.state.login_limiter = LoginLimiter()
+    app.include_router(accounts.router)
 
     @app.get("/health")
     def health(db: DbSession) -> dict:

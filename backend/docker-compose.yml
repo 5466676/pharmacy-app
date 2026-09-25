@@ -13,9 +13,11 @@ services:
     build: .
     environment:
       DOAYA_DATABASE_URL: postgresql+psycopg://doaya:${DB_PASSWORD:-doaya}@db:5432/doaya
-      DOAYA_JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET}
+      DOAYA_DATA_DIR: /srv/data
+    volumes: [apidata:/srv/data]
     ports: ["8000:8000", "47800:47800/udp"]
     depends_on: [db]
     restart: unless-stopped
 volumes:
   dbdata:
+  apidata:

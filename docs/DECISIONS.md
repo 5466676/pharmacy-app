@@ -118,3 +118,10 @@ Shortage rule: out of stock; at or under the minimum; or fewer days left than th
 
 ## 2026-09-25 · Server keeps synced rows in one generic table
 The server doesn't recreate the app's ~25 tables. Each synced row is stored once in `sync_rows` as (pharmacy, table name, row id, JSON data, deleted flag, changed_at + device for last-writer-wins, and a global change sequence). The server stays independent of app schema changes, and one push/pull code path covers every table. When the server needs to query a table itself (the patient app browsing a pharmacy's stock in Phase 3, the admin panel), it gets typed JSONB indexes or views for that table. The pharmacy stays the unit of isolation: every query filters by `pharmacy_id`.
+
+## 2026-09-25 · Linking devices: one password, then a device secret
+- A device is linked once with a phone number + password (owner or employee). The server gives it a random 256-bit secret, stored only as a SHA-256 hash. The device trades the secret for 15-minute access tokens (JWT with user, device, pharmacy, role).
+- The secret doesn't rotate on each use. On a pharmacy's Wi-Fi a lost response would lock the device out, and a lost or stolen device is handled by **unlinking** it instead. Every request checks the device isn't unlinked, so that takes effect at once, not when the token expires.
+- `/setup` creates the pharmacy and the owner, and only works while the server has no pharmacy yet: the first link from the counter PC. More pharmacies are added with `python -m app.cli create-pharmacy`.
+- Errors are short codes (`bad_credentials`, `device_unlinked`, `owner_only`…) that the app turns into Arabic messages.
+- Left unset, the token-signing secret is generated on first run and kept in `backend/data/jwt_secret`, so the pharmacy PC install needs no manual secret.

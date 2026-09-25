@@ -46,7 +46,7 @@ def engine(migrated):
 
 @pytest.fixture
 def settings(migrated) -> Settings:
-    return Settings(database_url=migrated, jwt_secret="test-secret")
+    return Settings(database_url=migrated, jwt_secret="test-secret-" + "x" * 40)
 
 
 @pytest.fixture
