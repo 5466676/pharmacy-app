@@ -1,7 +1,7 @@
 # Doaya (دوايا) — engineering rules
 
 Pharmacy platform for Syria: patient app, pharmacy app, admin panel, one backend.
-Full spec: `docs/SPEC.md`. Decisions log: `docs/DECISIONS.md`. Status: `docs/PROGRESS.md`.
+Full spec: `docs/SPEC.md`. Decisions log: `docs/DECISIONS.md`. Status: `docs/PROGRESS.md`. Where we are + ready prompts for every remaining step: `docs/HANDOFF.md`.
 
 ## Non-negotiables
 
