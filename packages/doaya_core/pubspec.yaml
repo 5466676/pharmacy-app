@@ -1,0 +1,11 @@
+name: doaya_core
+description: Doaya domain logic — ids, money, ledger events, stock & debt math. Pure Dart.
+publish_to: none
+version: 0.1.0
+resolution: workspace
+
+environment:
+  sdk: ^3.13.0
+dev_dependencies:
+  lints: ^6.1.0
+  test: ^1.31.1

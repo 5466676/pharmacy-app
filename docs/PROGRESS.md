@@ -39,7 +39,7 @@
 - Product images in the gallery are placeholder icons. Where will real product photos come from (pharmacy uploads, a shared catalogue)? That affects the Phase 1 schema.
 - Currency is written as "ل.س" after the number. Do you want "ل.س." or "ليرة" instead, and should prices ever show decimals?
 
-## Phase 1 — Pharmacy core (offline) · 📝 plan awaiting approval
+## Phase 1 — Pharmacy core (offline) · 🚧 in progress (plan approved 2026-09-25)
 
 Goal: the pharmacy desktop app sells, receives stock, tracks expiry and debts with **no internet and no server**. Everything is written as sync-ready events so Phase 2 only adds transport.
 
@@ -83,9 +83,11 @@ Selling picks batches **FEFO** (first-expiring first). A sale is one DB transact
 
 Note: I can build and test on Linux here, but **not produce a Windows `.exe`** in this environment. The code is platform-neutral; the Windows build is one command on a Windows machine (documented in CLAUDE.md).
 
-### Needs your decision before starting
-- New dependencies (see chat).
-- Counter login style, money precision, and batch-level expiry (see chat).
-- Product photos: not needed at the counter. Deferred to Phase 3 (patient app).
+### Decisions (owner, 2026-09-25)
+- Dependencies approved: drift, drift_flutter, drift_dev, build_runner, flutter_riverpod, go_router, crypto.
+- Counter login: pick your name, then a 4-digit PIN.
+- Currency: any currency is supported. Default is the **new Syrian pound** (2 decimals), with its symbol shown. Code and symbol are editable in settings.
+- Expiry: keep it light. The expiry date is **optional** when receiving. Sales automatically take the nearest-to-expiry stock first. The POS warns *"a quantity of this drug expires soon, sell from it first"*, and the dashboard lists near-expiry quantities.
+- Product photos: deferred to Phase 3.
 
 ## Phase 2 — Backend + sync · not started

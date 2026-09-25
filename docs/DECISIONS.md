@@ -44,3 +44,15 @@ CSS `box-shadow` is painted only outside an element. Flutter's `BoxShadow` is pa
 ## 2026-09-25 · Darker, more saturated green (owner request)
 Owner confirmed the "dark glass" design and asked for a deeper, more saturated green layer. All background/surface greens kept their hue; saturation was raised ~1.75× and lightness lowered ~16%:
 `bgTop #3D5747→#285439`, `bgMid #2B4034→#1B3F2B`, `bgBottom #22352A→#153422`, blobs `#5A7866→#3F7153`, `#45604F→#2F5A3F`, solid `surface #33483C→#224531`, `surfaceRaised #3A5044→#274C38`, `border #4A6254→#345E45` (leaves shifted the same way). Text, sage, accent, warning and danger tokens are unchanged; text contrast only improves on the darker ground. The HTML mockups in `/design` still show the old green; `doaya_ui` tokens are now the source of truth for color.
+
+## 2026-09-25 · Money = integer minor units + currency code
+Every amount is stored as an `int` of minor units (e.g. qirsh) plus a currency code, with no floating point. The pharmacy has one **base currency** for prices and the ledger. It defaults to the new Syrian pound (introduced 2026-01-01, two zeros removed, 2 decimal places). Its ISO code and official symbol weren't confirmed at the time of writing, so both are editable in settings. Defaults: code `SYP`, symbol `ل.س`. Fractions show only when they aren't zero. Taking payment in a different currency than the bill (e.g. a USD payment on a SYP bill) is deferred.
+
+## 2026-09-25 · Batches exist, but expiry is optional
+Each `received` event opens a batch whose id is the event's own id, with an optional expiry date. Selling allocates across batches **FEFO**: earliest expiry first, and batches without an expiry come last. The counter never has to pick a batch by hand. The POS just warns when a product has stock inside the near-expiry window (default 90 days, configurable). The owner asked for alerts, not detailed lot management.
+
+## 2026-09-25 · UUIDv7 implemented in `doaya_core`
+It's about 30 lines per RFC 9562, uses `Random.secure()` and is unit-tested, which is cheaper than adding a dependency. Ids sort by creation time, and sync cursors rely on that.
+
+## 2026-09-25 · Quantities are whole units
+Stock counts whole selling units (e.g. boxes). Selling part of a pack (strips) is an open question for later.
