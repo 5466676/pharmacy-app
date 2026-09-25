@@ -777,4 +777,128 @@ class AppLocalizationsAr extends AppLocalizations {
   String perStrip(String price) {
     return '$price للظرف';
   }
+
+  @override
+  String get navTill => 'الصندوق';
+
+  @override
+  String get paymentTransfer => 'تحويل';
+
+  @override
+  String get paymentTransferHint => 'شام كاش أو أي تحويل إلكتروني (ما بيدخل الصندوق)';
+
+  @override
+  String discountLabel(String symbol) {
+    return 'حسم ($symbol)';
+  }
+
+  @override
+  String tenderedLabel(String symbol) {
+    return 'المبلغ المقبوض ($symbol)';
+  }
+
+  @override
+  String get changeDue => 'الباقي للزبون';
+
+  @override
+  String get errTendered => 'المبلغ المقبوض أقل من الإجمالي';
+
+  @override
+  String get tillClosedBanner => 'الصندوق مسكّر. افتحه لتبدأ البيع.';
+
+  @override
+  String get openTill => 'افتح الصندوق';
+
+  @override
+  String openingFloatLabel(String symbol) {
+    return 'المبلغ الموجود بالصندوق هلق ($symbol)';
+  }
+
+  @override
+  String get tillTitle => 'الصندوق';
+
+  @override
+  String tillOpenedAt(String time) {
+    return 'مفتوح من $time';
+  }
+
+  @override
+  String get tillFloat => 'رصيد الافتتاح';
+
+  @override
+  String get tillCashSales => 'مبيعات نقدية';
+
+  @override
+  String get tillDebtPayments => 'دفعات ديون';
+
+  @override
+  String get tillCashRefunds => 'مرتجع نقدي';
+
+  @override
+  String get tillCashIn => 'إضافة نقد';
+
+  @override
+  String get tillCashOut => 'سحب نقد';
+
+  @override
+  String get tillTransfers => 'تحويلات (خارج الصندوق)';
+
+  @override
+  String get tillExpected => 'المفروض بالصندوق';
+
+  @override
+  String get addCash => 'إضافة نقد';
+
+  @override
+  String get withdrawCash => 'سحب نقد';
+
+  @override
+  String get reasonLabel => 'السبب';
+
+  @override
+  String get closeTill => 'إغلاق الصندوق';
+
+  @override
+  String countedLabel(String symbol) {
+    return 'العدّ الفعلي ($symbol)';
+  }
+
+  @override
+  String get countHelp => 'عدّ المصاري يلي بالصندوق واكتب المبلغ';
+
+  @override
+  String shortage(String amount) {
+    return 'عجز $amount';
+  }
+
+  @override
+  String surplus(String amount) {
+    return 'زيادة $amount';
+  }
+
+  @override
+  String get balanced => 'مطابق';
+
+  @override
+  String get tillClosedResult => 'انسكّر الصندوق';
+
+  @override
+  String get tillIsClosed => 'الصندوق مسكّر';
+
+  @override
+  String get shiftsTitle => 'الورديات';
+
+  @override
+  String get noShifts => 'ما في ورديات بهالفترة';
+
+  @override
+  String get shiftOpenNow => 'مفتوح';
+
+  @override
+  String shiftLine(String from, String to) {
+    return 'من $from لـ $to';
+  }
+
+  @override
+  String get staffTransferSales => 'تحويلات';
 }

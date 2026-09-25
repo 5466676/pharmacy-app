@@ -21,6 +21,7 @@ void main() {
     expect(formatSignedQty(6), '؜+٦');
     expect(formatSignedQty(-1), '؜-١');
     expect(formatSignedMoney(-4500, syp), '؜-٤٥ ل.س');
+    expect(formatSignedMoney(0, syp), '٠ ل.س');
   });
 
   test('dates parse in d/m/yyyy with Latin or Arabic digits', () {

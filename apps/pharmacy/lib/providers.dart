@@ -5,6 +5,7 @@ import 'data/catalog_repository.dart';
 import 'data/database.dart';
 import 'data/ledger_repository.dart';
 import 'data/people_repository.dart';
+import 'data/till_repository.dart';
 
 /// Overridden in `main()` (on-disk DB) and in tests (in-memory DB).
 final databaseProvider = Provider<AppDatabase>(
@@ -31,6 +32,34 @@ final ledgerProvider = Provider(
     clock: ref.watch(clockProvider),
   ),
 );
+
+final tillProvider = Provider(
+  (ref) => TillRepository(
+    ref.watch(databaseProvider),
+    ids: ref.watch(idsProvider),
+    clock: ref.watch(clockProvider),
+  ),
+);
+
+/// Live summary of the signed-in employee's open shift on this device
+/// (null when the till is closed). Refreshes on every sale/refund/till event.
+final currentShiftProvider = StreamProvider<ShiftSummary?>((ref) async* {
+  final till = ref.watch(tillProvider);
+  final session = ref.watch(sessionProvider);
+  if (session == null) {
+    yield null;
+    return;
+  }
+  Future<ShiftSummary?> load() async {
+    final id = await till.openShiftId(session.stamp);
+    return id == null ? null : till.summary(id);
+  }
+
+  yield await load();
+  await for (final _ in till.watchChanges()) {
+    yield await load();
+  }
+});
 
 final peopleProvider = Provider(
   (ref) => PeopleRepository(

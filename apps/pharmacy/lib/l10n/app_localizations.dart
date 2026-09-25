@@ -1507,6 +1507,222 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'{price} للظرف'**
   String perStrip(String price);
+
+  /// No description provided for @navTill.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصندوق'**
+  String get navTill;
+
+  /// No description provided for @paymentTransfer.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحويل'**
+  String get paymentTransfer;
+
+  /// No description provided for @paymentTransferHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'شام كاش أو أي تحويل إلكتروني (ما بيدخل الصندوق)'**
+  String get paymentTransferHint;
+
+  /// No description provided for @discountLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'حسم ({symbol})'**
+  String discountLabel(String symbol);
+
+  /// No description provided for @tenderedLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'المبلغ المقبوض ({symbol})'**
+  String tenderedLabel(String symbol);
+
+  /// No description provided for @changeDue.
+  ///
+  /// In ar, this message translates to:
+  /// **'الباقي للزبون'**
+  String get changeDue;
+
+  /// No description provided for @errTendered.
+  ///
+  /// In ar, this message translates to:
+  /// **'المبلغ المقبوض أقل من الإجمالي'**
+  String get errTendered;
+
+  /// No description provided for @tillClosedBanner.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصندوق مسكّر. افتحه لتبدأ البيع.'**
+  String get tillClosedBanner;
+
+  /// No description provided for @openTill.
+  ///
+  /// In ar, this message translates to:
+  /// **'افتح الصندوق'**
+  String get openTill;
+
+  /// No description provided for @openingFloatLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'المبلغ الموجود بالصندوق هلق ({symbol})'**
+  String openingFloatLabel(String symbol);
+
+  /// No description provided for @tillTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصندوق'**
+  String get tillTitle;
+
+  /// No description provided for @tillOpenedAt.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفتوح من {time}'**
+  String tillOpenedAt(String time);
+
+  /// No description provided for @tillFloat.
+  ///
+  /// In ar, this message translates to:
+  /// **'رصيد الافتتاح'**
+  String get tillFloat;
+
+  /// No description provided for @tillCashSales.
+  ///
+  /// In ar, this message translates to:
+  /// **'مبيعات نقدية'**
+  String get tillCashSales;
+
+  /// No description provided for @tillDebtPayments.
+  ///
+  /// In ar, this message translates to:
+  /// **'دفعات ديون'**
+  String get tillDebtPayments;
+
+  /// No description provided for @tillCashRefunds.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرتجع نقدي'**
+  String get tillCashRefunds;
+
+  /// No description provided for @tillCashIn.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة نقد'**
+  String get tillCashIn;
+
+  /// No description provided for @tillCashOut.
+  ///
+  /// In ar, this message translates to:
+  /// **'سحب نقد'**
+  String get tillCashOut;
+
+  /// No description provided for @tillTransfers.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحويلات (خارج الصندوق)'**
+  String get tillTransfers;
+
+  /// No description provided for @tillExpected.
+  ///
+  /// In ar, this message translates to:
+  /// **'المفروض بالصندوق'**
+  String get tillExpected;
+
+  /// No description provided for @addCash.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة نقد'**
+  String get addCash;
+
+  /// No description provided for @withdrawCash.
+  ///
+  /// In ar, this message translates to:
+  /// **'سحب نقد'**
+  String get withdrawCash;
+
+  /// No description provided for @reasonLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'السبب'**
+  String get reasonLabel;
+
+  /// No description provided for @closeTill.
+  ///
+  /// In ar, this message translates to:
+  /// **'إغلاق الصندوق'**
+  String get closeTill;
+
+  /// No description provided for @countedLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'العدّ الفعلي ({symbol})'**
+  String countedLabel(String symbol);
+
+  /// No description provided for @countHelp.
+  ///
+  /// In ar, this message translates to:
+  /// **'عدّ المصاري يلي بالصندوق واكتب المبلغ'**
+  String get countHelp;
+
+  /// No description provided for @shortage.
+  ///
+  /// In ar, this message translates to:
+  /// **'عجز {amount}'**
+  String shortage(String amount);
+
+  /// No description provided for @surplus.
+  ///
+  /// In ar, this message translates to:
+  /// **'زيادة {amount}'**
+  String surplus(String amount);
+
+  /// No description provided for @balanced.
+  ///
+  /// In ar, this message translates to:
+  /// **'مطابق'**
+  String get balanced;
+
+  /// No description provided for @tillClosedResult.
+  ///
+  /// In ar, this message translates to:
+  /// **'انسكّر الصندوق'**
+  String get tillClosedResult;
+
+  /// No description provided for @tillIsClosed.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصندوق مسكّر'**
+  String get tillIsClosed;
+
+  /// No description provided for @shiftsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الورديات'**
+  String get shiftsTitle;
+
+  /// No description provided for @noShifts.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما في ورديات بهالفترة'**
+  String get noShifts;
+
+  /// No description provided for @shiftOpenNow.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفتوح'**
+  String get shiftOpenNow;
+
+  /// No description provided for @shiftLine.
+  ///
+  /// In ar, this message translates to:
+  /// **'من {from} لـ {to}'**
+  String shiftLine(String from, String to);
+
+  /// No description provided for @staffTransferSales.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحويلات'**
+  String get staffTransferSales;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

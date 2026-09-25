@@ -13,6 +13,7 @@ import 'ui/screens/return_screen.dart';
 import 'ui/screens/settings_screen.dart';
 import 'ui/screens/setup_screen.dart';
 import 'ui/screens/staff_screen.dart';
+import 'ui/screens/till_screen.dart';
 import 'ui/shell.dart';
 
 abstract final class Routes {
@@ -24,6 +25,7 @@ abstract final class Routes {
   static const inventory = '/inventory';
   static const debts = '/debts';
   static const staff = '/staff';
+  static const till = '/till';
   static const returns = '/pos/return';
   static const settings = '/settings';
 
@@ -85,6 +87,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: Routes.debts,
             pageBuilder: (_, _) => const NoTransitionPage(child: DebtsScreen()),
+          ),
+          GoRoute(
+            path: Routes.till,
+            pageBuilder: (_, _) => const NoTransitionPage(child: TillScreen()),
           ),
           GoRoute(
             path: Routes.staff,

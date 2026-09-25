@@ -8,6 +8,9 @@ class EmployeeSummary {
   int salesCount = 0;
   int cashSalesMinor = 0;
   int debtSalesMinor = 0;
+
+  /// Paid by electronic transfer (not in the drawer).
+  int transferSalesMinor = 0;
   int discountMinor = 0;
 
   /// Debt payments this employee took from customers (cash in hand).
@@ -19,7 +22,7 @@ class EmployeeSummary {
   final Map<String, int> unitsByProduct = {};
   final List<SaleRow> sales = [];
 
-  int get totalSalesMinor => cashSalesMinor + debtSalesMinor;
+  int get totalSalesMinor => cashSalesMinor + debtSalesMinor + transferSalesMinor;
 
   /// Cash this employee should hand over:
   /// cash sales + debt payments taken − cash refunds paid out.
@@ -50,10 +53,13 @@ List<EmployeeSummary> summarizeByEmployee({
     e.salesCount++;
     e.discountMinor += s.discountMinor;
     e.sales.add(s);
-    if (s.payment == 'debt') {
-      e.debtSalesMinor += s.totalMinor;
-    } else {
-      e.cashSalesMinor += s.totalMinor;
+    switch (s.payment) {
+      case 'debt':
+        e.debtSalesMinor += s.totalMinor;
+      case 'transfer':
+        e.transferSalesMinor += s.totalMinor;
+      default:
+        e.cashSalesMinor += s.totalMinor;
     }
   }
   for (final l in lines) {

@@ -160,6 +160,7 @@ String saleErrorText(AppLocalizations l, SaleError e) => switch (e) {
   SaleError.discountTooLarge => l.errDiscount,
   SaleError.insufficientStock => l.errStock,
   SaleError.badQuantity => l.errBadQty,
+  SaleError.tenderedTooLow => l.errTendered,
 };
 
 String stockEventLabel(AppLocalizations l, StockEventType t) => switch (t) {
@@ -198,3 +199,88 @@ void toast(BuildContext context, String message, {bool error = false}) {
       ),
     );
 }
+
+/// Asks for an amount (and optionally a reason). Returns (minor units, note)
+/// or null when cancelled.
+Future<(int, String?)?> askAmount(
+  BuildContext context, {
+  required String title,
+  required String label,
+  required Currency currency,
+  String? help,
+  String? noteLabel,
+  bool allowZero = true,
+  String initial = '',
+}) async {
+  final l = AppLocalizations.of(context);
+  final form = GlobalKey<FormState>();
+  final amount = TextEditingController(text: initial);
+  final note = TextEditingController();
+  void submit() {
+    if (form.currentState!.validate()) Navigator.of(context).pop(true);
+  }
+
+  final ok = await showDoayaDialog<bool>(
+    context: context,
+    title: title,
+    content: Form(
+      key: form,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (help != null) ...[
+            Text(help, style: DoayaTypography.bodySmall.copyWith(color: DoayaColors.textSecondary)),
+            const SizedBox(height: DoayaSpacing.l),
+          ],
+          GlassTextField(
+            label: label,
+            controller: amount,
+            autofocus: true,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            validator: (v) {
+              final m = Money.tryParse(v ?? '', currency);
+              if (m == null || (!allowZero && m.isZero)) return l.invalidNumber;
+              return null;
+            },
+            onSubmitted: (_) => noteLabel == null ? submit() : null,
+          ),
+          if (noteLabel != null) ...[
+            const SizedBox(height: DoayaSpacing.l),
+            GlassTextField(
+              label: noteLabel,
+              controller: note,
+              validator: (v) => (v ?? '').trim().isEmpty ? l.required : null,
+              onSubmitted: (_) => submit(),
+            ),
+          ],
+        ],
+      ),
+    ),
+    actions: [
+      GlassPillButton(label: l.cancel, onPressed: () => Navigator.of(context).pop(false)),
+      SagePillButton(label: l.confirm, size: PillSize.small, onPressed: submit),
+    ],
+  );
+  if (ok != true) return null;
+  return (
+    Money.tryParse(amount.text, currency)!.minor,
+    noteLabel == null ? null : note.text.trim(),
+  );
+}
+
+/// "عجز ١٠ ل.س" / "زيادة ٥ ل.س" / "مطابق".
+StatusChip differenceChip(AppLocalizations l, int? difference, Currency c) {
+  if (difference == null) return StatusChip(label: l.shiftOpenNow, dot: true);
+  if (difference == 0) return StatusChip(label: l.balanced, tone: StatusTone.accent);
+  if (difference < 0) {
+    return StatusChip(label: l.shortage(formatMoney(-difference, c)), tone: StatusTone.danger);
+  }
+  return StatusChip(label: l.surplus(formatMoney(difference, c)), tone: StatusTone.warning);
+}
+
+/// Payment chip for a stored sale: نقدي / دين / تحويل.
+StatusChip paymentChip(AppLocalizations l, String payment) => switch (payment) {
+  'debt' => StatusChip(label: l.paymentDebt, tone: StatusTone.warning),
+  'transfer' => StatusChip(label: l.paymentTransfer, tone: StatusTone.neutral),
+  _ => StatusChip(label: l.paymentCash, tone: StatusTone.accent),
+};

@@ -3172,6 +3172,15 @@ class $SalesTable extends Sales with TableInfo<$SalesTable, SaleRow> {
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _tenderedMinorMeta = const VerificationMeta('tenderedMinor');
+  @override
+  late final GeneratedColumn<int> tenderedMinor = GeneratedColumn<int>(
+    'tendered_minor',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -3185,6 +3194,7 @@ class $SalesTable extends Sales with TableInfo<$SalesTable, SaleRow> {
     employeeId,
     occurredAt,
     syncedAt,
+    tenderedMinor,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3273,6 +3283,12 @@ class $SalesTable extends Sales with TableInfo<$SalesTable, SaleRow> {
         syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
       );
     }
+    if (data.containsKey('tendered_minor')) {
+      context.handle(
+        _tenderedMinorMeta,
+        tenderedMinor.isAcceptableOrUnknown(data['tendered_minor']!, _tenderedMinorMeta),
+      );
+    }
     return context;
   }
 
@@ -3323,6 +3339,10 @@ class $SalesTable extends Sales with TableInfo<$SalesTable, SaleRow> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}synced_at'],
       ),
+      tenderedMinor: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}tendered_minor'],
+      ),
     );
   }
 
@@ -3346,6 +3366,9 @@ class SaleRow extends DataClass implements Insertable<SaleRow> {
   final String employeeId;
   final DateTime occurredAt;
   final DateTime? syncedAt;
+
+  /// Cash handed over by the customer (cash sales, optional). v3.
+  final int? tenderedMinor;
   const SaleRow({
     required this.id,
     this.customerId,
@@ -3358,6 +3381,7 @@ class SaleRow extends DataClass implements Insertable<SaleRow> {
     required this.employeeId,
     required this.occurredAt,
     this.syncedAt,
+    this.tenderedMinor,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -3377,6 +3401,9 @@ class SaleRow extends DataClass implements Insertable<SaleRow> {
     if (!nullToAbsent || syncedAt != null) {
       map['synced_at'] = Variable<DateTime>(syncedAt);
     }
+    if (!nullToAbsent || tenderedMinor != null) {
+      map['tendered_minor'] = Variable<int>(tenderedMinor);
+    }
     return map;
   }
 
@@ -3393,6 +3420,9 @@ class SaleRow extends DataClass implements Insertable<SaleRow> {
       employeeId: Value(employeeId),
       occurredAt: Value(occurredAt),
       syncedAt: syncedAt == null && nullToAbsent ? const Value.absent() : Value(syncedAt),
+      tenderedMinor: tenderedMinor == null && nullToAbsent
+          ? const Value.absent()
+          : Value(tenderedMinor),
     );
   }
 
@@ -3410,6 +3440,7 @@ class SaleRow extends DataClass implements Insertable<SaleRow> {
       employeeId: serializer.fromJson<String>(json['employeeId']),
       occurredAt: serializer.fromJson<DateTime>(json['occurredAt']),
       syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
+      tenderedMinor: serializer.fromJson<int?>(json['tenderedMinor']),
     );
   }
   @override
@@ -3427,6 +3458,7 @@ class SaleRow extends DataClass implements Insertable<SaleRow> {
       'employeeId': serializer.toJson<String>(employeeId),
       'occurredAt': serializer.toJson<DateTime>(occurredAt),
       'syncedAt': serializer.toJson<DateTime?>(syncedAt),
+      'tenderedMinor': serializer.toJson<int?>(tenderedMinor),
     };
   }
 
@@ -3442,6 +3474,7 @@ class SaleRow extends DataClass implements Insertable<SaleRow> {
     String? employeeId,
     DateTime? occurredAt,
     Value<DateTime?> syncedAt = const Value.absent(),
+    Value<int?> tenderedMinor = const Value.absent(),
   }) => SaleRow(
     id: id ?? this.id,
     customerId: customerId.present ? customerId.value : this.customerId,
@@ -3454,6 +3487,7 @@ class SaleRow extends DataClass implements Insertable<SaleRow> {
     employeeId: employeeId ?? this.employeeId,
     occurredAt: occurredAt ?? this.occurredAt,
     syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
+    tenderedMinor: tenderedMinor.present ? tenderedMinor.value : this.tenderedMinor,
   );
   SaleRow copyWithCompanion(SalesCompanion data) {
     return SaleRow(
@@ -3468,6 +3502,7 @@ class SaleRow extends DataClass implements Insertable<SaleRow> {
       employeeId: data.employeeId.present ? data.employeeId.value : this.employeeId,
       occurredAt: data.occurredAt.present ? data.occurredAt.value : this.occurredAt,
       syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
+      tenderedMinor: data.tenderedMinor.present ? data.tenderedMinor.value : this.tenderedMinor,
     );
   }
 
@@ -3484,7 +3519,8 @@ class SaleRow extends DataClass implements Insertable<SaleRow> {
           ..write('deviceId: $deviceId, ')
           ..write('employeeId: $employeeId, ')
           ..write('occurredAt: $occurredAt, ')
-          ..write('syncedAt: $syncedAt')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('tenderedMinor: $tenderedMinor')
           ..write(')'))
         .toString();
   }
@@ -3502,6 +3538,7 @@ class SaleRow extends DataClass implements Insertable<SaleRow> {
     employeeId,
     occurredAt,
     syncedAt,
+    tenderedMinor,
   );
   @override
   bool operator ==(Object other) =>
@@ -3517,7 +3554,8 @@ class SaleRow extends DataClass implements Insertable<SaleRow> {
           other.deviceId == this.deviceId &&
           other.employeeId == this.employeeId &&
           other.occurredAt == this.occurredAt &&
-          other.syncedAt == this.syncedAt);
+          other.syncedAt == this.syncedAt &&
+          other.tenderedMinor == this.tenderedMinor);
 }
 
 class SalesCompanion extends UpdateCompanion<SaleRow> {
@@ -3532,6 +3570,7 @@ class SalesCompanion extends UpdateCompanion<SaleRow> {
   final Value<String> employeeId;
   final Value<DateTime> occurredAt;
   final Value<DateTime?> syncedAt;
+  final Value<int?> tenderedMinor;
   final Value<int> rowid;
   const SalesCompanion({
     this.id = const Value.absent(),
@@ -3545,6 +3584,7 @@ class SalesCompanion extends UpdateCompanion<SaleRow> {
     this.employeeId = const Value.absent(),
     this.occurredAt = const Value.absent(),
     this.syncedAt = const Value.absent(),
+    this.tenderedMinor = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   SalesCompanion.insert({
@@ -3559,6 +3599,7 @@ class SalesCompanion extends UpdateCompanion<SaleRow> {
     required String employeeId,
     required DateTime occurredAt,
     this.syncedAt = const Value.absent(),
+    this.tenderedMinor = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        payment = Value(payment),
@@ -3581,6 +3622,7 @@ class SalesCompanion extends UpdateCompanion<SaleRow> {
     Expression<String>? employeeId,
     Expression<DateTime>? occurredAt,
     Expression<DateTime>? syncedAt,
+    Expression<int>? tenderedMinor,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -3595,6 +3637,7 @@ class SalesCompanion extends UpdateCompanion<SaleRow> {
       if (employeeId != null) 'employee_id': employeeId,
       if (occurredAt != null) 'occurred_at': occurredAt,
       if (syncedAt != null) 'synced_at': syncedAt,
+      if (tenderedMinor != null) 'tendered_minor': tenderedMinor,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -3611,6 +3654,7 @@ class SalesCompanion extends UpdateCompanion<SaleRow> {
     Value<String>? employeeId,
     Value<DateTime>? occurredAt,
     Value<DateTime?>? syncedAt,
+    Value<int?>? tenderedMinor,
     Value<int>? rowid,
   }) {
     return SalesCompanion(
@@ -3625,6 +3669,7 @@ class SalesCompanion extends UpdateCompanion<SaleRow> {
       employeeId: employeeId ?? this.employeeId,
       occurredAt: occurredAt ?? this.occurredAt,
       syncedAt: syncedAt ?? this.syncedAt,
+      tenderedMinor: tenderedMinor ?? this.tenderedMinor,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -3665,6 +3710,9 @@ class SalesCompanion extends UpdateCompanion<SaleRow> {
     if (syncedAt.present) {
       map['synced_at'] = Variable<DateTime>(syncedAt.value);
     }
+    if (tenderedMinor.present) {
+      map['tendered_minor'] = Variable<int>(tenderedMinor.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -3685,6 +3733,7 @@ class SalesCompanion extends UpdateCompanion<SaleRow> {
           ..write('employeeId: $employeeId, ')
           ..write('occurredAt: $occurredAt, ')
           ..write('syncedAt: $syncedAt, ')
+          ..write('tenderedMinor: $tenderedMinor, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -5710,6 +5759,519 @@ class ReturnLinesCompanion extends UpdateCompanion<ReturnLineRow> {
   }
 }
 
+class $TillEventsTable extends TillEvents with TableInfo<$TillEventsTable, TillEventRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TillEventsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _typeMeta = const VerificationMeta('type');
+  @override
+  late final GeneratedColumn<String> type = GeneratedColumn<String>(
+    'type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _shiftIdMeta = const VerificationMeta('shiftId');
+  @override
+  late final GeneratedColumn<String> shiftId = GeneratedColumn<String>(
+    'shift_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _amountMinorMeta = const VerificationMeta('amountMinor');
+  @override
+  late final GeneratedColumn<int> amountMinor = GeneratedColumn<int>(
+    'amount_minor',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _noteMeta = const VerificationMeta('note');
+  @override
+  late final GeneratedColumn<String> note = GeneratedColumn<String>(
+    'note',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _deviceIdMeta = const VerificationMeta('deviceId');
+  @override
+  late final GeneratedColumn<String> deviceId = GeneratedColumn<String>(
+    'device_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _employeeIdMeta = const VerificationMeta('employeeId');
+  @override
+  late final GeneratedColumn<String> employeeId = GeneratedColumn<String>(
+    'employee_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _occurredAtMeta = const VerificationMeta('occurredAt');
+  @override
+  late final GeneratedColumn<DateTime> occurredAt = GeneratedColumn<DateTime>(
+    'occurred_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta('syncedAt');
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    type,
+    shiftId,
+    amountMinor,
+    note,
+    deviceId,
+    employeeId,
+    occurredAt,
+    syncedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'till_events';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<TillEventRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('type')) {
+      context.handle(_typeMeta, type.isAcceptableOrUnknown(data['type']!, _typeMeta));
+    } else if (isInserting) {
+      context.missing(_typeMeta);
+    }
+    if (data.containsKey('shift_id')) {
+      context.handle(_shiftIdMeta, shiftId.isAcceptableOrUnknown(data['shift_id']!, _shiftIdMeta));
+    } else if (isInserting) {
+      context.missing(_shiftIdMeta);
+    }
+    if (data.containsKey('amount_minor')) {
+      context.handle(
+        _amountMinorMeta,
+        amountMinor.isAcceptableOrUnknown(data['amount_minor']!, _amountMinorMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_amountMinorMeta);
+    }
+    if (data.containsKey('note')) {
+      context.handle(_noteMeta, note.isAcceptableOrUnknown(data['note']!, _noteMeta));
+    }
+    if (data.containsKey('device_id')) {
+      context.handle(
+        _deviceIdMeta,
+        deviceId.isAcceptableOrUnknown(data['device_id']!, _deviceIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_deviceIdMeta);
+    }
+    if (data.containsKey('employee_id')) {
+      context.handle(
+        _employeeIdMeta,
+        employeeId.isAcceptableOrUnknown(data['employee_id']!, _employeeIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_employeeIdMeta);
+    }
+    if (data.containsKey('occurred_at')) {
+      context.handle(
+        _occurredAtMeta,
+        occurredAt.isAcceptableOrUnknown(data['occurred_at']!, _occurredAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_occurredAtMeta);
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  TillEventRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TillEventRow(
+      id: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      type: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}type'])!,
+      shiftId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}shift_id'],
+      )!,
+      amountMinor: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}amount_minor'],
+      )!,
+      note: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}note']),
+      deviceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}device_id'],
+      )!,
+      employeeId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}employee_id'],
+      )!,
+      occurredAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}occurred_at'],
+      )!,
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      ),
+    );
+  }
+
+  @override
+  $TillEventsTable createAlias(String alias) {
+    return $TillEventsTable(attachedDatabase, alias);
+  }
+}
+
+class TillEventRow extends DataClass implements Insertable<TillEventRow> {
+  final String id;
+  final String type;
+
+  /// Id of the shift's `opened` event.
+  final String shiftId;
+  final int amountMinor;
+  final String? note;
+  final String deviceId;
+  final String employeeId;
+  final DateTime occurredAt;
+  final DateTime? syncedAt;
+  const TillEventRow({
+    required this.id,
+    required this.type,
+    required this.shiftId,
+    required this.amountMinor,
+    this.note,
+    required this.deviceId,
+    required this.employeeId,
+    required this.occurredAt,
+    this.syncedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['type'] = Variable<String>(type);
+    map['shift_id'] = Variable<String>(shiftId);
+    map['amount_minor'] = Variable<int>(amountMinor);
+    if (!nullToAbsent || note != null) {
+      map['note'] = Variable<String>(note);
+    }
+    map['device_id'] = Variable<String>(deviceId);
+    map['employee_id'] = Variable<String>(employeeId);
+    map['occurred_at'] = Variable<DateTime>(occurredAt);
+    if (!nullToAbsent || syncedAt != null) {
+      map['synced_at'] = Variable<DateTime>(syncedAt);
+    }
+    return map;
+  }
+
+  TillEventsCompanion toCompanion(bool nullToAbsent) {
+    return TillEventsCompanion(
+      id: Value(id),
+      type: Value(type),
+      shiftId: Value(shiftId),
+      amountMinor: Value(amountMinor),
+      note: note == null && nullToAbsent ? const Value.absent() : Value(note),
+      deviceId: Value(deviceId),
+      employeeId: Value(employeeId),
+      occurredAt: Value(occurredAt),
+      syncedAt: syncedAt == null && nullToAbsent ? const Value.absent() : Value(syncedAt),
+    );
+  }
+
+  factory TillEventRow.fromJson(Map<String, dynamic> json, {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TillEventRow(
+      id: serializer.fromJson<String>(json['id']),
+      type: serializer.fromJson<String>(json['type']),
+      shiftId: serializer.fromJson<String>(json['shiftId']),
+      amountMinor: serializer.fromJson<int>(json['amountMinor']),
+      note: serializer.fromJson<String?>(json['note']),
+      deviceId: serializer.fromJson<String>(json['deviceId']),
+      employeeId: serializer.fromJson<String>(json['employeeId']),
+      occurredAt: serializer.fromJson<DateTime>(json['occurredAt']),
+      syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'type': serializer.toJson<String>(type),
+      'shiftId': serializer.toJson<String>(shiftId),
+      'amountMinor': serializer.toJson<int>(amountMinor),
+      'note': serializer.toJson<String?>(note),
+      'deviceId': serializer.toJson<String>(deviceId),
+      'employeeId': serializer.toJson<String>(employeeId),
+      'occurredAt': serializer.toJson<DateTime>(occurredAt),
+      'syncedAt': serializer.toJson<DateTime?>(syncedAt),
+    };
+  }
+
+  TillEventRow copyWith({
+    String? id,
+    String? type,
+    String? shiftId,
+    int? amountMinor,
+    Value<String?> note = const Value.absent(),
+    String? deviceId,
+    String? employeeId,
+    DateTime? occurredAt,
+    Value<DateTime?> syncedAt = const Value.absent(),
+  }) => TillEventRow(
+    id: id ?? this.id,
+    type: type ?? this.type,
+    shiftId: shiftId ?? this.shiftId,
+    amountMinor: amountMinor ?? this.amountMinor,
+    note: note.present ? note.value : this.note,
+    deviceId: deviceId ?? this.deviceId,
+    employeeId: employeeId ?? this.employeeId,
+    occurredAt: occurredAt ?? this.occurredAt,
+    syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
+  );
+  TillEventRow copyWithCompanion(TillEventsCompanion data) {
+    return TillEventRow(
+      id: data.id.present ? data.id.value : this.id,
+      type: data.type.present ? data.type.value : this.type,
+      shiftId: data.shiftId.present ? data.shiftId.value : this.shiftId,
+      amountMinor: data.amountMinor.present ? data.amountMinor.value : this.amountMinor,
+      note: data.note.present ? data.note.value : this.note,
+      deviceId: data.deviceId.present ? data.deviceId.value : this.deviceId,
+      employeeId: data.employeeId.present ? data.employeeId.value : this.employeeId,
+      occurredAt: data.occurredAt.present ? data.occurredAt.value : this.occurredAt,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TillEventRow(')
+          ..write('id: $id, ')
+          ..write('type: $type, ')
+          ..write('shiftId: $shiftId, ')
+          ..write('amountMinor: $amountMinor, ')
+          ..write('note: $note, ')
+          ..write('deviceId: $deviceId, ')
+          ..write('employeeId: $employeeId, ')
+          ..write('occurredAt: $occurredAt, ')
+          ..write('syncedAt: $syncedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, type, shiftId, amountMinor, note, deviceId, employeeId, occurredAt, syncedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TillEventRow &&
+          other.id == this.id &&
+          other.type == this.type &&
+          other.shiftId == this.shiftId &&
+          other.amountMinor == this.amountMinor &&
+          other.note == this.note &&
+          other.deviceId == this.deviceId &&
+          other.employeeId == this.employeeId &&
+          other.occurredAt == this.occurredAt &&
+          other.syncedAt == this.syncedAt);
+}
+
+class TillEventsCompanion extends UpdateCompanion<TillEventRow> {
+  final Value<String> id;
+  final Value<String> type;
+  final Value<String> shiftId;
+  final Value<int> amountMinor;
+  final Value<String?> note;
+  final Value<String> deviceId;
+  final Value<String> employeeId;
+  final Value<DateTime> occurredAt;
+  final Value<DateTime?> syncedAt;
+  final Value<int> rowid;
+  const TillEventsCompanion({
+    this.id = const Value.absent(),
+    this.type = const Value.absent(),
+    this.shiftId = const Value.absent(),
+    this.amountMinor = const Value.absent(),
+    this.note = const Value.absent(),
+    this.deviceId = const Value.absent(),
+    this.employeeId = const Value.absent(),
+    this.occurredAt = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  TillEventsCompanion.insert({
+    required String id,
+    required String type,
+    required String shiftId,
+    required int amountMinor,
+    this.note = const Value.absent(),
+    required String deviceId,
+    required String employeeId,
+    required DateTime occurredAt,
+    this.syncedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       type = Value(type),
+       shiftId = Value(shiftId),
+       amountMinor = Value(amountMinor),
+       deviceId = Value(deviceId),
+       employeeId = Value(employeeId),
+       occurredAt = Value(occurredAt);
+  static Insertable<TillEventRow> custom({
+    Expression<String>? id,
+    Expression<String>? type,
+    Expression<String>? shiftId,
+    Expression<int>? amountMinor,
+    Expression<String>? note,
+    Expression<String>? deviceId,
+    Expression<String>? employeeId,
+    Expression<DateTime>? occurredAt,
+    Expression<DateTime>? syncedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (type != null) 'type': type,
+      if (shiftId != null) 'shift_id': shiftId,
+      if (amountMinor != null) 'amount_minor': amountMinor,
+      if (note != null) 'note': note,
+      if (deviceId != null) 'device_id': deviceId,
+      if (employeeId != null) 'employee_id': employeeId,
+      if (occurredAt != null) 'occurred_at': occurredAt,
+      if (syncedAt != null) 'synced_at': syncedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  TillEventsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? type,
+    Value<String>? shiftId,
+    Value<int>? amountMinor,
+    Value<String?>? note,
+    Value<String>? deviceId,
+    Value<String>? employeeId,
+    Value<DateTime>? occurredAt,
+    Value<DateTime?>? syncedAt,
+    Value<int>? rowid,
+  }) {
+    return TillEventsCompanion(
+      id: id ?? this.id,
+      type: type ?? this.type,
+      shiftId: shiftId ?? this.shiftId,
+      amountMinor: amountMinor ?? this.amountMinor,
+      note: note ?? this.note,
+      deviceId: deviceId ?? this.deviceId,
+      employeeId: employeeId ?? this.employeeId,
+      occurredAt: occurredAt ?? this.occurredAt,
+      syncedAt: syncedAt ?? this.syncedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (type.present) {
+      map['type'] = Variable<String>(type.value);
+    }
+    if (shiftId.present) {
+      map['shift_id'] = Variable<String>(shiftId.value);
+    }
+    if (amountMinor.present) {
+      map['amount_minor'] = Variable<int>(amountMinor.value);
+    }
+    if (note.present) {
+      map['note'] = Variable<String>(note.value);
+    }
+    if (deviceId.present) {
+      map['device_id'] = Variable<String>(deviceId.value);
+    }
+    if (employeeId.present) {
+      map['employee_id'] = Variable<String>(employeeId.value);
+    }
+    if (occurredAt.present) {
+      map['occurred_at'] = Variable<DateTime>(occurredAt.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TillEventsCompanion(')
+          ..write('id: $id, ')
+          ..write('type: $type, ')
+          ..write('shiftId: $shiftId, ')
+          ..write('amountMinor: $amountMinor, ')
+          ..write('note: $note, ')
+          ..write('deviceId: $deviceId, ')
+          ..write('employeeId: $employeeId, ')
+          ..write('occurredAt: $occurredAt, ')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -5725,6 +6287,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $DebtEventsTable debtEvents = $DebtEventsTable(this);
   late final $ReturnsTable returns = $ReturnsTable(this);
   late final $ReturnLinesTable returnLines = $ReturnLinesTable(this);
+  late final $TillEventsTable tillEvents = $TillEventsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -5742,6 +6305,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     debtEvents,
     returns,
     returnLines,
+    tillEvents,
   ];
   @override
   DriftDatabaseOptions get options => const DriftDatabaseOptions(storeDateTimeAsText: true);
@@ -7395,6 +7959,7 @@ typedef $$SalesTableCreateCompanionBuilder = SalesCompanion Function({
   required String employeeId,
   required DateTime occurredAt,
   Value<DateTime?> syncedAt,
+  Value<int?> tenderedMinor,
   Value<int> rowid,
 });
 typedef $$SalesTableUpdateCompanionBuilder = SalesCompanion Function({
@@ -7409,6 +7974,7 @@ typedef $$SalesTableUpdateCompanionBuilder = SalesCompanion Function({
   Value<String> employeeId,
   Value<DateTime> occurredAt,
   Value<DateTime?> syncedAt,
+  Value<int?> tenderedMinor,
   Value<int> rowid,
 });
 
@@ -7470,6 +8036,9 @@ class $$SalesTableFilterComposer extends Composer<_$AppDatabase, $SalesTable> {
 
   ColumnFilters<DateTime> get syncedAt =>
       $composableBuilder(column: $table.syncedAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get tenderedMinor =>
+      $composableBuilder(column: $table.tenderedMinor, builder: (column) => ColumnFilters(column));
 
   Expression<bool> saleLinesRefs(Expression<bool> Function($$SaleLinesTableFilterComposer f) f) {
     final $$SaleLinesTableFilterComposer composer = $composerBuilder(
@@ -7534,6 +8103,11 @@ class $$SalesTableOrderingComposer extends Composer<_$AppDatabase, $SalesTable> 
 
   ColumnOrderings<DateTime> get syncedAt =>
       $composableBuilder(column: $table.syncedAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get tenderedMinor => $composableBuilder(
+    column: $table.tenderedMinor,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$SalesTableAnnotationComposer extends Composer<_$AppDatabase, $SalesTable> {
@@ -7576,6 +8150,9 @@ class $$SalesTableAnnotationComposer extends Composer<_$AppDatabase, $SalesTable
 
   GeneratedColumn<DateTime> get syncedAt =>
       $composableBuilder(column: $table.syncedAt, builder: (column) => column);
+
+  GeneratedColumn<int> get tenderedMinor =>
+      $composableBuilder(column: $table.tenderedMinor, builder: (column) => column);
 
   Expression<T> saleLinesRefs<T extends Object>(
     Expression<T> Function($$SaleLinesTableAnnotationComposer a) f,
@@ -7634,6 +8211,7 @@ class $$SalesTableTableManager
                 Value<String> employeeId = const Value.absent(),
                 Value<DateTime> occurredAt = const Value.absent(),
                 Value<DateTime?> syncedAt = const Value.absent(),
+                Value<int?> tenderedMinor = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => SalesCompanion(
                 id: id,
@@ -7647,6 +8225,7 @@ class $$SalesTableTableManager
                 employeeId: employeeId,
                 occurredAt: occurredAt,
                 syncedAt: syncedAt,
+                tenderedMinor: tenderedMinor,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -7662,6 +8241,7 @@ class $$SalesTableTableManager
                 required String employeeId,
                 required DateTime occurredAt,
                 Value<DateTime?> syncedAt = const Value.absent(),
+                Value<int?> tenderedMinor = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => SalesCompanion.insert(
                 id: id,
@@ -7675,6 +8255,7 @@ class $$SalesTableTableManager
                 employeeId: employeeId,
                 occurredAt: occurredAt,
                 syncedAt: syncedAt,
+                tenderedMinor: tenderedMinor,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -8912,6 +9493,238 @@ typedef $$ReturnLinesTableProcessedTableManager =
       ReturnLineRow,
       PrefetchHooks Function({bool returnId})
     >;
+typedef $$TillEventsTableCreateCompanionBuilder = TillEventsCompanion Function({
+  required String id,
+  required String type,
+  required String shiftId,
+  required int amountMinor,
+  Value<String?> note,
+  required String deviceId,
+  required String employeeId,
+  required DateTime occurredAt,
+  Value<DateTime?> syncedAt,
+  Value<int> rowid,
+});
+typedef $$TillEventsTableUpdateCompanionBuilder = TillEventsCompanion Function({
+  Value<String> id,
+  Value<String> type,
+  Value<String> shiftId,
+  Value<int> amountMinor,
+  Value<String?> note,
+  Value<String> deviceId,
+  Value<String> employeeId,
+  Value<DateTime> occurredAt,
+  Value<DateTime?> syncedAt,
+  Value<int> rowid,
+});
+
+class $$TillEventsTableFilterComposer extends Composer<_$AppDatabase, $TillEventsTable> {
+  $$TillEventsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get type =>
+      $composableBuilder(column: $table.type, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get shiftId =>
+      $composableBuilder(column: $table.shiftId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get amountMinor =>
+      $composableBuilder(column: $table.amountMinor, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get note =>
+      $composableBuilder(column: $table.note, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get deviceId =>
+      $composableBuilder(column: $table.deviceId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get employeeId =>
+      $composableBuilder(column: $table.employeeId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get occurredAt =>
+      $composableBuilder(column: $table.occurredAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => ColumnFilters(column));
+}
+
+class $$TillEventsTableOrderingComposer extends Composer<_$AppDatabase, $TillEventsTable> {
+  $$TillEventsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get type =>
+      $composableBuilder(column: $table.type, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get shiftId =>
+      $composableBuilder(column: $table.shiftId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get amountMinor =>
+      $composableBuilder(column: $table.amountMinor, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get note =>
+      $composableBuilder(column: $table.note, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get deviceId =>
+      $composableBuilder(column: $table.deviceId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get employeeId =>
+      $composableBuilder(column: $table.employeeId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get occurredAt =>
+      $composableBuilder(column: $table.occurredAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => ColumnOrderings(column));
+}
+
+class $$TillEventsTableAnnotationComposer extends Composer<_$AppDatabase, $TillEventsTable> {
+  $$TillEventsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get type =>
+      $composableBuilder(column: $table.type, builder: (column) => column);
+
+  GeneratedColumn<String> get shiftId =>
+      $composableBuilder(column: $table.shiftId, builder: (column) => column);
+
+  GeneratedColumn<int> get amountMinor =>
+      $composableBuilder(column: $table.amountMinor, builder: (column) => column);
+
+  GeneratedColumn<String> get note =>
+      $composableBuilder(column: $table.note, builder: (column) => column);
+
+  GeneratedColumn<String> get deviceId =>
+      $composableBuilder(column: $table.deviceId, builder: (column) => column);
+
+  GeneratedColumn<String> get employeeId =>
+      $composableBuilder(column: $table.employeeId, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get occurredAt =>
+      $composableBuilder(column: $table.occurredAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
+}
+
+class $$TillEventsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $TillEventsTable,
+          TillEventRow,
+          $$TillEventsTableFilterComposer,
+          $$TillEventsTableOrderingComposer,
+          $$TillEventsTableAnnotationComposer,
+          $$TillEventsTableCreateCompanionBuilder,
+          $$TillEventsTableUpdateCompanionBuilder,
+          (TillEventRow, BaseReferences<_$AppDatabase, $TillEventsTable, TillEventRow>),
+          TillEventRow,
+          PrefetchHooks Function()
+        > {
+  $$TillEventsTableTableManager(_$AppDatabase db, $TillEventsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () => $$TillEventsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () => $$TillEventsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$TillEventsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> type = const Value.absent(),
+                Value<String> shiftId = const Value.absent(),
+                Value<int> amountMinor = const Value.absent(),
+                Value<String?> note = const Value.absent(),
+                Value<String> deviceId = const Value.absent(),
+                Value<String> employeeId = const Value.absent(),
+                Value<DateTime> occurredAt = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => TillEventsCompanion(
+                id: id,
+                type: type,
+                shiftId: shiftId,
+                amountMinor: amountMinor,
+                note: note,
+                deviceId: deviceId,
+                employeeId: employeeId,
+                occurredAt: occurredAt,
+                syncedAt: syncedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String type,
+                required String shiftId,
+                required int amountMinor,
+                Value<String?> note = const Value.absent(),
+                required String deviceId,
+                required String employeeId,
+                required DateTime occurredAt,
+                Value<DateTime?> syncedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => TillEventsCompanion.insert(
+                id: id,
+                type: type,
+                shiftId: shiftId,
+                amountMinor: amountMinor,
+                note: note,
+                deviceId: deviceId,
+                employeeId: employeeId,
+                occurredAt: occurredAt,
+                syncedAt: syncedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$TillEventsTable, TillEventRow>(table),
+                  BaseReferences<_$AppDatabase, $TillEventsTable, TillEventRow>(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$TillEventsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $TillEventsTable,
+      TillEventRow,
+      $$TillEventsTableFilterComposer,
+      $$TillEventsTableOrderingComposer,
+      $$TillEventsTableAnnotationComposer,
+      $$TillEventsTableCreateCompanionBuilder,
+      $$TillEventsTableUpdateCompanionBuilder,
+      (TillEventRow, BaseReferences<_$AppDatabase, $TillEventsTable, TillEventRow>),
+      TillEventRow,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -8932,4 +9745,6 @@ class $AppDatabaseManager {
   $$ReturnsTableTableManager get returns => $$ReturnsTableTableManager(_db, _db.returns);
   $$ReturnLinesTableTableManager get returnLines =>
       $$ReturnLinesTableTableManager(_db, _db.returnLines);
+  $$TillEventsTableTableManager get tillEvents =>
+      $$TillEventsTableTableManager(_db, _db.tillEvents);
 }

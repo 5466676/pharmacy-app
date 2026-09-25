@@ -98,7 +98,7 @@ Note: I can build and test on Linux here, but **not produce a Windows `.exe`** i
 - [x] POS: barcode = keyboard input, search by name/ingredient, alternatives with the same active ingredient, near-expiry warnings, cash/debt, **F2 / F8 / Enter**
 - [x] Customers & debts, record payment; dashboard (today's sales, open debts, near expiry, low stock, recent sales with employee + device)
 - [x] Settings (owner only): pharmacy, currency, near-expiry window, employees, demo data
-- [x] Tests: 40 core + 28 design system + 41 app (end-to-end flows, migration, returns, strips, reports) = 109
+- [x] Tests: 50 core + 28 design system + 47 app (end-to-end flows, migrations v1→v2→v3, returns, strips, reports, till) = 125
 - [x] **Real Linux desktop build** driven by keyboard under a virtual display: setup → demo data → scan → sell → debt sale → restart → PIN login. Screenshots: `docs/screenshots/phase1-*.png`
 
 ### Bugs found by running the real app (fixed)
@@ -125,8 +125,11 @@ Note: I can build and test on Linux here, but **not produce a Windows `.exe`** i
   - The "و١" ambiguity.
   - The release icon cache (documented).
 
+- **Till (الصندوق)** per employee: open with a float, add or withdraw cash with a reason, close with a count → shortage/surplus. Selling needs an open till; the owner sees every shift in employee accounts.
+- **Amount received + change** at the POS, **discount** for everyone, and **transfer (Sham Cash)** as a payment method that doesn't count toward the drawer.
+- Schema v3, with the migration tested from the real v2 schema and checked on a real v2 database.
+
 ### Still open
-- **Discount** at the POS: supported by the logic, not shown in the invoice yet. Any employee, or the owner only?
-- **Receipt printing**: thermal 58/80 mm?
+- **Receipt printing**: thermal 58/80 mm? (not answered yet)
 
 ## Phase 2 — Backend + sync · not started

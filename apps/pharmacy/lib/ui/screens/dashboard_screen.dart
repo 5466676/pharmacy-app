@@ -217,7 +217,6 @@ class _SaleRowView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final debt = sale.payment == PaymentType.debt.wire;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: DoayaSpacing.xs),
       child: Row(
@@ -231,10 +230,7 @@ class _SaleRowView extends StatelessWidget {
           Expanded(
             child: Align(
               alignment: AlignmentDirectional.centerStart,
-              child: StatusChip(
-                label: debt ? l.paymentDebt : l.paymentCash,
-                tone: debt ? StatusTone.warning : StatusTone.accent,
-              ),
+              child: paymentChip(l, sale.payment),
             ),
           ),
           Expanded(child: Text(employee, style: DoayaTypography.caption, maxLines: 1)),

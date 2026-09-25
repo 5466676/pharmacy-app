@@ -176,9 +176,11 @@ class LedgerRepository {
     required PaymentType payment,
     String? customerId,
     int discountMinor = 0,
+    int? tenderedMinor,
   }) {
     return _db.transaction(() async {
       final sale = buildSale(
+        tenderedMinor: tenderedMinor,
         cart: cart,
         stock: await loadStock(),
         currency: currency,
@@ -201,6 +203,7 @@ class LedgerRepository {
               subtotalMinor: sale.subtotalMinor,
               discountMinor: sale.discountMinor,
               totalMinor: sale.totalMinor,
+              tenderedMinor: Value(sale.tenderedMinor),
               deviceId: sale.meta.deviceId,
               employeeId: sale.meta.employeeId,
               occurredAt: sale.meta.occurredAt,

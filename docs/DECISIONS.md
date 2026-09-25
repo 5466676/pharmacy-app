@@ -83,3 +83,12 @@ Returns get their own append-only tables (`returns`, `return_lines`) and `return
 
 ## 2026-09-25 · Dialogs open on the nearest navigator
 `showDoayaDialog` uses `useRootNavigator: false`. With the root navigator, the page context's `Navigator.pop` popped the go_router shell page instead of the dialog: in the real app, "Save" in the receive-stock dialog left the dialog open and closed the product page. A widget test covers this, and it fails without the fix.
+
+## 2026-09-25 · Cash drawer (الصندوق), amount received, discount, transfers (owner request)
+The owner asked for the till features found in the local programs (Karma Soft / Al-Ameen): opening/closing shifts, counting the drawer, entering the amount received. Their websites are blocked from this environment, so the design follows their publicly described features: per-user shift open/close with a count, shortage/surplus, and payments recorded to the drawer or to Sham Cash.
+- **Shifts** are append-only `till_events` (`opened` with a float, `cash_in`, `cash_out` with a reason, `closed` with the counted cash). There's one open shift per employee per device, and selling requires one.
+- **Expected cash** = float + that employee's cash sales + debt payments − cash refunds + cash in − cash out, on that device during the shift. Closing shows **عجز / زيادة / مطابق**, and the owner sees every shift in the employee accounts.
+- **Amount received** is optional on cash sales. The screen shows the change live, and a sale is refused if the amount is less than the total. Enter in that field completes the sale.
+- **Discount**: any employee can give one (owner's decision). It's stored on the sale with who gave it, and appears in that employee's account.
+- **Transfer** (Sham Cash or another e-wallet) is a third payment method. It counts in sales but not in the drawer.
+- Schema v3: `sales.tendered_minor`, plus `till_events`. The migration is tested from the real v2 schema (`test/fixtures/schema_v2.sql`) and re-creates the `sales` guard trigger so the new column is frozen too. It was also run on a real v2 database with the Linux build.

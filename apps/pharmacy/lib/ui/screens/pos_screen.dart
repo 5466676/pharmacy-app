@@ -51,6 +51,8 @@ class _PosScreenState extends ConsumerState<PosScreen> {
   var _registered = false;
   var _busy = false;
   Timer? _debounce;
+  final _discount = TextEditingController();
+  final _tendered = TextEditingController();
 
   @override
   void initState() {
@@ -63,6 +65,8 @@ class _PosScreenState extends ConsumerState<PosScreen> {
     _debounce?.cancel();
     _search.dispose();
     _searchFocus.dispose();
+    _discount.dispose();
+    _tendered.dispose();
     super.dispose();
   }
 
@@ -198,10 +202,36 @@ class _PosScreenState extends ConsumerState<PosScreen> {
 
   // ─── Complete ───────────────────────────────────────────────────────────
 
+  Future<void> _openTill() async {
+    final l = AppLocalizations.of(context);
+    final currency = ref.read(currencyProvider);
+    final r = await askAmount(
+      context,
+      title: l.openTill,
+      label: l.openingFloatLabel(currency.symbol),
+      currency: currency,
+      initial: '0',
+    );
+    if (r != null) {
+      await ref
+          .read(tillProvider)
+          .openShift(ref.read(requireSessionProvider).stamp, floatMinor: r.$1);
+    }
+    _searchFocus.requestFocus();
+  }
+
+  int _discountMinor(Currency c) => Money.tryParse(_discount.text, c)?.minor ?? 0;
+  int? _tenderedMinor(Currency c) =>
+      _tendered.text.trim().isEmpty ? null : Money.tryParse(_tendered.text, c)?.minor;
+
   Future<void> _complete() async {
     if (_busy) return;
     final l = AppLocalizations.of(context);
     final currency = ref.read(currencyProvider);
+    if (ref.read(currentShiftProvider).value == null) {
+      await _openTill();
+      return;
+    }
     setState(() => _busy = true);
     try {
       final sale = await ref
@@ -220,9 +250,20 @@ class _PosScreenState extends ConsumerState<PosScreen> {
             currency: currency,
             payment: _payment,
             customerId: _registered ? _customer?.id : null,
+            discountMinor: _discountMinor(currency),
+            tenderedMinor: _tenderedMinor(currency),
           );
       if (!mounted) return;
-      toast(context, l.saleDone(formatMoney(sale.totalMinor, currency)));
+      final change = sale.changeMinor;
+      toast(
+        context,
+        change != null && change > 0
+            ? '${l.saleDone(formatMoney(sale.totalMinor, currency))}، '
+                  '${l.changeDue}: ${formatMoney(change, currency)}'
+            : l.saleDone(formatMoney(sale.totalMinor, currency)),
+      );
+      _discount.clear();
+      _tendered.clear();
       setState(() {
         _cart.clear();
         _payment = PaymentType.cash;
@@ -359,10 +400,16 @@ class _PosScreenState extends ConsumerState<PosScreen> {
                 }
               }),
               onPickCustomer: _pickCustomer,
-              onPayment: (p) => p == PaymentType.debt
-                  ? _toggleDebt()
-                  : setState(() => _payment = PaymentType.cash),
+              onPayment: (p) =>
+                  p == PaymentType.debt ? _toggleDebt() : setState(() => _payment = p),
               onComplete: _complete,
+              discount: _discount,
+              tendered: _tendered,
+              discountMinor: _discountMinor(currency),
+              tenderedMinor: _tenderedMinor(currency),
+              onAmountsChanged: () => setState(() {}),
+              tillOpen: ref.watch(currentShiftProvider).value != null,
+              onOpenTill: _openTill,
             ),
           ),
         ],
@@ -513,6 +560,13 @@ class _Invoice extends StatelessWidget {
     required this.onPickCustomer,
     required this.onPayment,
     required this.onComplete,
+    required this.discount,
+    required this.tendered,
+    required this.discountMinor,
+    required this.tenderedMinor,
+    required this.onAmountsChanged,
+    required this.tillOpen,
+    required this.onOpenTill,
   });
 
   final AppLocalizations l;
@@ -529,9 +583,21 @@ class _Invoice extends StatelessWidget {
   final VoidCallback onPickCustomer;
   final ValueChanged<PaymentType> onPayment;
   final VoidCallback onComplete;
+  final TextEditingController discount;
+  final TextEditingController tendered;
+  final int discountMinor;
+  final int? tenderedMinor;
+  final VoidCallback onAmountsChanged;
+  final bool tillOpen;
+  final VoidCallback onOpenTill;
 
   @override
   Widget build(BuildContext context) {
+    final total = subtotal - discountMinor;
+    final change = payment == PaymentType.cash && tenderedMinor != null
+        ? tenderedMinor! - total
+        : null;
+    final invalid = discountMinor > subtotal || (change != null && change < 0);
     return GlassSurface(
       tone: SurfaceTone.strong,
       borderRadius: BorderRadius.circular(DoayaRadii.hero),
@@ -631,62 +697,128 @@ class _Invoice extends StatelessWidget {
                   ),
           ),
           const SizedBox(height: DoayaSpacing.ml),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: GlassTextField(
+                  label: l.discountLabel(currency.symbol),
+                  controller: discount,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  onChanged: (_) => onAmountsChanged(),
+                ),
+              ),
+              if (payment == PaymentType.cash) ...[
+                const SizedBox(width: DoayaSpacing.sm),
+                Expanded(
+                  child: GlassTextField(
+                    label: l.tenderedLabel(currency.symbol),
+                    controller: tendered,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    onChanged: (_) => onAmountsChanged(),
+                    // Keyboard-first: type the amount received, press Enter.
+                    onSubmitted: (_) {
+                      if (tillOpen && !busy && items.isNotEmpty && !invalid) onComplete();
+                    },
+                  ),
+                ),
+              ],
+            ],
+          ),
+          const SizedBox(height: DoayaSpacing.sm),
           GlassSurface(
             shadow: false,
             borderRadius: BorderRadius.circular(DoayaRadii.card),
-            padding: const EdgeInsets.all(DoayaSpacing.l),
+            padding: const EdgeInsets.symmetric(
+              horizontal: DoayaSpacing.l,
+              vertical: DoayaSpacing.ml,
+            ),
             child: Column(
               children: [
                 _TotalRow(label: l.subtotal, value: formatMoney(subtotal, currency)),
+                if (discountMinor > 0)
+                  _TotalRow(label: l.discount, value: formatSignedMoney(-discountMinor, currency)),
                 const Divider(color: DoayaColors.divider),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.baseline,
                   textBaseline: TextBaseline.alphabetic,
                   children: [
                     Expanded(child: Text(l.total, style: DoayaTypography.label)),
-                    Text(formatMoney(subtotal, currency), style: DoayaTypography.price),
+                    Text(formatMoney(total, currency), style: DoayaTypography.price),
                   ],
                 ),
+                if (change != null)
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          change < 0 ? l.errTendered : l.changeDue,
+                          style: DoayaTypography.bodySmall.copyWith(
+                            color: change < 0 ? DoayaColors.dangerText : DoayaColors.accent,
+                          ),
+                        ),
+                      ),
+                      if (change >= 0)
+                        Text(
+                          formatMoney(change, currency),
+                          style: DoayaTypography.titleSmall.copyWith(color: DoayaColors.accent),
+                        ),
+                    ],
+                  ),
               ],
             ),
           ),
-          const SizedBox(height: DoayaSpacing.ml),
+          const SizedBox(height: DoayaSpacing.sm),
           Row(
             children: [
-              Expanded(
-                child: GlassPillButton(
-                  label: l.paymentCash,
-                  icon: DoayaIcons.cash,
-                  size: PillSize.medium,
-                  selected: payment == PaymentType.cash,
-                  expand: true,
-                  onPressed: () => onPayment(PaymentType.cash),
+              for (final (p, label, icon) in [
+                (PaymentType.cash, l.paymentCash, DoayaIcons.cash),
+                (PaymentType.debt, l.paymentDebt, DoayaIcons.debts),
+                (PaymentType.transfer, l.paymentTransfer, DoayaIcons.transfer),
+              ]) ...[
+                if (p != PaymentType.cash) const SizedBox(width: DoayaSpacing.s),
+                Expanded(
+                  child: _maybeTooltip(
+                    p == PaymentType.transfer ? l.paymentTransferHint : null,
+                    GlassPillButton(
+                      label: label,
+                      icon: icon,
+                      size: PillSize.medium,
+                      selected: payment == p,
+                      expand: true,
+                      onPressed: () => onPayment(p),
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(width: DoayaSpacing.sm),
-              Expanded(
-                child: GlassPillButton(
-                  label: l.paymentDebt,
-                  icon: DoayaIcons.debts,
-                  size: PillSize.medium,
-                  selected: payment == PaymentType.debt,
-                  expand: true,
-                  onPressed: () => onPayment(PaymentType.debt),
-                ),
-              ),
+              ],
             ],
           ),
-          const SizedBox(height: DoayaSpacing.ml),
-          SagePillButton(
-            label: l.completeSale,
-            expand: true,
-            onPressed: busy || items.isEmpty ? null : onComplete,
-          ),
+          const SizedBox(height: DoayaSpacing.sm),
+          if (tillOpen)
+            SagePillButton(
+              label: l.completeSale,
+              expand: true,
+              onPressed: busy || items.isEmpty || invalid ? null : onComplete,
+            )
+          else
+            NoticeBanner(
+              message: l.tillClosedBanner,
+              icon: DoayaIcons.cash,
+              action: SagePillButton(
+                label: l.openTill,
+                size: PillSize.medium,
+                expand: true,
+                onPressed: onOpenTill,
+              ),
+            ),
         ],
       ),
     );
   }
 }
+
+Widget _maybeTooltip(String? message, Widget child) =>
+    message == null ? child : Tooltip(message: message, child: child);
 
 class _TotalRow extends StatelessWidget {
   const _TotalRow({required this.label, required this.value});

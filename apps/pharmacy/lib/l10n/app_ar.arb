@@ -460,5 +460,100 @@
         "type": "String"
       }
     }
-  }
+  },
+  "navTill": "الصندوق",
+  "paymentTransfer": "تحويل",
+  "paymentTransferHint": "شام كاش أو أي تحويل إلكتروني (ما بيدخل الصندوق)",
+  "discountLabel": "حسم ({symbol})",
+  "@discountLabel": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "tenderedLabel": "المبلغ المقبوض ({symbol})",
+  "@tenderedLabel": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "changeDue": "الباقي للزبون",
+  "errTendered": "المبلغ المقبوض أقل من الإجمالي",
+  "tillClosedBanner": "الصندوق مسكّر. افتحه لتبدأ البيع.",
+  "openTill": "افتح الصندوق",
+  "openingFloatLabel": "المبلغ الموجود بالصندوق هلق ({symbol})",
+  "@openingFloatLabel": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "tillTitle": "الصندوق",
+  "tillOpenedAt": "مفتوح من {time}",
+  "@tillOpenedAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "tillFloat": "رصيد الافتتاح",
+  "tillCashSales": "مبيعات نقدية",
+  "tillDebtPayments": "دفعات ديون",
+  "tillCashRefunds": "مرتجع نقدي",
+  "tillCashIn": "إضافة نقد",
+  "tillCashOut": "سحب نقد",
+  "tillTransfers": "تحويلات (خارج الصندوق)",
+  "tillExpected": "المفروض بالصندوق",
+  "addCash": "إضافة نقد",
+  "withdrawCash": "سحب نقد",
+  "reasonLabel": "السبب",
+  "closeTill": "إغلاق الصندوق",
+  "countedLabel": "العدّ الفعلي ({symbol})",
+  "@countedLabel": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "countHelp": "عدّ المصاري يلي بالصندوق واكتب المبلغ",
+  "shortage": "عجز {amount}",
+  "@shortage": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "surplus": "زيادة {amount}",
+  "@surplus": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "balanced": "مطابق",
+  "tillClosedResult": "انسكّر الصندوق",
+  "tillIsClosed": "الصندوق مسكّر",
+  "shiftsTitle": "الورديات",
+  "noShifts": "ما في ورديات بهالفترة",
+  "shiftOpenNow": "مفتوح",
+  "shiftLine": "من {from} لـ {to}",
+  "@shiftLine": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "staffTransferSales": "تحويلات"
 }

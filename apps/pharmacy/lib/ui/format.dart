@@ -20,8 +20,10 @@ String formatQty(int n) => formatArabicNumber(n);
 String formatSignedQty(int n) => n > 0 ? '\u061C+${formatArabicNumber(n)}' : formatArabicNumber(n);
 
 /// Signed money change, same RTL-safe sign.
-String formatSignedMoney(int minor, Currency c) =>
-    minor >= 0 ? '\u061C+${formatMoney(minor, c)}' : '\u061C-${formatMoney(-minor, c)}';
+String formatSignedMoney(int minor, Currency c) {
+  if (minor == 0) return formatMoney(0, c);
+  return minor > 0 ? '\u061C+${formatMoney(minor, c)}' : '\u061C-${formatMoney(-minor, c)}';
+}
 
 /// d/m/yyyy in Arabic-Indic digits.
 String formatDate(DateTime d) {

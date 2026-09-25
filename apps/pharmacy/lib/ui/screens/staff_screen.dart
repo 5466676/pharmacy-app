@@ -34,6 +34,15 @@ final _returnsProvider = StreamProvider.family<List<ReturnRow>, ReportPeriod>((r
   return ref.watch(ledgerProvider).watchReturnsBetween(from, to);
 });
 
+final _shiftsProvider = StreamProvider.family<List<ShiftSummary>, ReportPeriod>((ref, p) async* {
+  final (from, to) = ref.watch(_rangeProvider(p));
+  final till = ref.watch(tillProvider);
+  yield await till.shiftsBetween(from, to);
+  await for (final _ in till.watchChanges()) {
+    yield await till.shiftsBetween(from, to);
+  }
+});
+
 final _summariesProvider = Provider.family<List<EmployeeSummary>, ReportPeriod>((ref, p) {
   return summarizeByEmployee(
     sales: ref.watch(_salesProvider(p)).value ?? const [],
@@ -120,6 +129,9 @@ class _StaffScreenState extends ConsumerState<StaffScreen> {
                       child: selected == null
                           ? const SizedBox.shrink()
                           : _EmployeeAccount(
+                              shifts: (ref.watch(_shiftsProvider(_period)).value ?? const [])
+                                  .where((x) => x.employeeId == selected.employeeId)
+                                  .toList(),
                               summary: selected,
                               name: employees[selected.employeeId]?.name ?? l.none,
                               currency: currency,
@@ -134,9 +146,15 @@ class _StaffScreenState extends ConsumerState<StaffScreen> {
 }
 
 class _EmployeeAccount extends ConsumerStatefulWidget {
-  const _EmployeeAccount({required this.summary, required this.name, required this.currency});
+  const _EmployeeAccount({
+    required this.summary,
+    required this.name,
+    required this.currency,
+    required this.shifts,
+  });
 
   final EmployeeSummary summary;
+  final List<ShiftSummary> shifts;
   final String name;
   final Currency currency;
 
@@ -194,6 +212,11 @@ class _EmployeeAccountState extends ConsumerState<_EmployeeAccount> {
                     tone: StatusTone.warning,
                   ),
                   stat(
+                    DoayaIcons.transfer,
+                    l.staffTransferSales,
+                    formatMoney(s.transferSalesMinor, c),
+                  ),
+                  stat(
                     DoayaIcons.payment,
                     l.staffPayments,
                     formatMoney(s.paymentsCollectedMinor, c),
@@ -237,6 +260,38 @@ class _EmployeeAccountState extends ConsumerState<_EmployeeAccount> {
               Text(formatMoney(s.cashToHandInMinor, c), style: DoayaTypography.price),
             ],
           ),
+        ),
+        const SizedBox(height: DoayaSpacing.l),
+        Panel(
+          title: l.shiftsTitle,
+          child: widget.shifts.isEmpty
+              ? EmptyHint(l.noShifts)
+              : Column(
+                  children: [
+                    for (final sh in widget.shifts)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                '${formatDate(sh.openedAt)}، ${l.shiftLine(formatTime(sh.openedAt), sh.closedAt == null ? l.shiftOpenNow : formatTime(sh.closedAt!))}',
+                                style: DoayaTypography.bodySmall,
+                              ),
+                            ),
+                            Text(
+                              '${l.tillExpected}: ${formatMoney(sh.expected, c)}',
+                              style: DoayaTypography.caption.copyWith(
+                                color: DoayaColors.textSecondary,
+                              ),
+                            ),
+                            const SizedBox(width: DoayaSpacing.l),
+                            differenceChip(l, sh.difference, c),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
         ),
         const SizedBox(height: DoayaSpacing.l),
         Panel(
@@ -300,12 +355,7 @@ class _EmployeeAccountState extends ConsumerState<_EmployeeAccount> {
                                       ),
                                     ),
                                   ),
-                                  StatusChip(
-                                    label: sale.payment == 'debt' ? l.paymentDebt : l.paymentCash,
-                                    tone: sale.payment == 'debt'
-                                        ? StatusTone.warning
-                                        : StatusTone.accent,
-                                  ),
+                                  paymentChip(l, sale.payment),
                                   const SizedBox(width: DoayaSpacing.l),
                                   SizedBox(
                                     width: DoayaSizes.priceColumn,

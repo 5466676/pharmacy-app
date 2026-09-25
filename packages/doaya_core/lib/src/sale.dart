@@ -5,7 +5,10 @@ import 'money.dart';
 
 enum PaymentType {
   cash,
-  debt;
+  debt,
+
+  /// Electronic transfer (Sham Cash…): paid, but not into the drawer.
+  transfer;
 
   String get wire => name;
   static PaymentType fromWire(String s) => values.byName(s);
@@ -66,11 +69,18 @@ class CompletedSale {
     required this.stockEvents,
     this.customerId,
     this.debtEvent,
+    this.tenderedMinor,
   });
 
   final EventMeta meta;
   final Currency currency;
   final PaymentType payment;
+
+  /// Cash the customer handed over (optional, cash sales only).
+  final int? tenderedMinor;
+
+  /// Change given back, when [tenderedMinor] was entered.
+  int? get changeMinor => tenderedMinor == null ? null : tenderedMinor! - totalMinor;
   final String? customerId;
   final List<SaleLine> lines;
   final int subtotalMinor;
@@ -93,7 +103,16 @@ class SaleException implements Exception {
   String toString() => 'SaleException($code, $detail)';
 }
 
-enum SaleError { emptyCart, badQuantity, debtNeedsCustomer, discountTooLarge, insufficientStock }
+enum SaleError {
+  emptyCart,
+  badQuantity,
+  debtNeedsCustomer,
+  discountTooLarge,
+  insufficientStock,
+
+  /// The amount received is less than the total.
+  tenderedTooLow,
+}
 
 /// Turns a cart into a sale and its ledger events, allocating FEFO.
 ///
@@ -110,6 +129,7 @@ CompletedSale buildSale({
   required UuidV7 ids,
   String? customerId,
   int discountMinor = 0,
+  int? tenderedMinor,
 }) {
   if (cart.isEmpty) throw const SaleException(SaleError.emptyCart);
   if (payment == PaymentType.debt && customerId == null) {
@@ -185,6 +205,10 @@ CompletedSale buildSale({
   }
 
   final total = subtotal.minor - discountMinor;
+  if (payment != PaymentType.cash) tenderedMinor = null;
+  if (tenderedMinor != null && tenderedMinor < total) {
+    throw const SaleException(SaleError.tenderedTooLow);
+  }
   final debt = payment == PaymentType.debt && total > 0
       ? DebtEvent(
           meta: meta(),
@@ -206,5 +230,6 @@ CompletedSale buildSale({
     discountMinor: discountMinor,
     stockEvents: events,
     debtEvent: debt,
+    tenderedMinor: tenderedMinor,
   );
 }

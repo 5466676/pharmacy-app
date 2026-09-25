@@ -138,6 +138,9 @@ class Sales extends Table {
   DateTimeColumn get occurredAt => dateTime()();
   DateTimeColumn get syncedAt => dateTime().nullable()();
 
+  /// Cash handed over by the customer (cash sales, optional). v3.
+  IntColumn get tenderedMinor => integer().nullable()();
+
   @override
   Set<Column> get primaryKey => {id};
 }
@@ -212,6 +215,25 @@ class ReturnLines extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+/// Cash-drawer shifts: opened / cash_in / cash_out / closed. v3.
+@DataClassName('TillEventRow')
+class TillEvents extends Table {
+  TextColumn get id => text()();
+  TextColumn get type => text()();
+
+  /// Id of the shift's `opened` event.
+  TextColumn get shiftId => text()();
+  IntColumn get amountMinor => integer()();
+  TextColumn get note => text().nullable()();
+  TextColumn get deviceId => text()();
+  TextColumn get employeeId => text()();
+  DateTimeColumn get occurredAt => dateTime()();
+  DateTimeColumn get syncedAt => dateTime().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 const _appendOnlyTables = [
   'stock_events',
   'sales',
@@ -219,6 +241,7 @@ const _appendOnlyTables = [
   'debt_events',
   'returns',
   'return_lines',
+  'till_events',
 ];
 
 @DriftDatabase(
@@ -235,6 +258,7 @@ const _appendOnlyTables = [
     DebtEvents,
     Returns,
     ReturnLines,
+    TillEvents,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -250,7 +274,7 @@ class AppDatabase extends _$AppDatabase {
   );
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -270,6 +294,20 @@ class AppDatabase extends _$AppDatabase {
         await _guardReturns();
         await customStatement('CREATE INDEX return_lines_sale_line ON return_lines (sale_line_id)');
       }
+      if (from < 3) {
+        // v3: amount received at the counter, and cash-drawer shifts.
+        await m.addColumn(sales, sales.tenderedMinor);
+        await m.createTable(tillEvents);
+        await _guardTill();
+        await customStatement('CREATE INDEX till_events_shift ON till_events (shift_id)');
+        // Re-create the sales guard so the new column is frozen too.
+        await customStatement('DROP TRIGGER IF EXISTS sales_no_update');
+        await customStatement('''
+          CREATE TRIGGER sales_no_update BEFORE UPDATE ON sales
+          WHEN NOT (${_sameColumnsExceptSynced('sales')})
+          BEGIN SELECT RAISE(ABORT, 'append-only: sales'); END;
+        ''');
+      }
     },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
@@ -277,7 +315,7 @@ class AppDatabase extends _$AppDatabase {
   );
 
   Future<void> _createLedgerGuards() async {
-    for (final t in _appendOnlyTables.where((t) => !t.startsWith('return'))) {
+    for (final t in _appendOnlyTables.where((t) => !t.startsWith('return') && t != 'till_events')) {
       await customStatement('''
         CREATE TRIGGER ${t}_no_delete BEFORE DELETE ON $t
         BEGIN SELECT RAISE(ABORT, 'append-only: $t'); END;
@@ -296,6 +334,19 @@ class AppDatabase extends _$AppDatabase {
       BEGIN SELECT RAISE(ABORT, 'append-only: sale_lines'); END;
     ''');
     await _guardReturns();
+    await _guardTill();
+  }
+
+  Future<void> _guardTill() async {
+    await customStatement('''
+      CREATE TRIGGER till_events_no_delete BEFORE DELETE ON till_events
+      BEGIN SELECT RAISE(ABORT, 'append-only: till_events'); END;
+    ''');
+    await customStatement('''
+      CREATE TRIGGER till_events_no_update BEFORE UPDATE ON till_events
+      WHEN NOT (${_sameColumnsExceptSynced('till_events')})
+      BEGIN SELECT RAISE(ABORT, 'append-only: till_events'); END;
+    ''');
   }
 
   Future<void> _guardReturns() async {
@@ -324,7 +375,7 @@ class AppDatabase extends _$AppDatabase {
       ],
       'sales' => [
         'id', 'customer_id', 'payment', 'currency_code', 'subtotal_minor', 'discount_minor', //
-        'total_minor', 'device_id', 'employee_id', 'occurred_at',
+        'total_minor', 'device_id', 'employee_id', 'occurred_at', 'tendered_minor',
       ],
       'debt_events' => [
         'id', 'type', 'customer_id', 'amount_minor', 'currency_code', 'sale_id', 'note', //
@@ -333,6 +384,10 @@ class AppDatabase extends _$AppDatabase {
       'returns' => [
         'id', 'sale_id', 'customer_id', 'refund', 'currency_code', 'total_minor', //
         'device_id', 'employee_id', 'occurred_at',
+      ],
+      'till_events' => [
+        'id', 'type', 'shift_id', 'amount_minor', 'note', 'device_id', 'employee_id', //
+        'occurred_at',
       ],
       _ => throw ArgumentError(table),
     };
@@ -349,6 +404,7 @@ class AppDatabase extends _$AppDatabase {
       'CREATE INDEX products_ingredient ON products (active_ingredient)',
       'CREATE INDEX product_barcodes_product ON product_barcodes (product_id)',
       'CREATE INDEX return_lines_sale_line ON return_lines (sale_line_id)',
+      'CREATE INDEX till_events_shift ON till_events (shift_id)',
     ]) {
       await customStatement(s);
     }

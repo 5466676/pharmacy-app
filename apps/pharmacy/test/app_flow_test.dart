@@ -4,6 +4,7 @@ import 'package:doaya_pharmacy/data/catalog_repository.dart';
 import 'package:doaya_pharmacy/data/database.dart';
 import 'package:doaya_pharmacy/data/ledger_repository.dart';
 import 'package:doaya_pharmacy/data/people_repository.dart';
+import 'package:doaya_pharmacy/data/till_repository.dart';
 import 'package:doaya_pharmacy/providers.dart';
 import 'package:doaya_pharmacy/router.dart';
 import 'package:doaya_ui/doaya_ui.dart';
@@ -89,7 +90,7 @@ void main() {
     late EmployeeRow owner;
     late ProductRow amox;
 
-    Future<void> seed(WidgetTester tester) async {
+    Future<void> seed(WidgetTester tester, {bool openTill = true}) async {
       await tester.runAsync(() async {
         final people = PeopleRepository(db);
         final (device, o) = await people.setUp(
@@ -113,6 +114,10 @@ void main() {
           quantity: 5,
           expiry: DateTime.now().add(const Duration(days: 30)),
         );
+        if (openTill) {
+          await TillRepository(db)
+              .openShift(Session(deviceId: device.id, employeeId: o.id), floatMinor: 10000);
+        }
       });
     }
 
@@ -361,6 +366,82 @@ void main() {
       expect(find.text('تفاصيل الصنف'), findsOneWidget); // still on the product page
       final stock = await tester.runAsync(() => LedgerRepository(db).loadStock());
       expect(stock!.onHand(amox.id), 8);
+      await unmount(tester);
+    });
+
+    testWidgets('POS: discount + amount received shows change; till summary adds up', (
+      tester,
+    ) async {
+      await signInAndOpenPos(tester);
+      await tester.enterText(find.byType(TextField).first, '6221000000011');
+      await tester.testTextInput.receiveAction(TextInputAction.search);
+      await settle(tester);
+      await tester.enterText(find.byType(TextField).first, '6221000000011');
+      await tester.testTextInput.receiveAction(TextInputAction.search);
+      await settle(tester); // 2 × 45 = 90
+
+      final fields = find.byType(TextFormField);
+      await tester.enterText(fields.at(0), '5'); // discount
+      await tester.enterText(fields.at(1), '100'); // received
+      await settle(tester);
+      expect(find.text('٨٥ ل.س'), findsWidgets); // total
+      expect(find.text('الباقي للزبون'), findsOneWidget);
+      expect(find.text('١٥ ل.س'), findsOneWidget); // change
+
+      // Enter in the amount-received field completes the sale.
+      await tester.showKeyboard(fields.at(1));
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+      await settle(tester);
+      final sale = (await tester.runAsync(() => db.select(db.sales).get()))!.single;
+      expect((sale.totalMinor, sale.discountMinor, sale.tenderedMinor), (8500, 500, 10000));
+
+      // Till: float 100 + cash sale 85 = 185 expected.
+      await tester.tap(find.text('الصندوق'));
+      await settle(tester);
+      expect(find.text('١٨٥ ل.س'), findsOneWidget);
+      await unmount(tester);
+    });
+
+    testWidgets('POS: amount received below total blocks the sale', (tester) async {
+      await signInAndOpenPos(tester);
+      await tester.enterText(find.byType(TextField).first, '6221000000011');
+      await tester.testTextInput.receiveAction(TextInputAction.search);
+      await settle(tester);
+      await tester.enterText(find.byType(TextFormField).at(1), '40');
+      await settle(tester);
+      expect(find.text('المبلغ المقبوض أقل من الإجمالي'), findsOneWidget);
+      final button = tester.widget<SagePillButton>(
+        find.widgetWithText(SagePillButton, 'إتمام البيع'),
+      );
+      expect(button.onPressed, isNull);
+      await unmount(tester);
+    });
+
+    testWidgets('closed till: POS asks to open it; closing shows the shortage', (tester) async {
+      await seed(tester, openTill: false);
+      await pumpApp(tester);
+      final device = await tester.runAsync(() => PeopleRepository(db).thisDevice());
+      container.read(sessionProvider.notifier).signIn(device!, owner);
+      await settle(tester);
+      await tester.sendKeyEvent(LogicalKeyboardKey.f2);
+      await settle(tester);
+      expect(find.text('الصندوق مسكّر. افتحه لتبدأ البيع.'), findsOneWidget);
+
+      await tester.tap(find.text('افتح الصندوق').last);
+      await settle(tester);
+      await tester.enterText(find.byType(TextFormField).last, '50');
+      await tester.tap(find.text('تأكيد'));
+      await settle(tester);
+      expect(find.text('إتمام البيع'), findsOneWidget);
+
+      await tester.tap(find.text('الصندوق'));
+      await settle(tester);
+      await tester.tap(find.widgetWithText(SagePillButton, 'إغلاق الصندوق'));
+      await settle(tester);
+      await tester.enterText(find.byType(TextFormField).last, '45');
+      await tester.tap(find.text('تأكيد'));
+      await settle(tester);
+      expect(find.text('عجز ٥ ل.س'), findsOneWidget);
       await unmount(tester);
     });
 
