@@ -515,3 +515,13 @@ Screens from `design/patient_*.html`, same `doaya_ui` dark glass, RTL, English d
 6. **Patient app**: new app skeleton, onboarding and account, choosing the pharmacy, home, chat with the emergency screen, case status.
 7. **Patient app**: the shelf, product detail, order for pickup, my orders, reminders, prescription photo.
 8. **Real run**: central server (in Docker here, standing in for the internet), a pharmacy's local server and PC app, the patient app on web and at phone size. Covers a normal case to pickup, a red-flag case, the model switched off, and the internet cut at the pharmacy → **review**.
+
+### Done
+- [x] Step 1: **red-flag rules** (`backend/app/consult/redflags.py`), with the example table written first (`tests/test_redflags.py`).
+  - Normalization: diacritics and tatweel removed; أ/إ/آ→ا, ى→ي, ة→ه; Arabic digits → Latin; stretched letters folded («كتيييير»).
+  - 12 categories: chest pain, breathing, stroke, heavy bleeding, feverish baby (up to 3 months), self-harm, poisoning / overdose, seizure, unconscious, severe allergy, pregnancy with bleeding, stiff neck / worst headache.
+  - Formal Arabic and Syrian dialect, plus a few English phrases.
+  - Negation cancels a symptom only when it comes just before it, in the same clause («ما عندي وجع بصدري», «ولا ضيق نفس»). «بس / لكن / و…» start a new clause, and negation **never** cancels self-harm, poisoning or a feverish baby.
+  - Examples: 54 that must fire; 27 everyday pharmacy sentences that must not («حرقة بالمعدة», «تشنج بالعضل», «رح موت من الجوع», «عندي صرع وبدي علبة الدوا», «لقاح شلل الأطفال»). A guard test checks every pattern is written on normalized text; it caught «على» in one.
+  - Emergency numbers are settings: ambulance **110** (the Ministry of Health's unified operations room, 2026) and **112** (police / emergency). Server 83.
+

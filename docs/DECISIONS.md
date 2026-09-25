@@ -164,3 +164,10 @@ The server doesn't recreate the app's ~25 tables. Each synced row is stored once
   - A restore is scheduled and applied at the next start, before the database opens, and the old file is kept as `.before-restore`.
   - **Restore is not offered on a device linked to a server**: the server doesn't send a device its own rows back. A linked device that lost data re-joins the pharmacy as a new device and downloads everything.
 
+## 2026-09-25 · Red-flag rules: normalize, match, negate carefully, fire when in doubt
+- The rules are plain Python regexes on **normalized** text, with no NLP dependency. Syrian dialect is spelled many ways, so normalization does most of the work, and a test forbids patterns containing letters that normalization folds away.
+- **Negation** looks back at most 4 words in the same clause for ما / مافي / لا / ولا / بدون / مو / مش. It stops at بس / لكن / a word joined with و.
+- Self-harm, poisoning and a feverish baby are **never** negated: «ما بدي انتحر بس تعبت» still stops the chat.
+- Some everyday words are deliberately **not** rules because they'd raise constant false alarms at a pharmacy: «حرقة» (heartburn), «صرع» alone (repeat medicine), «شلل» alone (polio vaccine), «تشنج» of a muscle. The LLM classifier (step 2) looks at the whole conversation for what rules miss, and it can only add alarms, never cancel one.
+- **Emergency numbers**: ambulance 110 (Syrian Ministry of Health unified ambulance operations room, launched 2026), 112 police / emergency. Both are server settings.
+

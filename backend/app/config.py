@@ -26,6 +26,11 @@ class Settings(BaseSettings):
     backup_keep: int = 30
     http_port: int = 8000
 
+    # Shown with every red-flag stop. Ambulance 110 is the Ministry of
+    # Health's unified operations room (2026); 112 is police / emergency.
+    emergency_ambulance: str = "110"
+    emergency_general: str = "112"
+
 
 @lru_cache
 def get_settings() -> Settings:
