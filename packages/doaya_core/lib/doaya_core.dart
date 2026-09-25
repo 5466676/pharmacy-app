@@ -9,5 +9,6 @@ export 'src/money.dart';
 export 'src/purchases.dart';
 export 'src/returns.dart';
 export 'src/sale.dart';
+export 'src/shortages.dart';
 export 'src/text.dart';
 export 'src/till.dart';
