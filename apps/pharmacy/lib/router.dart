@@ -16,6 +16,7 @@ import 'ui/screens/return_screen.dart';
 import 'ui/screens/settings_screen.dart';
 import 'ui/screens/setup_screen.dart';
 import 'ui/screens/staff_screen.dart';
+import 'ui/screens/stocktake_screen.dart';
 import 'ui/screens/supplier_screen.dart';
 import 'ui/screens/till_screen.dart';
 import 'ui/shell.dart';
@@ -42,6 +43,7 @@ abstract final class Routes {
 
   static String product(String id) => '$inventory/product/$id';
   static const newProduct = '$inventory/new';
+  static const stocktake = '$inventory/stocktake';
 }
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -89,6 +91,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             pageBuilder: (_, _) => const NoTransitionPage(child: InventoryScreen()),
             routes: [
               GoRoute(path: 'new', builder: (_, _) => const ProductFormScreen()),
+              GoRoute(path: 'stocktake', builder: (_, _) => const StocktakeScreen()),
               GoRoute(
                 path: 'product/:id',
                 builder: (_, s) => ProductScreen(productId: s.pathParameters['id']!),

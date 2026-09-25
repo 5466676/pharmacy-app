@@ -741,6 +741,56 @@ void main() {
       await unmount(tester);
     });
 
+    testWidgets('stocktake: an employee counts blind, the owner applies the difference', (
+      tester,
+    ) async {
+      await seed(tester);
+      late EmployeeRow rana;
+      late DeviceRow device;
+      await tester.runAsync(() async {
+        rana = await PeopleRepository(db).addEmployee(name: 'رنا', pin: '1111');
+        device = (await PeopleRepository(db).thisDevice())!;
+      });
+      await pumpApp(tester);
+      container.read(sessionProvider.notifier).signIn(device, rana);
+      await settle(tester);
+      container.read(routerProvider).go(Routes.stocktake);
+      await settle(tester);
+      await tester.tap(find.text('ابدأ جرد'));
+      await settle(tester);
+
+      await tester.enterText(find.byType(TextField).first, '6221000000011');
+      await tester.testTextInput.receiveAction(TextInputAction.search);
+      await settle(tester);
+      expect(find.text('5 علبة'), findsNothing); // blind: system quantity hidden
+      await tester.enterText(
+        find.descendant(
+          of: find.widgetWithText(GlassTextField, 'العلب المعدودة'),
+          matching: find.byType(TextField),
+        ),
+        '3',
+      );
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+      await settle(tester);
+      expect(find.textContaining('-2 علبة'), findsOneWidget);
+      expect(find.text('تطبيق الجرد على المخزون للمالك بس'), findsOneWidget);
+      expect(find.text('طبّق الجرد'), findsNothing);
+
+      container.read(sessionProvider.notifier).signIn(device, owner);
+      await settle(tester);
+      container.read(routerProvider).go(Routes.stocktake);
+      await settle(tester);
+      await tester.tap(find.text('طبّق الجرد'));
+      await settle(tester);
+      await tester.tap(find.text('تأكيد'));
+      await settle(tester);
+      expect(find.text('انطبّق الجرد: 1 تعديل'), findsOneWidget);
+      final stock = await tester.runAsync(() => LedgerRepository(db).loadStock());
+      expect(stock!.onHand(amox.id), 3);
+      expect(find.text('ابدأ جرد'), findsOneWidget); // session closed
+      await unmount(tester);
+    });
+
     testWidgets('solid theme on desktop: no BackdropFilter anywhere', (tester) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.windows;
       await signInAndOpenPos(tester);

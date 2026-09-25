@@ -1287,4 +1287,96 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get whatsappFailed => 'ما قدرنا نفتح واتساب: انسخت الطلبية، الصقها إنت';
+
+  @override
+  String get stocktakeButton => 'جرد';
+
+  @override
+  String get stocktakeTitle => 'الجرد';
+
+  @override
+  String get startStocktake => 'ابدأ جرد';
+
+  @override
+  String get stocktakeHelp =>
+      'الجرد ما بيوقف البيع: بتعدّ كل صنف لحال، والبرنامج بيسجّل الكمية يلي كانت بالنظام لحظة العدّ. إذا عدّيت صنف مرتين، العدّة الأخيرة هي المعتمدة.';
+
+  @override
+  String get scopeLabel => 'الرف (اختياري، لجرد جزئي)';
+
+  @override
+  String stocktakeOpen(String date) {
+    return 'جرد مفتوح من $date';
+  }
+
+  @override
+  String stocktakeScope(String shelf) {
+    return 'الرف: $shelf';
+  }
+
+  @override
+  String get countSearchHint => 'امسح أو ابحث عن الصنف يلي عم تعدّه';
+
+  @override
+  String get countedBoxesLabel => 'العلب المعدودة';
+
+  @override
+  String get countedStripsLabel => 'ظروف فرط';
+
+  @override
+  String get saveCount => 'سجّل';
+
+  @override
+  String tabCounted(String count) {
+    return 'انعدّت ($count)';
+  }
+
+  @override
+  String tabNotCounted(String count) {
+    return 'لسا ($count)';
+  }
+
+  @override
+  String get colCounted => 'المعدود';
+
+  @override
+  String get colSystem => 'بالنظام';
+
+  @override
+  String get colDifference => 'الفرق';
+
+  @override
+  String shortageValue(String amount) {
+    return 'قيمة النقص: $amount';
+  }
+
+  @override
+  String surplusValue(String amount) {
+    return 'قيمة الزيادة: $amount';
+  }
+
+  @override
+  String get applyStocktake => 'طبّق الجرد';
+
+  @override
+  String applyConfirm(String count) {
+    return 'رح ينعمل $count تعديل على المخزون، وبيتسكّر الجرد. أكيد؟';
+  }
+
+  @override
+  String stocktakeApplied(String count) {
+    return 'انطبّق الجرد: $count تعديل';
+  }
+
+  @override
+  String get ownerAppliesNote => 'تطبيق الجرد على المخزون للمالك بس';
+
+  @override
+  String get pastStocktakes => 'جرودات سابقة';
+
+  @override
+  String get noStocktakes => 'ما في جرودات سابقة';
+
+  @override
+  String get blindCountNote => 'ما منفرجيك الكمية يلي بالنظام قبل العدّ، منشان يكون العدّ دقيق.';
 }

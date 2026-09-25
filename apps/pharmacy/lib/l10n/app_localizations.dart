@@ -2431,6 +2431,156 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'ما قدرنا نفتح واتساب: انسخت الطلبية، الصقها إنت'**
   String get whatsappFailed;
+
+  /// No description provided for @stocktakeButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'جرد'**
+  String get stocktakeButton;
+
+  /// No description provided for @stocktakeTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الجرد'**
+  String get stocktakeTitle;
+
+  /// No description provided for @startStocktake.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابدأ جرد'**
+  String get startStocktake;
+
+  /// No description provided for @stocktakeHelp.
+  ///
+  /// In ar, this message translates to:
+  /// **'الجرد ما بيوقف البيع: بتعدّ كل صنف لحال، والبرنامج بيسجّل الكمية يلي كانت بالنظام لحظة العدّ. إذا عدّيت صنف مرتين، العدّة الأخيرة هي المعتمدة.'**
+  String get stocktakeHelp;
+
+  /// No description provided for @scopeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرف (اختياري، لجرد جزئي)'**
+  String get scopeLabel;
+
+  /// No description provided for @stocktakeOpen.
+  ///
+  /// In ar, this message translates to:
+  /// **'جرد مفتوح من {date}'**
+  String stocktakeOpen(String date);
+
+  /// No description provided for @stocktakeScope.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرف: {shelf}'**
+  String stocktakeScope(String shelf);
+
+  /// No description provided for @countSearchHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'امسح أو ابحث عن الصنف يلي عم تعدّه'**
+  String get countSearchHint;
+
+  /// No description provided for @countedBoxesLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'العلب المعدودة'**
+  String get countedBoxesLabel;
+
+  /// No description provided for @countedStripsLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'ظروف فرط'**
+  String get countedStripsLabel;
+
+  /// No description provided for @saveCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'سجّل'**
+  String get saveCount;
+
+  /// No description provided for @tabCounted.
+  ///
+  /// In ar, this message translates to:
+  /// **'انعدّت ({count})'**
+  String tabCounted(String count);
+
+  /// No description provided for @tabNotCounted.
+  ///
+  /// In ar, this message translates to:
+  /// **'لسا ({count})'**
+  String tabNotCounted(String count);
+
+  /// No description provided for @colCounted.
+  ///
+  /// In ar, this message translates to:
+  /// **'المعدود'**
+  String get colCounted;
+
+  /// No description provided for @colSystem.
+  ///
+  /// In ar, this message translates to:
+  /// **'بالنظام'**
+  String get colSystem;
+
+  /// No description provided for @colDifference.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفرق'**
+  String get colDifference;
+
+  /// No description provided for @shortageValue.
+  ///
+  /// In ar, this message translates to:
+  /// **'قيمة النقص: {amount}'**
+  String shortageValue(String amount);
+
+  /// No description provided for @surplusValue.
+  ///
+  /// In ar, this message translates to:
+  /// **'قيمة الزيادة: {amount}'**
+  String surplusValue(String amount);
+
+  /// No description provided for @applyStocktake.
+  ///
+  /// In ar, this message translates to:
+  /// **'طبّق الجرد'**
+  String get applyStocktake;
+
+  /// No description provided for @applyConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'رح ينعمل {count} تعديل على المخزون، وبيتسكّر الجرد. أكيد؟'**
+  String applyConfirm(String count);
+
+  /// No description provided for @stocktakeApplied.
+  ///
+  /// In ar, this message translates to:
+  /// **'انطبّق الجرد: {count} تعديل'**
+  String stocktakeApplied(String count);
+
+  /// No description provided for @ownerAppliesNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'تطبيق الجرد على المخزون للمالك بس'**
+  String get ownerAppliesNote;
+
+  /// No description provided for @pastStocktakes.
+  ///
+  /// In ar, this message translates to:
+  /// **'جرودات سابقة'**
+  String get pastStocktakes;
+
+  /// No description provided for @noStocktakes.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما في جرودات سابقة'**
+  String get noStocktakes;
+
+  /// No description provided for @blindCountNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما منفرجيك الكمية يلي بالنظام قبل العدّ، منشان يكون العدّ دقيق.'**
+  String get blindCountNote;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

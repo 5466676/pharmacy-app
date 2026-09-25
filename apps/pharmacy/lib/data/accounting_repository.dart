@@ -625,6 +625,22 @@ class AccountingRepository {
             ..orderBy([(t) => OrderingTerm.asc(t.occurredAt)]))
           .watch();
 
+  /// The session in progress (null when none), live.
+  Stream<StocktakeRow?> watchOpenStocktake() =>
+      (_db.select(_db.stocktakes)
+            ..where((t) => t.appliedAt.isNull())
+            ..orderBy([(t) => OrderingTerm.desc(t.startedAt)])
+            ..limit(1))
+          .watchSingleOrNull();
+
+  /// Applied sessions, newest first.
+  Stream<List<StocktakeRow>> watchAppliedStocktakes({int limit = 20}) =>
+      (_db.select(_db.stocktakes)
+            ..where((t) => t.appliedAt.isNotNull())
+            ..orderBy([(t) => OrderingTerm.desc(t.appliedAt)])
+            ..limit(limit))
+          .watch();
+
   Future<StocktakeRow?> openStocktake() =>
       (_db.select(_db.stocktakes)
             ..where((t) => t.appliedAt.isNull())

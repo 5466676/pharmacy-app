@@ -69,6 +69,12 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
         PageHeader(
           title: l.inventoryTitle,
           actions: [
+            GlassPillButton(
+              label: l.stocktakeButton,
+              icon: DoayaIcons.adjust,
+              size: PillSize.medium,
+              onPressed: () => context.go(Routes.stocktake),
+            ),
             SagePillButton(
               label: l.addProduct,
               icon: DoayaIcons.add,
