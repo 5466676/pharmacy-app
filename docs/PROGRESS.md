@@ -132,7 +132,7 @@ Note: I can build and test on Linux here, but **not produce a Windows `.exe`** i
 ### Still open
 - **Receipt printing**: thermal 58/80 mm? (not answered yet)
 
-## Phase 1.5 — Accounting · 🚧 steps 1–3 ready for review (plan approved 2026-09-25)
+## Phase 1.5 — Accounting · ⏸ steps 1–6 done; 7–9 paused for Phase 2 (owner, 2026-09-25)
 
 Goal: turn the counter app into a complete pharmacy accounting system (inspired by Karma Soft / Al-Ameen, see `docs/ACCOUNTING_RESEARCH.md`), still fully offline and still built on append-only records so Phase 2 sync stays safe.
 
@@ -202,10 +202,127 @@ Health ministry price-list import · money accounts (drawer / Sham Cash / bank +
   - Paying from the drawer (purchase, supplier payment, cash refund from a supplier) needs an open till, like selling.
   - Tests: 58 app tests (invoice flow, supplier page employee/owner, closed-till block). Checked in the real Linux build: `docs/screenshots/phase1_5/`.
 
+- [x] Step 4: **الأرباح** (owner only, in the admin section):
+  - Net sales, cost of goods sold, profit with margin, stock value at cost, for today, this week or this month.
+  - Grouped by product, by employee or by day, sorted by profit.
+  - A sale's discount is spread over its lines. A customer return subtracts its refund and gives its cost back, in the period it happens.
+  - Pieces sold from stock received before purchase invoices existed have no cost. They're counted and flagged ("تكلفة ناقصة" plus a notice), never guessed, and the margin is hidden until the cost is complete.
+  - Dashboard (owner): today's profit and what we owe suppliers.
+  - Tests: 72 core, 60 app. Screenshots `docs/screenshots/phase1_5/07–09`.
+
+- [x] Step 5: **النواقص والطلبيات** (tabs under المشتريات, for everyone; last prices owner-only):
+  - Shortages: out of stock, under the minimum, or running out within 14 days at the last 30 days' pace. Most urgent first, with how many days are left.
+  - Suggested quantity in whole boxes: enough for 14 days, and back above the minimum. It can be changed or unticked.
+  - Supplier: the last one we bought from by default, or picked. "اعمل الطلبيات" makes one draft order per supplier.
+  - Order: edit quantities; **انسخ الطلبية** copies a ready message (pharmacy, date, numbered lines "1. Amoxil 500 mg: 6 علبة") to paste in WhatsApp / Telegram, and marks it sent.
+  - **وصلت: فاتورة شراء** opens a purchase invoice with the supplier and lines filled in. Saving it marks the order received.
+  - The dashboard's low-stock card now opens the shortages.
+  - Tests: 75 core, 62 app. Screenshots `docs/screenshots/phase1_5/10–13`.
+
+- [x] Orders by **WhatsApp** (`url_launcher`, approved 2026-09-25):
+  - Suppliers have a WhatsApp number, set when adding or editing a supplier (there's now an edit button on the supplier page).
+  - "ابعتها واتساب" opens the supplier's chat with the order typed in, through the installed app (`whatsapp://`) or wa.me. If the supplier has no number, it asks for one first. The message is also copied as a fallback.
+  - The supplier page has a small chat button.
+  - Local numbers get the 963 code (`whatsappNumber`, tested).
+- [x] Step 6: **الجرد** (Inventory → جرد):
+  - Start a session for the whole pharmacy or one shelf (case-insensitive prefix: "B" covers B1, B2…).
+  - Scan or search, then type boxes and loose strips. The count is **blind**: the system quantity isn't shown before counting.
+  - The system quantity is recorded at the moment of counting, so selling goes on. A recount replaces the earlier count.
+  - Lists of counted and not-yet-counted products; differences with their value at cost (owner).
+  - The **owner** applies the session: one `adjusted` movement per difference, linked to the session. Past sessions are listed.
+  - Tests: 76 core, 65 app. Screenshots `docs/screenshots/phase1_5/14–16`.
+
 ### How to review (step 3)
 المشتريات → مورد جديد → فاتورة شراء → scan or search → type quantity, bonus, price… → F9. Then open the supplier: statement, "دفعة للمورد", "مرتجع للمستودع". Sign in as an employee to check the amounts are hidden.
 
 ### Question for this review
 - **Receipt printing**: OK to add the `pdf` + `printing` packages (well-maintained, pure Dart/Flutter, no Google services, work offline with any system printer, including 80 mm thermal printers installed in Windows)? The button will be a small print icon on the completed sale, nothing more.
 
-## Phase 2 — Backend + sync · not started
+## Phase 2 — Backend + sync · 🚧 steps 1–6 done, 7–8 left (plan approved 2026-09-25, with the owner's changes)
+
+Goal: the pharmacy's devices (counter PC, the owner's and employees' phones) share one set of data through a server **on the pharmacy's own computer, over the local Wi-Fi, with no internet needed**. Every device keeps a full copy and keeps selling when the server is off; they catch up when it's back. This is also the base the patient app (Phase 3) builds on. Phase 1.5 steps 7–9 (expenses + P&L, automatic backup, final run) are paused and come back later.
+
+### Owner decisions (2026-09-25)
+- Dependencies approved: `uvicorn`, `psycopg` 3, `pyjwt`, `argon2-cffi`, `pydantic-settings`, dev-only `pytest` / `httpx` / `ruff`; Flutter `http`.
+- **The server is the pharmacy's computer, on the local network (LAN).** The internet isn't required. If the computer is off, phones keep selling and sync when it's back on.
+- **Pharmacies are created by hand for now.** The first one is the owner's mother's pharmacy, used as the pilot.
+- **Phone number + password once per device, then the account stays signed in**: for the owner and for employees.
+- **Phones sell too** (the owner's and the employees'), for when the computer is off or far away. Every phone downloads the full catalogue and stock, so all devices stay consistent.
+
+### A. Server (`backend/`)
+- FastAPI + PostgreSQL 16 + SQLAlchemy 2 + Alembic + Pydantic v2. It runs on the pharmacy PC as a background service that starts with Windows (PostgreSQL's official Windows installer + our server). Docker Compose is kept for Linux, and for the internet server later.
+- **Multi-pharmacy from day one** (`pharmacy_id` on every row, a tenant-isolation test), even if a local server holds one pharmacy, because the same code becomes the internet server later.
+- It mirrors every table the app syncs (catalogue, customers, suppliers, employees, settings, every ledger, stocktakes, orders), and the server numbers every change with one sequence.
+
+### B. Accounts & devices
+- **Creating the pharmacy**:
+  - The first time the counter app links to an empty server, it offers to create the pharmacy there with the owner's phone and password, and uploads all its existing history.
+  - A command-line tool does the same by hand.
+- **Accounts**: the owner and every employee get a phone number + password on the server (the owner sets the employees' in Settings). PINs stay for switching users on the shared counter PC; the PIN hashes sync so any shared device accepts them.
+- **Linking a device**:
+  - Once, with a phone number + password. The device gets its own long-lived token and stays signed in.
+  - An **employee's own phone** opens straight into that employee's session. The counter PC keeps the "who's working?" PIN screen.
+- The owner sees every linked device and can **unlink** one (a lost phone): its token stops working at once. JWT (short access + rotating refresh stored hashed), Argon2 passwords, login rate limit.
+
+### C. Sync (push / pull by cursor), local network
+- **Finding the server**: the app finds it on the Wi-Fi by itself (a UDP broadcast, standard library only). Typing the PC's address by hand is a fallback.
+- **Push**: each device sends its unsynced rows (`synced_at IS NULL`). They're stored idempotently, and the device marks them synced.
+- **Pull**: "everything after cursor N" from the other devices, 500 at a time.
+- **Merging**: ledgers merge with no conflicts (append-only, UUIDv7). Master data uses last-writer-wins on `updated_at`, with the device id breaking ties.
+- **Selling is never blocked by sync.** Two devices selling the last box offline can take stock below zero; that shows in red and a stocktake fixes it.
+- Sync runs every 30 s when the server is reachable, plus "زامن هلق". The top-bar chip shows the real state: server not found / syncing / synced at 14:05 / N waiting.
+- A newly linked phone downloads the whole pharmacy once, with a progress bar.
+- **If the PC's disk dies**, any phone still holds everything and can fill a fresh server. This comes on top of the PostgreSQL daily backup.
+- The sync engine lives in `doaya_core` (the network behind an interface), **tests first**. An end-to-end test runs two devices through a real server.
+
+### D. Phones (Android)
+- The same app with a phone layout and bottom navigation: **selling** (search; camera scanning can come later), stock, debts, the till/shift, the dashboard and, for the owner, profits and purchases.
+
+### E. Later, for the patient app (Phase 3)
+Patients aren't on the pharmacy's Wi-Fi, so the patient app will need a server reachable from the internet. The plan is that the pharmacy's local server syncs up to it with the same protocol whenever the internet is available, and the pharmacy keeps working locally either way. This gets decided with the Phase 3 plan.
+
+### Steps (tests first; a commit after each; **stop for review after step 5**)
+1. Server skeleton: settings, health endpoint, pytest against a real PostgreSQL, lint.
+2. Schema + first Alembic migration; tenant isolation tests.
+3. Accounts: create a pharmacy (from the app or the command line), owner and employee accounts, device linking and unlinking, tokens. Tests.
+4. Sync API: push / pull, idempotency, last-writer-wins, cursor paging, isolation. Tests.
+5. `doaya_core` sync engine + tests; the app's drift adapter; end-to-end: two devices sell offline, sync, and end up identical → **review**.
+6. App: find the server on the Wi-Fi, "ربط بالسيرفر" (creating the pharmacy on first link), sync status, background sync, devices list, employees' phone/password.
+7. Phone layout (Android) with selling; an employee's phone opens straight in.
+8. Running the server on the pharmacy PC: Windows install guide, service start at boot, daily PostgreSQL backup; a real run (server + PC app + phone app) → **review**.
+
+### Done (steps 1–5)
+- [x] **1. Server skeleton**: settings (`DOAYA_*` / `.env`), `/health`, pytest on a real PostgreSQL, ruff, Docker Compose. The token secret is generated on first run when not set.
+- [x] **2. Schema** (Alembic `0001`): pharmacies, users, devices, and one generic `sync_rows` table with a change sequence. Tests: uniqueness per pharmacy, sequence order, migrate down and up.
+- [x] **3. Accounts** (8 tests):
+  - `/setup` (first run only: pharmacy + owner + this device), `/auth/link` (phone + password once), `/auth/token` (device secret → 15-minute token).
+  - The owner lists and unlinks devices (takes effect at once) and manages employee accounts.
+  - Login rate limit; a CLI to create pharmacies by hand; phone numbers typed in Arabic digits accepted.
+- [x] **4. Sync API** (10 tests):
+  - Push with idempotent ledgers and last-writer-wins master data (decided in one SQL statement), tombstones, and pull by cursor with paging.
+  - Pharmacies isolated; pushes serialised per pharmacy so no change is ever skipped (tested with concurrent pushes).
+- [x] **5. Sync on the device**:
+  - `doaya_core`: the sync engine (9 tests on an in-memory server with the same rules) and the HTTP client (setup, link, push/pull, automatic token refresh; 5 tests).
+  - App schema **v6**: `sync_outbox`, filled by SQLite **triggers** on all 23 synced tables, so no code path can forget a change, and `sync_state`. Migration tested from the real v5 schema.
+  - `DriftSyncStore` copies rows generically. Pulled rows don't bounce back; a newer local edit not pushed yet keeps its value; `is_this_device` and `synced_at` stay local.
+  - 5 app tests on real SQLite: triggers catch sales, edits and deletions; the PC uploads its history and a new phone gets the same pharmacy; both sell offline and end up identical; a child arriving before its edited parent still applies.
+  - **End-to-end against the real server** (`tool/sync_e2e.sh`): the PC creates the pharmacy and uploads; the owner gives Rana an account; her phone links with the number typed in Arabic digits; both sell; after sync both have stock 5 and 2 sales; unlinking her phone makes its next sync refused.
+- Totals: server 23, core 90, design system 23, app 70 (+1 end-to-end run by the script).
+
+- [x] **6. Linking from the app and live sync**:
+  - **Finding the server**: the server answers "DOAYA?" on UDP 47800 (Python standard library, 3 tests); the app broadcasts with `dart:io` (a test), or the PC's address is typed by hand.
+  - **السيرفر والمزامنة** (sidebar, and a tap on the status chip):
+    - On an empty server: create the pharmacy (owner phone + password) and upload all history.
+    - Otherwise: link with phone + password.
+    - Shows the state, pending changes, download progress and «زامن هلق». The owner also sees linked devices (with unlink) and employee accounts (add a phone + password for each employee).
+  - **Top-bar chip** shows the real state: not linked / syncing / synced at 14:05 / server missing / device unlinked. Sync runs every 30 s in the background.
+  - **First-run screen**: «انضمام لصيدلية موجودة» (device name → find server → phone + password). It registers only this device, downloads everything, and the account's employee is signed in by itself on that device (once per app start, so "switch user" still works).
+  - A `SyncApi` interface with an in-memory fake runs 3 widget flows: the owner links the PC; a new phone joins and opens as Rana; server off and unlinked shown.
+  - **Real run** (`docs/screenshots/phase2/`), with the real server and the real Linux app:
+    - The counter's existing database migrated v5 → v6, found the server on the network, created «صيدلية الشفاء» and uploaded 22 tables of history.
+    - A second copy of the app with its own empty database joined, downloaded everything, and opened straight into the owner.
+    - It sold Panadol; the counter then showed that sale (device «موبايل سامر») and today's total went from 194 to 212.
+  - Fixed after the real run: Tab left the account form (now kept inside it); a server with no pharmacy yet gets a clear name.
+
+### Open (asked at the step-5 review)
+- **Encryption on the Wi-Fi**: HTTPS with a certificate the server makes itself, trusted the first time a device links. That needs the `cryptography` package on the server. Until then the pilot runs over plain HTTP on the pharmacy's own Wi-Fi.

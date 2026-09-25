@@ -6,6 +6,7 @@ import 'data/catalog_repository.dart';
 import 'data/database.dart';
 import 'data/ledger_repository.dart';
 import 'data/people_repository.dart';
+import 'data/reports.dart';
 import 'data/till_repository.dart';
 
 /// Overridden in `main()` (on-disk DB) and in tests (in-memory DB).
@@ -53,6 +54,23 @@ final supplierLedgerProvider = StreamProvider<SupplierLedger>(
 
 final costBookProvider = StreamProvider<CostBook>(
   (ref) => ref.watch(accountingProvider).watchCostBook(),
+);
+
+/// Owner-only profit of a period; refreshes on every stock movement or purchase.
+final profitReportProvider = FutureProvider.family<ProfitReport, ReportPeriod>((ref, period) {
+  ref
+    ..watch(stockProvider)
+    ..watch(costBookProvider);
+  final (from, to) = periodRange(period, ref.watch(clockProvider)());
+  return ref.watch(accountingProvider).profitReport(from, to);
+});
+
+/// Stock on hand valued at purchase cost (owner only).
+final stockValueProvider = Provider<StockValue>(
+  (ref) => stockValue(
+    ref.watch(stockProvider).value ?? StockLedger(),
+    ref.watch(costBookProvider).value ?? CostBook(const {}),
+  ),
 );
 
 final tillProvider = Provider(

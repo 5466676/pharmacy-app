@@ -1,4 +1,5 @@
 import 'events.dart';
+import 'ledger.dart';
 import 'purchases.dart';
 
 // ─── Cost of goods & profit ──────────────────────────────────────────────────
@@ -79,6 +80,112 @@ ProfitSummary profitOf({
     }
   }
   return ProfitSummary(revenueMinor: revenueMinor, costMinor: cost, unknownCostPieces: unknown);
+}
+
+/// Money earned (or refunded, negative) on one product by one employee.
+/// A sale's discount is spread over its lines before this (see
+/// `allocateProportionally`), so items add up to the sale totals exactly.
+class RevenueItem {
+  const RevenueItem({
+    required this.productId,
+    required this.employeeId,
+    required this.at,
+    required this.amountMinor,
+  });
+
+  final String productId;
+  final String employeeId;
+  final DateTime at;
+
+  /// Positive for sales, negative for refunds.
+  final int amountMinor;
+}
+
+/// Profit of a period, in total and grouped three ways.
+class ProfitReport {
+  ProfitReport({
+    required this.total,
+    required this.byProduct,
+    required this.byEmployee,
+    required this.byDay,
+  });
+
+  final ProfitSummary total;
+  final Map<String, ProfitSummary> byProduct;
+  final Map<String, ProfitSummary> byEmployee;
+
+  /// Keyed by the day returned by `dayOf` (local midnight).
+  final Map<DateTime, ProfitSummary> byDay;
+
+  /// Entries sorted by profit, largest first.
+  static List<MapEntry<K, ProfitSummary>> ranked<K>(Map<K, ProfitSummary> m) =>
+      m.entries.toList()..sort((a, b) => b.value.profitMinor.compareTo(a.value.profitMinor));
+}
+
+/// Builds the profit report of a period from its revenue items and its
+/// `sold` / `returned` stock events (cost comes from the batch costs).
+/// Returns count in the period they happen, both revenue and cost.
+ProfitReport buildProfitReport({
+  required Iterable<RevenueItem> revenue,
+  required Iterable<StockEvent> stockEvents,
+  required CostBook costs,
+  required DateTime Function(DateTime) dayOf,
+}) {
+  var total = ProfitSummary.zero;
+  final byProduct = <String, ProfitSummary>{};
+  final byEmployee = <String, ProfitSummary>{};
+  final byDay = <DateTime, ProfitSummary>{};
+  void add(String product, String employee, DateTime at, ProfitSummary p) {
+    total += p;
+    byProduct[product] = (byProduct[product] ?? ProfitSummary.zero) + p;
+    byEmployee[employee] = (byEmployee[employee] ?? ProfitSummary.zero) + p;
+    final day = dayOf(at);
+    byDay[day] = (byDay[day] ?? ProfitSummary.zero) + p;
+  }
+
+  for (final r in revenue) {
+    add(
+      r.productId,
+      r.employeeId,
+      r.at,
+      ProfitSummary(revenueMinor: r.amountMinor, costMinor: 0, unknownCostPieces: 0),
+    );
+  }
+  for (final e in stockEvents) {
+    if (e.type != StockEventType.sold && e.type != StockEventType.returned) continue;
+    add(
+      e.productId,
+      e.meta.employeeId,
+      e.meta.occurredAt,
+      profitOf(revenueMinor: 0, stockEvents: [e], costs: costs),
+    );
+  }
+  return ProfitReport(total: total, byProduct: byProduct, byEmployee: byEmployee, byDay: byDay);
+}
+
+/// What the stock on hand is worth at cost.
+class StockValue {
+  const StockValue({required this.costMinor, required this.unknownCostPieces});
+
+  /// Cost of the pieces whose batch cost is known.
+  final int costMinor;
+
+  /// Pieces on hand whose cost is unknown (received before purchasing).
+  final int unknownCostPieces;
+}
+
+StockValue stockValue(StockLedger stock, CostBook costs) {
+  var cost = 0, unknown = 0;
+  for (final b in stock.batches) {
+    if (b.quantity <= 0) continue;
+    final c = costs.costOf(b.batchId, b.quantity);
+    if (c == null) {
+      unknown += b.quantity;
+    } else {
+      cost += c;
+    }
+  }
+  return StockValue(costMinor: cost, unknownCostPieces: unknown);
 }
 
 // ─── Stocktake ───────────────────────────────────────────────────────────────

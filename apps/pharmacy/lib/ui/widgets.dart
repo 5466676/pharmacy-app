@@ -282,3 +282,37 @@ StatusChip paymentChip(AppLocalizations l, String payment) => switch (payment) {
   'transfer' => StatusChip(label: l.paymentTransfer, tone: StatusTone.neutral),
   _ => StatusChip(label: l.paymentCash, tone: StatusTone.accent),
 };
+
+/// − value + with bounds.
+class QtyStepper extends StatelessWidget {
+  const QtyStepper({super.key, required this.value, required this.max, required this.onChanged});
+
+  final int value;
+  final int max;
+  final ValueChanged<int> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        RoundIconButton(
+          icon: DoayaIcons.remove,
+          tooltip: '−',
+          size: DoayaSizes.qtyButton + DoayaSpacing.sm,
+          onPressed: value > 0 ? () => onChanged(value - 1) : null,
+        ),
+        SizedBox(
+          width: DoayaSpacing.giant,
+          child: Text(formatQty(value), textAlign: TextAlign.center, style: DoayaTypography.label),
+        ),
+        RoundIconButton(
+          icon: DoayaIcons.add,
+          tooltip: '+',
+          size: DoayaSizes.qtyButton + DoayaSpacing.sm,
+          onPressed: value < max ? () => onChanged(value + 1) : null,
+        ),
+      ],
+    );
+  }
+}

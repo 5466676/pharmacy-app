@@ -2099,7 +2099,7 @@ abstract class AppLocalizations {
   /// No description provided for @dateFormatHint.
   ///
   /// In ar, this message translates to:
-  /// **'1/6/2028'**
+  /// **'1/6/28'**
   String get dateFormatHint;
 
   /// No description provided for @errDrawerClosed.
@@ -2113,6 +2113,816 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'دخّلها {name}'**
   String purchaseBy(String name);
+
+  /// No description provided for @navReports.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأرباح'**
+  String get navReports;
+
+  /// No description provided for @reportsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأرباح والتكلفة'**
+  String get reportsTitle;
+
+  /// No description provided for @netSales.
+  ///
+  /// In ar, this message translates to:
+  /// **'صافي المبيعات'**
+  String get netSales;
+
+  /// No description provided for @costOfGoods.
+  ///
+  /// In ar, this message translates to:
+  /// **'تكلفة البضاعة المباعة'**
+  String get costOfGoods;
+
+  /// No description provided for @grossProfit.
+  ///
+  /// In ar, this message translates to:
+  /// **'الربح'**
+  String get grossProfit;
+
+  /// No description provided for @marginCaption.
+  ///
+  /// In ar, this message translates to:
+  /// **'هامش الربح {pct}'**
+  String marginCaption(String pct);
+
+  /// No description provided for @stockValueAtCost.
+  ///
+  /// In ar, this message translates to:
+  /// **'قيمة المخزون بالتكلفة'**
+  String get stockValueAtCost;
+
+  /// No description provided for @piecesWithoutCost.
+  ///
+  /// In ar, this message translates to:
+  /// **'{pieces} قطعة بدون تكلفة'**
+  String piecesWithoutCost(String pieces);
+
+  /// No description provided for @unknownCostNotice.
+  ///
+  /// In ar, this message translates to:
+  /// **'في {pieces} قطعة انباعت من بضاعة دخلت قبل فواتير الشراء، تكلفتها مو معروفة، فالربح الظاهر أعلى من الحقيقي. بيتصلّح لحالو لما تخلص هالبضاعة وتدخل بفواتير شراء.'**
+  String unknownCostNotice(String pieces);
+
+  /// No description provided for @byProduct.
+  ///
+  /// In ar, this message translates to:
+  /// **'حسب الصنف'**
+  String get byProduct;
+
+  /// No description provided for @byEmployee.
+  ///
+  /// In ar, this message translates to:
+  /// **'حسب الموظف'**
+  String get byEmployee;
+
+  /// No description provided for @byDay.
+  ///
+  /// In ar, this message translates to:
+  /// **'حسب اليوم'**
+  String get byDay;
+
+  /// No description provided for @colRevenue.
+  ///
+  /// In ar, this message translates to:
+  /// **'المبيعات'**
+  String get colRevenue;
+
+  /// No description provided for @colCost.
+  ///
+  /// In ar, this message translates to:
+  /// **'التكلفة'**
+  String get colCost;
+
+  /// No description provided for @colProfit.
+  ///
+  /// In ar, this message translates to:
+  /// **'الربح'**
+  String get colProfit;
+
+  /// No description provided for @colMargin.
+  ///
+  /// In ar, this message translates to:
+  /// **'الهامش'**
+  String get colMargin;
+
+  /// No description provided for @noReportData.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما في مبيعات بهالفترة'**
+  String get noReportData;
+
+  /// No description provided for @statProfitToday.
+  ///
+  /// In ar, this message translates to:
+  /// **'ربح اليوم'**
+  String get statProfitToday;
+
+  /// No description provided for @statSupplierDebts.
+  ///
+  /// In ar, this message translates to:
+  /// **'علينا للموردين'**
+  String get statSupplierDebts;
+
+  /// No description provided for @suppliersOwedCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} مورد'**
+  String suppliersOwedCount(String count);
+
+  /// No description provided for @costIncomplete.
+  ///
+  /// In ar, this message translates to:
+  /// **'تكلفة ناقصة'**
+  String get costIncomplete;
+
+  /// No description provided for @tabShortages.
+  ///
+  /// In ar, this message translates to:
+  /// **'النواقص'**
+  String get tabShortages;
+
+  /// No description provided for @tabOrders.
+  ///
+  /// In ar, this message translates to:
+  /// **'الطلبيات'**
+  String get tabOrders;
+
+  /// No description provided for @reasonOutOfStock.
+  ///
+  /// In ar, this message translates to:
+  /// **'خالص'**
+  String get reasonOutOfStock;
+
+  /// No description provided for @reasonBelowMinimum.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحت الحد الأدنى'**
+  String get reasonBelowMinimum;
+
+  /// No description provided for @reasonSellingFast.
+  ///
+  /// In ar, this message translates to:
+  /// **'عم يخلص بسرعة'**
+  String get reasonSellingFast;
+
+  /// No description provided for @runsOutIn.
+  ///
+  /// In ar, this message translates to:
+  /// **'بيخلص خلال {days} يوم'**
+  String runsOutIn(String days);
+
+  /// No description provided for @orderQtyBoxes.
+  ///
+  /// In ar, this message translates to:
+  /// **'الطلب (علبة)'**
+  String get orderQtyBoxes;
+
+  /// No description provided for @noShortages.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما في نواقص، كل شي متوفر'**
+  String get noShortages;
+
+  /// No description provided for @createOrders.
+  ///
+  /// In ar, this message translates to:
+  /// **'اعمل الطلبيات ({count})'**
+  String createOrders(String count);
+
+  /// No description provided for @ordersCreated.
+  ///
+  /// In ar, this message translates to:
+  /// **'انعملت {count} طلبية'**
+  String ordersCreated(String count);
+
+  /// No description provided for @errShortageNeedsSupplier.
+  ///
+  /// In ar, this message translates to:
+  /// **'في أصناف بدون مورد: اختار المورد أو شيل التحديد عنها'**
+  String get errShortageNeedsSupplier;
+
+  /// No description provided for @noOrders.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما في طلبيات'**
+  String get noOrders;
+
+  /// No description provided for @orderDraft.
+  ///
+  /// In ar, this message translates to:
+  /// **'مسودة'**
+  String get orderDraft;
+
+  /// No description provided for @orderSent.
+  ///
+  /// In ar, this message translates to:
+  /// **'انبعتت'**
+  String get orderSent;
+
+  /// No description provided for @orderReceived.
+  ///
+  /// In ar, this message translates to:
+  /// **'استلمناها'**
+  String get orderReceived;
+
+  /// No description provided for @itemsCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} صنف'**
+  String itemsCount(String count);
+
+  /// No description provided for @orderTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلبية {supplier}'**
+  String orderTitle(String supplier);
+
+  /// No description provided for @copyOrder.
+  ///
+  /// In ar, this message translates to:
+  /// **'انسخ الطلبية'**
+  String get copyOrder;
+
+  /// No description provided for @orderCopied.
+  ///
+  /// In ar, this message translates to:
+  /// **'انسخت الطلبية: الصقها بواتساب أو تلغرام'**
+  String get orderCopied;
+
+  /// No description provided for @receiveOrder.
+  ///
+  /// In ar, this message translates to:
+  /// **'وصلت: فاتورة شراء'**
+  String get receiveOrder;
+
+  /// No description provided for @deleteOrder.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف'**
+  String get deleteOrder;
+
+  /// No description provided for @orderMessageHeader.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلبية من {pharmacy}'**
+  String orderMessageHeader(String pharmacy);
+
+  /// No description provided for @orderMessageDate.
+  ///
+  /// In ar, this message translates to:
+  /// **'التاريخ: {date}'**
+  String orderMessageDate(String date);
+
+  /// No description provided for @orderMessageThanks.
+  ///
+  /// In ar, this message translates to:
+  /// **'ويعطيكن العافية'**
+  String get orderMessageThanks;
+
+  /// No description provided for @editSupplier.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل المورد'**
+  String get editSupplier;
+
+  /// No description provided for @whatsappPhoneLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الواتساب'**
+  String get whatsappPhoneLabel;
+
+  /// No description provided for @whatsappPhoneHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'0944123456'**
+  String get whatsappPhoneHint;
+
+  /// No description provided for @invalidPhone.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرقم مو صحيح'**
+  String get invalidPhone;
+
+  /// No description provided for @sendWhatsApp.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابعتها واتساب'**
+  String get sendWhatsApp;
+
+  /// No description provided for @openChat.
+  ///
+  /// In ar, this message translates to:
+  /// **'واتساب'**
+  String get openChat;
+
+  /// No description provided for @errNoPhone.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما في رقم واتساب لهالمورد، ضيفه هون'**
+  String get errNoPhone;
+
+  /// No description provided for @whatsappFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما قدرنا نفتح واتساب: انسخت الطلبية، الصقها إنت'**
+  String get whatsappFailed;
+
+  /// No description provided for @stocktakeButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'جرد'**
+  String get stocktakeButton;
+
+  /// No description provided for @stocktakeTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الجرد'**
+  String get stocktakeTitle;
+
+  /// No description provided for @startStocktake.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابدأ جرد'**
+  String get startStocktake;
+
+  /// No description provided for @stocktakeHelp.
+  ///
+  /// In ar, this message translates to:
+  /// **'الجرد ما بيوقف البيع: بتعدّ كل صنف لحال، والبرنامج بيسجّل الكمية يلي كانت بالنظام لحظة العدّ. إذا عدّيت صنف مرتين، العدّة الأخيرة هي المعتمدة.'**
+  String get stocktakeHelp;
+
+  /// No description provided for @scopeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرف (اختياري، لجرد جزئي)'**
+  String get scopeLabel;
+
+  /// No description provided for @stocktakeOpen.
+  ///
+  /// In ar, this message translates to:
+  /// **'جرد مفتوح من {date}'**
+  String stocktakeOpen(String date);
+
+  /// No description provided for @stocktakeScope.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرف: {shelf}'**
+  String stocktakeScope(String shelf);
+
+  /// No description provided for @countSearchHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'امسح أو ابحث عن الصنف يلي عم تعدّه'**
+  String get countSearchHint;
+
+  /// No description provided for @countedBoxesLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'العلب المعدودة'**
+  String get countedBoxesLabel;
+
+  /// No description provided for @countedStripsLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'ظروف فرط'**
+  String get countedStripsLabel;
+
+  /// No description provided for @saveCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'سجّل'**
+  String get saveCount;
+
+  /// No description provided for @tabCounted.
+  ///
+  /// In ar, this message translates to:
+  /// **'انعدّت ({count})'**
+  String tabCounted(String count);
+
+  /// No description provided for @tabNotCounted.
+  ///
+  /// In ar, this message translates to:
+  /// **'لسا ({count})'**
+  String tabNotCounted(String count);
+
+  /// No description provided for @colCounted.
+  ///
+  /// In ar, this message translates to:
+  /// **'المعدود'**
+  String get colCounted;
+
+  /// No description provided for @colSystem.
+  ///
+  /// In ar, this message translates to:
+  /// **'بالنظام'**
+  String get colSystem;
+
+  /// No description provided for @colDifference.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفرق'**
+  String get colDifference;
+
+  /// No description provided for @shortageValue.
+  ///
+  /// In ar, this message translates to:
+  /// **'قيمة النقص: {amount}'**
+  String shortageValue(String amount);
+
+  /// No description provided for @surplusValue.
+  ///
+  /// In ar, this message translates to:
+  /// **'قيمة الزيادة: {amount}'**
+  String surplusValue(String amount);
+
+  /// No description provided for @applyStocktake.
+  ///
+  /// In ar, this message translates to:
+  /// **'طبّق الجرد'**
+  String get applyStocktake;
+
+  /// No description provided for @applyConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'رح ينعمل {count} تعديل على المخزون، وبيتسكّر الجرد. أكيد؟'**
+  String applyConfirm(String count);
+
+  /// No description provided for @stocktakeApplied.
+  ///
+  /// In ar, this message translates to:
+  /// **'انطبّق الجرد: {count} تعديل'**
+  String stocktakeApplied(String count);
+
+  /// No description provided for @ownerAppliesNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'تطبيق الجرد على المخزون للمالك بس'**
+  String get ownerAppliesNote;
+
+  /// No description provided for @pastStocktakes.
+  ///
+  /// In ar, this message translates to:
+  /// **'جرودات سابقة'**
+  String get pastStocktakes;
+
+  /// No description provided for @noStocktakes.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما في جرودات سابقة'**
+  String get noStocktakes;
+
+  /// No description provided for @blindCountNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما منفرجيك الكمية يلي بالنظام قبل العدّ، منشان يكون العدّ دقيق.'**
+  String get blindCountNote;
+
+  /// No description provided for @syncTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'السيرفر والمزامنة'**
+  String get syncTitle;
+
+  /// No description provided for @syncNotLinkedHelp.
+  ///
+  /// In ar, this message translates to:
+  /// **'هالجهاز شغّال لحاله. اربطه بسيرفر الصيدلية (كمبيوتر الصيدلية) لتتشارك كل الأجهزة نفس البيانات. البيع بيضل شغّال حتى لو السيرفر طفي.'**
+  String get syncNotLinkedHelp;
+
+  /// No description provided for @findServer.
+  ///
+  /// In ar, this message translates to:
+  /// **'دوّر على السيرفر'**
+  String get findServer;
+
+  /// No description provided for @searchingServer.
+  ///
+  /// In ar, this message translates to:
+  /// **'عم دوّر على الشبكة'**
+  String get searchingServer;
+
+  /// No description provided for @noServerFound.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما لقينا سيرفر على هالشبكة. تأكد إنو كمبيوتر الصيدلية شغّال وعلى نفس الواي فاي، أو اكتب عنوانه.'**
+  String get noServerFound;
+
+  /// No description provided for @serverAddressLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'عنوان السيرفر'**
+  String get serverAddressLabel;
+
+  /// No description provided for @serverAddressHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'192.168.1.10'**
+  String get serverAddressHint;
+
+  /// No description provided for @useThisServer.
+  ///
+  /// In ar, this message translates to:
+  /// **'اعتمد هالعنوان'**
+  String get useThisServer;
+
+  /// No description provided for @serverNotResponding.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما في سيرفر دوايا عم يرد على هالعنوان'**
+  String get serverNotResponding;
+
+  /// No description provided for @createOnServerTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنشاء الصيدلية على السيرفر'**
+  String get createOnServerTitle;
+
+  /// No description provided for @createOnServerHelp.
+  ///
+  /// In ar, this message translates to:
+  /// **'السيرفر جديد: رح ننشئ الصيدلية عليه ونرفع كل بيانات هالجهاز. رقمك وكلمة السر رح تربط فيهن باقي الأجهزة.'**
+  String get createOnServerHelp;
+
+  /// No description provided for @linkTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'ربط هالجهاز'**
+  String get linkTitle;
+
+  /// No description provided for @phoneAccountLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الموبايل'**
+  String get phoneAccountLabel;
+
+  /// No description provided for @passwordLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمة السر'**
+  String get passwordLabel;
+
+  /// No description provided for @passwordConfirmLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكيد كلمة السر'**
+  String get passwordConfirmLabel;
+
+  /// No description provided for @passwordTooShort.
+  ///
+  /// In ar, this message translates to:
+  /// **'6 أحرف على الأقل'**
+  String get passwordTooShort;
+
+  /// No description provided for @passwordMismatch.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمتين السر مو متطابقين'**
+  String get passwordMismatch;
+
+  /// No description provided for @linkButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'اربط'**
+  String get linkButton;
+
+  /// No description provided for @createAndLink.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنشئ واربط'**
+  String get createAndLink;
+
+  /// No description provided for @linkedTo.
+  ///
+  /// In ar, this message translates to:
+  /// **'مربوط بـ {pharmacy}'**
+  String linkedTo(String pharmacy);
+
+  /// No description provided for @signedInAs.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحساب: {name}'**
+  String signedInAs(String name);
+
+  /// No description provided for @lastSync.
+  ///
+  /// In ar, this message translates to:
+  /// **'آخر مزامنة: {time}'**
+  String lastSync(String time);
+
+  /// No description provided for @neverSynced.
+  ///
+  /// In ar, this message translates to:
+  /// **'لسا ما صار مزامنة'**
+  String get neverSynced;
+
+  /// No description provided for @pendingChanges.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} حركة ناطرة'**
+  String pendingChanges(String count);
+
+  /// No description provided for @syncNowButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'زامن هلق'**
+  String get syncNowButton;
+
+  /// No description provided for @syncDownloading.
+  ///
+  /// In ar, this message translates to:
+  /// **'عم ننزّل بيانات الصيدلية: {percent}%'**
+  String syncDownloading(String percent);
+
+  /// No description provided for @statusSyncing.
+  ///
+  /// In ar, this message translates to:
+  /// **'عم يزامن'**
+  String get statusSyncing;
+
+  /// No description provided for @statusSynced.
+  ///
+  /// In ar, this message translates to:
+  /// **'متزامن {time}'**
+  String statusSynced(String time);
+
+  /// No description provided for @statusServerMissing.
+  ///
+  /// In ar, this message translates to:
+  /// **'السيرفر مو موجود'**
+  String get statusServerMissing;
+
+  /// No description provided for @statusUnlinked.
+  ///
+  /// In ar, this message translates to:
+  /// **'الجهاز مفصول'**
+  String get statusUnlinked;
+
+  /// No description provided for @statusFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'المزامنة وقفت'**
+  String get statusFailed;
+
+  /// No description provided for @unlinkedHelp.
+  ///
+  /// In ar, this message translates to:
+  /// **'صاحب الصيدلية فصل هالجهاز عن السيرفر. البيع شغّال، بس ما رح يتزامن لحتى ينربط من جديد.'**
+  String get unlinkedHelp;
+
+  /// No description provided for @serverMissingHelp.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما عم نوصل للسيرفر. البيع شغّال عادي، والحركات ناطرة لحتى يرجع.'**
+  String get serverMissingHelp;
+
+  /// No description provided for @devicesTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأجهزة المربوطة'**
+  String get devicesTitle;
+
+  /// No description provided for @unlinkDevice.
+  ///
+  /// In ar, this message translates to:
+  /// **'افصل'**
+  String get unlinkDevice;
+
+  /// No description provided for @unlinkConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'رح ينفصل الجهاز {name} عن السيرفر فوراً. أكيد؟'**
+  String unlinkConfirm(String name);
+
+  /// No description provided for @thisDeviceTag.
+  ///
+  /// In ar, this message translates to:
+  /// **'هالجهاز'**
+  String get thisDeviceTag;
+
+  /// No description provided for @deviceUnlinkedTag.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفصول'**
+  String get deviceUnlinkedTag;
+
+  /// No description provided for @lastSeen.
+  ///
+  /// In ar, this message translates to:
+  /// **'آخر ظهور {time}'**
+  String lastSeen(String time);
+
+  /// No description provided for @accountsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'حسابات الموظفين'**
+  String get accountsTitle;
+
+  /// No description provided for @accountsHelp.
+  ///
+  /// In ar, this message translates to:
+  /// **'كل موظف إلو رقم وكلمة سر، بيربط فيهن موبايله مرة وحدة وبيضل مسجّل.'**
+  String get accountsHelp;
+
+  /// No description provided for @addAccount.
+  ///
+  /// In ar, this message translates to:
+  /// **'حساب لموظف'**
+  String get addAccount;
+
+  /// No description provided for @accountEmployeeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الموظف'**
+  String get accountEmployeeLabel;
+
+  /// No description provided for @accountDisabled.
+  ///
+  /// In ar, this message translates to:
+  /// **'موقوف'**
+  String get accountDisabled;
+
+  /// No description provided for @errBadCredentials.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرقم أو كلمة السر غلط'**
+  String get errBadCredentials;
+
+  /// No description provided for @errPhoneTaken.
+  ///
+  /// In ar, this message translates to:
+  /// **'هالرقم إلو حساب من قبل'**
+  String get errPhoneTaken;
+
+  /// No description provided for @errTooManyAttempts.
+  ///
+  /// In ar, this message translates to:
+  /// **'محاولات كتير غلط، جرّب بعد ربع ساعة'**
+  String get errTooManyAttempts;
+
+  /// No description provided for @errAlreadySetUp.
+  ///
+  /// In ar, this message translates to:
+  /// **'هالسيرفر عليه صيدلية من قبل: اربط برقم وكلمة سر'**
+  String get errAlreadySetUp;
+
+  /// No description provided for @errDeviceOtherPharmacy.
+  ///
+  /// In ar, this message translates to:
+  /// **'هالجهاز مربوط بصيدلية تانية'**
+  String get errDeviceOtherPharmacy;
+
+  /// No description provided for @errPharmacyInactive.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصيدلية موقوفة على السيرفر'**
+  String get errPharmacyInactive;
+
+  /// No description provided for @errServer.
+  ///
+  /// In ar, this message translates to:
+  /// **'صار خطأ بالسيرفر ({code})'**
+  String errServer(String code);
+
+  /// No description provided for @joinExisting.
+  ///
+  /// In ar, this message translates to:
+  /// **'انضمام لصيدلية موجودة'**
+  String get joinExisting;
+
+  /// No description provided for @newServer.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيرفر دوايا جديد (بلا صيدلية لسا)'**
+  String get newServer;
+
+  /// No description provided for @newPharmacy.
+  ///
+  /// In ar, this message translates to:
+  /// **'صيدلية جديدة'**
+  String get newPharmacy;
+
+  /// No description provided for @joinHelp.
+  ///
+  /// In ar, this message translates to:
+  /// **'للموبايلات والأجهزة الإضافية: بتربطها بسيرفر الصيدلية وبتنزل كل البيانات.'**
+  String get joinHelp;
+
+  /// No description provided for @joining.
+  ///
+  /// In ar, this message translates to:
+  /// **'عم نربط وننزّل البيانات'**
+  String get joining;
+
+  /// No description provided for @joinNoEmployee.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحساب مو مربوط بموظف على هالصيدلية. اطلب من صاحب الصيدلية يربطه.'**
+  String get joinNoEmployee;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

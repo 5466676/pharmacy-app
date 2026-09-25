@@ -294,7 +294,7 @@ class _ReturnScreenState extends ConsumerState<ReturnScreen> {
                                     style: DoayaTypography.caption,
                                   ),
                                   const SizedBox(width: DoayaSpacing.l),
-                                  _Stepper(
+                                  QtyStepper(
                                     value: _qty[line.id] ?? 0,
                                     max: maxUnits,
                                     onChanged: (v) => setState(() => _qty[line.id] = v),
@@ -385,7 +385,7 @@ class _ReturnScreenState extends ConsumerState<ReturnScreen> {
                     ),
                   ),
                   const SizedBox(width: DoayaSpacing.l),
-                  _Stepper(
+                  QtyStepper(
                     value: f.quantity,
                     max: 9999,
                     onChanged: (v) => setState(() {
@@ -460,39 +460,6 @@ class _ReturnScreenState extends ConsumerState<ReturnScreen> {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _Stepper extends StatelessWidget {
-  const _Stepper({required this.value, required this.max, required this.onChanged});
-
-  final int value;
-  final int max;
-  final ValueChanged<int> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        RoundIconButton(
-          icon: DoayaIcons.remove,
-          tooltip: '−',
-          size: DoayaSizes.qtyButton + DoayaSpacing.sm,
-          onPressed: value > 0 ? () => onChanged(value - 1) : null,
-        ),
-        SizedBox(
-          width: DoayaSpacing.giant,
-          child: Text(formatQty(value), textAlign: TextAlign.center, style: DoayaTypography.label),
-        ),
-        RoundIconButton(
-          icon: DoayaIcons.add,
-          tooltip: '+',
-          size: DoayaSizes.qtyButton + DoayaSpacing.sm,
-          onPressed: value < max ? () => onChanged(value + 1) : null,
-        ),
-      ],
     );
   }
 }

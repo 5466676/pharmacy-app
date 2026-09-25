@@ -6,8 +6,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/people_repository.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers.dart';
+import '../../sync/sync_controller.dart';
+import 'sync_screen.dart' show AccountForm, ServerPicker, syncErrorText;
 
-/// First run on a new machine: pharmacy name, device name, owner + PIN.
+/// First run on a new machine: a new pharmacy (name, device, owner + PIN),
+/// or joining an existing one through its server (phones, second laptop).
 class SetupScreen extends ConsumerStatefulWidget {
   const SetupScreen({super.key});
 
@@ -23,6 +26,8 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
   final _pin = TextEditingController();
   final _pin2 = TextEditingController();
   var _busy = false;
+  var _joining = false;
+  Uri? _server;
 
   @override
   void dispose() {
@@ -45,6 +50,37 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
     ref.read(sessionProvider.notifier).signIn(device, owner);
     ref.invalidate(thisDeviceProvider);
   }
+
+  /// Joining: this device's name, the server, then the account.
+  List<Widget> _joinFields(AppLocalizations l) => [
+    Text(l.joinHelp, style: DoayaTypography.bodySmall.copyWith(color: DoayaColors.textSecondary)),
+    const SizedBox(height: DoayaSpacing.l),
+    GlassTextField(label: l.deviceNameLabel, hint: l.deviceNameHint, controller: _device),
+    const SizedBox(height: DoayaSpacing.l),
+    if (_server == null)
+      ServerPicker(onChosen: (url) => setState(() => _server = url))
+    else ...[
+      LatinText(
+        '${_server!.host}:${_server!.port}',
+        style: DoayaTypography.bodySmall.copyWith(color: DoayaColors.textSecondary),
+      ),
+      const SizedBox(height: DoayaSpacing.l),
+      AccountForm(
+        submitLabel: l.linkButton,
+        onSubmit: (phone, password) async {
+          if (_device.text.trim().isEmpty) return '${l.deviceNameLabel}: ${l.required}';
+          try {
+            await ref
+                .read(syncProvider.notifier)
+                .joinPharmacy(_server!, phone: phone, password: password, deviceName: _device.text);
+            return null;
+          } on Object catch (e) {
+            return syncErrorText(l, e);
+          }
+        },
+      ),
+    ],
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -77,64 +113,90 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                       textAlign: TextAlign.center,
                       style: DoayaTypography.bodySmall.copyWith(color: DoayaColors.textSecondary),
                     ),
-                    const SizedBox(height: DoayaSpacing.huge),
-                    GlassTextField(
-                      label: l.pharmacyNameLabel,
-                      controller: _pharmacy,
-                      validator: requiredField,
-                      autofocus: true,
-                    ),
-                    const SizedBox(height: DoayaSpacing.l),
-                    GlassTextField(
-                      label: l.deviceNameLabel,
-                      hint: l.deviceNameHint,
-                      controller: _device,
-                      validator: requiredField,
-                    ),
-                    const SizedBox(height: DoayaSpacing.l),
-                    GlassTextField(
-                      label: l.ownerNameLabel,
-                      controller: _owner,
-                      validator: requiredField,
-                    ),
-                    const SizedBox(height: DoayaSpacing.l),
+                    const SizedBox(height: DoayaSpacing.xl),
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                          child: GlassTextField(
-                            label: l.pinLabel,
-                            controller: _pin,
-                            obscureText: true,
-                            maxLength: 4,
-                            keyboardType: TextInputType.number,
-                            inputFormatters: pinFormatters,
-                            validator: (v) =>
-                                PeopleRepository.isValidPin(v ?? '') ? null : l.pinInvalid,
+                          child: GlassPillButton(
+                            label: l.newPharmacy,
+                            expand: true,
+                            selected: !_joining,
+                            onPressed: () => setState(() => _joining = false),
                           ),
                         ),
-                        const SizedBox(width: DoayaSpacing.ml),
+                        const SizedBox(width: DoayaSpacing.sm),
                         Expanded(
-                          child: GlassTextField(
-                            label: l.pinConfirmLabel,
-                            controller: _pin2,
-                            obscureText: true,
-                            maxLength: 4,
-                            keyboardType: TextInputType.number,
-                            inputFormatters: pinFormatters,
-                            validator: (v) => v == _pin.text ? null : l.pinMismatch,
-                            onSubmitted: (_) => _submit(),
+                          child: GlassPillButton(
+                            label: l.joinExisting,
+                            expand: true,
+                            selected: _joining,
+                            onPressed: () => setState(() => _joining = true),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: DoayaSpacing.huge),
-                    SagePillButton(
-                      label: l.startButton,
-                      icon: DoayaIcons.forward,
-                      iconLayout: PillIconLayout.spread,
-                      onPressed: _busy ? null : _submit,
-                    ),
+                    const SizedBox(height: DoayaSpacing.xl),
+                    if (_joining)
+                      ..._joinFields(l)
+                    else ...[
+                      GlassTextField(
+                        label: l.pharmacyNameLabel,
+                        controller: _pharmacy,
+                        validator: requiredField,
+                        autofocus: true,
+                      ),
+                      const SizedBox(height: DoayaSpacing.l),
+                      GlassTextField(
+                        label: l.deviceNameLabel,
+                        hint: l.deviceNameHint,
+                        controller: _device,
+                        validator: requiredField,
+                      ),
+                      const SizedBox(height: DoayaSpacing.l),
+                      GlassTextField(
+                        label: l.ownerNameLabel,
+                        controller: _owner,
+                        validator: requiredField,
+                      ),
+                      const SizedBox(height: DoayaSpacing.l),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: GlassTextField(
+                              label: l.pinLabel,
+                              controller: _pin,
+                              obscureText: true,
+                              maxLength: 4,
+                              keyboardType: TextInputType.number,
+                              inputFormatters: pinFormatters,
+                              validator: (v) =>
+                                  PeopleRepository.isValidPin(v ?? '') ? null : l.pinInvalid,
+                            ),
+                          ),
+                          const SizedBox(width: DoayaSpacing.ml),
+                          Expanded(
+                            child: GlassTextField(
+                              label: l.pinConfirmLabel,
+                              controller: _pin2,
+                              obscureText: true,
+                              maxLength: 4,
+                              keyboardType: TextInputType.number,
+                              inputFormatters: pinFormatters,
+                              validator: (v) => v == _pin.text ? null : l.pinMismatch,
+                              onSubmitted: (_) => _submit(),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: DoayaSpacing.huge),
+                      SagePillButton(
+                        label: l.startButton,
+                        icon: DoayaIcons.forward,
+                        iconLayout: PillIconLayout.spread,
+                        onPressed: _busy ? null : _submit,
+                      ),
+                    ],
                   ],
                 ),
               ),

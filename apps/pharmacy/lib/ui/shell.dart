@@ -7,7 +7,9 @@ import 'package:go_router/go_router.dart';
 import '../l10n/app_localizations.dart';
 import '../providers.dart';
 import '../router.dart';
+import '../sync/sync_controller.dart';
 import 'format.dart';
+import 'screens/sync_screen.dart' show syncStatusChip;
 
 /// Desktop shell: sidebar + top bar (who's working, offline status).
 /// F2 anywhere jumps to the POS search.
@@ -36,7 +38,10 @@ class AppShell extends ConsumerWidget {
       (Routes.till, DoayaNavItem(icon: DoayaIcons.till, label: l.navTill)),
     ];
     final adminItems = [
+      if (session.isOwner)
+        (Routes.reports, DoayaNavItem(icon: DoayaIcons.reports, label: l.navReports)),
       if (session.isOwner) (Routes.staff, DoayaNavItem(icon: DoayaIcons.staff, label: l.navStaff)),
+      if (session.isOwner) (Routes.sync, DoayaNavItem(icon: DoayaIcons.sync, label: l.syncTitle)),
       if (session.isOwner)
         (Routes.settings, DoayaNavItem(icon: DoayaIcons.settings, label: l.navSettings)),
     ];
@@ -67,7 +72,17 @@ class AppShell extends ConsumerWidget {
             children: [
               if (pharmacyName != null) Text(pharmacyName, style: DoayaTypography.lead),
               const Spacer(),
-              StatusChip(label: l.offline, dot: true),
+              Tooltip(
+                message: l.syncTitle,
+                child: GestureDetector(
+                  onTap: () => context.go(Routes.sync),
+                  child: syncStatusChip(
+                    l,
+                    ref.watch(syncProvider),
+                    ref.watch(pendingChangesProvider).value ?? 0,
+                  ),
+                ),
+              ),
               const SizedBox(width: DoayaSpacing.ml),
               _WhoIsWorking(
                 name: session.employee.name,

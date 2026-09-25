@@ -11,11 +11,14 @@ import 'ui/screens/pos_screen.dart';
 import 'ui/screens/product_screen.dart';
 import 'ui/screens/purchase_form_screen.dart';
 import 'ui/screens/purchases_screen.dart';
+import 'ui/screens/reports_screen.dart';
 import 'ui/screens/return_screen.dart';
 import 'ui/screens/settings_screen.dart';
 import 'ui/screens/setup_screen.dart';
 import 'ui/screens/staff_screen.dart';
+import 'ui/screens/stocktake_screen.dart';
 import 'ui/screens/supplier_screen.dart';
+import 'ui/screens/sync_screen.dart';
 import 'ui/screens/till_screen.dart';
 import 'ui/shell.dart';
 
@@ -31,13 +34,18 @@ abstract final class Routes {
   static const till = '/till';
   static const returns = '/pos/return';
   static const settings = '/settings';
+  static const reports = '/reports';
+  static const sync = '/sync';
   static const purchases = '/purchases';
   static const newPurchase = '$purchases/new';
   static String newPurchaseFrom(String supplierId) => '$newPurchase?supplier=$supplierId';
+  static String purchaseFromOrder(String orderId) => '$newPurchase?order=$orderId';
+  static const shortages = '$purchases?tab=shortages';
   static String supplier(String id) => '$purchases/supplier/$id';
 
   static String product(String id) => '$inventory/product/$id';
   static const newProduct = '$inventory/new';
+  static const stocktake = '$inventory/stocktake';
 }
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -85,6 +93,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             pageBuilder: (_, _) => const NoTransitionPage(child: InventoryScreen()),
             routes: [
               GoRoute(path: 'new', builder: (_, _) => const ProductFormScreen()),
+              GoRoute(path: 'stocktake', builder: (_, _) => const StocktakeScreen()),
               GoRoute(
                 path: 'product/:id',
                 builder: (_, s) => ProductScreen(productId: s.pathParameters['id']!),
@@ -93,12 +102,21 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: Routes.purchases,
-            pageBuilder: (_, _) => const NoTransitionPage(child: PurchasesScreen()),
+            pageBuilder: (_, s) => NoTransitionPage(
+              child: PurchasesScreen(
+                initialTab: PurchasesTab.values.firstWhere(
+                  (t) => t.name == s.uri.queryParameters['tab'],
+                  orElse: () => PurchasesTab.invoices,
+                ),
+              ),
+            ),
             routes: [
               GoRoute(
                 path: 'new',
-                builder: (_, s) =>
-                    PurchaseFormScreen(supplierId: s.uri.queryParameters['supplier']),
+                builder: (_, s) => PurchaseFormScreen(
+                  supplierId: s.uri.queryParameters['supplier'],
+                  orderId: s.uri.queryParameters['order'],
+                ),
               ),
               GoRoute(
                 path: 'supplier/:id',
@@ -113,6 +131,14 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: Routes.till,
             pageBuilder: (_, _) => const NoTransitionPage(child: TillScreen()),
+          ),
+          GoRoute(
+            path: Routes.reports,
+            pageBuilder: (_, _) => const NoTransitionPage(child: ReportsScreen()),
+          ),
+          GoRoute(
+            path: Routes.sync,
+            pageBuilder: (_, _) => const NoTransitionPage(child: SyncScreen()),
           ),
           GoRoute(
             path: Routes.staff,

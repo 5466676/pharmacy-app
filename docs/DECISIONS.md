@@ -104,3 +104,39 @@ Names, phones, notes, shelves, barcodes and settings are saved with English digi
 - A new sale price typed on a box line updates the product's box price. Strip lines have no sale-price field; the strip price stays on the product form.
 - Anything paid from the drawer (a cash purchase, a supplier payment) or put into it (a supplier's cash refund) needs an open till, the same rule as selling, so every drawer movement belongs to a shift.
 - F9 saves the purchase invoice through a keyboard handler, not a focus-based shortcut: clicking a button (cash/credit…) took the focus away and F9 stopped working in the real app.
+
+## 2026-09-25 · Profit is computed from events, per period
+Profit of a period = sales in it (after discount, spread over lines by `allocateProportionally`) − refunds in it, minus the cost of `sold` events + the cost given back by `returned` events in it. Cost comes from the batch each piece left (purchase line cost ÷ pieces). A return counts in the period it happens, not the sale's, so closed periods never change. Pieces from batches without a purchase cost are reported as a count, never valued with a guess, and no margin is shown while any cost is missing.
+
+## 2026-09-25 · Purchase orders are sent by copy-paste
+Suppliers take orders electronically (owner). The order is copied as plain text to the clipboard, to paste into WhatsApp / Telegram desktop. That needs no new dependency, and nothing is sent from the app itself. Each line starts with a number and the Latin drug name, so chat apps lay it out left to right. Orders are mutable drafts (not a ledger): nothing in stock or money changes until they're received as a purchase invoice, which is the append-only record.
+Shortage rule: out of stock; at or under the minimum; or fewer days left than the cover period (14) at the pace of the last 30 days (sold − returned). Suggested boxes = enough for 14 days and above the minimum, rounded up, at least 1.
+
+## 2026-09-25 · WhatsApp for orders, blind stocktake counts
+- `url_launcher` was added (owner approved) to open WhatsApp. It tries `whatsapp://send` (WhatsApp Desktop on Windows) first, then `https://wa.me/…`, and always copies the message too. Numbers are stored as typed and converted when used: a leading 0 or a 9-digit mobile gets 963.
+- Stocktake counts are blind: whoever counts doesn't see the system quantity, which is the usual way to keep counts honest. The difference shows right after saving. Only the owner applies a session, because it changes stock. Values use the cost of the product's most recently received batch with a known cost.
+
+## 2026-09-25 · Server keeps synced rows in one generic table
+The server doesn't recreate the app's ~25 tables. Each synced row is stored once in `sync_rows` as (pharmacy, table name, row id, JSON data, deleted flag, changed_at + device for last-writer-wins, and a global change sequence). The server stays independent of app schema changes, and one push/pull code path covers every table. When the server needs to query a table itself (the patient app browsing a pharmacy's stock in Phase 3, the admin panel), it gets typed JSONB indexes or views for that table. The pharmacy stays the unit of isolation: every query filters by `pharmacy_id`.
+
+## 2026-09-25 · Linking devices: one password, then a device secret
+- A device is linked once with a phone number + password (owner or employee). The server gives it a random 256-bit secret, stored only as a SHA-256 hash. The device trades the secret for 15-minute access tokens (JWT with user, device, pharmacy, role).
+- The secret doesn't rotate on each use. On a pharmacy's Wi-Fi a lost response would lock the device out, and a lost or stolen device is handled by **unlinking** it instead. Every request checks the device isn't unlinked, so that takes effect at once, not when the token expires.
+- `/setup` creates the pharmacy and the owner, and only works while the server has no pharmacy yet: the first link from the counter PC. More pharmacies are added with `python -m app.cli create-pharmacy`.
+- Errors are short codes (`bad_credentials`, `device_unlinked`, `owner_only`…) that the app turns into Arabic messages.
+- Left unset, the token-signing secret is generated on first run and kept in `backend/data/jwt_secret`, so the pharmacy PC install needs no manual secret.
+
+## 2026-09-25 · Sync protocol (push / pull by cursor)
+- **Push** `POST /sync/push {changes:[{table,id,changed_at,data,deleted}]}` (up to 1,000). The device id comes from the token, never the body.
+  - Ledger tables: `INSERT … ON CONFLICT DO NOTHING`. Resending is harmless; a different body for the same id keeps the first version and reports a `conflict`; deleting is refused.
+  - Master tables: one `INSERT … ON CONFLICT DO UPDATE … WHERE (changed_at, device_id) < new`, so the newest edit wins whatever order edits arrive in, with the device id deciding exact ties. A winning edit gets a new sequence number, so everyone pulls it. Deletions are tombstones.
+  - Everything accepted, including a losing older edit, can be marked synced on the device.
+- **Pull** `GET /sync/pull?after=N&limit=…` returns changes from other devices after N, the next cursor, `more`, and `latest` (for a progress bar).
+- **No skipped changes**: pushes of one pharmacy take a transaction-level advisory lock, so their sequence numbers commit in order. Without it, a pull could pass seq 11 while seq 10 was still uncommitted and never see it. A test runs 6 concurrent pushes and checks that a paging reader sees all 120 rows.
+
+## 2026-09-25 · Device side of sync: a trigger-fed outbox
+- The app records its changes in `sync_outbox` through SQLite **triggers** on every synced table (INSERT on ledgers; INSERT/UPDATE/DELETE on master data). Every repository, migration or future screen is covered with no code to remember. Master tables had no `synced_at` and deletions left no trace; the outbox handles both. The ledgers' old `synced_at` column is no longer used for sync and never leaves the device.
+- Rows travel as generic column → value maps read with `SELECT *` and written back with `INSERT OR IGNORE` (ledgers) or `INSERT … ON CONFLICT DO UPDATE` (master data), only for columns the local schema knows. The sync code doesn't need to know each table, and a newer app version's extra columns are ignored by an older one.
+- While pulled changes are applied, a flag in `sync_state` pauses the triggers, so they aren't queued back.
+- **Foreign keys are switched off while a pulled page is applied.** An edited parent (a product whose price changed) gets a newer sequence number than its older children (its barcodes), so a new device can receive the child first. The rows were consistent on the device that wrote them, and a test covers this case.
+- **The first upload** of a device that already has history (the counter PC creating the pharmacy) queues every row, parents first. Master rows keep their own `updated_at`; rows without one use 1970, so re-linking an old PC can never override newer edits already on the server.

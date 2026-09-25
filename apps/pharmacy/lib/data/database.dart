@@ -1,4 +1,4 @@
-import 'package:doaya_core/doaya_core.dart' show toLatinDigits;
+import 'package:doaya_core/doaya_core.dart' show appendOnlyTables, mutableTables, toLatinDigits;
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:path_provider/path_provider.dart';
@@ -418,6 +418,32 @@ class PurchaseOrderLines extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+// ─── Sync (local only, never synced) ────────────────────────────────────────
+
+/// Local changes waiting to be pushed to the pharmacy's server. Filled by
+/// SQLite triggers on every synced table, so no code path can forget one.
+@DataClassName('SyncOutboxRow')
+class SyncOutbox extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get targetTable => text().named('table_name')();
+  TextColumn get recordId => text().named('row_id')();
+  BoolColumn get deleted => boolean().withDefault(const Constant(false))();
+
+  /// UTC ISO-8601 time of the change (last-writer-wins).
+  TextColumn get changedAt => text()();
+}
+
+/// Sync settings and secrets of this device: server address, device token,
+/// cursor… Key/value, never synced.
+@DataClassName('SyncStateRow')
+class SyncState extends Table {
+  TextColumn get key => text()();
+  TextColumn get value => text()();
+
+  @override
+  Set<Column> get primaryKey => {key};
+}
+
 // Append-only tables are guarded by triggers created in _createLedgerGuards,
 // _guardReturns, _guardTill and _guardAccounting.
 
@@ -446,6 +472,8 @@ class PurchaseOrderLines extends Table {
     StocktakeCounts,
     PurchaseOrders,
     PurchaseOrderLines,
+    SyncOutbox,
+    SyncState,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -461,7 +489,7 @@ class AppDatabase extends _$AppDatabase {
   );
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -469,6 +497,7 @@ class AppDatabase extends _$AppDatabase {
       await m.createAll();
       await _createLedgerGuards();
       await _createIndexes();
+      await _createSyncTriggers();
     },
     onUpgrade: (m, from, to) async {
       if (from < 2) {
@@ -521,11 +550,48 @@ class AppDatabase extends _$AppDatabase {
           await customStatement(s);
         }
       }
+      if (from < 6) {
+        // v6: sync with the pharmacy's server (outbox + state + triggers).
+        await m.createTable(syncOutbox);
+        await m.createTable(syncState);
+        await _createSyncTriggers();
+      }
     },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
     },
   );
+
+  /// Primary-key column of each synced table (`id` unless listed).
+  static const syncKeys = {'settings': 'key', 'product_barcodes': 'barcode'};
+
+  /// Every write to a synced table lands in `sync_outbox`, except while
+  /// changes pulled from the server are being applied (`applying` set in
+  /// `sync_state`). Ledgers only ever INSERT; master data also UPDATE/DELETE.
+  Future<void> _createSyncTriggers() async {
+    const now = "strftime('%Y-%m-%dT%H:%M:%fZ', 'now')";
+    const notApplying = "(SELECT value FROM sync_state WHERE key = 'applying') IS NULL";
+    for (final t in [...appendOnlyTables, ...mutableTables]) {
+      final k = syncKeys[t] ?? 'id';
+      await customStatement('''
+        CREATE TRIGGER ${t}_sync_insert AFTER INSERT ON $t WHEN $notApplying
+        BEGIN INSERT INTO sync_outbox (table_name, row_id, deleted, changed_at)
+              VALUES ('$t', NEW.$k, 0, $now); END;
+      ''');
+      if (mutableTables.contains(t)) {
+        await customStatement('''
+          CREATE TRIGGER ${t}_sync_update AFTER UPDATE ON $t WHEN $notApplying
+          BEGIN INSERT INTO sync_outbox (table_name, row_id, deleted, changed_at)
+                VALUES ('$t', NEW.$k, 0, $now); END;
+        ''');
+        await customStatement('''
+          CREATE TRIGGER ${t}_sync_delete AFTER DELETE ON $t WHEN $notApplying
+          BEGIN INSERT INTO sync_outbox (table_name, row_id, deleted, changed_at)
+                VALUES ('$t', OLD.$k, 1, $now); END;
+        ''');
+      }
+    }
+  }
 
   /// v4: every number in English digits (owner's decision). Converts
   /// Arabic-Indic digits already typed into names, phones and settings.

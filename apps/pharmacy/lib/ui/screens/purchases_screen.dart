@@ -10,6 +10,7 @@ import '../../providers.dart';
 import '../../router.dart';
 import '../format.dart';
 import '../widgets.dart';
+import 'orders_tabs.dart';
 
 final purchasesListProvider = StreamProvider.family<List<PurchaseRow>, String?>(
   (ref, supplierId) => ref.watch(accountingProvider).watchPurchases(supplierId: supplierId),
@@ -19,20 +20,28 @@ final _purchaseLinesProvider = FutureProvider.family<List<PurchaseLineRow>, Stri
   (ref, id) => ref.watch(accountingProvider).purchaseLines(id),
 );
 
-enum _Tab { invoices, suppliers }
+enum PurchasesTab { invoices, suppliers, shortages, orders }
 
 /// Purchases: supplier invoices and the suppliers list. Everyone can enter
 /// invoices; totals and supplier balances are shown to the owner only.
 class PurchasesScreen extends ConsumerStatefulWidget {
-  const PurchasesScreen({super.key});
+  const PurchasesScreen({super.key, this.initialTab = PurchasesTab.invoices});
+
+  final PurchasesTab initialTab;
 
   @override
   ConsumerState<PurchasesScreen> createState() => _PurchasesScreenState();
 }
 
 class _PurchasesScreenState extends ConsumerState<PurchasesScreen> {
-  var _tab = _Tab.invoices;
+  late var _tab = widget.initialTab;
   var _query = '';
+
+  @override
+  void didUpdateWidget(PurchasesScreen old) {
+    super.didUpdateWidget(old);
+    if (old.initialTab != widget.initialTab) _tab = widget.initialTab;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,27 +82,48 @@ class _PurchasesScreenState extends ConsumerState<PurchasesScreen> {
           children: [
             GlassPillButton(
               label: l.tabInvoices,
-              selected: _tab == _Tab.invoices,
-              onPressed: () => setState(() => _tab = _Tab.invoices),
+              selected: _tab == PurchasesTab.invoices,
+              onPressed: () => setState(() => _tab = PurchasesTab.invoices),
             ),
             const SizedBox(width: DoayaSpacing.s),
             GlassPillButton(
               label: l.tabSuppliers,
-              selected: _tab == _Tab.suppliers,
-              onPressed: () => setState(() => _tab = _Tab.suppliers),
+              selected: _tab == PurchasesTab.suppliers,
+              onPressed: () => setState(() => _tab = PurchasesTab.suppliers),
+            ),
+            const SizedBox(width: DoayaSpacing.s),
+            GlassPillButton(
+              label: l.tabShortages,
+              selected: _tab == PurchasesTab.shortages,
+              onPressed: () => setState(() => _tab = PurchasesTab.shortages),
+            ),
+            const SizedBox(width: DoayaSpacing.s),
+            GlassPillButton(
+              label: l.tabOrders,
+              selected: _tab == PurchasesTab.orders,
+              onPressed: () => setState(() => _tab = PurchasesTab.orders),
             ),
             const Spacer(),
-            SizedBox(
-              width: DoayaSizes.desktopSearchWidth,
-              child: GlassSearchField(hint: l.search, onChanged: (v) => setState(() => _query = v)),
-            ),
+            if (_tab == PurchasesTab.invoices || _tab == PurchasesTab.suppliers)
+              SizedBox(
+                width: DoayaSizes.desktopSearchWidth,
+                child: GlassSearchField(
+                  hint: l.search,
+                  onChanged: (v) => setState(() => _query = v),
+                ),
+              ),
           ],
         ),
         const SizedBox(height: DoayaSpacing.l),
         Expanded(
-          child: _tab == _Tab.invoices
-              ? PurchaseList(query: _query)
-              : _SupplierList(query: _query, ledger: ledger, owner: owner),
+          child: switch (_tab) {
+            PurchasesTab.invoices => PurchaseList(query: _query),
+            PurchasesTab.suppliers => _SupplierList(query: _query, ledger: ledger, owner: owner),
+            PurchasesTab.shortages => ShortagesTab(
+              onOrdersCreated: () => setState(() => _tab = PurchasesTab.orders),
+            ),
+            PurchasesTab.orders => const OrdersTab(),
+          },
         ),
       ],
     );
@@ -310,24 +340,25 @@ class _SupplierList extends ConsumerWidget {
   }
 }
 
-/// New-supplier dialog; returns the created supplier.
+/// New-supplier dialog (or edit [existing]); returns the saved supplier.
 Future<SupplierRow?> showAddSupplierDialog(
   BuildContext context,
   WidgetRef ref, {
   String initialName = '',
+  SupplierRow? existing,
 }) async {
   final l = AppLocalizations.of(context);
   final form = GlobalKey<FormState>();
-  final name = TextEditingController(text: initialName);
-  final rep = TextEditingController();
-  final phone = TextEditingController();
+  final name = TextEditingController(text: existing?.name ?? initialName);
+  final rep = TextEditingController(text: existing?.repName);
+  final phone = TextEditingController(text: existing?.phone);
   void submit() {
     if (form.currentState!.validate()) Navigator.of(context).pop(true);
   }
 
   final ok = await showDoayaDialog<bool>(
     context: context,
-    title: l.addSupplier,
+    title: existing == null ? l.addSupplier : l.editSupplier,
     content: Form(
       key: form,
       child: Column(
@@ -342,10 +373,13 @@ Future<SupplierRow?> showAddSupplierDialog(
           GlassTextField(label: '${l.repNameLabel} (${l.optional})', controller: rep),
           const SizedBox(height: DoayaSpacing.l),
           GlassTextField(
-            label: '${l.phoneLabel} (${l.optional})',
+            label: '${l.whatsappPhoneLabel} (${l.optional})',
+            hint: l.whatsappPhoneHint,
             controller: phone,
             keyboardType: TextInputType.phone,
             textDirection: TextDirection.ltr,
+            validator: (v) =>
+                (v ?? '').trim().isNotEmpty && whatsappNumber(v) == null ? l.invalidPhone : null,
             onSubmitted: (_) => submit(),
           ),
         ],
@@ -357,9 +391,16 @@ Future<SupplierRow?> showAddSupplierDialog(
     ],
   );
   if (ok != true) return null;
-  return ref
-      .read(accountingProvider)
-      .addSupplier(name: name.text, repName: rep.text, phone: toLatinDigits(phone.text));
+  final acc = ref.read(accountingProvider);
+  if (existing != null) {
+    return acc.updateSupplier(
+      existing.id,
+      name: name.text,
+      repName: rep.text,
+      phone: toLatinDigits(phone.text),
+    );
+  }
+  return acc.addSupplier(name: name.text, repName: rep.text, phone: toLatinDigits(phone.text));
 }
 
 /// Supplier picker with search and "new supplier".

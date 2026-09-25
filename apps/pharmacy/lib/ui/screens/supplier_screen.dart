@@ -10,7 +10,8 @@ import '../../providers.dart';
 import '../../router.dart';
 import '../format.dart';
 import '../widgets.dart';
-import 'purchases_screen.dart' show PurchaseList;
+import '../whatsapp.dart';
+import 'purchases_screen.dart' show PurchaseList, showAddSupplierDialog;
 
 final _supplierProvider = FutureProvider.family<SupplierRow?, String>((ref, id) {
   ref.watch(suppliersProvider);
@@ -48,6 +49,21 @@ class SupplierScreen extends ConsumerWidget {
           ),
           title: supplier.name,
           actions: [
+            RoundIconButton(
+              icon: DoayaIcons.edit,
+              tooltip: l.editSupplier,
+              onPressed: () => showAddSupplierDialog(context, ref, existing: supplier),
+            ),
+            if (whatsappNumber(supplier.phone) case final number?)
+              RoundIconButton(
+                icon: DoayaIcons.chat,
+                tooltip: l.openChat,
+                onPressed: () async {
+                  if (!await ref.read(whatsappProvider)(number) && context.mounted) {
+                    toast(context, l.whatsappFailed, error: true);
+                  }
+                },
+              ),
             GlassPillButton(
               label: l.returnToSupplier,
               icon: DoayaIcons.returns,

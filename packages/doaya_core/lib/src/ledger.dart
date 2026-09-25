@@ -81,6 +81,9 @@ class StockLedger {
 
   BatchStock? batch(String batchId) => _batches[batchId];
 
+  /// Every batch ever opened (including empty ones).
+  Iterable<BatchStock> get batches => _batches.values;
+
   Iterable<BatchStock> batchesOf(String productId) =>
       _batches.values.where((b) => b.productId == productId);
 

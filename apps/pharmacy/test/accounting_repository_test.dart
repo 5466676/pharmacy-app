@@ -117,6 +117,75 @@ void main() {
       expect((p.costMinor, p.profitMinor, p.complete), (7500, 13500 - 7500, true));
     });
 
+    test('profit report: discount spread over lines, a customer return subtracts both', () async {
+      await buy(); // 30000 for 12 pieces: 25.00 each
+      final sale = await ledger.sell(
+        s,
+        cart: [CartLine(productId: amox.id, quantity: 3, unitPrice: const Money(4500, syp))],
+        currency: syp,
+        payment: PaymentType.cash,
+        discountMinor: 1500,
+      );
+      await ledger.processReturn(
+        const Session(deviceId: 'laptop', employeeId: 'sam'),
+        items: [
+          ReturnItem(
+            productId: amox.id,
+            quantity: 1,
+            unitPrice: const Money(4500, syp),
+            saleLineId: sale.lines.single.id,
+          ),
+        ],
+        currency: syp,
+        refund: RefundMethod.cash,
+        saleId: sale.id,
+      );
+      final now = DateTime.now();
+      final r = await acc.profitReport(
+        now.subtract(const Duration(hours: 1)),
+        now.add(const Duration(hours: 1)),
+      );
+      expect((r.total.revenueMinor, r.total.costMinor), (12000 - 4500, 7500 - 2500));
+      expect(r.total.profitMinor, 2500);
+      expect(r.byEmployee['rana']!.profitMinor, 12000 - 7500);
+      expect(r.byEmployee['sam']!.profitMinor, -4500 + 2500);
+      expect(r.byProduct[amox.id]!.complete, isTrue);
+      // A period with nothing in it.
+      final empty = await acc.profitReport(DateTime(2020), DateTime(2020, 2));
+      expect(empty.byProduct, isEmpty);
+      // Stock value at cost: 12 − 3 + 1 = 10 pieces at 25.00.
+      expect(stockValue(await ledger.loadStock(), await acc.costBook()).costMinor, 25000);
+    });
+
+    test('shortages and purchase orders: create per supplier, edit, receive, delete', () async {
+      // Amoxil: none in stock, minimum 5 boxes → out of stock, 6 boxes suggested.
+      var list = await acc.shortages();
+      expect(list.single.productId, amox.id);
+      expect((list.single.reason, list.single.suggestedPacks), (ShortageReason.outOfStock, 6));
+      expect(await acc.lastPurchases(), isEmpty);
+
+      await buy(); // 12 pieces from Ibn Sina at 30.00
+      list = await acc.shortages();
+      expect(list, isEmpty); // 12 > minimum 5
+      expect((await acc.lastPurchases())[amox.id]!.supplierId, ibnSina.id);
+
+      final ids = await acc.createOrders({
+        ibnSina.id: [(amox.id, 6)],
+        'empty-supplier': [(amox.id, 0)], // nothing wanted → no order
+      });
+      expect(ids, hasLength(1));
+      final line = (await acc.orderLines(ids.single)).single;
+      expect(line.quantity, 6);
+      await acc.setOrderLineQuantity(line.id, 8);
+      expect((await acc.orderLines(ids.single)).single.quantity, 8);
+      await acc.setOrderStatus(ids.single, 'sent');
+      expect((await acc.order(ids.single))!.status, 'sent');
+      await acc.setOrderLineQuantity(line.id, 0);
+      expect(await acc.orderLines(ids.single), isEmpty);
+      await acc.deleteOrder(ids.single);
+      expect(await acc.order(ids.single), isNull);
+    });
+
     test('payment and return to supplier update the statement', () async {
       final p = await buy();
       await acc.paySupplier(

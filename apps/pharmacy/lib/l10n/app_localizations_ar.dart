@@ -1097,7 +1097,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get ownerOnlyAmounts => 'المبالغ والأرصدة للمالك بس';
 
   @override
-  String get dateFormatHint => '1/6/2028';
+  String get dateFormatHint => '1/6/28';
 
   @override
   String get errDrawerClosed => 'الصندوق مسكّر، افتحه أول أو اختار الدفع من برّا الصندوق';
@@ -1106,4 +1106,471 @@ class AppLocalizationsAr extends AppLocalizations {
   String purchaseBy(String name) {
     return 'دخّلها $name';
   }
+
+  @override
+  String get navReports => 'الأرباح';
+
+  @override
+  String get reportsTitle => 'الأرباح والتكلفة';
+
+  @override
+  String get netSales => 'صافي المبيعات';
+
+  @override
+  String get costOfGoods => 'تكلفة البضاعة المباعة';
+
+  @override
+  String get grossProfit => 'الربح';
+
+  @override
+  String marginCaption(String pct) {
+    return 'هامش الربح $pct';
+  }
+
+  @override
+  String get stockValueAtCost => 'قيمة المخزون بالتكلفة';
+
+  @override
+  String piecesWithoutCost(String pieces) {
+    return '$pieces قطعة بدون تكلفة';
+  }
+
+  @override
+  String unknownCostNotice(String pieces) {
+    return 'في $pieces قطعة انباعت من بضاعة دخلت قبل فواتير الشراء، تكلفتها مو معروفة، فالربح الظاهر أعلى من الحقيقي. بيتصلّح لحالو لما تخلص هالبضاعة وتدخل بفواتير شراء.';
+  }
+
+  @override
+  String get byProduct => 'حسب الصنف';
+
+  @override
+  String get byEmployee => 'حسب الموظف';
+
+  @override
+  String get byDay => 'حسب اليوم';
+
+  @override
+  String get colRevenue => 'المبيعات';
+
+  @override
+  String get colCost => 'التكلفة';
+
+  @override
+  String get colProfit => 'الربح';
+
+  @override
+  String get colMargin => 'الهامش';
+
+  @override
+  String get noReportData => 'ما في مبيعات بهالفترة';
+
+  @override
+  String get statProfitToday => 'ربح اليوم';
+
+  @override
+  String get statSupplierDebts => 'علينا للموردين';
+
+  @override
+  String suppliersOwedCount(String count) {
+    return '$count مورد';
+  }
+
+  @override
+  String get costIncomplete => 'تكلفة ناقصة';
+
+  @override
+  String get tabShortages => 'النواقص';
+
+  @override
+  String get tabOrders => 'الطلبيات';
+
+  @override
+  String get reasonOutOfStock => 'خالص';
+
+  @override
+  String get reasonBelowMinimum => 'تحت الحد الأدنى';
+
+  @override
+  String get reasonSellingFast => 'عم يخلص بسرعة';
+
+  @override
+  String runsOutIn(String days) {
+    return 'بيخلص خلال $days يوم';
+  }
+
+  @override
+  String get orderQtyBoxes => 'الطلب (علبة)';
+
+  @override
+  String get noShortages => 'ما في نواقص، كل شي متوفر';
+
+  @override
+  String createOrders(String count) {
+    return 'اعمل الطلبيات ($count)';
+  }
+
+  @override
+  String ordersCreated(String count) {
+    return 'انعملت $count طلبية';
+  }
+
+  @override
+  String get errShortageNeedsSupplier => 'في أصناف بدون مورد: اختار المورد أو شيل التحديد عنها';
+
+  @override
+  String get noOrders => 'ما في طلبيات';
+
+  @override
+  String get orderDraft => 'مسودة';
+
+  @override
+  String get orderSent => 'انبعتت';
+
+  @override
+  String get orderReceived => 'استلمناها';
+
+  @override
+  String itemsCount(String count) {
+    return '$count صنف';
+  }
+
+  @override
+  String orderTitle(String supplier) {
+    return 'طلبية $supplier';
+  }
+
+  @override
+  String get copyOrder => 'انسخ الطلبية';
+
+  @override
+  String get orderCopied => 'انسخت الطلبية: الصقها بواتساب أو تلغرام';
+
+  @override
+  String get receiveOrder => 'وصلت: فاتورة شراء';
+
+  @override
+  String get deleteOrder => 'حذف';
+
+  @override
+  String orderMessageHeader(String pharmacy) {
+    return 'طلبية من $pharmacy';
+  }
+
+  @override
+  String orderMessageDate(String date) {
+    return 'التاريخ: $date';
+  }
+
+  @override
+  String get orderMessageThanks => 'ويعطيكن العافية';
+
+  @override
+  String get editSupplier => 'تعديل المورد';
+
+  @override
+  String get whatsappPhoneLabel => 'رقم الواتساب';
+
+  @override
+  String get whatsappPhoneHint => '0944123456';
+
+  @override
+  String get invalidPhone => 'الرقم مو صحيح';
+
+  @override
+  String get sendWhatsApp => 'ابعتها واتساب';
+
+  @override
+  String get openChat => 'واتساب';
+
+  @override
+  String get errNoPhone => 'ما في رقم واتساب لهالمورد، ضيفه هون';
+
+  @override
+  String get whatsappFailed => 'ما قدرنا نفتح واتساب: انسخت الطلبية، الصقها إنت';
+
+  @override
+  String get stocktakeButton => 'جرد';
+
+  @override
+  String get stocktakeTitle => 'الجرد';
+
+  @override
+  String get startStocktake => 'ابدأ جرد';
+
+  @override
+  String get stocktakeHelp =>
+      'الجرد ما بيوقف البيع: بتعدّ كل صنف لحال، والبرنامج بيسجّل الكمية يلي كانت بالنظام لحظة العدّ. إذا عدّيت صنف مرتين، العدّة الأخيرة هي المعتمدة.';
+
+  @override
+  String get scopeLabel => 'الرف (اختياري، لجرد جزئي)';
+
+  @override
+  String stocktakeOpen(String date) {
+    return 'جرد مفتوح من $date';
+  }
+
+  @override
+  String stocktakeScope(String shelf) {
+    return 'الرف: $shelf';
+  }
+
+  @override
+  String get countSearchHint => 'امسح أو ابحث عن الصنف يلي عم تعدّه';
+
+  @override
+  String get countedBoxesLabel => 'العلب المعدودة';
+
+  @override
+  String get countedStripsLabel => 'ظروف فرط';
+
+  @override
+  String get saveCount => 'سجّل';
+
+  @override
+  String tabCounted(String count) {
+    return 'انعدّت ($count)';
+  }
+
+  @override
+  String tabNotCounted(String count) {
+    return 'لسا ($count)';
+  }
+
+  @override
+  String get colCounted => 'المعدود';
+
+  @override
+  String get colSystem => 'بالنظام';
+
+  @override
+  String get colDifference => 'الفرق';
+
+  @override
+  String shortageValue(String amount) {
+    return 'قيمة النقص: $amount';
+  }
+
+  @override
+  String surplusValue(String amount) {
+    return 'قيمة الزيادة: $amount';
+  }
+
+  @override
+  String get applyStocktake => 'طبّق الجرد';
+
+  @override
+  String applyConfirm(String count) {
+    return 'رح ينعمل $count تعديل على المخزون، وبيتسكّر الجرد. أكيد؟';
+  }
+
+  @override
+  String stocktakeApplied(String count) {
+    return 'انطبّق الجرد: $count تعديل';
+  }
+
+  @override
+  String get ownerAppliesNote => 'تطبيق الجرد على المخزون للمالك بس';
+
+  @override
+  String get pastStocktakes => 'جرودات سابقة';
+
+  @override
+  String get noStocktakes => 'ما في جرودات سابقة';
+
+  @override
+  String get blindCountNote => 'ما منفرجيك الكمية يلي بالنظام قبل العدّ، منشان يكون العدّ دقيق.';
+
+  @override
+  String get syncTitle => 'السيرفر والمزامنة';
+
+  @override
+  String get syncNotLinkedHelp =>
+      'هالجهاز شغّال لحاله. اربطه بسيرفر الصيدلية (كمبيوتر الصيدلية) لتتشارك كل الأجهزة نفس البيانات. البيع بيضل شغّال حتى لو السيرفر طفي.';
+
+  @override
+  String get findServer => 'دوّر على السيرفر';
+
+  @override
+  String get searchingServer => 'عم دوّر على الشبكة';
+
+  @override
+  String get noServerFound =>
+      'ما لقينا سيرفر على هالشبكة. تأكد إنو كمبيوتر الصيدلية شغّال وعلى نفس الواي فاي، أو اكتب عنوانه.';
+
+  @override
+  String get serverAddressLabel => 'عنوان السيرفر';
+
+  @override
+  String get serverAddressHint => '192.168.1.10';
+
+  @override
+  String get useThisServer => 'اعتمد هالعنوان';
+
+  @override
+  String get serverNotResponding => 'ما في سيرفر دوايا عم يرد على هالعنوان';
+
+  @override
+  String get createOnServerTitle => 'إنشاء الصيدلية على السيرفر';
+
+  @override
+  String get createOnServerHelp =>
+      'السيرفر جديد: رح ننشئ الصيدلية عليه ونرفع كل بيانات هالجهاز. رقمك وكلمة السر رح تربط فيهن باقي الأجهزة.';
+
+  @override
+  String get linkTitle => 'ربط هالجهاز';
+
+  @override
+  String get phoneAccountLabel => 'رقم الموبايل';
+
+  @override
+  String get passwordLabel => 'كلمة السر';
+
+  @override
+  String get passwordConfirmLabel => 'تأكيد كلمة السر';
+
+  @override
+  String get passwordTooShort => '6 أحرف على الأقل';
+
+  @override
+  String get passwordMismatch => 'كلمتين السر مو متطابقين';
+
+  @override
+  String get linkButton => 'اربط';
+
+  @override
+  String get createAndLink => 'أنشئ واربط';
+
+  @override
+  String linkedTo(String pharmacy) {
+    return 'مربوط بـ $pharmacy';
+  }
+
+  @override
+  String signedInAs(String name) {
+    return 'الحساب: $name';
+  }
+
+  @override
+  String lastSync(String time) {
+    return 'آخر مزامنة: $time';
+  }
+
+  @override
+  String get neverSynced => 'لسا ما صار مزامنة';
+
+  @override
+  String pendingChanges(String count) {
+    return '$count حركة ناطرة';
+  }
+
+  @override
+  String get syncNowButton => 'زامن هلق';
+
+  @override
+  String syncDownloading(String percent) {
+    return 'عم ننزّل بيانات الصيدلية: $percent%';
+  }
+
+  @override
+  String get statusSyncing => 'عم يزامن';
+
+  @override
+  String statusSynced(String time) {
+    return 'متزامن $time';
+  }
+
+  @override
+  String get statusServerMissing => 'السيرفر مو موجود';
+
+  @override
+  String get statusUnlinked => 'الجهاز مفصول';
+
+  @override
+  String get statusFailed => 'المزامنة وقفت';
+
+  @override
+  String get unlinkedHelp =>
+      'صاحب الصيدلية فصل هالجهاز عن السيرفر. البيع شغّال، بس ما رح يتزامن لحتى ينربط من جديد.';
+
+  @override
+  String get serverMissingHelp => 'ما عم نوصل للسيرفر. البيع شغّال عادي، والحركات ناطرة لحتى يرجع.';
+
+  @override
+  String get devicesTitle => 'الأجهزة المربوطة';
+
+  @override
+  String get unlinkDevice => 'افصل';
+
+  @override
+  String unlinkConfirm(String name) {
+    return 'رح ينفصل الجهاز $name عن السيرفر فوراً. أكيد؟';
+  }
+
+  @override
+  String get thisDeviceTag => 'هالجهاز';
+
+  @override
+  String get deviceUnlinkedTag => 'مفصول';
+
+  @override
+  String lastSeen(String time) {
+    return 'آخر ظهور $time';
+  }
+
+  @override
+  String get accountsTitle => 'حسابات الموظفين';
+
+  @override
+  String get accountsHelp => 'كل موظف إلو رقم وكلمة سر، بيربط فيهن موبايله مرة وحدة وبيضل مسجّل.';
+
+  @override
+  String get addAccount => 'حساب لموظف';
+
+  @override
+  String get accountEmployeeLabel => 'الموظف';
+
+  @override
+  String get accountDisabled => 'موقوف';
+
+  @override
+  String get errBadCredentials => 'الرقم أو كلمة السر غلط';
+
+  @override
+  String get errPhoneTaken => 'هالرقم إلو حساب من قبل';
+
+  @override
+  String get errTooManyAttempts => 'محاولات كتير غلط، جرّب بعد ربع ساعة';
+
+  @override
+  String get errAlreadySetUp => 'هالسيرفر عليه صيدلية من قبل: اربط برقم وكلمة سر';
+
+  @override
+  String get errDeviceOtherPharmacy => 'هالجهاز مربوط بصيدلية تانية';
+
+  @override
+  String get errPharmacyInactive => 'الصيدلية موقوفة على السيرفر';
+
+  @override
+  String errServer(String code) {
+    return 'صار خطأ بالسيرفر ($code)';
+  }
+
+  @override
+  String get joinExisting => 'انضمام لصيدلية موجودة';
+
+  @override
+  String get newServer => 'سيرفر دوايا جديد (بلا صيدلية لسا)';
+
+  @override
+  String get newPharmacy => 'صيدلية جديدة';
+
+  @override
+  String get joinHelp =>
+      'للموبايلات والأجهزة الإضافية: بتربطها بسيرفر الصيدلية وبتنزل كل البيانات.';
+
+  @override
+  String get joining => 'عم نربط وننزّل البيانات';
+
+  @override
+  String get joinNoEmployee => 'الحساب مو مربوط بموظف على هالصيدلية. اطلب من صاحب الصيدلية يربطه.';
 }

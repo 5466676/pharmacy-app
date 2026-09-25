@@ -8,6 +8,7 @@ import 'package:doaya_pharmacy/data/people_repository.dart';
 import 'package:doaya_pharmacy/data/till_repository.dart';
 import 'package:doaya_pharmacy/providers.dart';
 import 'package:doaya_pharmacy/router.dart';
+import 'package:doaya_pharmacy/ui/whatsapp.dart';
 import 'package:doaya_ui/doaya_ui.dart';
 import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:drift/native.dart';
@@ -15,6 +16,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 
 /// Lets drift's real async work finish between frames.
@@ -37,11 +39,13 @@ void main() {
   late AppDatabase db;
   late ProviderContainer container;
 
-  Future<void> pumpApp(WidgetTester tester) async {
+  Future<void> pumpApp(WidgetTester tester, {List<Override> overrides = const []}) async {
     tester.view.physicalSize = const Size(1440, 900);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
-    container = ProviderContainer(overrides: [databaseProvider.overrideWithValue(db)]);
+    container = ProviderContainer(
+      overrides: [databaseProvider.overrideWithValue(db), ...overrides],
+    );
     await tester.pumpWidget(
       UncontrolledProviderScope(container: container, child: const PharmacyApp()),
     );
@@ -577,6 +581,213 @@ void main() {
       expect(find.textContaining('الصندوق مسكّر'), findsOneWidget);
       final events = await tester.runAsync(() => db.select(db.supplierDebtEvents).get());
       expect(events, isEmpty);
+      await unmount(tester);
+    });
+
+    testWidgets('profit report: owner only; unknown cost is flagged, not guessed', (tester) async {
+      final (device, supplier) = await seedSupplier(tester);
+      late EmployeeRow rana;
+      await tester.runAsync(() async {
+        rana = await PeopleRepository(db).addEmployee(name: 'رنا', pin: '1111');
+        final stamp = Session(deviceId: device.id, employeeId: owner.id);
+        await AccountingRepository(db, LedgerRepository(db)).recordPurchase(
+          stamp,
+          supplierId: supplier.id,
+          items: [PurchaseItem(productId: amox.id, quantity: 4, unitPriceMinor: 2500)],
+          currency: Currency.syp,
+          payment: PurchasePayment.credit,
+        );
+        // FEFO sells the seeded batch first: it has no purchase cost.
+        await LedgerRepository(db).sell(
+          stamp,
+          cart: [
+            CartLine(productId: amox.id, quantity: 1, unitPrice: const Money(4500, Currency.syp)),
+          ],
+          currency: Currency.syp,
+          payment: PaymentType.cash,
+        );
+      });
+      await pumpApp(tester);
+
+      container.read(sessionProvider.notifier).signIn(device, rana);
+      await settle(tester);
+      expect(find.text('ربح اليوم'), findsNothing);
+      expect(find.text('الأرباح'), findsNothing);
+
+      container.read(sessionProvider.notifier).signIn(device, owner);
+      await settle(tester);
+      expect(find.text('ربح اليوم'), findsOneWidget);
+      expect(find.text('علينا للموردين'), findsOneWidget);
+      await tester.tap(find.text('الأرباح'));
+      await settle(tester);
+      expect(find.text('الأرباح والتكلفة'), findsOneWidget);
+      expect(find.text('Amoxil 500 mg'), findsOneWidget);
+      expect(find.textContaining('تكلفتها مو معروفة'), findsOneWidget);
+      expect(find.text('100 ل.س'), findsOneWidget); // stock value: 4 boxes at 25
+      await unmount(tester);
+    });
+
+    testWidgets('shortage → order per supplier → copied for WhatsApp → received as an invoice', (
+      tester,
+    ) async {
+      String? copied;
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform, (
+        call,
+      ) async {
+        if (call.method == 'Clipboard.setData') {
+          copied = (call.arguments as Map)['text'] as String;
+        }
+        return null;
+      });
+      addTearDown(
+        () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          SystemChannels.platform,
+          null,
+        ),
+      );
+      final (device, supplier) = await seedSupplier(tester);
+      await pumpApp(tester);
+      container.read(sessionProvider.notifier).signIn(device, owner);
+      await settle(tester);
+      container.read(routerProvider).go(Routes.shortages);
+      await settle(tester);
+      // 5 boxes on hand, minimum 5 → under the minimum; 1 box suggested.
+      expect(find.text('تحت الحد الأدنى'), findsOneWidget);
+
+      await tester.tap(find.text('اعمل الطلبيات (1)'));
+      await settle(tester);
+      expect(find.textContaining('في أصناف بدون مورد'), findsOneWidget);
+
+      await tester.tap(find.text('اختار المورد'));
+      await settle(tester);
+      await tester.tap(find.text('مستودع النور'));
+      await settle(tester);
+      await tester.tap(find.text('اعمل الطلبيات (1)'));
+      await settle(tester);
+      expect(find.text('مسودة'), findsOneWidget); // switched to the orders tab
+
+      await tester.tap(find.text('مستودع النور'));
+      await settle(tester);
+      await tester.tap(find.text('انسخ الطلبية'));
+      await settle(tester);
+      expect(copied, contains('1. Amoxil 500 mg: 1 علبة'));
+      expect(copied, contains('طلبية من'));
+      expect(find.text('انبعتت'), findsWidgets);
+
+      await tester.tap(find.text('وصلت: فاتورة شراء'));
+      await settle(tester);
+      expect(find.text('Amoxil 500 mg'), findsOneWidget); // line filled in
+      await tester.enterText(
+        find.descendant(
+          of: find.widgetWithText(GlassTextField, 'سعر الشراء'),
+          matching: find.byType(TextField),
+        ),
+        '30',
+      );
+      await tester.sendKeyEvent(LogicalKeyboardKey.f9);
+      await settle(tester);
+      expect(find.text('انحفظت فاتورة الشراء'), findsOneWidget);
+      final stock = await tester.runAsync(() => LedgerRepository(db).loadStock());
+      expect(stock!.onHand(amox.id), 6);
+      final order = await tester.runAsync(() => db.select(db.purchaseOrders).getSingle());
+      expect(order!.status, 'received');
+      await unmount(tester);
+    });
+
+    testWidgets('order by WhatsApp: asks for the supplier number, then opens the chat', (
+      tester,
+    ) async {
+      final (device, supplier) = await seedSupplier(tester);
+      await tester.runAsync(
+        () => AccountingRepository(db, LedgerRepository(db)).createOrders({
+          supplier.id: [(amox.id, 4)],
+        }),
+      );
+      final opened = <(String, String?)>[];
+      await pumpApp(
+        tester,
+        overrides: [
+          whatsappProvider.overrideWithValue((number, {text}) async {
+            opened.add((number, text));
+            return true;
+          }),
+        ],
+      );
+      container.read(sessionProvider.notifier).signIn(device, owner);
+      await settle(tester);
+      container.read(routerProvider).go('${Routes.purchases}?tab=orders');
+      await settle(tester);
+      await tester.tap(find.text('مستودع النور'));
+      await settle(tester);
+      await tester.tap(find.text('ابعتها واتساب'));
+      await settle(tester);
+      expect(find.text('تعديل المورد'), findsOneWidget); // no number yet
+      await tester.enterText(
+        find.descendant(
+          of: find.widgetWithText(GlassTextField, 'رقم الواتساب (اختياري)'),
+          matching: find.byType(TextField),
+        ),
+        '٠٩٤٤ ١٢٣ ٤٥٦',
+      );
+      await tester.tap(find.text('حفظ'));
+      await settle(tester);
+      expect(opened.single.$1, '963944123456');
+      expect(opened.single.$2, contains('1. Amoxil 500 mg: 4 علبة'));
+      expect(find.text('انبعتت'), findsWidgets);
+      final saved = await tester.runAsync(
+        () => AccountingRepository(db, LedgerRepository(db)).supplier(supplier.id),
+      );
+      expect(saved!.phone, '0944 123 456');
+      await unmount(tester);
+    });
+
+    testWidgets('stocktake: an employee counts blind, the owner applies the difference', (
+      tester,
+    ) async {
+      await seed(tester);
+      late EmployeeRow rana;
+      late DeviceRow device;
+      await tester.runAsync(() async {
+        rana = await PeopleRepository(db).addEmployee(name: 'رنا', pin: '1111');
+        device = (await PeopleRepository(db).thisDevice())!;
+      });
+      await pumpApp(tester);
+      container.read(sessionProvider.notifier).signIn(device, rana);
+      await settle(tester);
+      container.read(routerProvider).go(Routes.stocktake);
+      await settle(tester);
+      await tester.tap(find.text('ابدأ جرد'));
+      await settle(tester);
+
+      await tester.enterText(find.byType(TextField).first, '6221000000011');
+      await tester.testTextInput.receiveAction(TextInputAction.search);
+      await settle(tester);
+      expect(find.text('5 علبة'), findsNothing); // blind: system quantity hidden
+      await tester.enterText(
+        find.descendant(
+          of: find.widgetWithText(GlassTextField, 'العلب المعدودة'),
+          matching: find.byType(TextField),
+        ),
+        '3',
+      );
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+      await settle(tester);
+      expect(find.textContaining('-2 علبة'), findsOneWidget);
+      expect(find.text('تطبيق الجرد على المخزون للمالك بس'), findsOneWidget);
+      expect(find.text('طبّق الجرد'), findsNothing);
+
+      container.read(sessionProvider.notifier).signIn(device, owner);
+      await settle(tester);
+      container.read(routerProvider).go(Routes.stocktake);
+      await settle(tester);
+      await tester.tap(find.text('طبّق الجرد'));
+      await settle(tester);
+      await tester.tap(find.text('تأكيد'));
+      await settle(tester);
+      expect(find.text('انطبّق الجرد: 1 تعديل'), findsOneWidget);
+      final stock = await tester.runAsync(() => LedgerRepository(db).loadStock());
+      expect(stock!.onHand(amox.id), 3);
+      expect(find.text('ابدأ جرد'), findsOneWidget); // session closed
       await unmount(tester);
     });
 

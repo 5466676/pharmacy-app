@@ -85,6 +85,9 @@ class SupplierLedger {
 
   int get totalOwed => _events.keys.map(balance).where((b) => b > 0).fold(0, (a, b) => a + b);
 
+  /// How many suppliers we owe money to.
+  int get owedCount => _events.keys.where((id) => balance(id) > 0).length;
+
   /// Statement lines, oldest first, with the running balance.
   List<(SupplierDebtEvent, int)> statement(String supplierId) {
     final list = [...?_events[supplierId]]
