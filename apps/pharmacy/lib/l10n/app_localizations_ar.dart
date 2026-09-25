@@ -602,4 +602,62 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get demoLoaded => 'انضافت بيانات تجريبية';
+
+  @override
+  String get navStaff => 'حسابات الموظفين';
+
+  @override
+  String get staffTitle => 'حسابات الموظفين';
+
+  @override
+  String get periodToday => 'اليوم';
+
+  @override
+  String get periodWeek => 'هالأسبوع';
+
+  @override
+  String get periodMonth => 'هالشهر';
+
+  @override
+  String get staffTotalSales => 'مجموع المبيعات';
+
+  @override
+  String get staffCashSales => 'نقدي';
+
+  @override
+  String get staffDebtSales => 'بالدين';
+
+  @override
+  String get staffPayments => 'دفعات ديون قبضها';
+
+  @override
+  String get staffCashToHandIn => 'المفروض يسلّم نقدي';
+
+  @override
+  String get staffDiscounts => 'حسومات';
+
+  @override
+  String get staffUnits => 'علب مباعة';
+
+  @override
+  String staffSalesCount(String count) {
+    return '$count فاتورة';
+  }
+
+  @override
+  String get staffNoActivity => 'ما في مبيعات بهالفترة';
+
+  @override
+  String get staffTopProducts => 'أكثر شي باعه';
+
+  @override
+  String get staffInvoices => 'فواتيره';
+
+  @override
+  String lineItem(String product, String qty) {
+    return '$product × $qty';
+  }
+
+  @override
+  String get staffCashHint => 'النقدي = المبيعات النقدية + دفعات الديون يلي قبضها';
 }

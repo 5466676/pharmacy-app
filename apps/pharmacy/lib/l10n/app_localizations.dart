@@ -1189,6 +1189,114 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'انضافت بيانات تجريبية'**
   String get demoLoaded;
+
+  /// No description provided for @navStaff.
+  ///
+  /// In ar, this message translates to:
+  /// **'حسابات الموظفين'**
+  String get navStaff;
+
+  /// No description provided for @staffTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'حسابات الموظفين'**
+  String get staffTitle;
+
+  /// No description provided for @periodToday.
+  ///
+  /// In ar, this message translates to:
+  /// **'اليوم'**
+  String get periodToday;
+
+  /// No description provided for @periodWeek.
+  ///
+  /// In ar, this message translates to:
+  /// **'هالأسبوع'**
+  String get periodWeek;
+
+  /// No description provided for @periodMonth.
+  ///
+  /// In ar, this message translates to:
+  /// **'هالشهر'**
+  String get periodMonth;
+
+  /// No description provided for @staffTotalSales.
+  ///
+  /// In ar, this message translates to:
+  /// **'مجموع المبيعات'**
+  String get staffTotalSales;
+
+  /// No description provided for @staffCashSales.
+  ///
+  /// In ar, this message translates to:
+  /// **'نقدي'**
+  String get staffCashSales;
+
+  /// No description provided for @staffDebtSales.
+  ///
+  /// In ar, this message translates to:
+  /// **'بالدين'**
+  String get staffDebtSales;
+
+  /// No description provided for @staffPayments.
+  ///
+  /// In ar, this message translates to:
+  /// **'دفعات ديون قبضها'**
+  String get staffPayments;
+
+  /// No description provided for @staffCashToHandIn.
+  ///
+  /// In ar, this message translates to:
+  /// **'المفروض يسلّم نقدي'**
+  String get staffCashToHandIn;
+
+  /// No description provided for @staffDiscounts.
+  ///
+  /// In ar, this message translates to:
+  /// **'حسومات'**
+  String get staffDiscounts;
+
+  /// No description provided for @staffUnits.
+  ///
+  /// In ar, this message translates to:
+  /// **'علب مباعة'**
+  String get staffUnits;
+
+  /// No description provided for @staffSalesCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} فاتورة'**
+  String staffSalesCount(String count);
+
+  /// No description provided for @staffNoActivity.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما في مبيعات بهالفترة'**
+  String get staffNoActivity;
+
+  /// No description provided for @staffTopProducts.
+  ///
+  /// In ar, this message translates to:
+  /// **'أكثر شي باعه'**
+  String get staffTopProducts;
+
+  /// No description provided for @staffInvoices.
+  ///
+  /// In ar, this message translates to:
+  /// **'فواتيره'**
+  String get staffInvoices;
+
+  /// No description provided for @lineItem.
+  ///
+  /// In ar, this message translates to:
+  /// **'{product} × {qty}'**
+  String lineItem(String product, String qty);
+
+  /// No description provided for @staffCashHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'النقدي = المبيعات النقدية + دفعات الديون يلي قبضها'**
+  String get staffCashHint;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

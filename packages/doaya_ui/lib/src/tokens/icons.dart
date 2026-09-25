@@ -59,4 +59,5 @@ abstract final class DoayaIcons {
   static const close = Icons.close_rounded;
   static const swap = Icons.swap_horiz_rounded;
   static const demo = Icons.science_outlined;
+  static const staff = Icons.badge_outlined;
 }

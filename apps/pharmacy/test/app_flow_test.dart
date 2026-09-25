@@ -1,3 +1,4 @@
+import 'package:doaya_core/doaya_core.dart';
 import 'package:doaya_pharmacy/app.dart';
 import 'package:doaya_pharmacy/data/catalog_repository.dart';
 import 'package:doaya_pharmacy/data/database.dart';
@@ -207,6 +208,41 @@ void main() {
       await settle(tester);
       expect(find.text('اختار زبون'), findsWidgets);
       expect(find.text('زبون جديد'), findsOneWidget);
+      await unmount(tester);
+    });
+
+    testWidgets('owner sees employee accounts; employees do not see admin pages', (tester) async {
+      await seed(tester);
+      late EmployeeRow rana;
+      late DeviceRow device;
+      // All writes happen before the app is pumped (see settle()).
+      await tester.runAsync(() async {
+        final people = PeopleRepository(db);
+        rana = await people.addEmployee(name: 'رنا', pin: '1111');
+        device = (await people.thisDevice())!;
+        await LedgerRepository(db).sell(
+          Session(deviceId: device.id, employeeId: rana.id),
+          cart: [CartLine(productId: amox.id, quantity: 1, unitPrice: const Money(4500, Currency.syp))],
+          currency: Currency.syp,
+          payment: PaymentType.cash,
+        );
+      });
+      await pumpApp(tester);
+
+      // As Rana: no admin section.
+      container.read(sessionProvider.notifier).signIn(device, rana);
+      await settle(tester);
+      expect(find.text('حسابات الموظفين'), findsNothing);
+      expect(find.text('الإعدادات'), findsNothing);
+
+      // As owner: the staff page lists Rana and her sale.
+      container.read(sessionProvider.notifier).signIn(device, owner);
+      await settle(tester);
+      await tester.tap(find.text('حسابات الموظفين'));
+      await settle(tester);
+      expect(find.text('رنا'), findsWidgets);
+      expect(find.text('المفروض يسلّم نقدي'), findsOneWidget);
+      expect(find.text('٤٥ ل.س'), findsWidgets);
       await unmount(tester);
     });
 

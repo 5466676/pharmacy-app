@@ -62,3 +62,9 @@ By default drift_flutter puts the SQLite file in the user's *Documents* folder. 
 
 ## 2026-09-25 · Never put "·" next to an Arabic-Indic number
 The middle dot "·" looks almost the same as the Arabic zero "٠". In the real app, "متوفر · ٢٤" read as **٢٤٠**, and "تمّ البيع · ٨١" as "٠٨١". For stock counts and money that's a safety problem. Strings with a number use a colon instead ("متوفر: ٢٤"). "·" is kept only between words.
+
+## 2026-09-25 · Event timestamps are stored in UTC
+drift stores dates as ISO text. Mixing local and UTC values makes range queries unreliable ("today", "this week"). Every ledger event and sale is stamped with `now().toUtc()`, and range bounds are converted to UTC before a query. The screens convert back to local time for display.
+
+## 2026-09-25 · Employee accounts (owner request)
+The owner sees, per employee and period (today / this week from Saturday / this month): number of sales, cash vs debt totals, discounts, debt payments collected, **cash to hand in** (cash sales + collected payments), units sold, top products, and every invoice with its lines. This is computed from the immutable sales and ledger events, so an employee can't edit it. Employees can't open this screen.

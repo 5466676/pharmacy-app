@@ -19,17 +19,27 @@ class AppShell extends ConsumerWidget {
 
   static const _compactBreakpoint = 1100.0;
 
-  int get _index {
-    final i = Routes.shell.indexWhere((r) => location.startsWith(r));
-    return i < 0 ? 0 : i;
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
     final session = ref.watch(requireSessionProvider);
     final pharmacyName = ref.watch(settingsProvider).value?['pharmacy_name'];
     final width = MediaQuery.sizeOf(context).width;
+
+    // Owner-only destinations are hidden from employees.
+    final mainItems = [
+      (Routes.dashboard, DoayaNavItem(icon: DoayaIcons.dashboard, label: l.navDashboard)),
+      (Routes.pos, DoayaNavItem(icon: DoayaIcons.pos, label: l.navPos)),
+      (Routes.inventory, DoayaNavItem(icon: DoayaIcons.inventory, label: l.navInventory)),
+      (Routes.debts, DoayaNavItem(icon: DoayaIcons.debts, label: l.navDebts)),
+    ];
+    final adminItems = [
+      if (session.isOwner) (Routes.staff, DoayaNavItem(icon: DoayaIcons.staff, label: l.navStaff)),
+      if (session.isOwner)
+        (Routes.settings, DoayaNavItem(icon: DoayaIcons.settings, label: l.navSettings)),
+    ];
+    final routes = [...mainItems, ...adminItems].map((e) => e.$1).toList();
+    final selected = routes.indexWhere((r) => location.startsWith(r));
 
     return CallbackShortcuts(
       bindings: {
@@ -41,22 +51,15 @@ class AppShell extends ConsumerWidget {
         body: DesktopShell(
           brandName: l.appName,
           compact: width < _compactBreakpoint,
-          selectedIndex: _index,
-          onSelect: (i) => context.go(Routes.shell[i]),
+          selectedIndex: selected < 0 ? 0 : selected,
+          onSelect: (i) => context.go(routes[i]),
           sections: [
-            DoayaNavSection(
-              title: l.navSectionMain,
-              items: [
-                DoayaNavItem(icon: DoayaIcons.dashboard, label: l.navDashboard),
-                DoayaNavItem(icon: DoayaIcons.pos, label: l.navPos),
-                DoayaNavItem(icon: DoayaIcons.inventory, label: l.navInventory),
-                DoayaNavItem(icon: DoayaIcons.debts, label: l.navDebts),
-              ],
-            ),
-            DoayaNavSection(
-              title: l.navSectionAdmin,
-              items: [DoayaNavItem(icon: DoayaIcons.settings, label: l.navSettings)],
-            ),
+            DoayaNavSection(title: l.navSectionMain, items: mainItems.map((e) => e.$2).toList()),
+            if (adminItems.isNotEmpty)
+              DoayaNavSection(
+                title: l.navSectionAdmin,
+                items: adminItems.map((e) => e.$2).toList(),
+              ),
           ],
           topBar: Row(
             children: [

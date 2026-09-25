@@ -345,5 +345,40 @@
   "saved": "انحفظ",
   "ownerOnly": "هالقسم للمالك بس",
   "loadDemo": "عبّي بيانات تجريبية",
-  "demoLoaded": "انضافت بيانات تجريبية"
+  "demoLoaded": "انضافت بيانات تجريبية",
+  "navStaff": "حسابات الموظفين",
+  "staffTitle": "حسابات الموظفين",
+  "periodToday": "اليوم",
+  "periodWeek": "هالأسبوع",
+  "periodMonth": "هالشهر",
+  "staffTotalSales": "مجموع المبيعات",
+  "staffCashSales": "نقدي",
+  "staffDebtSales": "بالدين",
+  "staffPayments": "دفعات ديون قبضها",
+  "staffCashToHandIn": "المفروض يسلّم نقدي",
+  "staffDiscounts": "حسومات",
+  "staffUnits": "علب مباعة",
+  "staffSalesCount": "{count} فاتورة",
+  "@staffSalesCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "staffNoActivity": "ما في مبيعات بهالفترة",
+  "staffTopProducts": "أكثر شي باعه",
+  "staffInvoices": "فواتيره",
+  "lineItem": "{product} × {qty}",
+  "@lineItem": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "qty": {
+        "type": "String"
+      }
+    }
+  },
+  "staffCashHint": "النقدي = المبيعات النقدية + دفعات الديون يلي قبضها"
 }

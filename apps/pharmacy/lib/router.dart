@@ -11,6 +11,7 @@ import 'ui/screens/pos_screen.dart';
 import 'ui/screens/product_screen.dart';
 import 'ui/screens/settings_screen.dart';
 import 'ui/screens/setup_screen.dart';
+import 'ui/screens/staff_screen.dart';
 import 'ui/shell.dart';
 
 abstract final class Routes {
@@ -21,13 +22,11 @@ abstract final class Routes {
   static const pos = '/pos';
   static const inventory = '/inventory';
   static const debts = '/debts';
+  static const staff = '/staff';
   static const settings = '/settings';
 
   static String product(String id) => '$inventory/product/$id';
   static const newProduct = '$inventory/new';
-
-  /// Shell destinations, in sidebar order.
-  static const shell = [dashboard, pos, inventory, debts, settings];
 }
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -83,6 +82,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: Routes.debts,
             pageBuilder: (_, _) => const NoTransitionPage(child: DebtsScreen()),
+          ),
+          GoRoute(
+            path: Routes.staff,
+            pageBuilder: (_, _) => const NoTransitionPage(child: StaffScreen()),
           ),
           GoRoute(
             path: Routes.settings,

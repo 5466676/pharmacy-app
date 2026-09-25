@@ -29,7 +29,7 @@ class LedgerRepository {
     id: _ids.generate(),
     deviceId: s.deviceId,
     employeeId: s.employeeId,
-    occurredAt: _clock(),
+    occurredAt: _clock().toUtc(),
   );
 
   // ─── Stock ────────────────────────────────────────────────────────────────
@@ -187,7 +187,7 @@ class LedgerRepository {
         discountMinor: discountMinor,
         deviceId: s.deviceId,
         employeeId: s.employeeId,
-        now: _clock(),
+        now: _clock().toUtc(),
         ids: _ids,
       );
       await _db
@@ -231,8 +231,42 @@ class LedgerRepository {
             ..limit(limit))
           .watch();
 
-  Stream<List<SaleRow>> watchSalesSince(DateTime since) =>
-      (_db.select(_db.sales)..where((t) => t.occurredAt.isBiggerOrEqualValue(since))).watch();
+  Stream<List<SaleRow>> watchSalesSince(DateTime since) => (_db.select(
+    _db.sales,
+  )..where((t) => t.occurredAt.isBiggerOrEqualValue(since.toUtc()))).watch();
+
+  /// Sales with `from <= occurredAt < to`, newest first.
+  Stream<List<SaleRow>> watchSalesBetween(DateTime from, DateTime to) =>
+      (_db.select(_db.sales)
+            ..where(
+              (t) =>
+                  t.occurredAt.isBiggerOrEqualValue(from.toUtc()) &
+                  t.occurredAt.isSmallerThanValue(to.toUtc()),
+            )
+            ..orderBy([(t) => OrderingTerm.desc(t.occurredAt)]))
+          .watch();
+
+  /// Lines of the sales in `[from, to)`.
+  Stream<List<SaleLineRow>> watchLinesBetween(DateTime from, DateTime to) {
+    final q =
+        _db.select(_db.saleLines).join([
+          innerJoin(_db.sales, _db.sales.id.equalsExp(_db.saleLines.saleId)),
+        ])..where(
+          _db.sales.occurredAt.isBiggerOrEqualValue(from.toUtc()) &
+              _db.sales.occurredAt.isSmallerThanValue(to.toUtc()),
+        );
+    return q.watch().map((rows) => rows.map((r) => r.readTable(_db.saleLines)).toList());
+  }
+
+  /// Debt payments received in `[from, to)` (who collected cash).
+  Stream<List<DebtEventRow>> watchPaymentsBetween(DateTime from, DateTime to) =>
+      (_db.select(_db.debtEvents)..where(
+            (t) =>
+                t.type.equals(DebtEventType.paymentReceived.wire) &
+                t.occurredAt.isBiggerOrEqualValue(from.toUtc()) &
+                t.occurredAt.isSmallerThanValue(to.toUtc()),
+          ))
+          .watch();
 
   Future<List<SaleLineRow>> linesOf(String saleId) =>
       (_db.select(_db.saleLines)..where((t) => t.saleId.equals(saleId))).get();
