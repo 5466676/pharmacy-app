@@ -1,4 +1,5 @@
 import ssl
+import sys
 
 from app.discovery import answer
 from app.tls import ensure_certificate, fingerprint_of
@@ -7,7 +8,8 @@ from app.tls import ensure_certificate, fingerprint_of
 def test_certificate_is_made_once_and_kept(tmp_path):
     first = ensure_certificate(tmp_path)
     assert first.cert_file.exists() and first.key_file.exists()
-    assert (first.key_file.stat().st_mode & 0o777) == 0o600
+    if sys.platform != "win32":  # Windows ignores POSIX modes (chmod only sets read-only)
+        assert (first.key_file.stat().st_mode & 0o777) == 0o600
     again = ensure_certificate(tmp_path)
     assert again.fingerprint == first.fingerprint  # same after a restart
     assert len(first.fingerprint) == 64
