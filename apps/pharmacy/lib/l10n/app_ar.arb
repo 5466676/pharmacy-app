@@ -714,5 +714,13 @@
   "@orderMessageHeader": {"placeholders": {"pharmacy": {"type": "String"}}},
   "orderMessageDate": "التاريخ: {date}",
   "@orderMessageDate": {"placeholders": {"date": {"type": "String"}}},
-  "orderMessageThanks": "ويعطيكن العافية"
+  "orderMessageThanks": "ويعطيكن العافية",
+  "editSupplier": "تعديل المورد",
+  "whatsappPhoneLabel": "رقم الواتساب",
+  "whatsappPhoneHint": "0944123456",
+  "invalidPhone": "الرقم مو صحيح",
+  "sendWhatsApp": "ابعتها واتساب",
+  "openChat": "واتساب",
+  "errNoPhone": "ما في رقم واتساب لهالمورد، ضيفه هون",
+  "whatsappFailed": "ما قدرنا نفتح واتساب: انسخت الطلبية، الصقها إنت"
 }

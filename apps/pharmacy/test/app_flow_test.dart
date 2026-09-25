@@ -8,6 +8,7 @@ import 'package:doaya_pharmacy/data/people_repository.dart';
 import 'package:doaya_pharmacy/data/till_repository.dart';
 import 'package:doaya_pharmacy/providers.dart';
 import 'package:doaya_pharmacy/router.dart';
+import 'package:doaya_pharmacy/ui/whatsapp.dart';
 import 'package:doaya_ui/doaya_ui.dart';
 import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:drift/native.dart';
@@ -15,6 +16,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 
 /// Lets drift's real async work finish between frames.
@@ -37,11 +39,13 @@ void main() {
   late AppDatabase db;
   late ProviderContainer container;
 
-  Future<void> pumpApp(WidgetTester tester) async {
+  Future<void> pumpApp(WidgetTester tester, {List<Override> overrides = const []}) async {
     tester.view.physicalSize = const Size(1440, 900);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
-    container = ProviderContainer(overrides: [databaseProvider.overrideWithValue(db)]);
+    container = ProviderContainer(
+      overrides: [databaseProvider.overrideWithValue(db), ...overrides],
+    );
     await tester.pumpWidget(
       UncontrolledProviderScope(container: container, child: const PharmacyApp()),
     );
@@ -687,6 +691,53 @@ void main() {
       expect(stock!.onHand(amox.id), 6);
       final order = await tester.runAsync(() => db.select(db.purchaseOrders).getSingle());
       expect(order!.status, 'received');
+      await unmount(tester);
+    });
+
+    testWidgets('order by WhatsApp: asks for the supplier number, then opens the chat', (
+      tester,
+    ) async {
+      final (device, supplier) = await seedSupplier(tester);
+      await tester.runAsync(
+        () => AccountingRepository(db, LedgerRepository(db)).createOrders({
+          supplier.id: [(amox.id, 4)],
+        }),
+      );
+      final opened = <(String, String?)>[];
+      await pumpApp(
+        tester,
+        overrides: [
+          whatsappProvider.overrideWithValue((number, {text}) async {
+            opened.add((number, text));
+            return true;
+          }),
+        ],
+      );
+      container.read(sessionProvider.notifier).signIn(device, owner);
+      await settle(tester);
+      container.read(routerProvider).go('${Routes.purchases}?tab=orders');
+      await settle(tester);
+      await tester.tap(find.text('مستودع النور'));
+      await settle(tester);
+      await tester.tap(find.text('ابعتها واتساب'));
+      await settle(tester);
+      expect(find.text('تعديل المورد'), findsOneWidget); // no number yet
+      await tester.enterText(
+        find.descendant(
+          of: find.widgetWithText(GlassTextField, 'رقم الواتساب (اختياري)'),
+          matching: find.byType(TextField),
+        ),
+        '٠٩٤٤ ١٢٣ ٤٥٦',
+      );
+      await tester.tap(find.text('حفظ'));
+      await settle(tester);
+      expect(opened.single.$1, '963944123456');
+      expect(opened.single.$2, contains('1. Amoxil 500 mg: 4 علبة'));
+      expect(find.text('انبعتت'), findsWidgets);
+      final saved = await tester.runAsync(
+        () => AccountingRepository(db, LedgerRepository(db)).supplier(supplier.id),
+      );
+      expect(saved!.phone, '0944 123 456');
       await unmount(tester);
     });
 

@@ -51,6 +51,23 @@ class AccountingRepository {
     return (await supplier(id))!;
   }
 
+  Future<SupplierRow> updateSupplier(
+    String id, {
+    required String name,
+    String? phone,
+    String? repName,
+  }) async {
+    await (_db.update(_db.suppliers)..where((t) => t.id.equals(id))).write(
+      SuppliersCompanion(
+        name: Value(cleanText(name) ?? ''),
+        phone: Value(cleanText(phone)),
+        repName: Value(cleanText(repName)),
+        updatedAt: Value(_clock()),
+      ),
+    );
+    return (await supplier(id))!;
+  }
+
   Future<SupplierRow?> supplier(String id) =>
       (_db.select(_db.suppliers)..where((t) => t.id.equals(id))).getSingleOrNull();
 

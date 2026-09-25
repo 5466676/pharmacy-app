@@ -24,3 +24,15 @@ String? cleanText(String? s) {
   final t = toLatinDigits(s.trim());
   return t.isEmpty ? null : t;
 }
+
+/// A phone number in the international form WhatsApp links need (digits
+/// only, country code first), or null when it doesn't look like one.
+/// Local Syrian numbers get the 963 code: "0944 123 456" → "963944123456".
+String? whatsappNumber(String? phone, {String countryCode = '963'}) {
+  if (phone == null) return null;
+  var d = toLatinDigits(phone).replaceAll(RegExp(r'[^0-9]'), '');
+  if (d.startsWith('00')) d = d.substring(2);
+  if (d.startsWith('0')) d = '$countryCode${d.substring(1)}';
+  if (d.length == 9 && d.startsWith('9')) d = '$countryCode$d'; // 944123456
+  return d.length >= 10 && d.length <= 15 ? d : null;
+}

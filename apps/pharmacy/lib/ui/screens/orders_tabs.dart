@@ -11,7 +11,8 @@ import '../../providers.dart';
 import '../../router.dart';
 import '../format.dart';
 import '../widgets.dart';
-import 'purchases_screen.dart' show showSupplierPicker;
+import '../whatsapp.dart';
+import 'purchases_screen.dart' show showAddSupplierDialog, showSupplierPicker;
 
 typedef LastPurchase = ({String supplierId, int unitPriceMinor, int piecesPerUnit});
 
@@ -303,22 +304,35 @@ class _OrderDialog extends ConsumerWidget {
     final acc = ref.read(accountingProvider);
     final open = order.status != 'received';
 
+    String message() => orderMessage(
+      l,
+      pharmacy: ref.read(settingsProvider).value?['pharmacy_name'] ?? l.appName,
+      date: ref.read(clockProvider)(),
+      lines: [for (final x in lines) (products[x.productId]?.tradeName ?? l.none, x.quantity)],
+    );
+
     Future<void> copy() async {
-      final pharmacy = ref.read(settingsProvider).value?['pharmacy_name'] ?? l.appName;
-      await Clipboard.setData(
-        ClipboardData(
-          text: orderMessage(
-            l,
-            pharmacy: pharmacy,
-            date: ref.read(clockProvider)(),
-            lines: [
-              for (final x in lines) (products[x.productId]?.tradeName ?? l.none, x.quantity),
-            ],
-          ),
-        ),
-      );
+      await Clipboard.setData(ClipboardData(text: message()));
       if (order.status == 'draft') await acc.setOrderStatus(orderId, 'sent');
       if (context.mounted) toast(context, l.orderCopied);
+    }
+
+    // Opens the supplier's chat with the order typed in. Without a number,
+    // asks for it first. The message is also copied, in case WhatsApp
+    // doesn't take the text.
+    Future<void> sendWhatsApp() async {
+      var number = whatsappNumber(supplier?.phone);
+      if (number == null && supplier != null) {
+        toast(context, l.errNoPhone, error: true);
+        final updated = await showAddSupplierDialog(context, ref, existing: supplier);
+        number = whatsappNumber(updated?.phone);
+      }
+      if (number == null) return;
+      final text = message();
+      await Clipboard.setData(ClipboardData(text: text));
+      final opened = await ref.read(whatsappProvider)(number, text: text);
+      if (order.status == 'draft') await acc.setOrderStatus(orderId, 'sent');
+      if (!opened && context.mounted) toast(context, l.whatsappFailed, error: true);
     }
 
     return Dialog(
@@ -388,11 +402,12 @@ class _OrderDialog extends ConsumerWidget {
                 children: [
                   if (open && lines.isNotEmpty) ...[
                     SagePillButton(
-                      label: l.copyOrder,
-                      icon: DoayaIcons.share,
+                      label: l.sendWhatsApp,
+                      icon: DoayaIcons.chat,
                       size: PillSize.small,
-                      onPressed: copy,
+                      onPressed: sendWhatsApp,
                     ),
+                    GlassPillButton(label: l.copyOrder, icon: DoayaIcons.share, onPressed: copy),
                     GlassPillButton(
                       label: l.receiveOrder,
                       icon: DoayaIcons.receive,

@@ -2383,6 +2383,54 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'ويعطيكن العافية'**
   String get orderMessageThanks;
+
+  /// No description provided for @editSupplier.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل المورد'**
+  String get editSupplier;
+
+  /// No description provided for @whatsappPhoneLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الواتساب'**
+  String get whatsappPhoneLabel;
+
+  /// No description provided for @whatsappPhoneHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'0944123456'**
+  String get whatsappPhoneHint;
+
+  /// No description provided for @invalidPhone.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرقم مو صحيح'**
+  String get invalidPhone;
+
+  /// No description provided for @sendWhatsApp.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابعتها واتساب'**
+  String get sendWhatsApp;
+
+  /// No description provided for @openChat.
+  ///
+  /// In ar, this message translates to:
+  /// **'واتساب'**
+  String get openChat;
+
+  /// No description provided for @errNoPhone.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما في رقم واتساب لهالمورد، ضيفه هون'**
+  String get errNoPhone;
+
+  /// No description provided for @whatsappFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما قدرنا نفتح واتساب: انسخت الطلبية، الصقها إنت'**
+  String get whatsappFailed;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -340,24 +340,25 @@ class _SupplierList extends ConsumerWidget {
   }
 }
 
-/// New-supplier dialog; returns the created supplier.
+/// New-supplier dialog (or edit [existing]); returns the saved supplier.
 Future<SupplierRow?> showAddSupplierDialog(
   BuildContext context,
   WidgetRef ref, {
   String initialName = '',
+  SupplierRow? existing,
 }) async {
   final l = AppLocalizations.of(context);
   final form = GlobalKey<FormState>();
-  final name = TextEditingController(text: initialName);
-  final rep = TextEditingController();
-  final phone = TextEditingController();
+  final name = TextEditingController(text: existing?.name ?? initialName);
+  final rep = TextEditingController(text: existing?.repName);
+  final phone = TextEditingController(text: existing?.phone);
   void submit() {
     if (form.currentState!.validate()) Navigator.of(context).pop(true);
   }
 
   final ok = await showDoayaDialog<bool>(
     context: context,
-    title: l.addSupplier,
+    title: existing == null ? l.addSupplier : l.editSupplier,
     content: Form(
       key: form,
       child: Column(
@@ -372,10 +373,13 @@ Future<SupplierRow?> showAddSupplierDialog(
           GlassTextField(label: '${l.repNameLabel} (${l.optional})', controller: rep),
           const SizedBox(height: DoayaSpacing.l),
           GlassTextField(
-            label: '${l.phoneLabel} (${l.optional})',
+            label: '${l.whatsappPhoneLabel} (${l.optional})',
+            hint: l.whatsappPhoneHint,
             controller: phone,
             keyboardType: TextInputType.phone,
             textDirection: TextDirection.ltr,
+            validator: (v) =>
+                (v ?? '').trim().isNotEmpty && whatsappNumber(v) == null ? l.invalidPhone : null,
             onSubmitted: (_) => submit(),
           ),
         ],
@@ -387,9 +391,16 @@ Future<SupplierRow?> showAddSupplierDialog(
     ],
   );
   if (ok != true) return null;
-  return ref
-      .read(accountingProvider)
-      .addSupplier(name: name.text, repName: rep.text, phone: toLatinDigits(phone.text));
+  final acc = ref.read(accountingProvider);
+  if (existing != null) {
+    return acc.updateSupplier(
+      existing.id,
+      name: name.text,
+      repName: rep.text,
+      phone: toLatinDigits(phone.text),
+    );
+  }
+  return acc.addSupplier(name: name.text, repName: rep.text, phone: toLatinDigits(phone.text));
 }
 
 /// Supplier picker with search and "new supplier".

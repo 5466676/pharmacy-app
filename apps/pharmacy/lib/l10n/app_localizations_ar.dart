@@ -1263,4 +1263,28 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get orderMessageThanks => 'ويعطيكن العافية';
+
+  @override
+  String get editSupplier => 'تعديل المورد';
+
+  @override
+  String get whatsappPhoneLabel => 'رقم الواتساب';
+
+  @override
+  String get whatsappPhoneHint => '0944123456';
+
+  @override
+  String get invalidPhone => 'الرقم مو صحيح';
+
+  @override
+  String get sendWhatsApp => 'ابعتها واتساب';
+
+  @override
+  String get openChat => 'واتساب';
+
+  @override
+  String get errNoPhone => 'ما في رقم واتساب لهالمورد، ضيفه هون';
+
+  @override
+  String get whatsappFailed => 'ما قدرنا نفتح واتساب: انسخت الطلبية، الصقها إنت';
 }
