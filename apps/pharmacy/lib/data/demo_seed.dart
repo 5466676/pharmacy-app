@@ -94,7 +94,7 @@ Future<void> seedDemoData(
     (
       const ProductDraft(
         tradeName: 'Omega 3',
-        arabicName: 'أوميغا ٣',
+        arabicName: 'أوميغا 3',
         activeIngredient: 'fish oil',
         form: 'كبسولات جيلاتينية',
         shelf: 'D1',

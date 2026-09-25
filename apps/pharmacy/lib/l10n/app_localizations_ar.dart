@@ -85,7 +85,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get ownerNameLabel => 'اسمك (المالك)';
 
   @override
-  String get pinLabel => 'رمز الدخول (٤ أرقام)';
+  String get pinLabel => 'رمز الدخول (4 أرقام)';
 
   @override
   String get pinConfirmLabel => 'أعد الرمز';
@@ -94,7 +94,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get pinMismatch => 'الرمزين مو متطابقين';
 
   @override
-  String get pinInvalid => 'الرمز لازم يكون ٤ أرقام';
+  String get pinInvalid => 'الرمز لازم يكون 4 أرقام';
 
   @override
   String get startButton => 'ابدأ';
@@ -681,7 +681,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get unitsPerPackLabel => 'عدد الظروف بالعلبة';
 
   @override
-  String get unitsPerPackHelp => '١ = بيع بالعلبة بس';
+  String get unitsPerPackHelp => '1 = بيع بالعلبة بس';
 
   @override
   String stripPriceLabel(String symbol) {

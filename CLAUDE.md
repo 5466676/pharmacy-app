@@ -21,7 +21,7 @@ Full spec: `docs/SPEC.md`. Decisions log: `docs/DECISIONS.md`. Status: `docs/PRO
 
 **Engineering**
 - No hardcoded colors, sizes or strings in widgets: use `doaya_ui` tokens and ARB files.
-- Arabic RTL only (v1). Numbers in Arabic-Indic digits (`formatArabicNumber` / `toArabicDigits`). Drug names stay Latin, rendered LTR (`LatinText`).
+- Arabic RTL only (v1). **All numbers in English digits** (1,234.50) via `formatNumber`, even inside Arabic text (owner's decision). Accept Arabic-keyboard digits in input (`toLatinDigits`). Drug names stay Latin, rendered LTR (`LatinText`).
 - **Ask before adding any dependency** not in the stack below.
 - Tests for ledger, sync and red-flag logic come before the UI that uses them.
 - Pharmacy desktop: **no `BackdropFilter`** (use `DoayaTheme.solid()`). Mobile: max ~3 blurred surfaces per screen, only on large surfaces.
@@ -53,7 +53,7 @@ cd packages/doaya_ui/example && flutter run -d chrome   # component gallery (or 
 flutter analyze                               # at repo root
 flutter build web --no-web-resources-cdn      # ALWAYS this flag: no Google CDNs (see DECISIONS)
 ```
-Never put "·" next to an Arabic-Indic number (it reads as ٠); use ":" or "،".
+Prefer ":" or "،" over "·" next to numbers (clearer at the counter).
 After adding a new icon, run `flutter clean` before a release build: the icon tree-shaker's cache went stale and dropped the new glyphs.
 Never put glyphs missing from Amiri/Readex Pro (←, ✓, emoji) in strings — use `DoayaIcons`.
 Regenerate localizations after editing an `.arb` file: `flutter gen-l10n` inside that package.

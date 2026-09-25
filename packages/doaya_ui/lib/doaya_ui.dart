@@ -1,7 +1,7 @@
 /// Doaya "dark glass" design system.
 library;
 
-export 'src/format/arabic_numbers.dart';
+export 'src/format/numbers.dart';
 export 'src/theme/doaya_theme.dart';
 export 'src/theme/doaya_tokens.dart';
 export 'src/tokens/colors.dart';

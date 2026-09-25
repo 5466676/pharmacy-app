@@ -71,12 +71,12 @@ void main() {
                 child: ProductCard(
                   image: const Icon(DoayaIcons.medicine),
                   name: 'Omega 3',
-                  price: '${formatArabicNumber(45000)} ل.س',
+                  price: '${formatNumber(45000)} ل.س',
                   onFavorite: () => fav++,
                   favoriteTooltip: 'المفضلة',
                 ),
               ),
-              StatCard(icon: DoayaIcons.sales, label: 'مبيعات اليوم', value: formatArabicNumber(3)),
+              StatCard(icon: DoayaIcons.sales, label: 'مبيعات اليوم', value: formatNumber(3)),
               const StatusChip(label: 'نفد', tone: StatusTone.danger),
               const StatusChip(label: 'جاهز', tone: StatusTone.success),
               const StatusChip(label: 'متزامن', dot: true),
@@ -89,7 +89,7 @@ void main() {
     );
     expect(tester.takeException(), isNull);
     expect(find.text('Omega 3'), findsOneWidget);
-    expect(find.text('٤٥٬٠٠٠ ل.س'), findsOneWidget);
+    expect(find.text('45,000 ل.س'), findsOneWidget);
     await tester.tap(find.byIcon(DoayaIcons.heart));
     expect(fav, 1);
   });
@@ -113,7 +113,7 @@ void main() {
             items: const [
               DoayaNavItem(icon: DoayaIcons.home, label: 'الرئيسية'),
               DoayaNavItem(icon: DoayaIcons.chat, label: 'استشارة'),
-              DoayaNavItem(icon: DoayaIcons.bag, label: 'طلباتي', badge: '٢'),
+              DoayaNavItem(icon: DoayaIcons.bag, label: 'طلباتي', badge: '2'),
             ],
           ),
         ),
@@ -153,7 +153,7 @@ void main() {
                       title: 'العمليات',
                       items: [
                         DoayaNavItem(icon: DoayaIcons.pos, label: 'البيع'),
-                        DoayaNavItem(icon: DoayaIcons.cases, label: 'حالات المساعد', badge: '٣'),
+                        DoayaNavItem(icon: DoayaIcons.cases, label: 'حالات المساعد', badge: '3'),
                       ],
                     ),
                   ],

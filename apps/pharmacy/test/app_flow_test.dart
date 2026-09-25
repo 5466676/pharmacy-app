@@ -128,7 +128,7 @@ void main() {
       await tester.tap(find.text('سامر'));
       await settle(tester);
 
-      for (final d in ['٠', '٠', '٠', '٠']) {
+      for (final d in ['0', '0', '0', '0']) {
         await tester.tap(find.text(d).last);
         await tester.pump();
       }
@@ -176,7 +176,7 @@ void main() {
       await tester.enterText(find.byType(TextField).first, '6221000000011');
       await tester.testTextInput.receiveAction(TextInputAction.search);
       await settle(tester);
-      expect(find.text('٢'), findsOneWidget);
+      expect(find.text('2'), findsOneWidget);
 
       // Enter on the empty search completes the sale.
       await tester.testTextInput.receiveAction(TextInputAction.search);
@@ -198,7 +198,7 @@ void main() {
         await tester.testTextInput.receiveAction(TextInputAction.search);
         await settle(tester);
       }
-      expect(find.text('٥'), findsOneWidget);
+      expect(find.text('5'), findsOneWidget);
       expect(find.text('الكمية مو متوفرة بالمخزون'), findsOneWidget);
 
       await tester.enterText(find.byType(TextField).first, '000');
@@ -250,7 +250,7 @@ void main() {
       await settle(tester);
       expect(find.text('رنا'), findsWidgets);
       expect(find.text('المفروض يسلّم نقدي'), findsOneWidget);
-      expect(find.text('٤٥ ل.س'), findsWidgets);
+      expect(find.text('45 ل.س'), findsWidgets);
       await unmount(tester);
     });
 
@@ -286,10 +286,10 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
       await settle(tester);
       // 6 strips = 2 boxes, under the default threshold of 5 boxes.
-      expect(find.text('باقي ٢ علبة'), findsOneWidget);
+      expect(find.text('باقي 2 علبة'), findsOneWidget);
       await tester.tap(find.text('ظرف'));
       await settle(tester);
-      expect(find.text('٦٫٥٠ ل.س للظرف'), findsOneWidget);
+      expect(find.text('6.50 ل.س للظرف'), findsOneWidget);
 
       await tester.testTextInput.receiveAction(TextInputAction.search); // Enter = complete
       await settle(tester);
@@ -331,7 +331,7 @@ void main() {
       await settle(tester);
       await tester.tap(find.byTooltip('+')); // capped at 2
       await settle(tester);
-      expect(find.text('٩٠ ل.س'), findsWidgets);
+      expect(find.text('90 ل.س'), findsWidgets);
       await tester.tap(find.text('تأكيد المرتجع'));
       await settle(tester);
 
@@ -384,9 +384,9 @@ void main() {
       await tester.enterText(fields.at(0), '5'); // discount
       await tester.enterText(fields.at(1), '100'); // received
       await settle(tester);
-      expect(find.text('٨٥ ل.س'), findsWidgets); // total
+      expect(find.text('85 ل.س'), findsWidgets); // total
       expect(find.text('الباقي للزبون'), findsOneWidget);
-      expect(find.text('١٥ ل.س'), findsOneWidget); // change
+      expect(find.text('15 ل.س'), findsOneWidget); // change
 
       // Enter in the amount-received field completes the sale.
       await tester.showKeyboard(fields.at(1));
@@ -398,7 +398,7 @@ void main() {
       // Till: float 100 + cash sale 85 = 185 expected.
       await tester.tap(find.text('الصندوق'));
       await settle(tester);
-      expect(find.text('١٨٥ ل.س'), findsOneWidget);
+      expect(find.text('185 ل.س'), findsOneWidget);
       await unmount(tester);
     });
 
@@ -441,7 +441,7 @@ void main() {
       await tester.enterText(find.byType(TextFormField).last, '45');
       await tester.tap(find.text('تأكيد'));
       await settle(tester);
-      expect(find.text('عجز ٥ ل.س'), findsOneWidget);
+      expect(find.text('عجز 5 ل.س'), findsOneWidget);
       await unmount(tester);
     });
 

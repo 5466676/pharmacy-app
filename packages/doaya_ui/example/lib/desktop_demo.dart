@@ -42,11 +42,7 @@ class _DesktopDemoState extends State<DesktopDemo> {
               items: [
                 DoayaNavItem(icon: DoayaIcons.pos, label: l.sideSale),
                 DoayaNavItem(icon: DoayaIcons.debts, label: l.sideDebts),
-                DoayaNavItem(
-                  icon: DoayaIcons.cases,
-                  label: l.sideCases,
-                  badge: formatArabicNumber(3),
-                ),
+                DoayaNavItem(icon: DoayaIcons.cases, label: l.sideCases, badge: formatNumber(3)),
               ],
             ),
             DoayaNavSection(

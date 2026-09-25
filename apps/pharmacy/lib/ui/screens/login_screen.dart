@@ -68,7 +68,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   KeyEventResult _onKey(FocusNode _, KeyEvent event) {
     if (event is! KeyDownEvent || _selected == null) return KeyEventResult.ignored;
-    final ch = event.character;
+    final ch = event.character == null ? null : toLatinDigits(event.character!);
     if (ch != null && RegExp(r'^[0-9]$').hasMatch(ch)) {
       _type(ch);
       return KeyEventResult.handled;
@@ -236,8 +236,7 @@ class _PinPad extends StatelessWidget {
         ),
       ),
     );
-    Widget digit(int d) =>
-        key(Text(toArabicDigits('$d'), style: DoayaTypography.titleSmall), () => onDigit('$d'));
+    Widget digit(int d) => key(Text('$d', style: DoayaTypography.titleSmall), () => onDigit('$d'));
 
     return Column(
       children: [

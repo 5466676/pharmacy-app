@@ -239,7 +239,7 @@ abstract class AppLocalizations {
   /// No description provided for @pinLabel.
   ///
   /// In ar, this message translates to:
-  /// **'رمز الدخول (٤ أرقام)'**
+  /// **'رمز الدخول (4 أرقام)'**
   String get pinLabel;
 
   /// No description provided for @pinConfirmLabel.
@@ -257,7 +257,7 @@ abstract class AppLocalizations {
   /// No description provided for @pinInvalid.
   ///
   /// In ar, this message translates to:
-  /// **'الرمز لازم يكون ٤ أرقام'**
+  /// **'الرمز لازم يكون 4 أرقام'**
   String get pinInvalid;
 
   /// No description provided for @startButton.
@@ -1331,7 +1331,7 @@ abstract class AppLocalizations {
   /// No description provided for @unitsPerPackHelp.
   ///
   /// In ar, this message translates to:
-  /// **'١ = بيع بالعلبة بس'**
+  /// **'1 = بيع بالعلبة بس'**
   String get unitsPerPackHelp;
 
   /// No description provided for @stripPriceLabel.

@@ -36,11 +36,15 @@ class Money implements Comparable<Money> {
 
   const Money.zero(this.currency) : minor = 0;
 
-  /// Parses user input like `45`, `45.5`, `45.50`, `45,5` or `٤٥٫٥` into
-  /// minor units. Returns null for invalid input or too many decimals.
+  /// Parses user input like `45`, `45.5`, `1,250.50` (English digits, ","
+  /// thousands) — also accepts Arabic-keyboard input such as `٤٥٫٥` or
+  /// `١٬٢٥٠`. Returns null for invalid input or too many decimals.
   static Money? tryParse(String input, Currency currency) {
-    var s = _latinDigits(input.trim()).replaceAll('٬', '').replaceAll(' ', '');
-    s = s.replaceAll('٫', '.').replaceAll(',', '.');
+    final s = _latinDigits(input.trim())
+        .replaceAll('\u066C', '') // Arabic thousands separator
+        .replaceAll(',', '') // English thousands separator
+        .replaceAll(' ', '')
+        .replaceAll('\u066B', '.'); // Arabic decimal separator
     if (!RegExp(r'^\d+(\.\d+)?$').hasMatch(s)) return null;
     final parts = s.split('.');
     final frac = parts.length > 1 ? parts[1] : '';

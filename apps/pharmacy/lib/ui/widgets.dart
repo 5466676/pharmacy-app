@@ -82,7 +82,7 @@ class EmptyHint extends StatelessWidget {
   );
 }
 
-/// "٤ علبة" / "٢ علبة و١ ظرف" / "٢ ظرف", from a stock count in pieces.
+/// "4 علبة" / "2 علبة و1 ظرف" / "2 ظرف", from a stock count in pieces.
 String formatStock(AppLocalizations l, int pieces, int unitsPerPack) {
   if (unitsPerPack <= 1) return l.units(formatQty(pieces));
   final (packs, loose) = splitPieces(pieces, unitsPerPack);
@@ -91,7 +91,7 @@ String formatStock(AppLocalizations l, int pieces, int unitsPerPack) {
   return l.packsAndStrips(formatQty(packs), formatQty(loose));
 }
 
-/// Stock chip: "متوفر: ٢٤ علبة" / "باقي ٣ علبة" / "نفد".
+/// Stock chip: "متوفر: 24 علبة" / "باقي 3 علبة" / "نفد".
 class StockChip extends StatelessWidget {
   const StockChip({super.key, required this.product, required this.onHand});
 
@@ -171,12 +171,9 @@ String stockEventLabel(AppLocalizations l, StockEventType t) => switch (t) {
   StockEventType.expiredRemoved => l.evExpiredRemoved,
 };
 
-/// Parses "d/m/yyyy" (Latin or Arabic digits). Null if empty or invalid.
+/// Parses "d/m/yyyy" (English or Arabic-keyboard digits). Null if empty or invalid.
 DateTime? parseDate(String input) {
-  final s = input.trim().replaceAllMapped(
-    RegExp('[٠-٩]'),
-    (m) => String.fromCharCode(m[0]!.codeUnitAt(0) - 0x0660 + 0x30),
-  );
+  final s = toLatinDigits(input.trim());
   final m = RegExp(r'^(\d{1,2})[/\-.](\d{1,2})[/\-.](\d{2,4})$').firstMatch(s);
   if (m == null) return null;
   final d = int.parse(m[1]!), mo = int.parse(m[2]!);
@@ -268,7 +265,7 @@ Future<(int, String?)?> askAmount(
   );
 }
 
-/// "عجز ١٠ ل.س" / "زيادة ٥ ل.س" / "مطابق".
+/// "عجز 10 ل.س" / "زيادة 5 ل.س" / "مطابق".
 StatusChip differenceChip(AppLocalizations l, int? difference, Currency c) {
   if (difference == null) return StatusChip(label: l.shiftOpenNow, dot: true);
   if (difference == 0) return StatusChip(label: l.balanced, tone: StatusTone.accent);

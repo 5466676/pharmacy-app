@@ -43,7 +43,7 @@ Patients pay a monthly subscription. Pharmacies pay a small monthly fee and rece
 
 ### 2.4 Engineering
 - No hardcoded colors, sizes, or strings in widgets — everything from `doaya_ui` and ARB files.
-- Arabic RTL is the default and only language in v1. Numbers render in Arabic-Indic digits. Drug names stay in Latin script and render LTR inside RTL text.
+- Arabic RTL is the default and only language in v1. All numbers render in English digits (1,234.50), also inside Arabic text (owner's decision, 2026-09-25). Drug names stay in Latin script and render LTR inside RTL text.
 - Ask before adding any dependency not listed in §3.
 - Tests for ledger, sync, and red-flag logic are written before the UI that uses them.
 

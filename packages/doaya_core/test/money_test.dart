@@ -22,12 +22,12 @@ void main() {
     expect(() => const Money(1, syp) + const Money(1, Currency.usd), throwsArgumentError);
   });
 
-  test('parses Latin and Arabic input', () {
+  test('parses English input, and Arabic-keyboard input', () {
     expect(Money.tryParse('45', syp)!.minor, 4500);
     expect(Money.tryParse('45.5', syp)!.minor, 4550);
-    expect(Money.tryParse('45,05', syp)!.minor, 4505);
-    expect(Money.tryParse('٤٥٫٥', syp)!.minor, 4550);
-    expect(Money.tryParse('١٬٢٥٠', syp)!.minor, 125000);
+    expect(Money.tryParse('1,250.05', syp)!.minor, 125005);
+    expect(Money.tryParse('\u0664\u0665\u066B\u0665', syp)!.minor, 4550); // ٤٥٫٥
+    expect(Money.tryParse('\u0661\u066C\u0662\u0665\u0660', syp)!.minor, 125000); // ١٬٢٥٠
     expect(Money.tryParse(' 7 ', syp)!.minor, 700);
   });
 

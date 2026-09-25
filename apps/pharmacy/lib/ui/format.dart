@@ -1,10 +1,10 @@
 import 'package:doaya_core/doaya_core.dart';
 import 'package:doaya_ui/doaya_ui.dart';
 
-/// "٤٥٫٥٠ ل.س" — fraction only when non-zero. Symbol comes from settings.
+/// "45.50 ل.س" — fraction only when non-zero. Symbol comes from settings.
 String formatMoney(int minor, Currency c) {
   final m = Money(minor, c);
-  final digits = formatArabicNumber(m.majorValue, decimals: m.hasFraction ? c.decimals : 0);
+  final digits = formatNumber(m.majorValue, decimals: m.hasFraction ? c.decimals : 0);
   return '$digits ${c.symbol}';
 }
 
@@ -14,10 +14,10 @@ String moneyInput(int minor, Currency c) {
   return m.hasFraction ? m.majorValue.toStringAsFixed(c.decimals) : '${minor ~/ c.minorPerMajor}';
 }
 
-String formatQty(int n) => formatArabicNumber(n);
+String formatQty(int n) => formatNumber(n);
 
-/// Signed change ("+٦" / "−١") that keeps its sign on the correct side in RTL.
-String formatSignedQty(int n) => n > 0 ? '\u061C+${formatArabicNumber(n)}' : formatArabicNumber(n);
+/// Signed change ("+6" / "−1") that keeps its sign on the correct side in RTL.
+String formatSignedQty(int n) => n > 0 ? '\u061C+${formatNumber(n)}' : formatNumber(n);
 
 /// Signed money change, same RTL-safe sign.
 String formatSignedMoney(int minor, Currency c) {
@@ -25,18 +25,16 @@ String formatSignedMoney(int minor, Currency c) {
   return minor > 0 ? '\u061C+${formatMoney(minor, c)}' : '\u061C-${formatMoney(-minor, c)}';
 }
 
-/// d/m/yyyy in Arabic-Indic digits.
+/// d/m/yyyy.
 String formatDate(DateTime d) {
   final l = d.toLocal();
-  return toArabicDigits('${l.day}/${l.month}/${l.year}');
+  return '${l.day}/${l.month}/${l.year}';
 }
 
-/// HH:mm in Arabic-Indic digits.
+/// HH:mm.
 String formatTime(DateTime d) {
   final l = d.toLocal();
-  return toArabicDigits(
-    '${l.hour.toString().padLeft(2, '0')}:${l.minute.toString().padLeft(2, '0')}',
-  );
+  return '${l.hour.toString().padLeft(2, '0')}:${l.minute.toString().padLeft(2, '0')}';
 }
 
 /// Two-letter initials: "أبو أحمد" → "أ.أ".

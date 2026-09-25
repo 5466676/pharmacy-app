@@ -78,7 +78,7 @@ class _GalleryPageState extends State<GalleryPage> {
                 label: l.navConsult,
               ),
               DoayaNavItem(icon: DoayaIcons.clock, label: l.navDoses),
-              DoayaNavItem(icon: DoayaIcons.bag, label: l.navOrders, badge: formatArabicNumber(2)),
+              DoayaNavItem(icon: DoayaIcons.bag, label: l.navOrders, badge: formatNumber(2)),
               DoayaNavItem(
                 icon: DoayaIcons.person,
                 activeIcon: DoayaIcons.personFilled,
@@ -171,12 +171,12 @@ class _GalleryPageState extends State<GalleryPage> {
       children: [
         Text(l.appName, style: DoayaTypography.wordmark),
         Text(l.typeDisplay, style: DoayaTypography.title),
-        Text(l.price(formatArabicNumber(12500)), style: DoayaTypography.price),
+        Text(l.price(formatNumber(12500)), style: DoayaTypography.price),
         const SizedBox(height: DoayaSpacing.sm),
         Text(l.typeBody, style: DoayaTypography.body),
         for (final w in const [FontWeight.w300, FontWeight.w400, FontWeight.w500, FontWeight.w600])
           Text(
-            l.typeWeight(formatArabicNumber(w.value)),
+            l.typeWeight(formatNumber(w.value)),
             style: DoayaTypography.bodyMedium.copyWith(fontWeight: w),
           ),
         LatinText('Amoxicillin 500 mg · 16 caps', style: DoayaTypography.body),
@@ -325,7 +325,7 @@ class _GalleryPageState extends State<GalleryPage> {
               ),
               name: items[i].$1,
               latinName: items[i].$2,
-              price: l.price(formatArabicNumber(items[i].$3)),
+              price: l.price(formatNumber(items[i].$3)),
               status: items[i].$4,
               favorite: _favorites.contains(i),
               favoriteTooltip: l.favorite,
@@ -348,8 +348,8 @@ class _GalleryPageState extends State<GalleryPage> {
       children: [
         StatusChip(label: l.chipReady, tone: StatusTone.success),
         StatusChip(label: l.chipDelivered, tone: StatusTone.success, icon: DoayaIcons.check),
-        StatusChip(label: l.chipInStock(formatArabicNumber(24)), tone: StatusTone.accent),
-        StatusChip(label: l.chipLeft(formatArabicNumber(3)), tone: StatusTone.warning),
+        StatusChip(label: l.chipInStock(formatNumber(24)), tone: StatusTone.accent),
+        StatusChip(label: l.chipLeft(formatNumber(3)), tone: StatusTone.warning),
         StatusChip(label: l.chipOut, tone: StatusTone.danger),
         StatusChip(label: l.chipSynced, dot: true),
         StatusChip(label: l.chipCash),
@@ -391,29 +391,29 @@ class GalleryStats extends StatelessWidget {
       StatCard(
         icon: DoayaIcons.sales,
         label: l.statSalesToday,
-        value: l.price(formatArabicNumber(1250000)),
-        caption: l.statVsYesterday(formatArabicNumber(12)),
+        value: l.price(formatNumber(1250000)),
+        caption: l.statVsYesterday(formatNumber(12)),
         tone: StatusTone.success,
       ),
       StatCard(
         icon: DoayaIcons.debts,
         label: l.statOpenDebts,
-        value: l.price(formatArabicNumber(340000)),
-        caption: l.statCustomers(formatArabicNumber(9)),
+        value: l.price(formatNumber(340000)),
+        caption: l.statCustomers(formatNumber(9)),
         tone: StatusTone.neutral,
       ),
       StatCard(
         icon: DoayaIcons.expiry,
         label: l.statNearExpiry,
-        value: formatArabicNumber(14),
-        caption: l.statWithinDays(formatArabicNumber(30)),
+        value: formatNumber(14),
+        caption: l.statWithinDays(formatNumber(30)),
         tone: StatusTone.warning,
       ),
       StatCard(
         icon: DoayaIcons.cases,
         label: l.statAiCases,
-        value: formatArabicNumber(3),
-        caption: l.statWaiting(formatArabicNumber(1)),
+        value: formatNumber(3),
+        caption: l.statWaiting(formatNumber(1)),
         tone: StatusTone.accent,
       ),
     ];
@@ -448,9 +448,9 @@ class _GalleryCasesState extends State<GalleryCases> {
   Widget build(BuildContext context) {
     final l = widget.l;
     final rows = [
-      (l.initials1, l.case1Title, l.case1Sub(formatArabicNumber(2)), true),
-      (l.initials2, l.case2Title, l.case2Sub(formatArabicNumber(4)), false),
-      (l.initials3, l.case3Title, l.case3Sub(formatArabicNumber(11)), false),
+      (l.initials1, l.case1Title, l.case1Sub(formatNumber(2)), true),
+      (l.initials2, l.case2Title, l.case2Sub(formatNumber(4)), false),
+      (l.initials3, l.case3Title, l.case3Sub(formatNumber(11)), false),
     ];
     return Column(
       children: [

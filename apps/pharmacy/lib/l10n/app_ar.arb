@@ -31,10 +31,10 @@
   "deviceNameLabel": "اسم هالجهاز",
   "deviceNameHint": "مثلاً: لابتوب الكاونتر",
   "ownerNameLabel": "اسمك (المالك)",
-  "pinLabel": "رمز الدخول (٤ أرقام)",
+  "pinLabel": "رمز الدخول (4 أرقام)",
   "pinConfirmLabel": "أعد الرمز",
   "pinMismatch": "الرمزين مو متطابقين",
-  "pinInvalid": "الرمز لازم يكون ٤ أرقام",
+  "pinInvalid": "الرمز لازم يكون 4 أرقام",
   "startButton": "ابدأ",
   "loginTitle": "مين عم يشتغل هلق؟",
   "loginEnterPin": "أدخل رمز {name}",
@@ -403,7 +403,7 @@
     }
   },
   "unitsPerPackLabel": "عدد الظروف بالعلبة",
-  "unitsPerPackHelp": "١ = بيع بالعلبة بس",
+  "unitsPerPackHelp": "1 = بيع بالعلبة بس",
   "stripPriceLabel": "سعر الظرف ({symbol})",
   "@stripPriceLabel": {
     "placeholders": {
