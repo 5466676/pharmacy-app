@@ -59,10 +59,18 @@ class LinkResult {
   bool get isOwner => role == 'pharmacist_owner';
 }
 
+/// A linked device's connection to its server: sync plus the few JSON
+/// calls the app makes (devices, accounts). HTTP in the app; fakes in tests.
+abstract interface class SyncRemote implements SyncTransport {
+  Future<Object?> getJson(String path);
+  Future<Object?> postJson(String path, [Object? body]);
+  void close();
+}
+
 /// Talks to a Doaya server over HTTP. Sign-in calls are static; a linked
 /// device makes an instance with its secret, and access tokens are fetched
 /// and refreshed by themselves.
-class HttpSyncClient implements SyncTransport {
+class HttpSyncClient implements SyncRemote {
   HttpSyncClient({
     required this.baseUrl,
     required this.deviceId,
@@ -78,6 +86,7 @@ class HttpSyncClient implements SyncTransport {
   final http.Client _client;
   String? _accessToken;
 
+  @override
   void close() => _client.close();
 
   // ─── Without a device (first run, linking) ─────────────────────────────
@@ -182,9 +191,11 @@ class HttpSyncClient implements SyncTransport {
   }
 
   /// Any authorized GET/POST returning JSON (devices, users…).
+  @override
   Future<Object?> getJson(String path) async =>
       _decode(await _authorized((c, h) => c.get(baseUrl.resolve(path), headers: h)));
 
+  @override
   Future<Object?> postJson(String path, [Object? body]) async => _decode(
     await _authorized(
       (c, h) =>

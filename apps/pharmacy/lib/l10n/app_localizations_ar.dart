@@ -1379,4 +1379,195 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get blindCountNote => 'ما منفرجيك الكمية يلي بالنظام قبل العدّ، منشان يكون العدّ دقيق.';
+
+  @override
+  String get syncTitle => 'السيرفر والمزامنة';
+
+  @override
+  String get syncNotLinkedHelp =>
+      'هالجهاز شغّال لحاله. اربطه بسيرفر الصيدلية (كمبيوتر الصيدلية) لتتشارك كل الأجهزة نفس البيانات. البيع بيضل شغّال حتى لو السيرفر طفي.';
+
+  @override
+  String get findServer => 'دوّر على السيرفر';
+
+  @override
+  String get searchingServer => 'عم دوّر على الشبكة';
+
+  @override
+  String get noServerFound =>
+      'ما لقينا سيرفر على هالشبكة. تأكد إنو كمبيوتر الصيدلية شغّال وعلى نفس الواي فاي، أو اكتب عنوانه.';
+
+  @override
+  String get serverAddressLabel => 'عنوان السيرفر';
+
+  @override
+  String get serverAddressHint => '192.168.1.10';
+
+  @override
+  String get useThisServer => 'اعتمد هالعنوان';
+
+  @override
+  String get serverNotResponding => 'ما في سيرفر دوايا عم يرد على هالعنوان';
+
+  @override
+  String get createOnServerTitle => 'إنشاء الصيدلية على السيرفر';
+
+  @override
+  String get createOnServerHelp =>
+      'السيرفر جديد: رح ننشئ الصيدلية عليه ونرفع كل بيانات هالجهاز. رقمك وكلمة السر رح تربط فيهن باقي الأجهزة.';
+
+  @override
+  String get linkTitle => 'ربط هالجهاز';
+
+  @override
+  String get phoneAccountLabel => 'رقم الموبايل';
+
+  @override
+  String get passwordLabel => 'كلمة السر';
+
+  @override
+  String get passwordConfirmLabel => 'تأكيد كلمة السر';
+
+  @override
+  String get passwordTooShort => '6 أحرف على الأقل';
+
+  @override
+  String get passwordMismatch => 'كلمتين السر مو متطابقين';
+
+  @override
+  String get linkButton => 'اربط';
+
+  @override
+  String get createAndLink => 'أنشئ واربط';
+
+  @override
+  String linkedTo(String pharmacy) {
+    return 'مربوط بـ $pharmacy';
+  }
+
+  @override
+  String signedInAs(String name) {
+    return 'الحساب: $name';
+  }
+
+  @override
+  String lastSync(String time) {
+    return 'آخر مزامنة: $time';
+  }
+
+  @override
+  String get neverSynced => 'لسا ما صار مزامنة';
+
+  @override
+  String pendingChanges(String count) {
+    return '$count حركة ناطرة';
+  }
+
+  @override
+  String get syncNowButton => 'زامن هلق';
+
+  @override
+  String syncDownloading(String percent) {
+    return 'عم ننزّل بيانات الصيدلية: $percent%';
+  }
+
+  @override
+  String get statusSyncing => 'عم يزامن';
+
+  @override
+  String statusSynced(String time) {
+    return 'متزامن $time';
+  }
+
+  @override
+  String get statusServerMissing => 'السيرفر مو موجود';
+
+  @override
+  String get statusUnlinked => 'الجهاز مفصول';
+
+  @override
+  String get statusFailed => 'المزامنة وقفت';
+
+  @override
+  String get unlinkedHelp =>
+      'صاحب الصيدلية فصل هالجهاز عن السيرفر. البيع شغّال، بس ما رح يتزامن لحتى ينربط من جديد.';
+
+  @override
+  String get serverMissingHelp => 'ما عم نوصل للسيرفر. البيع شغّال عادي، والحركات ناطرة لحتى يرجع.';
+
+  @override
+  String get devicesTitle => 'الأجهزة المربوطة';
+
+  @override
+  String get unlinkDevice => 'افصل';
+
+  @override
+  String unlinkConfirm(String name) {
+    return 'رح ينفصل الجهاز $name عن السيرفر فوراً. أكيد؟';
+  }
+
+  @override
+  String get thisDeviceTag => 'هالجهاز';
+
+  @override
+  String get deviceUnlinkedTag => 'مفصول';
+
+  @override
+  String lastSeen(String time) {
+    return 'آخر ظهور $time';
+  }
+
+  @override
+  String get accountsTitle => 'حسابات الموظفين';
+
+  @override
+  String get accountsHelp => 'كل موظف إلو رقم وكلمة سر، بيربط فيهن موبايله مرة وحدة وبيضل مسجّل.';
+
+  @override
+  String get addAccount => 'حساب لموظف';
+
+  @override
+  String get accountEmployeeLabel => 'الموظف';
+
+  @override
+  String get accountDisabled => 'موقوف';
+
+  @override
+  String get errBadCredentials => 'الرقم أو كلمة السر غلط';
+
+  @override
+  String get errPhoneTaken => 'هالرقم إلو حساب من قبل';
+
+  @override
+  String get errTooManyAttempts => 'محاولات كتير غلط، جرّب بعد ربع ساعة';
+
+  @override
+  String get errAlreadySetUp => 'هالسيرفر عليه صيدلية من قبل: اربط برقم وكلمة سر';
+
+  @override
+  String get errDeviceOtherPharmacy => 'هالجهاز مربوط بصيدلية تانية';
+
+  @override
+  String get errPharmacyInactive => 'الصيدلية موقوفة على السيرفر';
+
+  @override
+  String errServer(String code) {
+    return 'صار خطأ بالسيرفر ($code)';
+  }
+
+  @override
+  String get joinExisting => 'انضمام لصيدلية موجودة';
+
+  @override
+  String get newPharmacy => 'صيدلية جديدة';
+
+  @override
+  String get joinHelp =>
+      'للموبايلات والأجهزة الإضافية: بتربطها بسيرفر الصيدلية وبتنزل كل البيانات.';
+
+  @override
+  String get joining => 'عم نربط وننزّل البيانات';
+
+  @override
+  String get joinNoEmployee => 'الحساب مو مربوط بموظف على هالصيدلية. اطلب من صاحب الصيدلية يربطه.';
 }

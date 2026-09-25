@@ -155,9 +155,8 @@ class DriftSyncStore implements SyncStore {
   @override
   Future<int> cursor() async => int.tryParse(await getState('cursor') ?? '') ?? 0;
 
-  Future<String?> getState(String key) async => (await (_db.select(
-    _db.syncState,
-  )..where((t) => t.key.equals(key))).getSingleOrNull())?.value;
+  Future<String?> getState(String key) async =>
+      (await (_db.select(_db.syncState)..where((t) => t.key.equals(key))).getSingleOrNull())?.value;
 
   Future<void> setState(String key, String? value) async {
     if (value == null) {

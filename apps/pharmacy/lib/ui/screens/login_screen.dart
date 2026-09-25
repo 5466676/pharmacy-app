@@ -7,9 +7,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/database.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers.dart';
+import '../../sync/sync_controller.dart';
 import '../format.dart';
 
+/// Whether this app run already tried the automatic sign-in (so "switch
+/// user" on a phone still shows the list).
+class _AutoSignInTried extends Notifier<bool> {
+  @override
+  bool build() => false;
+  void mark() => state = true;
+}
+
+final _autoSignInTriedProvider = NotifierProvider<_AutoSignInTried, bool>(_AutoSignInTried.new);
+
 /// Counter login: tap your name, type your 4-digit PIN (keyboard or keypad).
+/// A device that joined with an employee's own account (their phone) signs
+/// that employee in by itself.
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
@@ -24,9 +37,31 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _focus = FocusNode();
 
   @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => _tryAutoSignIn(ref.read(employeesProvider).value));
+  }
+
+  @override
   void dispose() {
     _focus.dispose();
     super.dispose();
+  }
+
+  Future<void> _tryAutoSignIn(List<EmployeeRow>? employees) async {
+    if (employees == null || !mounted || ref.read(_autoSignInTriedProvider)) return;
+    final id = await ref.read(syncStoreProvider)?.getState('auto_employee_id');
+    if (!mounted) return;
+    if (id == null) {
+      ref.read(_autoSignInTriedProvider.notifier).mark();
+      return;
+    }
+    // The account's employee may still be on its way (first download).
+    final e = employees.where((x) => x.id == id && x.active).firstOrNull;
+    if (e == null) return;
+    ref.read(_autoSignInTriedProvider.notifier).mark();
+    final device = await ref.read(thisDeviceProvider.future);
+    if (device != null) ref.read(sessionProvider.notifier).signIn(device, e);
   }
 
   void _pick(EmployeeRow e) {
@@ -89,6 +124,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final employees = ref.watch(employeesProvider).value ?? const [];
+    ref.listen(employeesProvider, (_, next) => _tryAutoSignIn(next.value));
 
     return Scaffold(
       body: Focus(

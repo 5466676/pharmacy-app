@@ -61,6 +61,23 @@ class PeopleRepository {
     });
   }
 
+  /// A device joining an existing pharmacy: only its own device row; the
+  /// pharmacy's data (owner, employees, settings…) arrives by sync.
+  Future<DeviceRow> registerDevice({required String id, required String name}) async {
+    if (await thisDevice() != null) throw StateError('already set up');
+    await _db
+        .into(_db.devices)
+        .insert(
+          DevicesCompanion.insert(
+            id: id,
+            name: cleanText(name) ?? '',
+            isThisDevice: const Value(true),
+            createdAt: _clock(),
+          ),
+        );
+    return (await thisDevice())!;
+  }
+
   // ─── Employees ────────────────────────────────────────────────────────────
 
   static final _pinPattern = RegExp(r'^\d{4}$');

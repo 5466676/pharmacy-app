@@ -2581,6 +2581,342 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'ما منفرجيك الكمية يلي بالنظام قبل العدّ، منشان يكون العدّ دقيق.'**
   String get blindCountNote;
+
+  /// No description provided for @syncTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'السيرفر والمزامنة'**
+  String get syncTitle;
+
+  /// No description provided for @syncNotLinkedHelp.
+  ///
+  /// In ar, this message translates to:
+  /// **'هالجهاز شغّال لحاله. اربطه بسيرفر الصيدلية (كمبيوتر الصيدلية) لتتشارك كل الأجهزة نفس البيانات. البيع بيضل شغّال حتى لو السيرفر طفي.'**
+  String get syncNotLinkedHelp;
+
+  /// No description provided for @findServer.
+  ///
+  /// In ar, this message translates to:
+  /// **'دوّر على السيرفر'**
+  String get findServer;
+
+  /// No description provided for @searchingServer.
+  ///
+  /// In ar, this message translates to:
+  /// **'عم دوّر على الشبكة'**
+  String get searchingServer;
+
+  /// No description provided for @noServerFound.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما لقينا سيرفر على هالشبكة. تأكد إنو كمبيوتر الصيدلية شغّال وعلى نفس الواي فاي، أو اكتب عنوانه.'**
+  String get noServerFound;
+
+  /// No description provided for @serverAddressLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'عنوان السيرفر'**
+  String get serverAddressLabel;
+
+  /// No description provided for @serverAddressHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'192.168.1.10'**
+  String get serverAddressHint;
+
+  /// No description provided for @useThisServer.
+  ///
+  /// In ar, this message translates to:
+  /// **'اعتمد هالعنوان'**
+  String get useThisServer;
+
+  /// No description provided for @serverNotResponding.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما في سيرفر دوايا عم يرد على هالعنوان'**
+  String get serverNotResponding;
+
+  /// No description provided for @createOnServerTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنشاء الصيدلية على السيرفر'**
+  String get createOnServerTitle;
+
+  /// No description provided for @createOnServerHelp.
+  ///
+  /// In ar, this message translates to:
+  /// **'السيرفر جديد: رح ننشئ الصيدلية عليه ونرفع كل بيانات هالجهاز. رقمك وكلمة السر رح تربط فيهن باقي الأجهزة.'**
+  String get createOnServerHelp;
+
+  /// No description provided for @linkTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'ربط هالجهاز'**
+  String get linkTitle;
+
+  /// No description provided for @phoneAccountLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الموبايل'**
+  String get phoneAccountLabel;
+
+  /// No description provided for @passwordLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمة السر'**
+  String get passwordLabel;
+
+  /// No description provided for @passwordConfirmLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكيد كلمة السر'**
+  String get passwordConfirmLabel;
+
+  /// No description provided for @passwordTooShort.
+  ///
+  /// In ar, this message translates to:
+  /// **'6 أحرف على الأقل'**
+  String get passwordTooShort;
+
+  /// No description provided for @passwordMismatch.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمتين السر مو متطابقين'**
+  String get passwordMismatch;
+
+  /// No description provided for @linkButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'اربط'**
+  String get linkButton;
+
+  /// No description provided for @createAndLink.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنشئ واربط'**
+  String get createAndLink;
+
+  /// No description provided for @linkedTo.
+  ///
+  /// In ar, this message translates to:
+  /// **'مربوط بـ {pharmacy}'**
+  String linkedTo(String pharmacy);
+
+  /// No description provided for @signedInAs.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحساب: {name}'**
+  String signedInAs(String name);
+
+  /// No description provided for @lastSync.
+  ///
+  /// In ar, this message translates to:
+  /// **'آخر مزامنة: {time}'**
+  String lastSync(String time);
+
+  /// No description provided for @neverSynced.
+  ///
+  /// In ar, this message translates to:
+  /// **'لسا ما صار مزامنة'**
+  String get neverSynced;
+
+  /// No description provided for @pendingChanges.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} حركة ناطرة'**
+  String pendingChanges(String count);
+
+  /// No description provided for @syncNowButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'زامن هلق'**
+  String get syncNowButton;
+
+  /// No description provided for @syncDownloading.
+  ///
+  /// In ar, this message translates to:
+  /// **'عم ننزّل بيانات الصيدلية: {percent}%'**
+  String syncDownloading(String percent);
+
+  /// No description provided for @statusSyncing.
+  ///
+  /// In ar, this message translates to:
+  /// **'عم يزامن'**
+  String get statusSyncing;
+
+  /// No description provided for @statusSynced.
+  ///
+  /// In ar, this message translates to:
+  /// **'متزامن {time}'**
+  String statusSynced(String time);
+
+  /// No description provided for @statusServerMissing.
+  ///
+  /// In ar, this message translates to:
+  /// **'السيرفر مو موجود'**
+  String get statusServerMissing;
+
+  /// No description provided for @statusUnlinked.
+  ///
+  /// In ar, this message translates to:
+  /// **'الجهاز مفصول'**
+  String get statusUnlinked;
+
+  /// No description provided for @statusFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'المزامنة وقفت'**
+  String get statusFailed;
+
+  /// No description provided for @unlinkedHelp.
+  ///
+  /// In ar, this message translates to:
+  /// **'صاحب الصيدلية فصل هالجهاز عن السيرفر. البيع شغّال، بس ما رح يتزامن لحتى ينربط من جديد.'**
+  String get unlinkedHelp;
+
+  /// No description provided for @serverMissingHelp.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما عم نوصل للسيرفر. البيع شغّال عادي، والحركات ناطرة لحتى يرجع.'**
+  String get serverMissingHelp;
+
+  /// No description provided for @devicesTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأجهزة المربوطة'**
+  String get devicesTitle;
+
+  /// No description provided for @unlinkDevice.
+  ///
+  /// In ar, this message translates to:
+  /// **'افصل'**
+  String get unlinkDevice;
+
+  /// No description provided for @unlinkConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'رح ينفصل الجهاز {name} عن السيرفر فوراً. أكيد؟'**
+  String unlinkConfirm(String name);
+
+  /// No description provided for @thisDeviceTag.
+  ///
+  /// In ar, this message translates to:
+  /// **'هالجهاز'**
+  String get thisDeviceTag;
+
+  /// No description provided for @deviceUnlinkedTag.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفصول'**
+  String get deviceUnlinkedTag;
+
+  /// No description provided for @lastSeen.
+  ///
+  /// In ar, this message translates to:
+  /// **'آخر ظهور {time}'**
+  String lastSeen(String time);
+
+  /// No description provided for @accountsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'حسابات الموظفين'**
+  String get accountsTitle;
+
+  /// No description provided for @accountsHelp.
+  ///
+  /// In ar, this message translates to:
+  /// **'كل موظف إلو رقم وكلمة سر، بيربط فيهن موبايله مرة وحدة وبيضل مسجّل.'**
+  String get accountsHelp;
+
+  /// No description provided for @addAccount.
+  ///
+  /// In ar, this message translates to:
+  /// **'حساب لموظف'**
+  String get addAccount;
+
+  /// No description provided for @accountEmployeeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الموظف'**
+  String get accountEmployeeLabel;
+
+  /// No description provided for @accountDisabled.
+  ///
+  /// In ar, this message translates to:
+  /// **'موقوف'**
+  String get accountDisabled;
+
+  /// No description provided for @errBadCredentials.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرقم أو كلمة السر غلط'**
+  String get errBadCredentials;
+
+  /// No description provided for @errPhoneTaken.
+  ///
+  /// In ar, this message translates to:
+  /// **'هالرقم إلو حساب من قبل'**
+  String get errPhoneTaken;
+
+  /// No description provided for @errTooManyAttempts.
+  ///
+  /// In ar, this message translates to:
+  /// **'محاولات كتير غلط، جرّب بعد ربع ساعة'**
+  String get errTooManyAttempts;
+
+  /// No description provided for @errAlreadySetUp.
+  ///
+  /// In ar, this message translates to:
+  /// **'هالسيرفر عليه صيدلية من قبل: اربط برقم وكلمة سر'**
+  String get errAlreadySetUp;
+
+  /// No description provided for @errDeviceOtherPharmacy.
+  ///
+  /// In ar, this message translates to:
+  /// **'هالجهاز مربوط بصيدلية تانية'**
+  String get errDeviceOtherPharmacy;
+
+  /// No description provided for @errPharmacyInactive.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصيدلية موقوفة على السيرفر'**
+  String get errPharmacyInactive;
+
+  /// No description provided for @errServer.
+  ///
+  /// In ar, this message translates to:
+  /// **'صار خطأ بالسيرفر ({code})'**
+  String errServer(String code);
+
+  /// No description provided for @joinExisting.
+  ///
+  /// In ar, this message translates to:
+  /// **'انضمام لصيدلية موجودة'**
+  String get joinExisting;
+
+  /// No description provided for @newPharmacy.
+  ///
+  /// In ar, this message translates to:
+  /// **'صيدلية جديدة'**
+  String get newPharmacy;
+
+  /// No description provided for @joinHelp.
+  ///
+  /// In ar, this message translates to:
+  /// **'للموبايلات والأجهزة الإضافية: بتربطها بسيرفر الصيدلية وبتنزل كل البيانات.'**
+  String get joinHelp;
+
+  /// No description provided for @joining.
+  ///
+  /// In ar, this message translates to:
+  /// **'عم نربط وننزّل البيانات'**
+  String get joining;
+
+  /// No description provided for @joinNoEmployee.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحساب مو مربوط بموظف على هالصيدلية. اطلب من صاحب الصيدلية يربطه.'**
+  String get joinNoEmployee;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

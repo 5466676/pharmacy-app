@@ -81,7 +81,11 @@ void main() {
 
   test('every write is queued: sales, edits and deletions', () async {
     final pc = device('pc');
-    final (dev, owner) = await pc.people.setUp(deviceName: 'PC', ownerName: 'سامر', ownerPin: '1234');
+    final (dev, owner) = await pc.people.setUp(
+      deviceName: 'PC',
+      ownerName: 'سامر',
+      ownerPin: '1234',
+    );
     final amox = await pc.catalog.create(
       const ProductDraft(
         tradeName: 'Amoxil',
@@ -129,7 +133,11 @@ void main() {
 
   test('the counter PC uploads its history; a new phone gets the same pharmacy', () async {
     final pc = device('pc'), phone = device('phone');
-    final (dev, owner) = await pc.people.setUp(deviceName: 'PC', ownerName: 'سامر', ownerPin: '1234');
+    final (dev, owner) = await pc.people.setUp(
+      deviceName: 'PC',
+      ownerName: 'سامر',
+      ownerPin: '1234',
+    );
     final s = Session(deviceId: dev.id, employeeId: owner.id);
     final amox = await pc.catalog.create(
       const ProductDraft(tradeName: 'Amoxil', activeIngredient: 'amoxicillin', priceMinor: 4500),
@@ -162,12 +170,20 @@ void main() {
 
   test('both devices sell offline, sync, and end up identical', () async {
     final pc = device('pc'), phone = device('phone');
-    final (dev, owner) = await pc.people.setUp(deviceName: 'PC', ownerName: 'سامر', ownerPin: '1234');
+    final (dev, owner) = await pc.people.setUp(
+      deviceName: 'PC',
+      ownerName: 'سامر',
+      ownerPin: '1234',
+    );
     final amox = await pc.catalog.create(
       const ProductDraft(tradeName: 'Amoxil', activeIngredient: 'amoxicillin', priceMinor: 4500),
       deviceId: dev.id,
     );
-    await pc.ledger.receive(Session(deviceId: dev.id, employeeId: owner.id), productId: amox.id, quantity: 3);
+    await pc.ledger.receive(
+      Session(deviceId: dev.id, employeeId: owner.id),
+      productId: amox.id,
+      quantity: 3,
+    );
     await pc.store.seedOutbox();
     await pc.engine(server).sync();
     await phone.registerOnly('موبايل');

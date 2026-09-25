@@ -10,7 +10,7 @@ python3 -m venv .venv && .venv/bin/pip install -e ".[dev]"
 #   CREATE ROLE doaya LOGIN PASSWORD 'doaya' CREATEDB;  CREATE DATABASE doaya_test OWNER doaya;
 .venv/bin/pytest                    # tests run against the real PostgreSQL
 .venv/bin/ruff check . && .venv/bin/ruff format --check .
-.venv/bin/uvicorn app.main:create_app --factory --host 0.0.0.0 --port 8000
+.venv/bin/uvicorn app.main:server_app --factory --host 0.0.0.0 --port 8000
 ```
 
 Settings come from `DOAYA_*` environment variables or `backend/.env` (see `.env.example`).

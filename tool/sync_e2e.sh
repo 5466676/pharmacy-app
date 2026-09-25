@@ -14,7 +14,7 @@ cd "$ROOT/backend"
 DOAYA_DATABASE_URL="$URL" .venv/bin/alembic upgrade head >/dev/null
 DATA_DIR="$(mktemp -d)"
 DOAYA_DATABASE_URL="$URL" DOAYA_DATA_DIR="$DATA_DIR" \
-  .venv/bin/uvicorn app.main:create_app --factory --port "$PORT" --log-level warning &
+  .venv/bin/uvicorn app.main:server_app --factory --port "$PORT" --log-level warning &
 SERVER=$!
 trap 'kill $SERVER 2>/dev/null; rm -rf "$DATA_DIR"' EXIT
 for _ in $(seq 50); do curl --noproxy "*" -sf "http://localhost:${PORT}/health" >/dev/null && break; sleep 0.2; done
