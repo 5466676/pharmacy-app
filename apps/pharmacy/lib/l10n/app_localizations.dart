@@ -1723,6 +1723,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'تحويلات'**
   String get staffTransferSales;
+
+  /// No description provided for @evReturnedToSupplier.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرتجع للمستودع'**
+  String get evReturnedToSupplier;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -34,7 +34,10 @@ enum StockEventType {
   adjusted,
 
   /// Removed because it expired (negative quantity).
-  expiredRemoved;
+  expiredRemoved,
+
+  /// Sent back to the supplier (negative quantity).
+  returnedToSupplier;
 
   /// Storage name (snake_case, matches the spec).
   String get wire => switch (this) {
@@ -43,6 +46,7 @@ enum StockEventType {
     returned => 'returned',
     adjusted => 'adjusted',
     expiredRemoved => 'expired_removed',
+    returnedToSupplier => 'returned_to_supplier',
   };
 
   static StockEventType fromWire(String s) =>
@@ -60,6 +64,7 @@ class StockEvent {
     this.unitCostMinor,
     this.saleId,
     this.note,
+    this.refId,
   }) {
     _validate();
   }
@@ -83,6 +88,10 @@ class StockEvent {
   final String? saleId;
   final String? note;
 
+  /// The document that caused this movement when it isn't a sale
+  /// (purchase invoice, supplier return, stocktake…).
+  final String? refId;
+
   String get id => meta.id;
 
   void _validate() {
@@ -90,7 +99,9 @@ class StockEvent {
       case StockEventType.received:
         if (quantity <= 0) throw ArgumentError('received quantity must be > 0');
         if (batchId != meta.id) throw ArgumentError('received opens batch == event id');
-      case StockEventType.sold || StockEventType.expiredRemoved:
+      case StockEventType.sold ||
+          StockEventType.expiredRemoved ||
+          StockEventType.returnedToSupplier:
         if (quantity >= 0) throw ArgumentError('${type.wire} quantity must be < 0');
       case StockEventType.returned:
         if (quantity <= 0) throw ArgumentError('returned quantity must be > 0');

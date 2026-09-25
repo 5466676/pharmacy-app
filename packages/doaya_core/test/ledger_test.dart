@@ -58,6 +58,7 @@ void main() {
         'returned',
         'adjusted',
         'expired_removed',
+        'returned_to_supplier',
       ]);
       expect(StockEventType.fromWire('expired_removed'), StockEventType.expiredRemoved);
       expect(DebtEventType.fromWire('payment_received'), DebtEventType.paymentReceived);

@@ -169,6 +169,7 @@ String stockEventLabel(AppLocalizations l, StockEventType t) => switch (t) {
   StockEventType.returned => l.evReturned,
   StockEventType.adjusted => l.evAdjusted,
   StockEventType.expiredRemoved => l.evExpiredRemoved,
+  StockEventType.returnedToSupplier => l.evReturnedToSupplier,
 };
 
 /// Parses "d/m/yyyy" (English or Arabic-keyboard digits). Null if empty or invalid.

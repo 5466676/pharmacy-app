@@ -132,7 +132,7 @@ Note: I can build and test on Linux here, but **not produce a Windows `.exe`** i
 ### Still open
 - **Receipt printing**: thermal 58/80 mm? (not answered yet)
 
-## Phase 1.5 — Accounting · 📝 plan awaiting approval
+## Phase 1.5 — Accounting · 🚧 in progress (plan approved 2026-09-25)
 
 Goal: turn the counter app into a complete pharmacy accounting system (inspired by Karma Soft / Al-Ameen, see `docs/ACCOUNTING_RESEARCH.md`), still fully offline and still built on append-only records so Phase 2 sync stays safe.
 
@@ -171,8 +171,14 @@ Goal: turn the counter app into a complete pharmacy accounting system (inspired 
 - Dashboard adds: today's profit, supplier debts due, shortages count.
 - Owner reports: profit by product / employee / day, stock value at cost, P&L, supplier statements.
 
+### Owner decisions (2026-09-25)
+- Purchase invoices: the **owner and employees** can enter them, and each invoice records who entered it.
+- **Cost, purchase prices and profit are owner-only**: employees never see them.
+- Expenses and cash purchases: **choose each time** whether they come from the drawer or from outside.
+- **Receipt printing**: yes, behind a **small, unobtrusive print button** (the printing dependency needs approval; asked at the step-3 review).
+
 ### Not in this phase (next, after your review)
-Health ministry price-list import · money accounts (drawer / Sham Cash / bank + owner withdrawals) · printed customer statement + credit limit · finer permissions · barcode labels · receipts (needs your printer answer).
+Health ministry price-list import · money accounts (drawer / Sham Cash / bank + owner withdrawals) · printed customer statement + credit limit · finer permissions · barcode labels.
 
 ### Steps (tests first, a commit after each, **stop for review after step 3**)
 1. `doaya_core`: supplier ledger, purchase cost allocation (bonus, discounts, transport), COGS/profit, stocktake deltas, P&L. Unit tests first.

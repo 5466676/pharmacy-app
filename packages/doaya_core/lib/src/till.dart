@@ -61,6 +61,9 @@ class ShiftMovements {
     this.debtPayments = 0,
     this.cashRefunds = 0,
     this.transferSales = 0,
+    this.drawerPurchases = 0,
+    this.drawerExpenses = 0,
+    this.supplierCashRefunds = 0,
   });
 
   /// Totals of cash sales (after discount).
@@ -74,6 +77,15 @@ class ShiftMovements {
 
   /// Paid by transfer (Sham Cash…): NOT in the drawer, shown for reference.
   final int transferSales;
+
+  /// Supplier invoices paid in cash out of the drawer.
+  final int drawerPurchases;
+
+  /// Expenses paid out of the drawer.
+  final int drawerExpenses;
+
+  /// Cash a supplier handed back for returned goods, put in the drawer.
+  final int supplierCashRefunds;
 }
 
 /// A shift's reconciliation.
@@ -107,14 +119,18 @@ class ShiftSummary {
   bool get isOpen => closedAt == null;
 
   /// What should be in the drawer:
-  /// float + cash sales + debt payments − cash refunds + cash in − cash out.
+  /// float + cash sales + debt payments − cash refunds + cash in − cash out
+  /// − purchases and expenses paid from the drawer + supplier cash refunds.
   int get expected =>
       openingFloat +
       movements.cashSales +
       movements.debtPayments -
       movements.cashRefunds +
       cashIn -
-      cashOut;
+      cashOut -
+      movements.drawerPurchases -
+      movements.drawerExpenses +
+      movements.supplierCashRefunds;
 
   /// counted − expected: negative = shortage (عجز), positive = surplus (زيادة).
   int? get difference => counted == null ? null : counted! - expected;

@@ -555,5 +555,6 @@
       }
     }
   },
-  "staffTransferSales": "تحويلات"
+  "staffTransferSales": "تحويلات",
+  "evReturnedToSupplier": "مرتجع للمستودع"
 }

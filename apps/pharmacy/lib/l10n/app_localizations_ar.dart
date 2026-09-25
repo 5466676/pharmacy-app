@@ -901,4 +901,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get staffTransferSales => 'تحويلات';
+
+  @override
+  String get evReturnedToSupplier => 'مرتجع للمستودع';
 }
