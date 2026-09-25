@@ -1,3 +1,5 @@
+import 'text.dart';
+
 /// A currency the pharmacy prices in. Code and symbol are user-editable
 /// (the new Syrian pound's ISO code/symbol may change).
 class Currency {
@@ -40,7 +42,7 @@ class Money implements Comparable<Money> {
   /// thousands) — also accepts Arabic-keyboard input such as `٤٥٫٥` or
   /// `١٬٢٥٠`. Returns null for invalid input or too many decimals.
   static Money? tryParse(String input, Currency currency) {
-    final s = _latinDigits(input.trim())
+    final s = toLatinDigits(input.trim())
         .replaceAll('\u066C', '') // Arabic thousands separator
         .replaceAll(',', '') // English thousands separator
         .replaceAll(' ', '')
@@ -90,18 +92,4 @@ class Money implements Comparable<Money> {
 
   @override
   String toString() => '$majorValue ${currency.code}';
-}
-
-String _latinDigits(String s) {
-  final out = StringBuffer();
-  for (final r in s.runes) {
-    if (r >= 0x0660 && r <= 0x0669) {
-      out.writeCharCode(0x30 + r - 0x0660);
-    } else if (r >= 0x06F0 && r <= 0x06F9) {
-      out.writeCharCode(0x30 + r - 0x06F0);
-    } else {
-      out.writeCharCode(r);
-    }
-  }
-  return out.toString();
 }

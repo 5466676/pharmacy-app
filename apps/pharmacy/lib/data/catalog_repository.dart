@@ -68,7 +68,7 @@ class CatalogRepository {
           .insert(
             ProductsCompanion.insert(
               id: id,
-              tradeName: d.tradeName.trim(),
+              tradeName: cleanText(d.tradeName) ?? '',
               arabicName: Value(_blankToNull(d.arabicName)),
               activeIngredient: _normalizeIngredient(d.activeIngredient),
               strength: Value(_blankToNull(d.strength)),
@@ -98,7 +98,7 @@ class CatalogRepository {
       }
       await (_db.update(_db.products)..where((t) => t.id.equals(id))).write(
         ProductsCompanion(
-          tradeName: Value(d.tradeName.trim()),
+          tradeName: Value(cleanText(d.tradeName) ?? ''),
           arabicName: Value(_blankToNull(d.arabicName)),
           activeIngredient: Value(_normalizeIngredient(d.activeIngredient)),
           strength: Value(_blankToNull(d.strength)),
@@ -120,7 +120,8 @@ class CatalogRepository {
   }
 
   Future<void> _setBarcodes(String productId, List<String> codes) async {
-    for (final raw in codes.map((c) => c.trim()).where((c) => c.isNotEmpty).toSet()) {
+    for (final raw
+        in codes.map((c) => toLatinDigits(c.trim())).where((c) => c.isNotEmpty).toSet()) {
       final existing = await (_db.select(
         _db.productBarcodes,
       )..where((t) => t.barcode.equals(raw))).getSingleOrNull();
@@ -148,7 +149,7 @@ class CatalogRepository {
   Future<ProductRow?> byBarcode(String barcode) async {
     final q = _db.select(_db.products).join([
       innerJoin(_db.productBarcodes, _db.productBarcodes.productId.equalsExp(_db.products.id)),
-    ])..where(_db.productBarcodes.barcode.equals(barcode.trim()));
+    ])..where(_db.productBarcodes.barcode.equals(toLatinDigits(barcode.trim())));
     final row = await q.getSingleOrNull();
     return row?.readTable(_db.products);
   }
@@ -165,7 +166,7 @@ class CatalogRepository {
 
   /// Search by trade name, Arabic name, active ingredient or exact barcode.
   Future<List<ProductRow>> search(String query, {int limit = 30}) async {
-    final q = query.trim();
+    final q = toLatinDigits(query.trim());
     if (q.isEmpty) return const [];
     final byCode = await byBarcode(q);
     final pattern = '%${q.replaceAll('%', r'\%').replaceAll('_', r'\_')}%';
@@ -196,9 +197,9 @@ class CatalogRepository {
             ..orderBy([(t) => OrderingTerm.asc(t.tradeName)]))
           .get();
 
-  static String? _blankToNull(String? s) => (s == null || s.trim().isEmpty) ? null : s.trim();
+  static String? _blankToNull(String? s) => cleanText(s);
 
   /// Lower-case, single spaces: "Amoxicillin  " and "amoxicillin" match.
   static String _normalizeIngredient(String s) =>
-      s.trim().toLowerCase().replaceAll(RegExp(r'\s+'), ' ');
+      toLatinDigits(s.trim()).toLowerCase().replaceAll(RegExp(r'\s+'), ' ');
 }

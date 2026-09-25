@@ -37,7 +37,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
         stock.fefo(id).where((b) => b.expiry != null).firstOrNull?.expiry;
     bool isNear(String id) => stock.nearExpiry(now, window, productId: id).isNotEmpty;
 
-    final q = _query.trim().toLowerCase();
+    final q = toLatinDigits(_query.trim()).toLowerCase();
     final list = products.where((p) {
       if (q.isNotEmpty &&
           !p.tradeName.toLowerCase().contains(q) &&

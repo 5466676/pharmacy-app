@@ -7,4 +7,5 @@ export 'src/ledger.dart';
 export 'src/money.dart';
 export 'src/returns.dart';
 export 'src/sale.dart';
+export 'src/text.dart';
 export 'src/till.dart';

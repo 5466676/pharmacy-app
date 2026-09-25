@@ -905,7 +905,7 @@ class _CustomerPickerState extends ConsumerState<_CustomerPicker> {
     final all = ref.watch(customersProvider).value ?? const [];
     final debts = ref.watch(debtsProvider).value;
     final currency = ref.watch(currencyProvider);
-    final q = _query.trim();
+    final q = toLatinDigits(_query.trim());
     final list = q.isEmpty
         ? all
         : all.where((c) => c.name.contains(q) || (c.phone?.contains(q) ?? false)).toList();

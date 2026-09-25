@@ -29,7 +29,7 @@ class _DebtsScreenState extends ConsumerState<DebtsScreen> {
     final currency = ref.watch(currencyProvider);
     final customers = ref.watch(customersProvider).value ?? const [];
     final debts = ref.watch(debtsProvider).value ?? DebtLedger();
-    final q = _query.trim();
+    final q = toLatinDigits(_query.trim());
     final list = customers.where((c) {
       if (_owingOnly && debts.balance(c.id) <= 0) return false;
       return q.isEmpty || c.name.contains(q) || (c.phone?.contains(q) ?? false);

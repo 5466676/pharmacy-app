@@ -201,7 +201,7 @@ class _ReturnScreenState extends ConsumerState<ReturnScreen> {
     Map<String, int> returnable,
   ) {
     final sales = (ref.watch(_recentSalesProvider).value ?? const <SaleRow>[]).where((s) {
-      final q = _saleQuery.trim();
+      final q = toLatinDigits(_saleQuery.trim());
       if (q.isEmpty) return true;
       return (customers[s.customerId]?.name.contains(q) ?? false);
     }).toList();

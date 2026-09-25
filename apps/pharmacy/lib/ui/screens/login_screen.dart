@@ -1,3 +1,4 @@
+import 'package:doaya_core/doaya_core.dart' show toLatinDigits;
 import 'package:doaya_ui/doaya_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

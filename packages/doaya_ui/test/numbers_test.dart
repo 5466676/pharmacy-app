@@ -29,10 +29,4 @@ void main() {
       }
     });
   });
-
-  test('toLatinDigits converts Arabic-Indic and Persian digits', () {
-    expect(toLatinDigits('0123456789'), '0123456789');
-    expect(toLatinDigits('۱۲'), '12');
-    expect(toLatinDigits('باقي 3'), 'باقي 3');
-  });
 }

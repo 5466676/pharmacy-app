@@ -48,12 +48,14 @@ class PeopleRepository {
           .insert(
             DevicesCompanion.insert(
               id: id,
-              name: deviceName.trim(),
+              name: cleanText(deviceName) ?? '',
               isThisDevice: const Value(true),
               createdAt: _clock(),
             ),
           );
-      if (pharmacyName != null) await setSetting(SettingKeys.pharmacyName, pharmacyName.trim());
+      if (pharmacyName != null) {
+        await setSetting(SettingKeys.pharmacyName, cleanText(pharmacyName) ?? '');
+      }
       final owner = await addEmployee(name: ownerName, pin: ownerPin, role: EmployeeRole.owner);
       return ((await thisDevice())!, owner);
     });
@@ -77,7 +79,7 @@ class PeopleRepository {
         .insert(
           EmployeesCompanion.insert(
             id: id,
-            name: name.trim(),
+            name: cleanText(name) ?? '',
             role: role.name,
             pinHash: hashPin(pin, salt),
             pinSalt: salt,
@@ -150,9 +152,9 @@ class PeopleRepository {
         .insert(
           CustomersCompanion.insert(
             id: id,
-            name: name.trim(),
-            phone: Value(phone?.trim().isEmpty ?? true ? null : phone!.trim()),
-            notes: Value(notes),
+            name: cleanText(name) ?? '',
+            phone: Value(cleanText(phone)),
+            notes: Value(cleanText(notes)),
             createdAt: now,
             updatedAt: now,
           ),
@@ -167,7 +169,7 @@ class PeopleRepository {
       (_db.select(_db.customers)..orderBy([(t) => OrderingTerm.asc(t.name)])).watch();
 
   Future<List<CustomerRow>> searchCustomers(String q) {
-    final pattern = '%${q.trim()}%';
+    final pattern = '%${toLatinDigits(q.trim())}%';
     return (_db.select(_db.customers)
           ..where((t) => t.name.like(pattern) | t.phone.like(pattern))
           ..orderBy([(t) => OrderingTerm.asc(t.name)])
@@ -182,7 +184,7 @@ class PeopleRepository {
 
   Future<void> setSetting(String key, String value) => _db
       .into(_db.settings)
-      .insertOnConflictUpdate(SettingsCompanion.insert(key: key, value: value));
+      .insertOnConflictUpdate(SettingsCompanion.insert(key: key, value: toLatinDigits(value)));
 
   Stream<Map<String, String>> watchSettings() =>
       _db.select(_db.settings).watch().map((rows) => {for (final r in rows) r.key: r.value});

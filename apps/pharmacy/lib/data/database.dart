@@ -1,3 +1,4 @@
+import 'package:doaya_core/doaya_core.dart' show toLatinDigits;
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:path_provider/path_provider.dart';
@@ -274,7 +275,7 @@ class AppDatabase extends _$AppDatabase {
   );
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -308,11 +309,55 @@ class AppDatabase extends _$AppDatabase {
           BEGIN SELECT RAISE(ABORT, 'append-only: sales'); END;
         ''');
       }
+      if (from < 4) await _latinDigitsInMasterData();
     },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
     },
   );
+
+  /// v4: every number in English digits (owner's decision). Converts
+  /// Arabic-Indic digits already typed into names, phones and settings.
+  /// Only mutable master data; ledgers never contain free text digits.
+  Future<void> _latinDigitsInMasterData() async {
+    String? fix(String? v) => v == null ? null : toLatinDigits(v);
+    for (final p in await select(products).get()) {
+      await (update(products)..where((t) => t.id.equals(p.id))).write(
+        ProductsCompanion(
+          tradeName: Value(fix(p.tradeName)!),
+          arabicName: Value(fix(p.arabicName)),
+          strength: Value(fix(p.strength)),
+          form: Value(fix(p.form)),
+          manufacturer: Value(fix(p.manufacturer)),
+          shelf: Value(fix(p.shelf)),
+        ),
+      );
+    }
+    for (final c in await select(customers).get()) {
+      await (update(customers)..where((t) => t.id.equals(c.id))).write(
+        CustomersCompanion(
+          name: Value(fix(c.name)!),
+          phone: Value(fix(c.phone)),
+          notes: Value(fix(c.notes)),
+        ),
+      );
+    }
+    for (final e in await select(employees).get()) {
+      await (update(
+        employees,
+      )..where((t) => t.id.equals(e.id))).write(EmployeesCompanion(name: Value(fix(e.name)!)));
+    }
+    for (final d in await select(devices).get()) {
+      await (update(
+        devices,
+      )..where((t) => t.id.equals(d.id))).write(DevicesCompanion(name: Value(fix(d.name)!)));
+    }
+    for (final st in await select(settings).get()) {
+      await (update(
+        settings,
+      )..where((t) => t.key.equals(st.key))).write(SettingsCompanion(value: Value(fix(st.value)!)));
+    }
+  }
 
   Future<void> _createLedgerGuards() async {
     for (final t in _appendOnlyTables.where((t) => !t.startsWith('return') && t != 'till_events')) {
