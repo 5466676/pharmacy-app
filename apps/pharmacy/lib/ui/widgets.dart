@@ -6,6 +6,10 @@ import '../data/database.dart';
 import '../l10n/app_localizations.dart';
 import 'format.dart';
 
+/// Whether this window uses the phone layout (bottom navigation, one column).
+bool isPhoneLayout(BuildContext context) =>
+    MediaQuery.sizeOf(context).width < DoayaSizes.phoneLayoutWidth;
+
 /// Screen title row with optional trailing actions.
 class PageHeader extends StatelessWidget {
   const PageHeader({super.key, required this.title, this.actions = const [], this.leading});
@@ -16,15 +20,67 @@ class PageHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: DoayaSpacing.xl),
-      child: Row(
-        children: [
-          if (leading != null) ...[leading!, const SizedBox(width: DoayaSpacing.ml)],
-          Expanded(child: Text(title, style: DoayaTypography.title)),
+    final titleRow = Row(
+      children: [
+        if (leading != null) ...[leading!, const SizedBox(width: DoayaSpacing.ml)],
+        Expanded(child: Text(title, style: DoayaTypography.title)),
+        if (!isPhoneLayout(context))
           for (final a in actions) ...[const SizedBox(width: DoayaSpacing.sm), a],
+      ],
+    );
+    if (!isPhoneLayout(context) || actions.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: DoayaSpacing.xl),
+        child: titleRow,
+      );
+    }
+    // Phone: actions wrap under the title.
+    return Padding(
+      padding: const EdgeInsets.only(bottom: DoayaSpacing.l),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          titleRow,
+          const SizedBox(height: DoayaSpacing.sm),
+          Wrap(spacing: DoayaSpacing.sm, runSpacing: DoayaSpacing.sm, children: actions),
         ],
       ),
+    );
+  }
+}
+
+/// A main pane and a side pane: side by side on desktop, stacked on a phone.
+class SplitPanes extends StatelessWidget {
+  const SplitPanes({
+    super.key,
+    required this.main,
+    required this.side,
+    this.sideWidth = DoayaSizes.invoiceWidth,
+  });
+
+  final Widget main;
+  final Widget side;
+  final double sideWidth;
+
+  @override
+  Widget build(BuildContext context) {
+    if (isPhoneLayout(context)) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          main,
+          const SizedBox(height: DoayaSpacing.l),
+          side,
+        ],
+      );
+    }
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(child: main),
+        const SizedBox(width: DoayaSpacing.xl),
+        SizedBox(width: sideWidth, child: side),
+      ],
     );
   }
 }
@@ -42,7 +98,8 @@ class Panel extends StatelessWidget {
   Widget build(BuildContext context) {
     return GlassSurface(
       borderRadius: BorderRadius.circular(DoayaRadii.hero),
-      padding: padding ?? const EdgeInsets.all(DoayaSpacing.xxl),
+      padding:
+          padding ?? EdgeInsets.all(isPhoneLayout(context) ? DoayaSpacing.l : DoayaSpacing.xxl),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,

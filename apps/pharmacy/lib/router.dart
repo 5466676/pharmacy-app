@@ -36,6 +36,7 @@ abstract final class Routes {
   static const settings = '/settings';
   static const reports = '/reports';
   static const sync = '/sync';
+  static const more = '/more';
   static const purchases = '/purchases';
   static const newPurchase = '$purchases/new';
   static String newPurchaseFrom(String supplierId) => '$newPurchase?supplier=$supplierId';
@@ -135,6 +136,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: Routes.reports,
             pageBuilder: (_, _) => const NoTransitionPage(child: ReportsScreen()),
+          ),
+          GoRoute(
+            path: Routes.more,
+            pageBuilder: (_, _) => const NoTransitionPage(child: MoreScreen()),
           ),
           GoRoute(
             path: Routes.sync,

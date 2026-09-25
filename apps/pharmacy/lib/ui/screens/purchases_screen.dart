@@ -78,42 +78,78 @@ class _PurchasesScreenState extends ConsumerState<PurchasesScreen> {
             ),
           ],
         ),
-        Row(
-          children: [
-            GlassPillButton(
-              label: l.tabInvoices,
-              selected: _tab == PurchasesTab.invoices,
-              onPressed: () => setState(() => _tab = PurchasesTab.invoices),
-            ),
-            const SizedBox(width: DoayaSpacing.s),
-            GlassPillButton(
-              label: l.tabSuppliers,
-              selected: _tab == PurchasesTab.suppliers,
-              onPressed: () => setState(() => _tab = PurchasesTab.suppliers),
-            ),
-            const SizedBox(width: DoayaSpacing.s),
-            GlassPillButton(
-              label: l.tabShortages,
-              selected: _tab == PurchasesTab.shortages,
-              onPressed: () => setState(() => _tab = PurchasesTab.shortages),
-            ),
-            const SizedBox(width: DoayaSpacing.s),
-            GlassPillButton(
-              label: l.tabOrders,
-              selected: _tab == PurchasesTab.orders,
-              onPressed: () => setState(() => _tab = PurchasesTab.orders),
-            ),
-            const Spacer(),
-            if (_tab == PurchasesTab.invoices || _tab == PurchasesTab.suppliers)
-              SizedBox(
-                width: DoayaSizes.desktopSearchWidth,
-                child: GlassSearchField(
-                  hint: l.search,
-                  onChanged: (v) => setState(() => _query = v),
+        if (isPhoneLayout(context)) ...[
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                GlassPillButton(
+                  label: l.tabInvoices,
+                  selected: _tab == PurchasesTab.invoices,
+                  onPressed: () => setState(() => _tab = PurchasesTab.invoices),
                 ),
-              ),
+                const SizedBox(width: DoayaSpacing.s),
+                GlassPillButton(
+                  label: l.tabSuppliers,
+                  selected: _tab == PurchasesTab.suppliers,
+                  onPressed: () => setState(() => _tab = PurchasesTab.suppliers),
+                ),
+                const SizedBox(width: DoayaSpacing.s),
+                GlassPillButton(
+                  label: l.tabShortages,
+                  selected: _tab == PurchasesTab.shortages,
+                  onPressed: () => setState(() => _tab = PurchasesTab.shortages),
+                ),
+                const SizedBox(width: DoayaSpacing.s),
+                GlassPillButton(
+                  label: l.tabOrders,
+                  selected: _tab == PurchasesTab.orders,
+                  onPressed: () => setState(() => _tab = PurchasesTab.orders),
+                ),
+              ],
+            ),
+          ),
+          if (_tab == PurchasesTab.invoices || _tab == PurchasesTab.suppliers) ...[
+            const SizedBox(height: DoayaSpacing.sm),
+            GlassSearchField(hint: l.search, onChanged: (v) => setState(() => _query = v)),
           ],
-        ),
+        ] else
+          Row(
+            children: [
+              GlassPillButton(
+                label: l.tabInvoices,
+                selected: _tab == PurchasesTab.invoices,
+                onPressed: () => setState(() => _tab = PurchasesTab.invoices),
+              ),
+              const SizedBox(width: DoayaSpacing.s),
+              GlassPillButton(
+                label: l.tabSuppliers,
+                selected: _tab == PurchasesTab.suppliers,
+                onPressed: () => setState(() => _tab = PurchasesTab.suppliers),
+              ),
+              const SizedBox(width: DoayaSpacing.s),
+              GlassPillButton(
+                label: l.tabShortages,
+                selected: _tab == PurchasesTab.shortages,
+                onPressed: () => setState(() => _tab = PurchasesTab.shortages),
+              ),
+              const SizedBox(width: DoayaSpacing.s),
+              GlassPillButton(
+                label: l.tabOrders,
+                selected: _tab == PurchasesTab.orders,
+                onPressed: () => setState(() => _tab = PurchasesTab.orders),
+              ),
+              const Spacer(),
+              if (_tab == PurchasesTab.invoices || _tab == PurchasesTab.suppliers)
+                SizedBox(
+                  width: DoayaSizes.desktopSearchWidth,
+                  child: GlassSearchField(
+                    hint: l.search,
+                    onChanged: (v) => setState(() => _query = v),
+                  ),
+                ),
+            ],
+          ),
         const SizedBox(height: DoayaSpacing.l),
         Expanded(
           child: switch (_tab) {

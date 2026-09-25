@@ -35,6 +35,53 @@ class _DebtsScreenState extends ConsumerState<DebtsScreen> {
       return q.isEmpty || c.name.contains(q) || (c.phone?.contains(q) ?? false);
     }).toList()..sort((a, b) => debts.balance(b.id).compareTo(debts.balance(a.id)));
     final selected = customers.where((c) => c.id == _selectedId).firstOrNull;
+    final phone = isPhoneLayout(context);
+    final Widget listPane = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        GlassSearchField(hint: l.search, onChanged: (v) => setState(() => _query = v)),
+        const SizedBox(height: DoayaSpacing.ml),
+        Row(
+          children: [
+            GlassPillButton(
+              label: l.filterAll,
+              selected: !_owingOnly,
+              onPressed: () => setState(() => _owingOnly = false),
+            ),
+            const SizedBox(width: DoayaSpacing.s),
+            GlassPillButton(
+              label: l.filterOwing,
+              selected: _owingOnly,
+              onPressed: () => setState(() => _owingOnly = true),
+            ),
+          ],
+        ),
+        const SizedBox(height: DoayaSpacing.ml),
+        Expanded(
+          child: list.isEmpty
+              ? EmptyHint(l.noCustomers)
+              : ListView.separated(
+                  itemCount: list.length,
+                  separatorBuilder: (_, _) => const SizedBox(height: DoayaSpacing.sm),
+                  itemBuilder: (context, i) {
+                    final c = list[i];
+                    final bal = debts.balance(c.id);
+                    return CaseRow(
+                      initials: initialsOf(c.name),
+                      title: c.name,
+                      subtitle: c.phone ?? '',
+                      selected: c.id == _selectedId,
+                      trailing: StatusChip(
+                        label: bal > 0 ? formatMoney(bal, currency) : l.settled,
+                        tone: bal > 0 ? StatusTone.warning : StatusTone.neutral,
+                      ),
+                      onTap: () => setState(() => _selectedId = c.id),
+                    );
+                  },
+                ),
+        ),
+      ],
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -58,66 +105,38 @@ class _DebtsScreenState extends ConsumerState<DebtsScreen> {
           ],
         ),
         Expanded(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              SizedBox(
-                width: DoayaSizes.listPaneWidth,
-                child: Column(
+          child: phone
+              ? (selected == null
+                    ? listPane
+                    : ListView(
+                        children: [
+                          Align(
+                            alignment: AlignmentDirectional.centerStart,
+                            child: RoundIconButton(
+                              icon: DoayaIcons.back,
+                              tooltip: l.back,
+                              onPressed: () => setState(() => _selectedId = null),
+                            ),
+                          ),
+                          const SizedBox(height: DoayaSpacing.sm),
+                          _CustomerDetail(customer: selected, balance: debts.balance(selected.id)),
+                        ],
+                      ))
+              : Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    GlassSearchField(hint: l.search, onChanged: (v) => setState(() => _query = v)),
-                    const SizedBox(height: DoayaSpacing.ml),
-                    Row(
-                      children: [
-                        GlassPillButton(
-                          label: l.filterAll,
-                          selected: !_owingOnly,
-                          onPressed: () => setState(() => _owingOnly = false),
-                        ),
-                        const SizedBox(width: DoayaSpacing.s),
-                        GlassPillButton(
-                          label: l.filterOwing,
-                          selected: _owingOnly,
-                          onPressed: () => setState(() => _owingOnly = true),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: DoayaSpacing.ml),
+                    SizedBox(width: DoayaSizes.listPaneWidth, child: listPane),
+                    const SizedBox(width: DoayaSpacing.huge),
                     Expanded(
-                      child: list.isEmpty
-                          ? EmptyHint(l.noCustomers)
-                          : ListView.separated(
-                              itemCount: list.length,
-                              separatorBuilder: (_, _) => const SizedBox(height: DoayaSpacing.sm),
-                              itemBuilder: (context, i) {
-                                final c = list[i];
-                                final bal = debts.balance(c.id);
-                                return CaseRow(
-                                  initials: initialsOf(c.name),
-                                  title: c.name,
-                                  subtitle: c.phone ?? '',
-                                  selected: c.id == _selectedId,
-                                  trailing: StatusChip(
-                                    label: bal > 0 ? formatMoney(bal, currency) : l.settled,
-                                    tone: bal > 0 ? StatusTone.warning : StatusTone.neutral,
-                                  ),
-                                  onTap: () => setState(() => _selectedId = c.id),
-                                );
-                              },
+                      child: selected == null
+                          ? const SizedBox.shrink()
+                          : _CustomerDetail(
+                              customer: selected,
+                              balance: debts.balance(selected.id),
                             ),
                     ),
                   ],
                 ),
-              ),
-              const SizedBox(width: DoayaSpacing.huge),
-              Expanded(
-                child: selected == null
-                    ? const SizedBox.shrink()
-                    : _CustomerDetail(customer: selected, balance: debts.balance(selected.id)),
-              ),
-            ],
-          ),
         ),
       ],
     );

@@ -303,11 +303,19 @@ class _SessionState extends ConsumerState<_Session> {
       }
     }
 
-    return Row(
+    final phone = isPhoneLayout(context);
+    return Flex(
+      direction: phone ? Axis.vertical : Axis.horizontal,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        SizedBox(width: DoayaSizes.invoiceWidth, child: _countPane(l)),
-        const SizedBox(width: DoayaSpacing.huge),
+        if (phone)
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxHeight: DoayaSizes.formWidth / 2),
+            child: _countPane(l),
+          )
+        else
+          SizedBox(width: DoayaSizes.invoiceWidth, child: _countPane(l)),
+        const SizedBox(width: DoayaSpacing.huge, height: DoayaSpacing.l),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -286,11 +286,14 @@ class _NotLinkedState extends ConsumerState<_NotLinked> {
     final session = ref.watch(requireSessionProvider);
     final secondary = DoayaTypography.bodySmall.copyWith(color: DoayaColors.textSecondary);
     final server = _server;
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    final phone = isPhoneLayout(context);
+    Widget cell(Widget w) => phone ? w : Expanded(child: w);
+    return Flex(
+      direction: phone ? Axis.vertical : Axis.horizontal,
+      crossAxisAlignment: phone ? CrossAxisAlignment.stretch : CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: Panel(
+        cell(
+          Panel(
             title: l.findServer,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -302,9 +305,9 @@ class _NotLinkedState extends ConsumerState<_NotLinked> {
             ),
           ),
         ),
-        const SizedBox(width: DoayaSpacing.xl),
-        Expanded(
-          child: server == null
+        const SizedBox(width: DoayaSpacing.xl, height: DoayaSpacing.l),
+        cell(
+          server == null
               ? const SizedBox.shrink()
               : Panel(
                   title: _needsSetup! ? l.createOnServerTitle : l.linkTitle,
@@ -427,14 +430,19 @@ class _Linked extends ConsumerWidget {
         ),
         if (owner && link.isOwner) ...[
           const SizedBox(height: DoayaSpacing.xl),
-          const Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(child: _DevicesPanel()),
-              SizedBox(width: DoayaSpacing.xl),
-              Expanded(child: _AccountsPanel()),
-            ],
-          ),
+          if (isPhoneLayout(context)) ...[
+            const _DevicesPanel(),
+            const SizedBox(height: DoayaSpacing.l),
+            const _AccountsPanel(),
+          ] else
+            const Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(child: _DevicesPanel()),
+                SizedBox(width: DoayaSpacing.xl),
+                Expanded(child: _AccountsPanel()),
+              ],
+            ),
         ],
       ],
     );

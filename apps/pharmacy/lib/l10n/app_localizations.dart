@@ -2894,6 +2894,24 @@ abstract class AppLocalizations {
   /// **'انضمام لصيدلية موجودة'**
   String get joinExisting;
 
+  /// No description provided for @navMore.
+  ///
+  /// In ar, this message translates to:
+  /// **'المزيد'**
+  String get navMore;
+
+  /// No description provided for @navInventoryShort.
+  ///
+  /// In ar, this message translates to:
+  /// **'المخزون'**
+  String get navInventoryShort;
+
+  /// No description provided for @navDebtsShort.
+  ///
+  /// In ar, this message translates to:
+  /// **'الديون'**
+  String get navDebtsShort;
+
   /// No description provided for @newServer.
   ///
   /// In ar, this message translates to:

@@ -1559,6 +1559,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get joinExisting => 'انضمام لصيدلية موجودة';
 
   @override
+  String get navMore => 'المزيد';
+
+  @override
+  String get navInventoryShort => 'المخزون';
+
+  @override
+  String get navDebtsShort => 'الديون';
+
+  @override
   String get newServer => 'سيرفر دوايا جديد (بلا صيدلية لسا)';
 
   @override
