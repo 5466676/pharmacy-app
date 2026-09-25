@@ -5,11 +5,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../data/database.dart';
+import '../../data/reports.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers.dart';
 import '../../router.dart';
 import '../format.dart';
 import '../widgets.dart';
+import 'reports_screen.dart' show formatMargin;
 
 final _todaySalesProvider = StreamProvider<List<SaleRow>>((ref) {
   final now = ref.watch(clockProvider)();
@@ -52,6 +54,12 @@ class DashboardScreen extends ConsumerWidget {
         .toList();
     final low = stock.lowStock({for (final p in products.values) p.id: lowStockPieces(p)});
     final todayTotal = today.fold<int>(0, (s, x) => s + x.totalMinor);
+    final profit = session.isOwner
+        ? ref.watch(profitReportProvider(ReportPeriod.today)).value?.total ?? ProfitSummary.zero
+        : ProfitSummary.zero;
+    final suppliers = session.isOwner
+        ? ref.watch(supplierLedgerProvider).value ?? SupplierLedger()
+        : SupplierLedger();
 
     return ListView(
       children: [
@@ -103,6 +111,28 @@ class DashboardScreen extends ConsumerWidget {
                 tone: low.isEmpty ? StatusTone.neutral : StatusTone.danger,
                 onTap: () => context.go(Routes.inventory),
               ),
+              // Owner only: profit and what we owe suppliers.
+              if (session.isOwner) ...[
+                StatCard(
+                  icon: DoayaIcons.reports,
+                  label: l.statProfitToday,
+                  value: formatSignedMoney(profit.profitMinor, currency),
+                  caption: profit.complete
+                      ? (profit.marginBasisPoints == null
+                            ? null
+                            : l.marginCaption(formatMargin(profit.marginBasisPoints!)))
+                      : l.costIncomplete,
+                  tone: profit.complete ? StatusTone.success : StatusTone.warning,
+                  onTap: () => context.go(Routes.reports),
+                ),
+                StatCard(
+                  icon: DoayaIcons.receive,
+                  label: l.statSupplierDebts,
+                  value: formatMoney(suppliers.totalOwed, currency),
+                  tone: StatusTone.neutral,
+                  onTap: () => context.go(Routes.purchases),
+                ),
+              ],
             ];
             return Wrap(
               spacing: gap,

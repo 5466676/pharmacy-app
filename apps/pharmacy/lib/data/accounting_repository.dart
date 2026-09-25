@@ -254,6 +254,86 @@ class AccountingRepository {
         }),
       );
 
+  // ─── Profit ───────────────────────────────────────────────────────────────
+
+  /// Profit of `[from, to)`: sales (discount spread over their lines) minus
+  /// customer refunds, and the cost of the pieces sold minus those returned.
+  Future<ProfitReport> profitReport(DateTime from, DateTime to) async {
+    final f = from.toUtc(), t = to.toUtc();
+    final sales =
+        await (_db.select(_db.sales)..where(
+              (x) => x.occurredAt.isBiggerOrEqualValue(f) & x.occurredAt.isSmallerThanValue(t),
+            ))
+            .get();
+    final saleLines =
+        await (_db.select(_db.saleLines).join([
+              innerJoin(_db.sales, _db.sales.id.equalsExp(_db.saleLines.saleId)),
+            ])..where(
+              _db.sales.occurredAt.isBiggerOrEqualValue(f) &
+                  _db.sales.occurredAt.isSmallerThanValue(t),
+            ))
+            .get();
+    final returnLines =
+        await (_db.select(_db.returnLines).join([
+              innerJoin(_db.returns, _db.returns.id.equalsExp(_db.returnLines.returnId)),
+            ])..where(
+              _db.returns.occurredAt.isBiggerOrEqualValue(f) &
+                  _db.returns.occurredAt.isSmallerThanValue(t),
+            ))
+            .get();
+    final events =
+        await (_db.select(_db.stockEvents)..where(
+              (x) =>
+                  x.type.isIn([StockEventType.sold.wire, StockEventType.returned.wire]) &
+                  x.occurredAt.isBiggerOrEqualValue(f) &
+                  x.occurredAt.isSmallerThanValue(t),
+            ))
+            .get();
+
+    final linesBySale = <String, List<SaleLineRow>>{};
+    for (final r in saleLines) {
+      final l = r.readTable(_db.saleLines);
+      linesBySale.putIfAbsent(l.saleId, () => []).add(l);
+    }
+    final revenue = <RevenueItem>[];
+    for (final s in sales) {
+      final lines = linesBySale[s.id] ?? const <SaleLineRow>[];
+      final gross = [for (final l in lines) l.quantity * l.unitPriceMinor];
+      final discount = allocateProportionally(s.discountMinor, gross);
+      for (var i = 0; i < lines.length; i++) {
+        revenue.add(
+          RevenueItem(
+            productId: lines[i].productId,
+            employeeId: s.employeeId,
+            at: s.occurredAt,
+            amountMinor: gross[i] - discount[i],
+          ),
+        );
+      }
+    }
+    for (final r in returnLines) {
+      final ret = r.readTable(_db.returns);
+      final l = r.readTable(_db.returnLines);
+      revenue.add(
+        RevenueItem(
+          productId: l.productId,
+          employeeId: ret.employeeId,
+          at: ret.occurredAt,
+          amountMinor: -(l.quantity * l.unitPriceMinor),
+        ),
+      );
+    }
+    return buildProfitReport(
+      revenue: revenue,
+      stockEvents: events.map(stockFromRow),
+      costs: await costBook(),
+      dayOf: (at) {
+        final l = at.toLocal();
+        return DateTime(l.year, l.month, l.day);
+      },
+    );
+  }
+
   // ─── Returns to supplier ──────────────────────────────────────────────────
 
   Future<CompletedSupplierReturn> returnToSupplier(

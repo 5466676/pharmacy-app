@@ -11,6 +11,7 @@ import 'ui/screens/pos_screen.dart';
 import 'ui/screens/product_screen.dart';
 import 'ui/screens/purchase_form_screen.dart';
 import 'ui/screens/purchases_screen.dart';
+import 'ui/screens/reports_screen.dart';
 import 'ui/screens/return_screen.dart';
 import 'ui/screens/settings_screen.dart';
 import 'ui/screens/setup_screen.dart';
@@ -31,6 +32,7 @@ abstract final class Routes {
   static const till = '/till';
   static const returns = '/pos/return';
   static const settings = '/settings';
+  static const reports = '/reports';
   static const purchases = '/purchases';
   static const newPurchase = '$purchases/new';
   static String newPurchaseFrom(String supplierId) => '$newPurchase?supplier=$supplierId';
@@ -113,6 +115,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: Routes.till,
             pageBuilder: (_, _) => const NoTransitionPage(child: TillScreen()),
+          ),
+          GoRoute(
+            path: Routes.reports,
+            pageBuilder: (_, _) => const NoTransitionPage(child: ReportsScreen()),
           ),
           GoRoute(
             path: Routes.staff,

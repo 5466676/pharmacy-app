@@ -36,6 +36,8 @@ class AppShell extends ConsumerWidget {
       (Routes.till, DoayaNavItem(icon: DoayaIcons.till, label: l.navTill)),
     ];
     final adminItems = [
+      if (session.isOwner)
+        (Routes.reports, DoayaNavItem(icon: DoayaIcons.reports, label: l.navReports)),
       if (session.isOwner) (Routes.staff, DoayaNavItem(icon: DoayaIcons.staff, label: l.navStaff)),
       if (session.isOwner)
         (Routes.settings, DoayaNavItem(icon: DoayaIcons.settings, label: l.navSettings)),

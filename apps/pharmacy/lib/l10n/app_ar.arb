@@ -658,5 +658,28 @@
         "type": "String"
       }
     }
-  }
+  },
+  "navReports": "الأرباح",
+  "reportsTitle": "الأرباح والتكلفة",
+  "netSales": "صافي المبيعات",
+  "costOfGoods": "تكلفة البضاعة المباعة",
+  "grossProfit": "الربح",
+  "marginCaption": "هامش الربح {pct}%",
+  "@marginCaption": {"placeholders": {"pct": {"type": "String"}}},
+  "stockValueAtCost": "قيمة المخزون بالتكلفة",
+  "piecesWithoutCost": "{pieces} قطعة بدون تكلفة",
+  "@piecesWithoutCost": {"placeholders": {"pieces": {"type": "String"}}},
+  "unknownCostNotice": "في {pieces} قطعة انباعت من بضاعة دخلت قبل فواتير الشراء، تكلفتها مو معروفة، فالربح الظاهر أعلى من الحقيقي. بيتصلّح لحالو لما تخلص هالبضاعة وتدخل بفواتير شراء.",
+  "@unknownCostNotice": {"placeholders": {"pieces": {"type": "String"}}},
+  "byProduct": "حسب الصنف",
+  "byEmployee": "حسب الموظف",
+  "byDay": "حسب اليوم",
+  "colRevenue": "المبيعات",
+  "colCost": "التكلفة",
+  "colProfit": "الربح",
+  "colMargin": "الهامش",
+  "noReportData": "ما في مبيعات بهالفترة",
+  "statProfitToday": "ربح اليوم",
+  "statSupplierDebts": "علينا للموردين",
+  "costIncomplete": "تكلفة ناقصة"
 }

@@ -580,6 +580,49 @@ void main() {
       await unmount(tester);
     });
 
+    testWidgets('profit report: owner only; unknown cost is flagged, not guessed', (tester) async {
+      final (device, supplier) = await seedSupplier(tester);
+      late EmployeeRow rana;
+      await tester.runAsync(() async {
+        rana = await PeopleRepository(db).addEmployee(name: 'رنا', pin: '1111');
+        final stamp = Session(deviceId: device.id, employeeId: owner.id);
+        await AccountingRepository(db, LedgerRepository(db)).recordPurchase(
+          stamp,
+          supplierId: supplier.id,
+          items: [PurchaseItem(productId: amox.id, quantity: 4, unitPriceMinor: 2500)],
+          currency: Currency.syp,
+          payment: PurchasePayment.credit,
+        );
+        // FEFO sells the seeded batch first: it has no purchase cost.
+        await LedgerRepository(db).sell(
+          stamp,
+          cart: [
+            CartLine(productId: amox.id, quantity: 1, unitPrice: const Money(4500, Currency.syp)),
+          ],
+          currency: Currency.syp,
+          payment: PaymentType.cash,
+        );
+      });
+      await pumpApp(tester);
+
+      container.read(sessionProvider.notifier).signIn(device, rana);
+      await settle(tester);
+      expect(find.text('ربح اليوم'), findsNothing);
+      expect(find.text('الأرباح'), findsNothing);
+
+      container.read(sessionProvider.notifier).signIn(device, owner);
+      await settle(tester);
+      expect(find.text('ربح اليوم'), findsOneWidget);
+      expect(find.text('علينا للموردين'), findsOneWidget);
+      await tester.tap(find.text('الأرباح'));
+      await settle(tester);
+      expect(find.text('الأرباح والتكلفة'), findsOneWidget);
+      expect(find.text('Amoxil 500 mg'), findsOneWidget);
+      expect(find.textContaining('تكلفتها مو معروفة'), findsOneWidget);
+      expect(find.text('100 ل.س'), findsOneWidget); // stock value: 4 boxes at 25
+      await unmount(tester);
+    });
+
     testWidgets('solid theme on desktop: no BackdropFilter anywhere', (tester) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.windows;
       await signInAndOpenPos(tester);

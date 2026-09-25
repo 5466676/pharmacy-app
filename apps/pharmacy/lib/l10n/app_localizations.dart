@@ -2113,6 +2113,126 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'دخّلها {name}'**
   String purchaseBy(String name);
+
+  /// No description provided for @navReports.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأرباح'**
+  String get navReports;
+
+  /// No description provided for @reportsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأرباح والتكلفة'**
+  String get reportsTitle;
+
+  /// No description provided for @netSales.
+  ///
+  /// In ar, this message translates to:
+  /// **'صافي المبيعات'**
+  String get netSales;
+
+  /// No description provided for @costOfGoods.
+  ///
+  /// In ar, this message translates to:
+  /// **'تكلفة البضاعة المباعة'**
+  String get costOfGoods;
+
+  /// No description provided for @grossProfit.
+  ///
+  /// In ar, this message translates to:
+  /// **'الربح'**
+  String get grossProfit;
+
+  /// No description provided for @marginCaption.
+  ///
+  /// In ar, this message translates to:
+  /// **'هامش الربح {pct}%'**
+  String marginCaption(String pct);
+
+  /// No description provided for @stockValueAtCost.
+  ///
+  /// In ar, this message translates to:
+  /// **'قيمة المخزون بالتكلفة'**
+  String get stockValueAtCost;
+
+  /// No description provided for @piecesWithoutCost.
+  ///
+  /// In ar, this message translates to:
+  /// **'{pieces} قطعة بدون تكلفة'**
+  String piecesWithoutCost(String pieces);
+
+  /// No description provided for @unknownCostNotice.
+  ///
+  /// In ar, this message translates to:
+  /// **'في {pieces} قطعة انباعت من بضاعة دخلت قبل فواتير الشراء، تكلفتها مو معروفة، فالربح الظاهر أعلى من الحقيقي. بيتصلّح لحالو لما تخلص هالبضاعة وتدخل بفواتير شراء.'**
+  String unknownCostNotice(String pieces);
+
+  /// No description provided for @byProduct.
+  ///
+  /// In ar, this message translates to:
+  /// **'حسب الصنف'**
+  String get byProduct;
+
+  /// No description provided for @byEmployee.
+  ///
+  /// In ar, this message translates to:
+  /// **'حسب الموظف'**
+  String get byEmployee;
+
+  /// No description provided for @byDay.
+  ///
+  /// In ar, this message translates to:
+  /// **'حسب اليوم'**
+  String get byDay;
+
+  /// No description provided for @colRevenue.
+  ///
+  /// In ar, this message translates to:
+  /// **'المبيعات'**
+  String get colRevenue;
+
+  /// No description provided for @colCost.
+  ///
+  /// In ar, this message translates to:
+  /// **'التكلفة'**
+  String get colCost;
+
+  /// No description provided for @colProfit.
+  ///
+  /// In ar, this message translates to:
+  /// **'الربح'**
+  String get colProfit;
+
+  /// No description provided for @colMargin.
+  ///
+  /// In ar, this message translates to:
+  /// **'الهامش'**
+  String get colMargin;
+
+  /// No description provided for @noReportData.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما في مبيعات بهالفترة'**
+  String get noReportData;
+
+  /// No description provided for @statProfitToday.
+  ///
+  /// In ar, this message translates to:
+  /// **'ربح اليوم'**
+  String get statProfitToday;
+
+  /// No description provided for @statSupplierDebts.
+  ///
+  /// In ar, this message translates to:
+  /// **'علينا للموردين'**
+  String get statSupplierDebts;
+
+  /// No description provided for @costIncomplete.
+  ///
+  /// In ar, this message translates to:
+  /// **'تكلفة ناقصة'**
+  String get costIncomplete;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

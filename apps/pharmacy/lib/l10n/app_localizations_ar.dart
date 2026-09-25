@@ -1106,4 +1106,70 @@ class AppLocalizationsAr extends AppLocalizations {
   String purchaseBy(String name) {
     return 'دخّلها $name';
   }
+
+  @override
+  String get navReports => 'الأرباح';
+
+  @override
+  String get reportsTitle => 'الأرباح والتكلفة';
+
+  @override
+  String get netSales => 'صافي المبيعات';
+
+  @override
+  String get costOfGoods => 'تكلفة البضاعة المباعة';
+
+  @override
+  String get grossProfit => 'الربح';
+
+  @override
+  String marginCaption(String pct) {
+    return 'هامش الربح $pct%';
+  }
+
+  @override
+  String get stockValueAtCost => 'قيمة المخزون بالتكلفة';
+
+  @override
+  String piecesWithoutCost(String pieces) {
+    return '$pieces قطعة بدون تكلفة';
+  }
+
+  @override
+  String unknownCostNotice(String pieces) {
+    return 'في $pieces قطعة انباعت من بضاعة دخلت قبل فواتير الشراء، تكلفتها مو معروفة، فالربح الظاهر أعلى من الحقيقي. بيتصلّح لحالو لما تخلص هالبضاعة وتدخل بفواتير شراء.';
+  }
+
+  @override
+  String get byProduct => 'حسب الصنف';
+
+  @override
+  String get byEmployee => 'حسب الموظف';
+
+  @override
+  String get byDay => 'حسب اليوم';
+
+  @override
+  String get colRevenue => 'المبيعات';
+
+  @override
+  String get colCost => 'التكلفة';
+
+  @override
+  String get colProfit => 'الربح';
+
+  @override
+  String get colMargin => 'الهامش';
+
+  @override
+  String get noReportData => 'ما في مبيعات بهالفترة';
+
+  @override
+  String get statProfitToday => 'ربح اليوم';
+
+  @override
+  String get statSupplierDebts => 'علينا للموردين';
+
+  @override
+  String get costIncomplete => 'تكلفة ناقصة';
 }
