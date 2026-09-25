@@ -847,7 +847,8 @@ class _Invoice extends StatelessWidget {
                   p == PaymentType.transfer ? l.paymentTransferHint : null,
                   GlassPillButton(
                     label: label,
-                    icon: icon,
+                    // A narrow phone has room for the words only.
+                    icon: compact ? null : icon,
                     size: PillSize.medium,
                     selected: payment == p,
                     expand: true,

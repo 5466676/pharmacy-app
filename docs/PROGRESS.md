@@ -238,7 +238,7 @@ Health ministry price-list import · money accounts (drawer / Sham Cash / bank +
 ### Question for this review
 - **Receipt printing**: OK to add the `pdf` + `printing` packages (well-maintained, pure Dart/Flutter, no Google services, work offline with any system printer, including 80 mm thermal printers installed in Windows)? The button will be a small print icon on the completed sale, nothing more.
 
-## Phase 2 — Backend + sync · 🚧 steps 1–6 done, 7 mostly done, 8 left (plan approved 2026-09-25, with the owner's changes)
+## Phase 2 — Backend + sync · ✅ ready for review (plan approved 2026-09-25, with the owner's changes)
 
 Goal: the pharmacy's devices (counter PC, the owner's and employees' phones) share one set of data through a server **on the pharmacy's own computer, over the local Wi-Fi, with no internet needed**. Every device keeps a full copy and keeps selling when the server is off; they catch up when it's back. This is also the base the patient app (Phase 3) builds on. Phase 1.5 steps 7–9 (expenses + P&L, automatic backup, final run) are paused and come back later.
 
@@ -324,13 +324,25 @@ Patients aren't on the pharmacy's Wi-Fi, so the patient app will need a server r
     - It sold Panadol; the counter then showed that sale (device «موبايل سامر») and today's total went from 194 to 212.
   - Fixed after the real run: Tab left the account form (now kept inside it); a server with no pharmacy yet gets a clear name.
 
-- [~] **7. Phone layout** (mostly done; there's no Android SDK in this environment, so it was checked with the Linux window at 400×820 plus widget tests at phone size):
+- [x] **7. Phone layout**:
   - Below 700 px wide: a slim top bar (pharmacy name, sync chip, switch user) and a floating bottom bar (الرئيسية، البيع، المخزون، الديون، المزيد); «المزيد» lists the rest, without owner pages for employees.
-  - Phone versions of the POS (one column: search on top, results while searching, otherwise the scrollable invoice), dashboard, inventory, debts (list, then details), till, profits, purchases tabs, sync/linking and stocktake.
+  - **Every screen fits a 360 px phone.** A test opens each one at 360×740 and fails on any layout overflow.
+    - POS: one column; the invoice scrolls; result rows on several lines.
+    - Dashboard: 2 cards per row.
+    - Inventory rows, and debts/returns as a list then details with a back button.
+    - Till, profits (2×2 cards, two-line rows), the purchase invoice (lines over the summary, three fields per row), the supplier page (one scrolling column), shortages, sync and stocktake.
   - `PageHeader`, `Panel` and `SplitPanes` adapt by themselves.
   - Android manifest: internet, plain HTTP on the local network, WhatsApp, Arabic app name.
-  - 2 widget tests: a sale on a 400 px phone; «المزيد» and several screens with no layout errors.
-  - **Left**: phone versions of the purchase invoice, supplier page, returns, product page and employee accounts (they work on a tablet or a wide phone, not yet comfortably on a narrow one), and an APK build on a machine with the Android SDK.
+  - **APK not built here**: this environment's network blocks Google's Android SDK downloads (403). On a machine with Android Studio: `cd apps/pharmacy && flutter build apk --release`.
+- [x] **8. Server on the pharmacy PC**:
+  - **Daily backups by the server itself** (Windows or Linux): `pg_dump` into `data/backups`, keeping 30. CLI `backup` / `list-backups` / `restore`; owner endpoint `/backups`. Tested with a real dump and restore. The app shows the owner the server's last backup.
+  - **Windows**: `backend/deploy/windows/install.ps1` sets up the Python environment, a database with a random password, the migrations, firewall rules for TCP 8000 and UDP 47800, and a scheduled task that starts the server with Windows and restarts it. PowerShell isn't available here, so the script is **not run yet** and needs its first real run on the pharmacy PC. Linux: a systemd unit.
+  - **`docs/INSTALL_SERVER.md`**: a simple Arabic guide (install, link devices, backups, restore, what to do if…).
+  - **Real run** (`docs/screenshots/phase2/07–12`):
+    - The server took its first backup by itself, then was switched off.
+    - The phone (at 360 px) showed «السيرفر مو موجود» and still sold Brufen.
+    - The server came back; «زامن هلق» synced; the counter then showed that sale (26 ل.س, «موبايل سامر») and today's total went to 238 over 6 sales.
+- Totals: server 30, core 90, design system 23, app 78 (+ the end-to-end script).
 
 ### Open (asked at the step-5 review)
 - **Encryption on the Wi-Fi**: HTTPS with a certificate the server makes itself, trusted the first time a device links. That needs the `cryptography` package on the server. Until then the pilot runs over plain HTTP on the pharmacy's own Wi-Fi.
