@@ -524,4 +524,17 @@ Screens from `design/patient_*.html`, same `doaya_ui` dark glass, RTL, English d
   - Negation cancels a symptom only when it comes just before it, in the same clause («ما عندي وجع بصدري», «ولا ضيق نفس»). «بس / لكن / و…» start a new clause, and negation **never** cancels self-harm, poisoning or a feverish baby.
   - Examples: 54 that must fire; 27 everyday pharmacy sentences that must not («حرقة بالمعدة», «تشنج بالعضل», «رح موت من الجوع», «عندي صرع وبدي علبة الدوا», «لقاح شلل الأطفال»). A guard test checks every pattern is written on normalized text; it caught «على» in one.
   - Emergency numbers are settings: ambulance **110** (the Ministry of Health's unified operations room, 2026) and **112** (police / emergency). Server 83.
+- [x] Step 2: **model interface, classifier, output guard** (`backend/app/consult/`):
+  - `OpenAICompatibleLLM`: `POST …/chat/completions` to LM Studio by default (`DOAYA_LLM_BASE_URL/MODEL/API_KEY`); Ollama or a hosted API by settings.
+    - JSON mode, falling back without it when a local server refuses it.
+    - `<think>` blocks of reasoning models stripped.
+    - Every failure becomes one `LLMUnavailable`.
+  - `ScriptedLLM` for tests; `parse_json` finds the object even inside prose or ```json.
+  - **Classifier** (second red-flag layer): reads the last 6 messages, so a bare «اي» to «في تيبّس بالرقبة؟» counts. It returns strict JSON with a category. It can only add an alarm; a down model or an unreadable answer → the rules alone decide.
+  - **Output guard** on every assistant reply:
+    - doses (units, «حبتين مرتين باليوم», «ملعقة ٣ مرات يومياً»)
+    - prescribing («خود بنادول», «جرب Brufen», «بنصحك بمضاد حيوي»)
+    - "no doctor needed" («ما في داعي تروح للدكتور»)
+    - while normal questions and «لازم تروح للدكتور» pass
+  - Dependencies added (approved): `httpx` (runtime), `websockets`, `python-multipart`. Server 154.
 
