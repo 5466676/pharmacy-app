@@ -4,18 +4,18 @@ import 'dart:ui';
 /// (directly for mode-independent colors, or via `DoayaTokens` for surfaces).
 abstract final class DoayaColors {
   // Background gradient.
-  static const bgTop = Color(0xFF3D5747);
-  static const bgMid = Color(0xFF2B4034);
-  static const bgBottom = Color(0xFF22352A);
+  static const bgTop = Color(0xFF285439);
+  static const bgMid = Color(0xFF1B3F2B);
+  static const bgBottom = Color(0xFF153422);
 
   // Background decoration (blobs + leaves).
-  static const blobLight = Color(0xFF5A7866);
-  static const blobDark = Color(0xFF45604F);
-  static const leafFillA = Color(0xFF3F5B4A);
-  static const leafVeinA = Color(0xFF6F8E78);
-  static const leafFillB = Color(0xFF3A5546);
-  static const leafVeinB = Color(0xFF688770);
-  static const photoScrim = Color.fromRGBO(34, 53, 42, 0.55);
+  static const blobLight = Color(0xFF3F7153);
+  static const blobDark = Color(0xFF2F5A3F);
+  static const leafFillA = Color(0xFF29573C);
+  static const leafVeinA = Color(0xFF50865F);
+  static const leafFillB = Color(0xFF26523A);
+  static const leafVeinB = Color(0xFF4A8057);
+  static const photoScrim = Color.fromRGBO(21, 52, 34, 0.55);
 
   // Glass.
   static const glassFill = Color.fromRGBO(236, 242, 234, 0.09);
@@ -26,9 +26,9 @@ abstract final class DoayaColors {
   static const glassHighlightStrong = Color.fromRGBO(255, 255, 255, 0.16);
 
   // Solid variants (pharmacy desktop, long lists).
-  static const surface = Color(0xFF33483C);
-  static const surfaceRaised = Color(0xFF3A5044);
-  static const border = Color(0xFF4A6254);
+  static const surface = Color(0xFF224531);
+  static const surfaceRaised = Color(0xFF274C38);
+  static const border = Color(0xFF345E45);
 
   // Sage (primary action).
   static const sageTop = Color(0xFFDCE8C8);

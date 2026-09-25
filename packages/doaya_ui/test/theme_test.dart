@@ -35,7 +35,7 @@ void main() {
     });
 
     test('spec colors are exact', () {
-      expect(DoayaColors.bgTop, const Color(0xFF3D5747));
+      expect(DoayaColors.bgTop, const Color(0xFF285439));
       expect(DoayaColors.glassFill, const Color.fromRGBO(236, 242, 234, 0.09));
       expect(DoayaColors.onSage, const Color(0xFF1B3024));
       expect(DoayaColors.accent, const Color(0xFFC9DEAE));

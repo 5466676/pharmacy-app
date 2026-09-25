@@ -70,12 +70,12 @@ Reference mockups live in `/design`. Rebuild them in Flutter; never embed HTML.
 - All `[bracketed]` text in mockups is a placeholder for real data.
 
 ### 4.1 Background
-Vertical gradient `#3D5747` → `#2B4034` (55%) → `#22352A`, two large soft blobs (`#5A7866`, `#45604F`) and faint blurred leaf shapes. Optional blurred photo `assets/bg/leaves.jpg` (added later); the gradient is the fallback.
+Vertical gradient `#285439` → `#1B3F2B` (55%) → `#153422`, two large soft blobs (`#3F7153`, `#2F5A3F`) and faint blurred leaf shapes. Optional blurred photo `assets/bg/leaves.jpg` (added later); the gradient is the fallback.
 
 ### 4.2 Color tokens
 | Token | Value | Use |
 |---|---|---|
-| bgTop / bgMid / bgBottom | `#3D5747` / `#2B4034` / `#22352A` | background gradient |
+| bgTop / bgMid / bgBottom | `#285439` / `#1B3F2B` / `#153422` | background gradient |
 | glassFill | `rgba(236,242,234,0.09)` | standard glass surface |
 | glassFillStrong | `rgba(236,242,234,0.13)` | hero cards, sheets, bottom nav |
 | glassBorder / glassBorderStrong | `rgba(236,242,234,0.20)` / `0.26` | 1px glass borders |
@@ -91,7 +91,7 @@ Vertical gradient `#3D5747` → `#2B4034` (55%) → `#22352A`, two large soft bl
 | dangerFill / Border / Text | `rgba(240,120,110,0.16)` / `0.40` / `#F6B7B0` | out of stock, red-flag cases |
 | successDot | `#A8D98A` | online, synced, ready |
 
-**Solid variants** (pharmacy desktop, long lists): `surface #33483C`, `surfaceRaised #3A5044`, `border #4A6254`.
+**Solid variants** (pharmacy desktop, long lists): `surface #224531`, `surfaceRaised #274C38`, `border #345E45`.
 
 ### 4.3 Glass rules and performance
 - Glass = translucent fill + 1px border + inner top highlight + `BackdropFilter` blur 18 (strong: 22).

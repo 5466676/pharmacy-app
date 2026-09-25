@@ -25,9 +25,13 @@
 - [x] Tests + analyzer clean
 
 ### How to review
-- Screenshots: `docs/screenshots/phase0-*.png` (mobile gallery at 430px wide, desktop shell at 1280×880, full sidebar and compact rail).
+- Screenshots: `docs/screenshots/phase0-*.png` (mobile gallery at 430px wide, desktop shell at 1280×880).
 - Run it yourself: `cd packages/doaya_ui/example && flutter run -d chrome` (or `-d windows`). Use the زجاج / صلب toggle to switch between glass and solid, and the "واجهة سطح المكتب" button to open the desktop shell.
 - `flutter test` in `packages/doaya_ui`: 28 tests (Arabic number formatting, theme tokens, the rule that solid mode never blurs, component behavior).
+
+### Review feedback applied
+- Design direction confirmed: "dark glass" (the `glass` page of the design canvas, identical to `/design`).
+- Green layer made darker and more saturated (see DECISIONS, 2026-09-25).
 
 ### Open questions for review
 - `design/*.html` reference a `support.js` that wasn't in the zip. The files still render (static markup); only the preview-harness script is missing.
