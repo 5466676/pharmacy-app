@@ -39,6 +39,13 @@ int? pieceCost(StockLedger stock, CostBook costs, String productId, int pieces) 
   return costs.costOf(batches.first.batchId, pieces);
 }
 
+/// Whether a product on [shelf] belongs to a stocktake of [scope]: no scope
+/// means everything; otherwise case-insensitive prefix, so "B" covers B1, B2…
+bool inShelfScope(String? shelf, String? scope) {
+  if (scope == null || scope.trim().isEmpty) return true;
+  return shelf?.trim().toUpperCase().startsWith(scope.trim().toUpperCase()) ?? false;
+}
+
 /// "+2 علبة" / "−1 ظرف" / "مطابق".
 String formatStockDifference(AppLocalizations l, int pieces, int unitsPerPack) {
   if (pieces == 0) return l.balanced;
@@ -278,7 +285,7 @@ class _SessionState extends ConsumerState<_Session> {
       ref.watch(_countsProvider(widget.stocktake.id)).value ?? const <StocktakeCountRow>[],
     );
     final scope = widget.stocktake.scope;
-    final inScope = products.where((p) => scope == null || p.shelf == scope).toList();
+    final inScope = products.where((p) => inShelfScope(p.shelf, scope)).toList();
     final notCounted = inScope.where((p) => !counts.containsKey(p.id)).toList();
     final differences = counts.values.where((c) => c.countedPieces != c.systemPiecesAtCount).length;
 

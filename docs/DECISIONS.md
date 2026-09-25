@@ -111,3 +111,7 @@ Profit of a period = sales in it (after discount, spread over lines by `allocate
 ## 2026-09-25 · Purchase orders are sent by copy-paste
 Suppliers take orders electronically (owner). The order is copied as plain text to the clipboard, to paste into WhatsApp / Telegram desktop. That needs no new dependency, and nothing is sent from the app itself. Each line starts with a number and the Latin drug name, so chat apps lay it out left to right. Orders are mutable drafts (not a ledger): nothing in stock or money changes until they're received as a purchase invoice, which is the append-only record.
 Shortage rule: out of stock; at or under the minimum; or fewer days left than the cover period (14) at the pace of the last 30 days (sold − returned). Suggested boxes = enough for 14 days and above the minimum, rounded up, at least 1.
+
+## 2026-09-25 · WhatsApp for orders, blind stocktake counts
+- `url_launcher` was added (owner approved) to open WhatsApp. It tries `whatsapp://send` (WhatsApp Desktop on Windows) first, then `https://wa.me/…`, and always copies the message too. Numbers are stored as typed and converted when used: a leading 0 or a 9-digit mobile gets 963.
+- Stocktake counts are blind: whoever counts doesn't see the system quantity, which is the usual way to keep counts honest. The difference shows right after saving. Only the owner applies a session, because it changes stock. Values use the cost of the product's most recently received batch with a known cost.

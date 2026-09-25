@@ -1,5 +1,6 @@
 import 'package:doaya_core/doaya_core.dart';
 import 'package:doaya_pharmacy/ui/format.dart';
+import 'package:doaya_pharmacy/ui/screens/stocktake_screen.dart' show inShelfScope;
 import 'package:doaya_pharmacy/ui/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -39,5 +40,14 @@ void main() {
     expect(initialsOf('أبو أحمد'), 'أ.أ');
     expect(initialsOf('سامر'), 'س');
     expect(initialsOf('  '), '');
+  });
+
+  test('stocktake shelf scope: none = all; case-insensitive prefix', () {
+    expect(inShelfScope('B3', null), isTrue);
+    expect(inShelfScope(null, null), isTrue);
+    expect(inShelfScope('B3', 'b'), isTrue);
+    expect(inShelfScope('B3', 'B3'), isTrue);
+    expect(inShelfScope('A1', 'B'), isFalse);
+    expect(inShelfScope(null, 'B'), isFalse);
   });
 }

@@ -132,7 +132,7 @@ Note: I can build and test on Linux here, but **not produce a Windows `.exe`** i
 ### Still open
 - **Receipt printing**: thermal 58/80 mm? (not answered yet)
 
-## Phase 1.5 — Accounting · 🚧 steps 1–5 done (plan approved 2026-09-25)
+## Phase 1.5 — Accounting · 🚧 steps 1–6 done (plan approved 2026-09-25)
 
 Goal: turn the counter app into a complete pharmacy accounting system (inspired by Karma Soft / Al-Ameen, see `docs/ACCOUNTING_RESEARCH.md`), still fully offline and still built on append-only records so Phase 2 sync stays safe.
 
@@ -218,6 +218,19 @@ Health ministry price-list import · money accounts (drawer / Sham Cash / bank +
   - **وصلت: فاتورة شراء** opens a purchase invoice with the supplier and lines filled in. Saving it marks the order received.
   - The dashboard's low-stock card now opens the shortages.
   - Tests: 75 core, 62 app. Screenshots `docs/screenshots/phase1_5/10–13`.
+
+- [x] Orders by **WhatsApp** (`url_launcher`, approved 2026-09-25):
+  - Suppliers have a WhatsApp number, set when adding or editing a supplier (there's now an edit button on the supplier page).
+  - "ابعتها واتساب" opens the supplier's chat with the order typed in, through the installed app (`whatsapp://`) or wa.me. If the supplier has no number, it asks for one first. The message is also copied as a fallback.
+  - The supplier page has a small chat button.
+  - Local numbers get the 963 code (`whatsappNumber`, tested).
+- [x] Step 6: **الجرد** (Inventory → جرد):
+  - Start a session for the whole pharmacy or one shelf (case-insensitive prefix: "B" covers B1, B2…).
+  - Scan or search, then type boxes and loose strips. The count is **blind**: the system quantity isn't shown before counting.
+  - The system quantity is recorded at the moment of counting, so selling goes on. A recount replaces the earlier count.
+  - Lists of counted and not-yet-counted products; differences with their value at cost (owner).
+  - The **owner** applies the session: one `adjusted` movement per difference, linked to the session. Past sessions are listed.
+  - Tests: 76 core, 65 app. Screenshots `docs/screenshots/phase1_5/14–16`.
 
 ### How to review (step 3)
 المشتريات → مورد جديد → فاتورة شراء → scan or search → type quantity, bonus, price… → F9. Then open the supplier: statement, "دفعة للمورد", "مرتجع للمستودع". Sign in as an employee to check the amounts are hidden.
