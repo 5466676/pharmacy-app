@@ -31,6 +31,8 @@ class PeopleRepository {
   Future<DeviceRow?> thisDevice() =>
       (_db.select(_db.devices)..where((t) => t.isThisDevice.equals(true))).getSingleOrNull();
 
+  Stream<List<DeviceRow>> watchDevices() => _db.select(_db.devices).watch();
+
   /// First-run setup: names this machine and creates the owner account.
   Future<(DeviceRow, EmployeeRow)> setUp({
     required String deviceName,

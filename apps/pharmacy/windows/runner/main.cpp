@@ -26,8 +26,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
 
   FlutterWindow window(project);
   Win32Window::Point origin(10, 10);
-  Win32Window::Size size(1280, 720);
-  if (!window.Create(L"doaya_pharmacy", origin, size)) {
+  Win32Window::Size size(1366, 768);
+  if (!window.Create(L"\x062F\x0648\x0627\x064A\x0627", origin, size)) {
     return EXIT_FAILURE;
   }
   window.SetQuitOnClose(true);

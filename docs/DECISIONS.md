@@ -56,3 +56,9 @@ It's about 30 lines per RFC 9562, uses `Random.secure()` and is unit-tested, whi
 
 ## 2026-09-25 · Quantities are whole units
 Stock counts whole selling units (e.g. boxes). Selling part of a pack (strips) is an open question for later.
+
+## 2026-09-25 · Database lives in the app support directory
+By default drift_flutter puts the SQLite file in the user's *Documents* folder. On Windows that folder is often synced by OneDrive, which can corrupt a live database or copy it off the machine. `AppDatabase.open()` uses `getApplicationSupportDirectory()` instead (`%APPDATA%\app.doaya\…` on Windows, `~/.local/share/app.doaya.doaya_pharmacy` on Linux). `path_provider` was already a transitive dependency of drift_flutter; it's now declared directly.
+
+## 2026-09-25 · Never put "·" next to an Arabic-Indic number
+The middle dot "·" looks almost the same as the Arabic zero "٠". In the real app, "متوفر · ٢٤" read as **٢٤٠**, and "تمّ البيع · ٨١" as "٠٨١". For stock counts and money that's a safety problem. Strings with a number use a colon instead ("متوفر: ٢٤"). "·" is kept only between words.

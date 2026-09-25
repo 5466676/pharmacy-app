@@ -49,4 +49,14 @@ abstract final class DoayaIcons {
   static const delete = Icons.delete_outline_rounded;
   static const edit = Icons.edit_outlined;
   static const more = Icons.more_horiz_rounded;
+  static const switchUser = Icons.switch_account_outlined;
+  static const backspace = Icons.backspace_outlined;
+  static const receive = Icons.move_to_inbox_outlined;
+  static const adjust = Icons.fact_check_outlined;
+  static const customer = Icons.person_add_alt_1_outlined;
+  static const payment = Icons.payments_outlined;
+  static const cash = Icons.money_rounded;
+  static const close = Icons.close_rounded;
+  static const swap = Icons.swap_horiz_rounded;
+  static const demo = Icons.science_outlined;
 }

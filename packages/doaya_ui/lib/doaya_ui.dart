@@ -10,6 +10,7 @@ export 'src/tokens/icons.dart';
 export 'src/tokens/typography.dart';
 export 'src/widgets/buttons.dart';
 export 'src/widgets/cards.dart';
+export 'src/widgets/dialog.dart';
 export 'src/widgets/doaya_background.dart';
 export 'src/widgets/doaya_logo.dart';
 export 'src/widgets/glass_surface.dart';

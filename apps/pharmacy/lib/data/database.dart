@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
+import 'package:path_provider/path_provider.dart';
 
 part 'database.g.dart';
 
@@ -186,8 +187,14 @@ const _appendOnlyTables = ['stock_events', 'sales', 'sale_lines', 'debt_events']
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
-  /// The on-disk database in the app's support directory.
-  factory AppDatabase.open() => AppDatabase(driftDatabase(name: 'doaya_pharmacy'));
+  /// The on-disk database in the app's private support directory (NOT the
+  /// user's Documents folder, which Windows often syncs to OneDrive).
+  factory AppDatabase.open() => AppDatabase(
+    driftDatabase(
+      name: 'doaya_pharmacy',
+      native: const DriftNativeOptions(databaseDirectory: getApplicationSupportDirectory),
+    ),
+  );
 
   @override
   int get schemaVersion => 1;

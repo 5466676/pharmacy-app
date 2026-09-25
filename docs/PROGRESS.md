@@ -39,7 +39,7 @@
 - Product images in the gallery are placeholder icons. Where will real product photos come from (pharmacy uploads, a shared catalogue)? That affects the Phase 1 schema.
 - Currency is written as "ل.س" after the number. Do you want "ل.س." or "ليرة" instead, and should prices ever show decimals?
 
-## Phase 1 — Pharmacy core (offline) · 🚧 in progress (plan approved 2026-09-25)
+## Phase 1 — Pharmacy core (offline) · ✅ ready for review
 
 Goal: the pharmacy desktop app sells, receives stock, tracks expiry and debts with **no internet and no server**. Everything is written as sync-ready events so Phase 2 only adds transport.
 
@@ -89,5 +89,33 @@ Note: I can build and test on Linux here, but **not produce a Windows `.exe`** i
 - Currency: any currency is supported. Default is the **new Syrian pound** (2 decimals), with its symbol shown. Code and symbol are editable in settings.
 - Expiry: keep it light. The expiry date is **optional** when receiving. Sales automatically take the nearest-to-expiry stock first. The POS warns *"a quantity of this drug expires soon, sell from it first"*, and the dashboard lists near-expiry quantities.
 - Product photos: deferred to Phase 3.
+
+### Done
+- [x] `doaya_core`: UUIDv7, money, append-only stock/debt ledgers, FEFO, sale rules (32 tests)
+- [x] drift schema with SQLite triggers that refuse DELETE and any UPDATE other than `synced_at` on ledger tables; repositories (15 tests)
+- [x] App shell, first-run setup, name + PIN login (keypad or keyboard)
+- [x] Inventory: filters (low stock / near expiry / out of stock), product form, receive stock (optional expiry), stock count, remove expired, movement history
+- [x] POS: barcode = keyboard input, search by name/ingredient, alternatives with the same active ingredient, near-expiry warnings, cash/debt, **F2 / F8 / Enter**
+- [x] Customers & debts, record payment; dashboard (today's sales, open debts, near expiry, low stock, recent sales with employee + device)
+- [x] Settings (owner only): pharmacy, currency, near-expiry window, employees, demo data
+- [x] End-to-end widget tests (7) + format tests (5): 27 app tests in total
+- [x] **Real Linux desktop build** driven by keyboard under a virtual display: setup → demo data → scan → sell → debt sale → restart → PIN login. Screenshots: `docs/screenshots/phase1-*.png`
+
+### Bugs found by running the real app (fixed)
+- Search debounce could bring stale results back after a barcode scan.
+- Long status chips overflowed instead of truncating.
+- drift_flutter's default DB location was the user's Documents folder, which OneDrive can sync. Moved to the app support directory.
+- "·" next to Arabic digits read as a zero ("متوفر · ٢٤" ≈ ٢٤٠). Replaced with ":" / "،".
+- Signs (+/−) could end up on the wrong side of numbers in RTL.
+
+### How to review
+- Windows: `cd apps/pharmacy && flutter build windows --release` on a Windows PC (not buildable in this Linux environment; the code has no platform-specific parts).
+- Linux: `flutter run -d linux`. First run → setup; Settings → «عبّي بيانات تجريبية» loads sample drugs with near-expiry batches.
+
+### Not built yet / questions for you
+- **Returns** (مرتجع): supported in the ledger, but there's no screen yet. Should it start from a past sale, or be a free-form return?
+- **Discount** at the POS: supported in the logic, with no field in the invoice yet. Should any employee be able to give a discount, or only the owner?
+- **Receipt printing**: do you need thermal receipts (58/80 mm)?
+- **Partial packs** (selling a strip from a box): still whole units only.
 
 ## Phase 2 — Backend + sync · not started

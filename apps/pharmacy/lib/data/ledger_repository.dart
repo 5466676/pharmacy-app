@@ -40,6 +40,14 @@ class LedgerRepository {
   Stream<StockLedger> watchStock() =>
       _db.select(_db.stockEvents).watch().map((rows) => StockLedger(rows.map(stockFromRow)));
 
+  /// Every stock movement of one product, newest first.
+  Stream<List<StockEvent>> watchProductEvents(String productId) =>
+      (_db.select(_db.stockEvents)
+            ..where((t) => t.productId.equals(productId))
+            ..orderBy([(t) => OrderingTerm.desc(t.occurredAt), (t) => OrderingTerm.desc(t.id)]))
+          .watch()
+          .map((rows) => rows.map(stockFromRow).toList());
+
   /// Inserts events, ignoring ids that already exist (idempotent sync).
   /// Returns how many were new.
   Future<int> insertStockEvents(Iterable<StockEvent> events) async {

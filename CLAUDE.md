@@ -32,9 +32,10 @@ Flutter stable (Riverpod, go_router, drift) · FastAPI + PostgreSQL + SQLAlchemy
 
 ## Layout
 ```
-apps/patient  apps/pharmacy  apps/admin     Flutter apps (from Phase 1+)
+apps/pharmacy                                Flutter pharmacy app (Phase 1: offline POS)
+apps/patient  apps/admin                     Flutter apps (Phase 3/4)
 packages/doaya_ui                            design system + component gallery (example/)
-packages/doaya_core                          models, API client, sync, ledger (Phase 1+)
+packages/doaya_core                          pure-Dart ids, money, ledgers, FEFO, sales
 backend/                                     FastAPI (Phase 2)
 design/                                      reference HTML mockups — read-only
 docs/                                        SPEC, DECISIONS, PROGRESS
@@ -44,10 +45,14 @@ docs/                                        SPEC, DECISIONS, PROGRESS
 The Dart packages form a pub workspace (root `pubspec.yaml`).
 ```bash
 flutter pub get                               # at repo root, resolves every package
+cd packages/doaya_core && dart test           # domain logic (ledger, FEFO, sales)
 cd packages/doaya_ui && flutter test          # design-system tests
+cd apps/pharmacy && dart run build_runner build   # after editing lib/data/database.dart
+cd apps/pharmacy && flutter test && flutter run -d linux   # or -d windows
 cd packages/doaya_ui/example && flutter run -d chrome   # component gallery (or -d windows / linux)
 flutter analyze                               # at repo root
 flutter build web --no-web-resources-cdn      # ALWAYS this flag: no Google CDNs (see DECISIONS)
 ```
+Never put "·" next to an Arabic-Indic number (it reads as ٠); use ":" or "،".
 Never put glyphs missing from Amiri/Readex Pro (←, ✓, emoji) in strings — use `DoayaIcons`.
 Regenerate localizations after editing an `.arb` file: `flutter gen-l10n` inside that package.

@@ -1,1 +1,349 @@
-{"@@locale":"ar","appName":"دوايا"}
+{
+  "@@locale": "ar",
+  "appName": "دوايا",
+  "save": "حفظ",
+  "cancel": "إلغاء",
+  "confirm": "تأكيد",
+  "close": "إغلاق",
+  "edit": "تعديل",
+  "add": "إضافة",
+  "back": "رجوع",
+  "search": "بحث",
+  "optional": "اختياري",
+  "required": "مطلوب",
+  "invalidNumber": "رقم غير صحيح",
+  "units": "{count} علبة",
+  "@units": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "none": "—",
+  "offline": "يعمل بدون إنترنت",
+  "signOut": "تبديل الموظف",
+  "owner": "مالك",
+  "employee": "موظف",
+  "setupTitle": "أهلين بدوايا",
+  "setupSubtitle": "خلّينا نجهّز هالجهاز للصيدلية. كل شي بينحفظ على الجهاز وبيشتغل بدون إنترنت.",
+  "pharmacyNameLabel": "اسم الصيدلية",
+  "deviceNameLabel": "اسم هالجهاز",
+  "deviceNameHint": "مثلاً: لابتوب الكاونتر",
+  "ownerNameLabel": "اسمك (المالك)",
+  "pinLabel": "رمز الدخول (٤ أرقام)",
+  "pinConfirmLabel": "أعد الرمز",
+  "pinMismatch": "الرمزين مو متطابقين",
+  "pinInvalid": "الرمز لازم يكون ٤ أرقام",
+  "startButton": "ابدأ",
+  "loginTitle": "مين عم يشتغل هلق؟",
+  "loginEnterPin": "أدخل رمز {name}",
+  "@loginEnterPin": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "wrongPin": "الرمز غلط",
+  "changeEmployee": "غيّر الموظف",
+  "navDashboard": "لوحة التحكم",
+  "navPos": "البيع",
+  "navInventory": "الأدوية والمخزون",
+  "navDebts": "الزبائن والديون",
+  "navSettings": "الإعدادات",
+  "navSectionMain": "الصيدلية",
+  "navSectionAdmin": "الإدارة",
+  "greeting": "أهلين {name}",
+  "@greeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "newSale": "بيع جديد",
+  "statSalesToday": "مبيعات اليوم",
+  "statSalesCount": "{count} عملية",
+  "@statSalesCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "statOpenDebts": "ديون مفتوحة",
+  "statCustomersCount": "{count} زبون",
+  "@statCustomersCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "statNearExpiry": "قرب تنتهي صلاحيته",
+  "statWithinDays": "خلال {days} يوم",
+  "@statWithinDays": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "statLowStock": "مخزون قليل",
+  "statProductsCount": "{count} صنف",
+  "@statProductsCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "recentSales": "آخر المبيعات",
+  "noSalesYet": "ما في مبيعات لسا",
+  "colTime": "الوقت",
+  "colTotal": "المبلغ",
+  "colPayment": "الدفع",
+  "colEmployee": "الموظف",
+  "colDevice": "الجهاز",
+  "colCustomer": "الزبون",
+  "paymentCash": "نقدي",
+  "paymentDebt": "دين",
+  "walkInCustomer": "زبون عابر",
+  "nearExpiryAlerts": "كميات قريبة الانتهاء",
+  "nearExpiryAlertLine": "{qty} من {product} بتنتهي {date}",
+  "@nearExpiryAlertLine": {
+    "placeholders": {
+      "qty": {
+        "type": "String"
+      },
+      "product": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "noNearExpiry": "ما في شي قريب ينتهي",
+  "expiredLabel": "منتهي",
+  "posTitle": "بيع جديد",
+  "posSearchHint": "ابحث بالاسم أو المادة الفعالة أو امسح الباركود",
+  "scannerReady": "قارئ الباركود جاهز",
+  "addToCart": "أضف",
+  "inStock": "متوفر: {count}",
+  "@inStock": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "lowLeft": "باقي {count}",
+  "@lowLeft": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "outOfStock": "نفد",
+  "showAlternatives": "اعرض البديل",
+  "alternativesTitle": "بدائل بنفس المادة الفعالة",
+  "noAlternatives": "ما في بديل متوفر",
+  "alternativeHint": "بديل متوفر: {name}",
+  "@alternativeHint": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "invoice": "الفاتورة",
+  "cartEmpty": "امسح باركود أو ابحث لتضيف أصناف",
+  "perUnit": "{price} للعلبة",
+  "@perUnit": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "subtotal": "المجموع الفرعي",
+  "discount": "حسم",
+  "total": "الإجمالي",
+  "completeSale": "إتمام البيع",
+  "registeredCustomer": "زبون مسجّل",
+  "chooseCustomer": "اختار زبون",
+  "newCustomer": "زبون جديد",
+  "customerNameLabel": "اسم الزبون",
+  "phoneLabel": "رقم الموبايل",
+  "notesLabel": "ملاحظات",
+  "shortcuts": "اختصارات:",
+  "shortcutSearch": "بحث",
+  "shortcutDebt": "دين",
+  "shortcutComplete": "إتمام",
+  "saleDone": "تمّ البيع: {total}",
+  "@saleDone": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "barcodeNotFound": "ما لقينا صنف بهالباركود: {code}",
+  "@barcodeNotFound": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "errEmptyCart": "الفاتورة فاضية",
+  "errDebtNeedsCustomer": "البيع بالدين بدو زبون مسجّل",
+  "errDiscount": "الحسم أكبر من المجموع",
+  "errStock": "الكمية مو متوفرة بالمخزون",
+  "errBadQty": "كمية غير صحيحة",
+  "nearExpiryNudge": "في {qty} بتنتهي {date}، بيع منها أول",
+  "@nearExpiryNudge": {
+    "placeholders": {
+      "qty": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "prescriptionOnly": "بوصفة",
+  "inventoryTitle": "الأدوية والمخزون",
+  "addProduct": "صنف جديد",
+  "filterAll": "الكل",
+  "filterLow": "مخزون قليل",
+  "filterNearExpiry": "قريب الانتهاء",
+  "filterOut": "نفد",
+  "colProduct": "الصنف",
+  "colIngredient": "المادة الفعالة",
+  "colStock": "المخزون",
+  "colPrice": "السعر",
+  "colNearestExpiry": "أقرب انتهاء",
+  "colShelf": "الرف",
+  "noProducts": "ما في أصناف لسا. ضيف أول صنف.",
+  "productFormNew": "صنف جديد",
+  "productFormEdit": "تعديل الصنف",
+  "tradeNameLabel": "الاسم التجاري (لاتيني)",
+  "arabicNameLabel": "الاسم بالعربي",
+  "ingredientLabel": "المادة الفعالة",
+  "strengthLabel": "التركيز",
+  "formLabel": "الشكل",
+  "manufacturerLabel": "الشركة المصنعة",
+  "shelfLabel": "الرف",
+  "priceLabel": "سعر البيع ({symbol})",
+  "@priceLabel": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "lowThresholdLabel": "تنبيه المخزون القليل عند",
+  "barcodesLabel": "الباركود (افصل بفاصلة)",
+  "prescriptionLabel": "بحاجة وصفة",
+  "duplicateBarcode": "الباركود {code} مستعمل لصنف تاني",
+  "@duplicateBarcode": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "productDetail": "تفاصيل الصنف",
+  "batches": "الدفعات",
+  "batchReceived": "استلام {date}",
+  "@batchReceived": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "noExpiry": "بدون تاريخ",
+  "expiresOn": "ينتهي {date}",
+  "@expiresOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "receiveStock": "استلام بضاعة",
+  "quantityLabel": "الكمية",
+  "expiryLabel": "تاريخ الانتهاء",
+  "expiryHint": "اختياري · يوم/شهر/سنة",
+  "unitCostLabel": "سعر الشراء للعلبة",
+  "adjustStock": "تعديل جرد",
+  "adjustHelp": "اكتب الكمية الفعلية الموجودة بالرف",
+  "actualQtyLabel": "الكمية الفعلية",
+  "removeExpired": "إزالة كمية منتهية",
+  "removeExpiredConfirm": "رح نشيل {qty} من المخزون كمنتهية الصلاحية.",
+  "@removeExpiredConfirm": {
+    "placeholders": {
+      "qty": {
+        "type": "String"
+      }
+    }
+  },
+  "invalidDate": "تاريخ غير صحيح",
+  "history": "الحركات",
+  "evReceived": "استلام",
+  "evSold": "بيع",
+  "evReturned": "مرتجع",
+  "evAdjusted": "تعديل جرد",
+  "evExpiredRemoved": "إزالة منتهي",
+  "debtsTitle": "الزبائن والديون",
+  "addCustomer": "زبون جديد",
+  "balance": "الرصيد",
+  "owes": "عليه {amount}",
+  "@owes": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "settled": "مسدّد",
+  "recordPayment": "تسجيل دفعة",
+  "amountLabel": "المبلغ ({symbol})",
+  "@amountLabel": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "debtAdded": "دين من بيع",
+  "paymentReceived": "دفعة",
+  "noCustomers": "ما في زبائن لسا",
+  "filterOwing": "عليهم ديون",
+  "totalOpenDebts": "مجموع الديون المفتوحة",
+  "paymentTooLarge": "المبلغ أكبر من الدين",
+  "settingsTitle": "الإعدادات",
+  "pharmacySection": "الصيدلية",
+  "currencySection": "العملة",
+  "currencyCodeLabel": "رمز العملة (ISO)",
+  "currencySymbolLabel": "الرمز الظاهر",
+  "currencyDecimalsLabel": "عدد الخانات العشرية",
+  "currencyHelp": "الافتراضي الليرة السورية الجديدة. غيّرها إذا بتسعّر بعملة تانية.",
+  "nearExpiryDaysLabel": "نبّهني قبل الانتهاء بـ (يوم)",
+  "employeesSection": "الموظفين",
+  "addEmployee": "موظف جديد",
+  "employeeNameLabel": "اسم الموظف",
+  "deactivate": "إيقاف",
+  "activate": "تفعيل",
+  "inactive": "موقوف",
+  "thisDevice": "هالجهاز",
+  "saved": "انحفظ",
+  "ownerOnly": "هالقسم للمالك بس",
+  "loadDemo": "عبّي بيانات تجريبية",
+  "demoLoaded": "انضافت بيانات تجريبية"
+}

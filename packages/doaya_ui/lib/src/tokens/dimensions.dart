@@ -80,6 +80,16 @@ abstract final class DoayaSizes {
   static const double swatchWidth = 80;
   static const double swatchHeight = 44;
   static const double desktopSearchWidth = 300;
+  static const double dialogWidth = 460;
+  static const double invoiceWidth = 380;
+  static const double formWidth = 560;
+  static const double pinKey = 64;
+  static const double employeeTile = 140;
+  static const double productThumb = 46;
+  static const double qtyButton = 30;
+  static const double listPaneWidth = 360;
+  static const double priceColumn = 110;
+  static const double wideFormWidth = 780;
 
   /// Width breakpoint above which the gallery / apps use a desktop layout.
   static const double desktopBreakpoint = 900;

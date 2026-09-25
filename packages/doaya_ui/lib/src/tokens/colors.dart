@@ -71,5 +71,6 @@ abstract final class DoayaColors {
   static const shadow = Color.fromRGBO(0, 0, 0, 0.18);
   static const shadowStrong = Color.fromRGBO(0, 0, 0, 0.25);
   static const shadowSolid = Color.fromRGBO(0, 0, 0, 0.14);
+  static const scrim = Color.fromRGBO(10, 26, 17, 0.6);
   static const transparent = Color(0x00000000);
 }

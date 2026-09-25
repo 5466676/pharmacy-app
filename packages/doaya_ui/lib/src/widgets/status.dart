@@ -75,7 +75,14 @@ class StatusChip extends StatelessWidget {
           Icon(icon, size: DoayaSizes.iconXs, color: tone.iconColor),
           const SizedBox(width: DoayaSpacing.xs),
         ],
-        Text(label, style: DoayaTypography.caption.copyWith(color: fg, height: 1.3)),
+        Flexible(
+          child: Text(
+            label,
+            style: DoayaTypography.caption.copyWith(color: fg, height: 1.3),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
       ],
     );
     const padding = EdgeInsets.symmetric(horizontal: DoayaSpacing.ml, vertical: DoayaSpacing.xs);
