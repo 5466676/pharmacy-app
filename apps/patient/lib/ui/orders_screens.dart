@@ -29,13 +29,13 @@ class OrdersScreen extends ConsumerWidget {
             ScreenHeader(title: l.ordersTitle, trailing: const CartButton()),
             ...switch (all) {
               AsyncData(:final value) when value.isEmpty => [
-                const SizedBox(height: DoayaSpacing.huge),
+                SizedBox(height: DoayaSpacing.huge),
                 Text(
                   l.noOrders,
                   textAlign: TextAlign.center,
                   style: DoayaTypography.bodyMedium.copyWith(color: DoayaColors.textSecondary),
                 ),
-                const SizedBox(height: DoayaSpacing.l),
+                SizedBox(height: DoayaSpacing.l),
                 Center(
                   child: GlassPillButton(
                     label: l.browseShelf,
@@ -47,7 +47,7 @@ class OrdersScreen extends ConsumerWidget {
               AsyncData(:final value) => [
                 for (final o in value)
                   Padding(
-                    padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
+                    padding: EdgeInsets.only(bottom: DoayaSpacing.sm),
                     child: Material(
                       type: MaterialType.transparency,
                       child: InkWell(
@@ -55,11 +55,11 @@ class OrdersScreen extends ConsumerWidget {
                         onTap: () => context.push(Routes.order(o.id)),
                         child: GlassSurface(
                           borderRadius: BorderRadius.circular(DoayaRadii.card),
-                          padding: const EdgeInsets.all(DoayaSpacing.l),
+                          padding: EdgeInsets.all(DoayaSpacing.l),
                           child: Row(
                             children: [
-                              const Icon(DoayaIcons.bag, color: DoayaColors.accent),
-                              const SizedBox(width: DoayaSpacing.ml),
+                              Icon(DoayaIcons.bag, color: DoayaColors.accent),
+                              SizedBox(width: DoayaSpacing.ml),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,7 +80,7 @@ class OrdersScreen extends ConsumerWidget {
                                   ],
                                 ),
                               ),
-                              const SizedBox(width: DoayaSpacing.sm),
+                              SizedBox(width: DoayaSpacing.sm),
                               StatusChip(label: l.orderStatus(o.status), tone: orderTone(o.status)),
                             ],
                           ),
@@ -153,17 +153,17 @@ class OrderScreen extends ConsumerWidget {
                 ),
                 if (!{OrderStatus.rejected, OrderStatus.cancelled}.contains(o.status)) ...[
                   _OrderSteps(status: o.status),
-                  const SizedBox(height: DoayaSpacing.l),
+                  SizedBox(height: DoayaSpacing.l),
                 ],
                 GlassSurface(
                   borderRadius: BorderRadius.circular(DoayaRadii.cardLarge),
-                  padding: const EdgeInsets.all(DoayaSpacing.xl),
+                  padding: EdgeInsets.all(DoayaSpacing.xl),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       for (final line in o.lines)
                         Padding(
-                          padding: const EdgeInsets.only(bottom: DoayaSpacing.ml),
+                          padding: EdgeInsets.only(bottom: DoayaSpacing.ml),
                           child: Row(
                             children: [
                               Expanded(
@@ -203,7 +203,7 @@ class OrderScreen extends ConsumerWidget {
                             ],
                           ),
                         ),
-                      const Divider(color: DoayaColors.divider),
+                      Divider(color: DoayaColors.divider),
                       Text(
                         l.orderTotal(formatPrice(o.totalMinor, o.currency)),
                         style: DoayaTypography.lead.copyWith(color: DoayaColors.price),
@@ -212,7 +212,7 @@ class OrderScreen extends ConsumerWidget {
                   ),
                 ),
                 if (o.photoId case final photo?) ...[
-                  const SizedBox(height: DoayaSpacing.ml),
+                  SizedBox(height: DoayaSpacing.ml),
                   // A ListView stretches its children: keep the thumbnail square.
                   Align(
                     alignment: AlignmentDirectional.centerStart,
@@ -220,11 +220,11 @@ class OrderScreen extends ConsumerWidget {
                   ),
                 ],
                 if (o.note != null) ...[
-                  const SizedBox(height: DoayaSpacing.ml),
+                  SizedBox(height: DoayaSpacing.ml),
                   Text('${l.noteToPharmacist}: ${o.note}', style: secondary),
                 ],
                 if (o.pharmacistNote != null) ...[
-                  const SizedBox(height: DoayaSpacing.ml),
+                  SizedBox(height: DoayaSpacing.ml),
                   NoticeBanner(
                     message: [
                       if (o.handledBy != null) l.decisionBy(o.handledBy!),
@@ -235,11 +235,11 @@ class OrderScreen extends ConsumerWidget {
                   ),
                 ],
                 if (pharmacy != null && !o.finished) ...[
-                  const SizedBox(height: DoayaSpacing.ml),
+                  SizedBox(height: DoayaSpacing.ml),
                   StatusChip(label: l.pickupAt(pharmacy.name), tone: StatusTone.accent),
                 ],
                 if (o.cancellable) ...[
-                  const SizedBox(height: DoayaSpacing.huge),
+                  SizedBox(height: DoayaSpacing.huge),
                   GlassPillButton(
                     label: l.cancelOrder,
                     icon: DoayaIcons.close,
@@ -247,7 +247,7 @@ class OrderScreen extends ConsumerWidget {
                     onPressed: () => _cancel(context, ref),
                   ),
                 ],
-                const SizedBox(height: DoayaSpacing.xl),
+                SizedBox(height: DoayaSpacing.xl),
               ],
             ),
             AsyncError(:final error) => Center(child: NoticeBanner(message: errorText(l, error))),
@@ -277,7 +277,7 @@ class _OrderSteps extends StatelessWidget {
     final at = order.indexOf(status);
     return GlassSurface(
       borderRadius: BorderRadius.circular(DoayaRadii.card),
-      padding: const EdgeInsets.all(DoayaSpacing.l),
+      padding: EdgeInsets.all(DoayaSpacing.l),
       child: Row(
         children: [
           for (var i = 0; i < order.length; i++)
@@ -289,7 +289,7 @@ class _OrderSteps extends StatelessWidget {
                     size: DoayaSizes.iconS,
                     color: i <= at ? DoayaColors.accent : DoayaColors.dotInactive,
                   ),
-                  const SizedBox(height: DoayaSpacing.xs),
+                  SizedBox(height: DoayaSpacing.xs),
                   Text(
                     labels[i],
                     textAlign: TextAlign.center,

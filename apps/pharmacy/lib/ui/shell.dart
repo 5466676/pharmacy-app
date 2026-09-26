@@ -10,6 +10,7 @@ import '../providers.dart';
 import '../router.dart';
 import '../sync/sync_controller.dart';
 import 'format.dart';
+import 'lock_gate.dart';
 import 'screens/sync_screen.dart' show syncStatusChip;
 import 'widgets.dart' show isPhoneLayout, toast;
 
@@ -77,7 +78,9 @@ class AppShell extends ConsumerWidget {
       if (session.isOwner)
         (Routes.settings, DoayaNavItem(icon: DoayaIcons.settings, label: l.navSettings)),
     ];
-    final routes = [...mainItems, ...adminItems].map((e) => e.$1).toList();
+    // «المظهر» is for everyone on this device.
+    final lookItems = [(Routes.look, DoayaNavItem(icon: DoayaIcons.edit, label: l.lookTitle))];
+    final routes = [...mainItems, ...adminItems, ...lookItems].map((e) => e.$1).toList();
     final selected = routes.indexWhere((r) => location.startsWith(r));
 
     return CallbackShortcuts(
@@ -99,6 +102,7 @@ class AppShell extends ConsumerWidget {
                 title: l.navSectionAdmin,
                 items: adminItems.map((e) => e.$2).toList(),
               ),
+            DoayaNavSection(items: lookItems.map((e) => e.$2).toList()),
           ],
           topBar: Row(
             children: [
@@ -115,13 +119,13 @@ class AppShell extends ConsumerWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: DoayaSpacing.ml),
+              SizedBox(width: DoayaSpacing.ml),
               _WhoIsWorking(
                 name: session.employee.name,
                 role: session.isOwner ? l.owner : l.employee,
                 device: session.device.name,
               ),
-              const SizedBox(width: DoayaSpacing.sm),
+              SizedBox(width: DoayaSpacing.sm),
               RoundIconButton(
                 icon: DoayaIcons.switchUser,
                 tooltip: l.signOut,
@@ -129,7 +133,7 @@ class AppShell extends ConsumerWidget {
               ),
             ],
           ),
-          body: child,
+          body: LockGate(location: location, child: child),
         ),
       ),
     );
@@ -159,7 +163,7 @@ class _WhoIsWorking extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(width: DoayaSpacing.m),
+        SizedBox(width: DoayaSpacing.m),
         Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -195,7 +199,7 @@ class PhoneShell extends ConsumerWidget {
     var tab = _tabs.indexWhere((r) => r != Routes.dashboard && location.startsWith(r));
     if (location.startsWith(Routes.dashboard)) tab = 0;
     if (tab < 0) tab = _tabs.length - 1; // anything else lives under «المزيد»
-    const navSpace = DoayaSizes.bottomNav + DoayaSpacing.floatingBottom + DoayaSpacing.l;
+    final navSpace = DoayaSizes.bottomNav + DoayaSpacing.floatingBottom + DoayaSpacing.l;
 
     return Scaffold(
       body: DoayaBackground(
@@ -207,7 +211,7 @@ class PhoneShell extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(
+                    padding: EdgeInsets.fromLTRB(
                       DoayaSpacing.l,
                       DoayaSpacing.sm,
                       DoayaSpacing.l,
@@ -231,7 +235,7 @@ class PhoneShell extends ConsumerWidget {
                             ref.watch(pendingChangesProvider).value ?? 0,
                           ),
                         ),
-                        const SizedBox(width: DoayaSpacing.s),
+                        SizedBox(width: DoayaSpacing.s),
                         RoundIconButton(
                           icon: DoayaIcons.switchUser,
                           tooltip: '${l.signOut}: ${session.employee.name}',
@@ -242,13 +246,13 @@ class PhoneShell extends ConsumerWidget {
                   ),
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(
+                      padding: EdgeInsets.fromLTRB(
                         DoayaSpacing.l,
                         DoayaSpacing.sm,
                         DoayaSpacing.l,
                         navSpace,
                       ),
-                      child: child,
+                      child: LockGate(location: location, child: child),
                     ),
                   ),
                 ],
@@ -301,14 +305,15 @@ class MoreScreen extends ConsumerWidget {
       if (owner) (Routes.staff, DoayaIcons.staff, l.navStaff),
       (Routes.sync, DoayaIcons.sync, l.syncTitle),
       if (owner) (Routes.settings, DoayaIcons.settings, l.navSettings),
+      (Routes.look, DoayaIcons.edit, l.lookTitle),
     ];
     return ListView(
       children: [
         Text(l.navMore, style: DoayaTypography.title),
-        const SizedBox(height: DoayaSpacing.l),
+        SizedBox(height: DoayaSpacing.l),
         for (final (route, icon, label) in items)
           Padding(
-            padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
+            padding: EdgeInsets.only(bottom: DoayaSpacing.sm),
             child: GlassSurface(
               shadow: false,
               borderRadius: BorderRadius.circular(DoayaRadii.tile),

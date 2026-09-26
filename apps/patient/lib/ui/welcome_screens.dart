@@ -26,9 +26,9 @@ class WelcomeScreen extends StatelessWidget {
             children: [
               const Spacer(flex: 3),
               const Center(child: DoayaLogo(size: DoayaSizes.logoHero)),
-              const SizedBox(height: DoayaSpacing.l),
+              SizedBox(height: DoayaSpacing.l),
               Text(l.appName, textAlign: TextAlign.center, style: DoayaTypography.wordmark),
-              const SizedBox(height: DoayaSpacing.sm),
+              SizedBox(height: DoayaSpacing.sm),
               Text(
                 l.tagline,
                 textAlign: TextAlign.center,
@@ -41,14 +41,14 @@ class WelcomeScreen extends StatelessWidget {
                 expand: true,
                 onPressed: () => context.push(Routes.signUp),
               ),
-              const SizedBox(height: DoayaSpacing.sm),
+              SizedBox(height: DoayaSpacing.sm),
               GlassPillButton(
                 label: l.haveAccount,
                 size: PillSize.large,
                 expand: true,
                 onPressed: () => context.push(Routes.signIn),
               ),
-              const SizedBox(height: DoayaSpacing.xl),
+              SizedBox(height: DoayaSpacing.xl),
             ],
           ),
         ),
@@ -72,7 +72,7 @@ class _FormPage extends StatelessWidget {
         child: PhoneBody(
           child: ListView(
             children: [
-              const SizedBox(height: DoayaSpacing.l),
+              SizedBox(height: DoayaSpacing.l),
               Row(
                 children: [
                   RoundIconButton(
@@ -80,11 +80,11 @@ class _FormPage extends StatelessWidget {
                     tooltip: l.cancel,
                     onPressed: () => context.canPop() ? context.pop() : context.go(Routes.welcome),
                   ),
-                  const SizedBox(width: DoayaSpacing.sm),
+                  SizedBox(width: DoayaSpacing.sm),
                   Text(title, style: DoayaTypography.title),
                 ],
               ),
-              const SizedBox(height: DoayaSpacing.xl),
+              SizedBox(height: DoayaSpacing.xl),
               ...children,
             ],
           ),
@@ -115,6 +115,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   final _year = TextEditingController();
   final _city = TextEditingController();
   String? _sex;
+  var _consent = false;
   var _busy = false;
 
   @override
@@ -139,6 +140,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
             birthYear: int.tryParse(toLatinDigits(_year.text)),
             sex: _sex,
             city: _city.text.trim().isEmpty ? null : _city.text.trim(),
+            fileConsent: _consent,
           );
     } on Object catch (e) {
       if (mounted) toast(context, errorText(l, e), error: true);
@@ -150,7 +152,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    const gap = SizedBox(height: DoayaSpacing.l);
+    final gap = SizedBox(height: DoayaSpacing.l);
     final thisYear = DateTime.now().year;
     return _FormPage(
       title: l.signUpTitle,
@@ -197,7 +199,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 '${l.sexLabel} (${l.optional})',
                 style: DoayaTypography.bodySmall.copyWith(color: DoayaColors.textSecondary),
               ),
-              const SizedBox(height: DoayaSpacing.s),
+              SizedBox(height: DoayaSpacing.s),
               Row(
                 children: [
                   for (final (value, label) in [('m', l.male), ('f', l.female)]) ...[
@@ -209,20 +211,27 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                         onPressed: () => setState(() => _sex = _sex == value ? null : value),
                       ),
                     ),
-                    if (value == 'm') const SizedBox(width: DoayaSpacing.sm),
+                    if (value == 'm') SizedBox(width: DoayaSpacing.sm),
                   ],
                 ],
               ),
               gap,
               GlassTextField(label: '${l.cityLabel} (${l.optional})', controller: _city),
-              const SizedBox(height: DoayaSpacing.sm),
+              SizedBox(height: DoayaSpacing.sm),
+              CheckboxListTile(
+                contentPadding: EdgeInsets.zero,
+                controlAffinity: ListTileControlAffinity.leading,
+                value: _consent,
+                onChanged: (v) => setState(() => _consent = v ?? false),
+                title: Text(l.fileConsent, style: DoayaTypography.bodySmall),
+              ),
               Text(
                 l.signUpHelp,
                 style: DoayaTypography.caption.copyWith(color: DoayaColors.textSecondary),
               ),
-              const SizedBox(height: DoayaSpacing.xl),
+              SizedBox(height: DoayaSpacing.xl),
               BusyButton(label: l.createAccount, busy: _busy, onPressed: _submit),
-              const SizedBox(height: DoayaSpacing.xl),
+              SizedBox(height: DoayaSpacing.xl),
             ],
           ),
         ),
@@ -282,7 +291,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                 textDirection: TextDirection.ltr,
                 validator: (v) => _checkPhone(l, v),
               ),
-              const SizedBox(height: DoayaSpacing.l),
+              SizedBox(height: DoayaSpacing.l),
               GlassTextField(
                 label: l.passwordLabel,
                 controller: _password,
@@ -290,7 +299,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                 validator: (v) => _checkPassword(l, v),
                 onSubmitted: (_) => _submit(),
               ),
-              const SizedBox(height: DoayaSpacing.xl),
+              SizedBox(height: DoayaSpacing.xl),
               BusyButton(label: l.signIn, busy: _busy, onPressed: _submit),
             ],
           ),

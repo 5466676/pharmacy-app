@@ -60,7 +60,7 @@ class _DesktopDemoState extends State<DesktopDemo> {
                 tooltip: l.back,
                 onPressed: () => Navigator.of(context).pop(),
               ),
-              const SizedBox(width: DoayaSpacing.ml),
+              SizedBox(width: DoayaSpacing.ml),
               SizedBox(
                 width: DoayaSizes.desktopSearchWidth,
                 child: GlassSearchField(hint: l.posSearchHint),
@@ -70,9 +70,9 @@ class _DesktopDemoState extends State<DesktopDemo> {
                 label: _compact ? l.fullSidebar : l.compactSidebar,
                 onPressed: () => setState(() => _compact = !_compact),
               ),
-              const SizedBox(width: DoayaSpacing.ml),
+              SizedBox(width: DoayaSpacing.ml),
               StatusChip(label: l.chipSynced, dot: true),
-              const SizedBox(width: DoayaSpacing.ml),
+              SizedBox(width: DoayaSpacing.ml),
               CircleAvatar(
                 radius: DoayaSizes.avatar / 2,
                 backgroundColor: DoayaColors.selectedTileFill,
@@ -81,7 +81,7 @@ class _DesktopDemoState extends State<DesktopDemo> {
                   style: DoayaTypography.label.copyWith(color: DoayaColors.accent),
                 ),
               ),
-              const SizedBox(width: DoayaSpacing.m),
+              SizedBox(width: DoayaSpacing.m),
               Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -108,28 +108,28 @@ class _DesktopDemoState extends State<DesktopDemo> {
                   ),
                 ],
               ),
-              const SizedBox(height: DoayaSpacing.xl),
+              SizedBox(height: DoayaSpacing.xl),
               GlassSurface(
                 borderRadius: BorderRadius.circular(DoayaRadii.hero),
-                padding: const EdgeInsets.all(DoayaSpacing.xxl),
+                padding: EdgeInsets.all(DoayaSpacing.xxl),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(l.pharmacyResults, style: DoayaTypography.lead),
-                    const SizedBox(height: DoayaSpacing.l),
+                    SizedBox(height: DoayaSpacing.l),
                     GalleryStats(l: l, columns: 4),
                   ],
                 ),
               ),
-              const SizedBox(height: DoayaSpacing.xl),
+              SizedBox(height: DoayaSpacing.xl),
               GlassSurface(
                 borderRadius: BorderRadius.circular(DoayaRadii.hero),
-                padding: const EdgeInsets.all(DoayaSpacing.xxl),
+                padding: EdgeInsets.all(DoayaSpacing.xxl),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     SectionHeader(title: l.latestCases, actionLabel: l.seeAll, onAction: () {}),
-                    const SizedBox(height: DoayaSpacing.l),
+                    SizedBox(height: DoayaSpacing.l),
                     GalleryCases(l: l),
                   ],
                 ),

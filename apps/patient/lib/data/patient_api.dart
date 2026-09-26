@@ -66,6 +66,7 @@ class PatientApi {
     int? birthYear,
     String? sex,
     String? city,
+    bool fileConsent = false,
   }) async => _signedIn(
     await _post('patients/register', {
       'name': name,
@@ -74,6 +75,7 @@ class PatientApi {
       'birth_year': birthYear,
       'sex': sex,
       'city': city,
+      'file_consent': fileConsent,
     }),
   );
 
@@ -242,6 +244,38 @@ class PatientApi {
       throw SyncNetworkException(e.message);
     }
   }
+
+  // ─── «ملفي الصحي» ───────────────────────────────────────────────────────
+
+  /// Null when the patient hasn't agreed to a file.
+  Future<HealthFile?> healthFile() async {
+    try {
+      return HealthFile.fromJson(
+        (await _authorized('GET', 'patients/me/file'))! as Map<String, Object?>,
+      );
+    } on SyncApiException catch (e) {
+      if (e.code == 'no_consent') return null;
+      rethrow;
+    }
+  }
+
+  Future<void> setFileConsent(bool consent) =>
+      _authorized('POST', 'patients/me/consent', {'consent': consent});
+
+  Future<void> addFact(String kind, String text) =>
+      _authorized('POST', 'patients/me/file/facts', {'kind': kind, 'text': text});
+
+  Future<void> endFact(String id) => _authorized('POST', 'patients/me/file/facts/$id/end');
+
+  Future<void> decideProposal(String id, {required bool accept}) =>
+      _authorized('POST', 'patients/me/file/proposals/$id', {'accept': accept});
+
+  /// The whole file with its change log, as JSON text.
+  Future<String> exportFile() async =>
+      const JsonEncoder.withIndent('  ')
+          .convert(await _authorized('GET', 'patients/me/file/export'));
+
+  Future<void> deleteFile() => _authorized('DELETE', 'patients/me/file');
 
   // ─── Consultations ───────────────────────────────────────────────────────
 

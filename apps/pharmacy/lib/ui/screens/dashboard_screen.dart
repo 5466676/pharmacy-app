@@ -91,7 +91,7 @@ class DashboardScreen extends ConsumerWidget {
               children: [
                 for (final b in near.take(8))
                   Padding(
-                    padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
+                    padding: EdgeInsets.only(bottom: DoayaSpacing.sm),
                     child: NoticeBanner(
                       tone: b.expiry!.isBefore(now) ? StatusTone.danger : StatusTone.warning,
                       icon: DoayaIcons.expiry,
@@ -121,7 +121,7 @@ class DashboardScreen extends ConsumerWidget {
         ),
         LayoutBuilder(
           builder: (context, c) {
-            const gap = DoayaSpacing.l;
+            final gap = DoayaSpacing.l;
             final perRow = isPhoneLayout(context) ? 2 : 4;
             final w = (c.maxWidth - gap * (perRow - 1)) / perRow;
             final cards = [
@@ -189,7 +189,7 @@ class DashboardScreen extends ConsumerWidget {
             );
           },
         ),
-        const SizedBox(height: DoayaSpacing.xl),
+        SizedBox(height: DoayaSpacing.xl),
         if (phone) ...[
           Panel(
             title: l.recentSales,
@@ -212,14 +212,14 @@ class DashboardScreen extends ConsumerWidget {
                     ],
                   ),
           ),
-          const SizedBox(height: DoayaSpacing.l),
+          SizedBox(height: DoayaSpacing.l),
           nearPanel,
         ] else
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(flex: 3, child: salesPanel),
-              const SizedBox(width: DoayaSpacing.xl),
+              SizedBox(width: DoayaSpacing.xl),
               Expanded(flex: 2, child: nearPanel),
             ],
           ),
@@ -239,7 +239,7 @@ class _SaleLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
+    padding: EdgeInsets.only(bottom: DoayaSpacing.sm),
     child: Row(
       children: [
         Expanded(
@@ -271,7 +271,7 @@ class _SalesHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = DoayaTypography.caption.copyWith(color: DoayaColors.textSecondary);
     return Padding(
-      padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
+      padding: EdgeInsets.only(bottom: DoayaSpacing.sm),
       child: Row(
         children: [
           Expanded(child: Text(l.colTime, style: s)),
@@ -306,7 +306,7 @@ class _SaleRowView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: DoayaSpacing.xs),
+      padding: EdgeInsets.symmetric(vertical: DoayaSpacing.xs),
       child: Row(
         children: [
           Expanded(child: Text(formatTime(sale.occurredAt), style: DoayaTypography.bodySmall)),

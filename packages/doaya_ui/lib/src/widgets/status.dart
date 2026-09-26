@@ -70,10 +70,10 @@ class StatusChip extends StatelessWidget {
     final content = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (dot) ...[const StatusDot(), const SizedBox(width: DoayaSpacing.s)],
+        if (dot) ...[const StatusDot(), SizedBox(width: DoayaSpacing.s)],
         if (icon != null) ...[
           Icon(icon, size: DoayaSizes.iconXs, color: tone.iconColor),
-          const SizedBox(width: DoayaSpacing.xs),
+          SizedBox(width: DoayaSpacing.xs),
         ],
         Flexible(
           child: Text(
@@ -85,7 +85,7 @@ class StatusChip extends StatelessWidget {
         ),
       ],
     );
-    const padding = EdgeInsets.symmetric(horizontal: DoayaSpacing.ml, vertical: DoayaSpacing.xs);
+    final padding = EdgeInsets.symmetric(horizontal: DoayaSpacing.ml, vertical: DoayaSpacing.xs);
 
     if (tone == StatusTone.success) {
       return DecoratedBox(
@@ -108,12 +108,14 @@ class StatusChip extends StatelessWidget {
 
 /// 7px glowing status dot (online / synced / ready).
 class StatusDot extends StatelessWidget {
-  const StatusDot({super.key, this.color = DoayaColors.successDot});
+  const StatusDot({super.key, this.color});
 
-  final Color color;
+  /// Defaults to the «online» green.
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
+    final color = this.color ?? DoayaColors.successDot;
     return Container(
       width: DoayaSizes.statusDot,
       height: DoayaSizes.statusDot,
@@ -147,7 +149,7 @@ class NoticeBanner extends StatelessWidget {
       tone: tone.surfaceTone,
       shadow: false,
       borderRadius: BorderRadius.circular(DoayaRadii.tile),
-      padding: const EdgeInsets.symmetric(horizontal: DoayaSpacing.l, vertical: DoayaSpacing.ml),
+      padding: EdgeInsets.symmetric(horizontal: DoayaSpacing.l, vertical: DoayaSpacing.ml),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -156,10 +158,10 @@ class NoticeBanner extends StatelessWidget {
             children: [
               if (icon != null) ...[
                 Padding(
-                  padding: const EdgeInsets.only(top: DoayaSpacing.xxs),
+                  padding: EdgeInsets.only(top: DoayaSpacing.xxs),
                   child: Icon(icon, size: DoayaSizes.iconS, color: tone.iconColor),
                 ),
-                const SizedBox(width: DoayaSpacing.m),
+                SizedBox(width: DoayaSpacing.m),
               ],
               Expanded(
                 child: Text(
@@ -169,7 +171,7 @@ class NoticeBanner extends StatelessWidget {
               ),
             ],
           ),
-          if (action != null) ...[const SizedBox(height: DoayaSpacing.m), action!],
+          if (action != null) ...[SizedBox(height: DoayaSpacing.m), action!],
         ],
       ),
     );
@@ -199,13 +201,13 @@ class SectionHeader extends StatelessWidget {
             onTap: onAction,
             borderRadius: BorderRadius.circular(DoayaRadii.key),
             child: Padding(
-              padding: const EdgeInsets.all(DoayaSpacing.xs),
+              padding: EdgeInsets.all(DoayaSpacing.xs),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(actionLabel!, style: linkStyle),
-                  const SizedBox(width: DoayaSpacing.xs),
-                  const Icon(
+                  SizedBox(width: DoayaSpacing.xs),
+                  Icon(
                     DoayaIcons.forward,
                     size: DoayaSizes.iconXs,
                     color: DoayaColors.textSecondary,

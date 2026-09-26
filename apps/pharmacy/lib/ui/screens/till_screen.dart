@@ -34,7 +34,7 @@ class TillScreen extends ConsumerWidget {
             child: Column(
               children: [
                 Text(l.tillIsClosed, style: DoayaTypography.lead),
-                const SizedBox(height: DoayaSpacing.l),
+                SizedBox(height: DoayaSpacing.l),
                 SagePillButton(
                   label: l.openTill,
                   icon: DoayaIcons.till,
@@ -58,7 +58,7 @@ class TillScreen extends ConsumerWidget {
 
     String money(int m) => formatMoney(m, currency);
     Widget row(String label, String value, {bool strong = false, Color? color}) => Padding(
-      padding: const EdgeInsets.symmetric(vertical: DoayaSpacing.xs),
+      padding: EdgeInsets.symmetric(vertical: DoayaSpacing.xs),
       child: Row(
         children: [
           Expanded(
@@ -145,9 +145,9 @@ class TillScreen extends ConsumerWidget {
                     l.tillSupplierRefunds,
                     formatSignedMoney(s.movements.supplierCashRefunds, currency),
                   ),
-                const Divider(color: DoayaColors.divider),
+                Divider(color: DoayaColors.divider),
                 row(l.tillExpected, money(s.expected), strong: true, color: DoayaColors.price),
-                const SizedBox(height: DoayaSpacing.sm),
+                SizedBox(height: DoayaSpacing.sm),
                 row(l.tillTransfers, money(s.movements.transferSales)),
               ],
             ),
@@ -161,7 +161,7 @@ class TillScreen extends ConsumerWidget {
                   l.countHelp,
                   style: DoayaTypography.bodySmall.copyWith(color: DoayaColors.textSecondary),
                 ),
-                const SizedBox(height: DoayaSpacing.l),
+                SizedBox(height: DoayaSpacing.l),
                 SagePillButton(
                   label: l.closeTill,
                   icon: DoayaIcons.check,
@@ -208,7 +208,7 @@ class TillScreen extends ConsumerWidget {
               Text(formatMoney(s.counted!, c), style: DoayaTypography.label),
             ],
           ),
-          const SizedBox(height: DoayaSpacing.l),
+          SizedBox(height: DoayaSpacing.l),
           Align(
             alignment: AlignmentDirectional.centerStart,
             child: differenceChip(l, s.difference, c),

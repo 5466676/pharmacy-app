@@ -128,12 +128,12 @@ class SupplierScreen extends ConsumerWidget {
                 ],
               ),
             ),
-            const SizedBox(height: DoayaSpacing.l),
+            SizedBox(height: DoayaSpacing.l),
             Panel(
               title: l.statement,
               child: _Statement(lines: ledger.statement(supplierId), shrinkWrap: true),
             ),
-            const SizedBox(height: DoayaSpacing.l),
+            SizedBox(height: DoayaSpacing.l),
           ],
           Panel(
             title: l.tabInvoices,
@@ -152,14 +152,14 @@ class SupplierScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Expanded(child: cards[0]),
-                const SizedBox(width: DoayaSpacing.l),
+                SizedBox(width: DoayaSpacing.l),
                 Expanded(child: cards[1]),
-                const SizedBox(width: DoayaSpacing.l),
+                SizedBox(width: DoayaSpacing.l),
                 Expanded(child: cards[2]),
               ],
             ),
           ),
-          const SizedBox(height: DoayaSpacing.xl),
+          SizedBox(height: DoayaSpacing.xl),
         ],
         Expanded(
           child: Row(
@@ -172,7 +172,7 @@ class SupplierScreen extends ConsumerWidget {
                     child: Expanded(child: _Statement(lines: ledger.statement(supplierId))),
                   ),
                 ),
-                const SizedBox(width: DoayaSpacing.xl),
+                SizedBox(width: DoayaSpacing.xl),
               ],
               Expanded(
                 child: Panel(
@@ -222,14 +222,14 @@ class SupplierScreen extends ConsumerWidget {
                 },
                 onSubmitted: (_) => submit(),
               ),
-              const SizedBox(height: DoayaSpacing.l),
+              SizedBox(height: DoayaSpacing.l),
               GlassTextField(label: '${l.notesLabel} (${l.optional})', controller: note),
-              const SizedBox(height: DoayaSpacing.l),
+              SizedBox(height: DoayaSpacing.l),
               Text(
                 l.paidFromLabel,
                 style: DoayaTypography.bodySmall.copyWith(color: DoayaColors.textSecondary),
               ),
-              const SizedBox(height: DoayaSpacing.s),
+              SizedBox(height: DoayaSpacing.s),
               Row(
                 children: [
                   Expanded(
@@ -240,7 +240,7 @@ class SupplierScreen extends ConsumerWidget {
                       onPressed: () => setState(() => from = PaidFrom.drawer),
                     ),
                   ),
-                  const SizedBox(width: DoayaSpacing.sm),
+                  SizedBox(width: DoayaSpacing.sm),
                   Expanded(
                     child: GlassPillButton(
                       label: l.fromOutside,
@@ -309,7 +309,7 @@ class _Statement extends ConsumerWidget {
             ),
           ],
         ),
-        const Divider(color: DoayaColors.divider),
+        Divider(color: DoayaColors.divider),
         _fill(
           ListView.builder(
             shrinkWrap: shrinkWrap,
@@ -318,7 +318,7 @@ class _Statement extends ConsumerWidget {
             itemBuilder: (context, i) {
               final (e, running) = rows[i];
               return Padding(
-                padding: const EdgeInsets.symmetric(vertical: DoayaSpacing.xs),
+                padding: EdgeInsets.symmetric(vertical: DoayaSpacing.xs),
                 child: Row(
                   children: [
                     Expanded(
@@ -474,7 +474,7 @@ class _SupplierReturnDialogState extends ConsumerState<_SupplierReturnDialog> {
           tone: SurfaceTone.strong,
           blur: true,
           borderRadius: BorderRadius.circular(DoayaRadii.hero),
-          padding: const EdgeInsets.all(DoayaSpacing.huge),
+          padding: EdgeInsets.all(DoayaSpacing.huge),
           child: ListView(
             shrinkWrap: true,
             children: [
@@ -482,13 +482,13 @@ class _SupplierReturnDialogState extends ConsumerState<_SupplierReturnDialog> {
                 '${l.returnToSupplier}: ${widget.supplier.name}',
                 style: DoayaTypography.titleSmall,
               ),
-              const SizedBox(height: DoayaSpacing.l),
+              SizedBox(height: DoayaSpacing.l),
               if (p == null) ...[
                 GlassSearchField(hint: l.posSearchHint, autofocus: true, onChanged: _search),
-                const SizedBox(height: DoayaSpacing.sm),
+                SizedBox(height: DoayaSpacing.sm),
                 for (final r in _results.take(6))
                   Padding(
-                    padding: const EdgeInsets.only(bottom: DoayaSpacing.s),
+                    padding: EdgeInsets.only(bottom: DoayaSpacing.s),
                     child: CaseRow(
                       initials: initialsOf(r.tradeName),
                       title: r.tradeName,
@@ -513,9 +513,9 @@ class _SupplierReturnDialogState extends ConsumerState<_SupplierReturnDialog> {
                     ),
                   ],
                 ),
-                const SizedBox(height: DoayaSpacing.l),
+                SizedBox(height: DoayaSpacing.l),
                 Text(l.batchLabel, style: DoayaTypography.label),
-                const SizedBox(height: DoayaSpacing.s),
+                SizedBox(height: DoayaSpacing.s),
                 if (batches.isEmpty) EmptyHint(l.noBatches),
                 Wrap(
                   spacing: DoayaSpacing.s,
@@ -534,7 +534,7 @@ class _SupplierReturnDialogState extends ConsumerState<_SupplierReturnDialog> {
                       ),
                   ],
                 ),
-                const SizedBox(height: DoayaSpacing.l),
+                SizedBox(height: DoayaSpacing.l),
                 Row(
                   children: [
                     Expanded(
@@ -546,7 +546,7 @@ class _SupplierReturnDialogState extends ConsumerState<_SupplierReturnDialog> {
                         onChanged: (_) => setState(_suggestCredit),
                       ),
                     ),
-                    const SizedBox(width: DoayaSpacing.sm),
+                    SizedBox(width: DoayaSpacing.sm),
                     Expanded(
                       child: GlassTextField(
                         label: l.creditValueLabel(currency.symbol),
@@ -556,9 +556,9 @@ class _SupplierReturnDialogState extends ConsumerState<_SupplierReturnDialog> {
                     ),
                   ],
                 ),
-                const SizedBox(height: DoayaSpacing.l),
+                SizedBox(height: DoayaSpacing.l),
                 GlassTextField(label: '${l.notesLabel} (${l.optional})', controller: _note),
-                const SizedBox(height: DoayaSpacing.l),
+                SizedBox(height: DoayaSpacing.l),
                 Row(
                   children: [
                     Expanded(
@@ -569,7 +569,7 @@ class _SupplierReturnDialogState extends ConsumerState<_SupplierReturnDialog> {
                         onPressed: () => setState(() => _cash = false),
                       ),
                     ),
-                    const SizedBox(width: DoayaSpacing.sm),
+                    SizedBox(width: DoayaSpacing.sm),
                     Expanded(
                       child: GlassPillButton(
                         label: l.refundCashFromSupplier,
@@ -581,12 +581,12 @@ class _SupplierReturnDialogState extends ConsumerState<_SupplierReturnDialog> {
                   ],
                 ),
               ],
-              const SizedBox(height: DoayaSpacing.xl),
+              SizedBox(height: DoayaSpacing.xl),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   GlassPillButton(label: l.cancel, onPressed: () => Navigator.of(context).pop()),
-                  const SizedBox(width: DoayaSpacing.sm),
+                  SizedBox(width: DoayaSpacing.sm),
                   SagePillButton(
                     label: l.confirm,
                     size: PillSize.small,

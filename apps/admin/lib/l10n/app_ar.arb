@@ -1,0 +1,637 @@
+{
+  "@@locale": "ar",
+  "appName": "دوايا",
+  "panelName": "لوحة المالك",
+  "navOverview": "نظرة عامة",
+  "navPharmacies": "الصيدليات",
+  "navPerformance": "الأداء والمكافآت",
+  "navReview": "مراجعة المحادثات",
+  "navKnowledge": "قاعدة المعرفة",
+  "navSettings": "الإعدادات",
+  "navPayments": "المدفوعات: مطفية",
+  "signOut": "تسجيل خروج",
+  "loading": "لحظة...",
+  "retry": "جرّب مرة تانية",
+  "cancel": "إلغاء",
+  "save": "حفظ",
+  "confirm": "تأكيد",
+  "close": "سكّر",
+  "copy": "نسخ",
+  "copied": "انتسخ",
+  "never": "أبداً",
+  "none": "ما في",
+  "minutesShort": "{n} د",
+  "@minutesShort": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "percent": "{n}%",
+  "@percent": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "agoMinutes": "من {n} دقيقة",
+  "@agoMinutes": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "agoHours": "من {n} ساعة",
+  "@agoHours": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "agoDays": "من {n} يوم",
+  "@agoDays": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "justNow": "هلق",
+  "errNetwork": "ما في اتصال مع سيرفر دوايا. تأكد من الإنترنت وجرّب مرة تانية.",
+  "errBadCredentials": "الرقم أو كلمة السر غلط.",
+  "errTooMany": "محاولات كتير غلط. استنى ربع ساعة وجرّب.",
+  "errReasonRequired": "اكتب السبب (3 أحرف عالأقل).",
+  "errBadStatus": "هالخطوة ما بتنفع بحالة الصيدلية الحالية.",
+  "errCodeTaken": "هالرمز مستعمل لصيدلية تانية.",
+  "errBadCode": "الرمز من 3 لـ 12 حرف إنكليزي أو رقم.",
+  "errNoteHasDose": "الملاحظة فيها جرعة. المساعد ما بيعطي جرعات أبداً، شيلها واكتب شو لازم يسأل.",
+  "errGeneric": "صار خطأ: {code}",
+  "@errGeneric": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "signInTitle": "لوحة مالك دوايا",
+  "signInSubtitle": "للمالك بس. الحساب بيتعمل من سطر الأوامر على السيرفر.",
+  "phone": "رقم الموبايل",
+  "password": "كلمة السر",
+  "signIn": "دخول",
+  "required": "مطلوب",
+  "overviewSubtitle": "آخر {days} يوم",
+  "@overviewSubtitle": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "rangeToday": "اليوم",
+  "rangeWeek": "7 أيام",
+  "rangeMonth": "30 يوم",
+  "rangeQuarter": "90 يوم",
+  "kpiPharmacies": "صيدليات فعّالة",
+  "kpiPharmaciesCaption": "متصلة هلق: {connected}، جديدة: {fresh}",
+  "@kpiPharmaciesCaption": {
+    "placeholders": {
+      "connected": {
+        "type": "String"
+      },
+      "fresh": {
+        "type": "String"
+      }
+    }
+  },
+  "kpiPatients": "مرضى مسجلين",
+  "kpiPatientsCaption": "فعّالين: {active}، جدد: {fresh}",
+  "@kpiPatientsCaption": {
+    "placeholders": {
+      "active": {
+        "type": "String"
+      },
+      "fresh": {
+        "type": "String"
+      }
+    }
+  },
+  "kpiToday": "استشارات اليوم",
+  "kpiTodayCaption": "طلبات: {orders}",
+  "@kpiTodayCaption": {
+    "placeholders": {
+      "orders": {
+        "type": "String"
+      }
+    }
+  },
+  "kpiResponse": "متوسط أول رد",
+  "kpiResponseCaption": "الهدف: {target} د أو أقل، ما انجاوب: {open}",
+  "@kpiResponseCaption": {
+    "placeholders": {
+      "target": {
+        "type": "String"
+      },
+      "open": {
+        "type": "String"
+      }
+    }
+  },
+  "kpiUrgent": "حالات خطرة اليوم",
+  "kpiUrgentCaption": "ناطرة رد: {open}",
+  "@kpiUrgentCaption": {
+    "placeholders": {
+      "open": {
+        "type": "String"
+      }
+    }
+  },
+  "chartTitle": "سرعة أول رد",
+  "chartLegend": "بالدقايق: الخط هو المتوسط، والشريط لحد أبطأ 10%، والمنقّط هو الهدف",
+  "chartEmpty": "ما في حالات انجاوبت بهالفترة.",
+  "attentionTitle": "بدها انتباه",
+  "attentionNone": "كل الصيدليات ماشية تمام.",
+  "attentionOffline": "ما اتصلت {ago}",
+  "@attentionOffline": {
+    "placeholders": {
+      "ago": {
+        "type": "String"
+      }
+    }
+  },
+  "attentionNeverConnected": "ما اتصلت ولا مرة",
+  "attentionHealth": "الفحص الشهري فيه مشكلة",
+  "attentionSlow": "رد بطيء: {m}",
+  "@attentionSlow": {
+    "placeholders": {
+      "m": {
+        "type": "String"
+      }
+    }
+  },
+  "reviewWaiting": "{n} محادثة ناطرة مراجعة",
+  "@reviewWaiting": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "openReview": "افتح المراجعة",
+  "paymentsOff": "الاشتراكات والمدفوعات مطفية بهالمرحلة (الدفع عند الاستلام).",
+  "searchPharmacies": "دوّر بالاسم أو المدينة أو الرمز",
+  "addPharmacy": "صيدلية جديدة",
+  "colName": "الصيدلية",
+  "colCity": "المدينة",
+  "colPatients": "المرضى",
+  "colResponse": "المتوسط",
+  "colConnection": "الاتصال",
+  "colStatus": "الحالة",
+  "statusActive": "مستعملة",
+  "statusPending": "ناطرة موافقة",
+  "statusSuspended": "معلّقة",
+  "statusStopped": "النظام موقّف",
+  "statusRemoved": "ملغاة",
+  "connected": "متصلة",
+  "hidden": "مخفية عن المرضى",
+  "noPharmacies": "ما في صيدليات لسا. ضيف أول وحدة من «صيدلية جديدة».",
+  "pickPharmacy": "اختار صيدلية من القائمة لتشوف تفاصيلها.",
+  "factCode": "الرمز",
+  "factLastContact": "آخر اتصال",
+  "factLicence": "الترخيص",
+  "licenceDays": "{n} يوم بلا اتصال",
+  "@licenceDays": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "factDevices": "الأجهزة",
+  "factBackup": "آخر نسخة احتياطية",
+  "factVersion": "نسخة السيرفر",
+  "factDisk": "المساحة الفاضية",
+  "diskMb": "{n} ميغا",
+  "@diskMb": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "factKeys": "مفاتيح فعّالة",
+  "healthTitle": "الفحص الشهري",
+  "healthAt": "آخر فحص: {date}",
+  "@healthAt": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "healthNever": "ما صار فحص لسا. بيصير مع أول اتصال.",
+  "healthRequested": "طلبت فحص، بيصير مع الاتصال الجاي.",
+  "healthPrivacy": "الفحص بيصير على كمبيوتر الصيدلية، وبيوصلك بس النتيجة. ما بتوصلك أدويتهم ولا مبيعاتهم ولا أرباحهم.",
+  "checkBackup": "النسخ الاحتياطي",
+  "checkDevices": "كل الأجهزة عم تتزامن",
+  "checkStockBelowZero": "مخزون تحت الصفر",
+  "checkExpiredOnSale": "أدوية منتهية لسا معروضة",
+  "checkEvents": "سجلات ناقصة",
+  "checkOpenShifts": "ورديات مفتوحة أكتر من يوم",
+  "checkDisk": "المساحة",
+  "levelOk": "تمام",
+  "levelWarn": "تنبيه",
+  "levelProblem": "مشكلة",
+  "countOf": "({n})",
+  "@countOf": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "actionsTitle": "التحكم",
+  "actApprove": "موافقة",
+  "actSuspend": "تعليق",
+  "actResume": "إعادة تشغيل",
+  "actStop": "إيقاف النظام",
+  "actRemove": "إلغاء",
+  "actList": "إظهار للمرضى",
+  "actUnlist": "إخفاء عن المرضى",
+  "actNewKey": "مفتاح جديد",
+  "actLicence": "مدة الترخيص",
+  "actHealth": "فحص هلق",
+  "actCreate": "إضافة",
+  "explainSuspend": "بيوقف دوايا أونلاين عنها فوراً: ما بتوصلها حالات ولا طلبات، وبتختفي عن المرضى. نظام البيع عندها بيضل شغال.",
+  "explainStop": "أول ما يتصل سيرفرها، بيتسكّر البيع وتعديل المخزون عندها عند فتح البرنامج الجاي. الشوفة وتصدير بياناتها بيضلوا مفتوحين.",
+  "explainRemove": "لما تشيل البرنامج من عندهم. مفتاحها بيبطل يشتغل وبتختفي عن المرضى، وما في رجعة.",
+  "explainNewKey": "المفتاح القديم بيبطل فوراً. لازم تحط الجديد بسيرفر الصيدلية.",
+  "explainResume": "بترجع الصيدلية فعّالة، وبيوصلها الخبر مع الاتصال الجاي.",
+  "reason": "السبب",
+  "reasonHint": "مثلاً: انتهى العقد",
+  "licencePrompt": "قديش يوم بيضل النظام شغال بلا ما يتصل بدوايا؟",
+  "days": "عدد الأيام",
+  "keyTitle": "مفتاح سيرفر الصيدلية",
+  "keyOnce": "انسخه هلق وحطه بسيرفر الصيدلية (شاشة «السيرفر والمزامنة» عند المالك). ما رح يبيّن مرة تانية.",
+  "logTitle": "سجل الخطوات",
+  "logEmpty": "ما في خطوات لسا.",
+  "logBy": "{who}، {when}",
+  "@logBy": {
+    "placeholders": {
+      "who": {
+        "type": "String"
+      },
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "fieldName": "اسم الصيدلية",
+  "fieldCity": "المدينة",
+  "fieldCode": "الرمز (بيشوفه المريض عالكاونتر)",
+  "fieldAddress": "العنوان",
+  "fieldPhone": "رقم الصيدلية",
+  "fieldHours": "الدوام",
+  "perfTitle": "الأداء والمكافآت",
+  "perfSubtitle": "الترتيب حسب نسبة الرد خلال {target} دقايق، وبعدين نسبة الجواب والسرعة. الصيدلية يلي عندها أقل من {min} حالة ما بتدخل الترتيب.",
+  "@perfSubtitle": {
+    "placeholders": {
+      "target": {
+        "type": "String"
+      },
+      "min": {
+        "type": "String"
+      }
+    }
+  },
+  "perfMonth": "الشهر",
+  "colRank": "#",
+  "colCases": "حالات",
+  "colAnswered": "انجاوب",
+  "colWithin": "خلال الهدف",
+  "colP90": "أبطأ 10%",
+  "colUrgent": "خطرة بوقتها",
+  "colOrders": "طلبات جاهزة",
+  "colTier": "الفئة",
+  "tierGold": "ذهبي",
+  "tierSilver": "فضي",
+  "tierFew": "حالات قليلة",
+  "perfEmpty": "ما في حالات بهالشهر.",
+  "rewardsNote": "المكافآت نفسها بتقررها إنت برّا البرنامج.",
+  "reviewTitle": "مراجعة المحادثات",
+  "reviewSubtitle": "بلا اسم المريض ولا رقمه: العمر والجنس والصيدلية بس.",
+  "reviewWaitingTab": "ناطرة",
+  "reviewDoneTab": "خلصت",
+  "reviewEmpty": "ما في شي ناطر مراجعة.",
+  "kindRedFlag": "حالة خطرة",
+  "kindGuardBlock": "رد انمنع",
+  "kindCorrection": "تصحيح صيدلي",
+  "kindPatientEdit": "المريض عدّل الملخص",
+  "kindLlmDown": "النموذج وقف",
+  "patientBrief": "{sex}، {age} سنة، {pharmacy}",
+  "@patientBrief": {
+    "placeholders": {
+      "sex": {
+        "type": "String"
+      },
+      "age": {
+        "type": "String"
+      },
+      "pharmacy": {
+        "type": "String"
+      }
+    }
+  },
+  "sexM": "رجل",
+  "sexF": "امرأة",
+  "unknown": "مو معروف",
+  "roleAssistant": "المساعد",
+  "rolePatient": "المريض",
+  "rolePharmacist": "الصيدلي",
+  "roleSystem": "النظام",
+  "photoMarker": "صورة",
+  "detailTitle": "التفاصيل",
+  "reviewNote": "ملاحظتك",
+  "markReviewed": "تمت المراجعة",
+  "toKnowledge": "حوّلها لملاحظة بقاعدة المعرفة",
+  "pickItem": "اختار محادثة من القائمة.",
+  "knowledgeTitle": "قاعدة المعرفة",
+  "knowledgeSubtitle": "ملاحظات قصيرة بتساعد المساعد يسأل أحسن. بتوصله الملاحظة لما يذكر المريض وحدة من كلماتها. ما في تدريب تلقائي أبداً.",
+  "addNote": "ملاحظة جديدة",
+  "noteTitle": "العنوان",
+  "noteText": "الملاحظة",
+  "noteTags": "الكلمات (افصل بينها بفاصلة)",
+  "noteTagsHint": "طفل، رضيع، حرار",
+  "noteEnabled": "شغّالة",
+  "noteDisabled": "مطفية",
+  "notesEmpty": "ما في ملاحظات لسا.",
+  "tryTitle": "جرّب",
+  "tryHint": "اكتب شي متل ما بيكتبه المريض",
+  "tryResult": "بيوصل للمساعد: {titles}",
+  "@tryResult": {
+    "placeholders": {
+      "titles": {
+        "type": "String"
+      }
+    }
+  },
+  "tryNothing": "ولا ملاحظة.",
+  "settingsTitle": "الإعدادات",
+  "designTitle": "شكل اللوحة",
+  "designConsole": "غرفة القيادة",
+  "designConsoleNote": "غامقة ودقيقة، أرقام كتير بمساحة قليلة.",
+  "designLedger": "الدفتر",
+  "designLedgerNote": "فاتحة ونظيفة، بتنقرى منيح بالنهار.",
+  "designFamily": "من عيلة دوايا",
+  "designFamilyNote": "أخضر دوايا وخط أميري.",
+  "serverTitle": "السيرفر",
+  "serverNote": "بتتغيّر من إعدادات السيرفر نفسه، مو من هون.",
+  "modelUrl": "عنوان النموذج",
+  "modelName": "النموذج",
+  "modelCheck": "جرّب النموذج",
+  "modelOk": "عم يجاوب ({ms} ملي ثانية)",
+  "@modelOk": {
+    "placeholders": {
+      "ms": {
+        "type": "String"
+      }
+    }
+  },
+  "modelDown": "ما عم يجاوب: {error}",
+  "@modelDown": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "emergencyNumbers": "أرقام الطوارئ",
+  "emergencyValue": "إسعاف {ambulance}، طوارئ {general}",
+  "@emergencyValue": {
+    "placeholders": {
+      "ambulance": {
+        "type": "String"
+      },
+      "general": {
+        "type": "String"
+      }
+    }
+  },
+  "corsOrigins": "عناوين الويب المسموحة",
+  "serverVersion": "نسخة السيرفر",
+  "detailMatched": "الكلام يلي طابق",
+  "detailCategory": "النوع",
+  "detailCorrection": "التصحيح",
+  "detailOriginal": "قبل التصحيح",
+  "detailReply": "رد المساعد",
+  "detailError": "الخطأ",
+  "detailBy": "الصيدلي",
+  "detailReason": "السبب",
+  "navAssistant": "المساعد",
+  "asTitle": "المساعد",
+  "asSubtitle": "النموذج، التعليمات، أمثلة السلامة، وجرّب قبل ما تعتمد. قواعد السلامة الأساسية ثابتة بالكود وما بتتغيّر من هون.",
+  "tabState": "الحالة والنموذج",
+  "tabPrompts": "التعليمات",
+  "tabExamples": "أمثلة السلامة",
+  "tabSandbox": "جرّب",
+  "last24h": "آخر 24 ساعة",
+  "stReplies": "ردود",
+  "stDown": "مرات الوقوف",
+  "stMedian": "متوسط زمن الرد",
+  "stSlowest": "أبطأ رد: {ms}",
+  "@stSlowest": {
+    "placeholders": {
+      "ms": {
+        "type": "String"
+      }
+    }
+  },
+  "msValue": "{n} ملي ثانية",
+  "@msValue": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "stGuard": "ردود انمنعت",
+  "stFlags": "حالات خطرة",
+  "stFlagsCaption": "من القواعد: {rules}، من النموذج: {model}",
+  "@stFlagsCaption": {
+    "placeholders": {
+      "rules": {
+        "type": "String"
+      },
+      "model": {
+        "type": "String"
+      }
+    }
+  },
+  "stDoctor": "نصيحة بطبيب",
+  "lastDown": "آخر وقوف: {ago}",
+  "@lastDown": {
+    "placeholders": {
+      "ago": {
+        "type": "String"
+      }
+    }
+  },
+  "assistantDownBanner": "المساعد وقف {ago}. المرضى عم يبعتوا للصيدلي مباشرة لحد ما يرجع.",
+  "@assistantDownBanner": {
+    "placeholders": {
+      "ago": {
+        "type": "String"
+      }
+    }
+  },
+  "modelTitle": "النموذج",
+  "modelSourcePanel": "مختار من اللوحة",
+  "modelSourceSettings": "من إعدادات السيرفر (ما اخترت من اللوحة لسا)",
+  "modelKeySet": "في مفتاح محفوظ",
+  "modelNoKey": "بلا مفتاح",
+  "changeModel": "غيّر النموذج",
+  "chooseServer": "اختر المخدم",
+  "providerLmStudio": "LM Studio",
+  "providerOllama": "Ollama",
+  "providerHosted": "خدمة أونلاين",
+  "serverUrl": "عنوان المخدم",
+  "apiKey": "مفتاح API",
+  "apiKeyKeep": "اتركه فاضي لتضل على المفتاح المحفوظ",
+  "removeKey": "شيل المفتاح",
+  "fetchModels": "جيب النماذج",
+  "chooseModel": "اختر النموذج",
+  "modelNameManual": "أو اكتب اسم النموذج",
+  "noModels": "المخدم ما رجّع ولا نموذج.",
+  "timeoutSeconds": "مهلة الرد (ثانية)",
+  "switchModel": "جرّب وبدّل",
+  "switched": "تبدّل النموذج، جاوب بـ {ms}",
+  "@switched": {
+    "placeholders": {
+      "ms": {
+        "type": "String"
+      }
+    }
+  },
+  "errServerUnreachable": "ما قدرت وصل للمخدم. تأكد من العنوان وإنو شغّال.",
+  "errModelNotAnswering": "النموذج ما جاوب، فما بدّلت. تأكد من الاسم والمفتاح.",
+  "errTestNotPassed": "لازم تمتحن المسودة وتنجح بعد آخر تعديل قبل ما تعتمدها.",
+  "errNotADraft": "هالنسخة مو مسودة.",
+  "errAlreadyDefault": "هي أصلاً النسخة الأساسية.",
+  "kindAssistant": "أسئلة المساعد",
+  "kindSummary": "ملخص الصيدلي",
+  "kindClassifier": "فاحص الخطر",
+  "kindAssistantNote": "كيف بيحكي المساعد مع المريض وشو بيسأل.",
+  "kindSummaryNote": "كيف بينكتب الملخص يلي بيوصل للصيدلي.",
+  "kindClassifierNote": "شو بيعتبر إسعاف، وشو بيعتبر لازم دكتور. أمثلة السلامة بتنضاف عليه.",
+  "inUse": "المستعمل هلق",
+  "builtIn": "النسخة الأساسية",
+  "versionN": "نسخة {n}",
+  "@versionN": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "statusDraft": "مسودة",
+  "statusRetired": "قديمة",
+  "lockedTitle": "ثابت بالكود (بينضاف دايماً)",
+  "newDraft": "مسودة جديدة",
+  "editDraft": "عدّل",
+  "runTest": "امتحن",
+  "activateDraft": "اعتمد",
+  "rollbackStep": "رجوع خطوة",
+  "rollbackConfirm": "ترجع للنسخة يلي قبلها؟",
+  "draftText": "النص",
+  "draftNote": "ملاحظة (شو غيّرت)",
+  "testPassed": "نجحت: ما فوّتت ولا حالة",
+  "testFailed": "ما نجحت: فوّتت {missed}",
+  "@testFailed": {
+    "placeholders": {
+      "missed": {
+        "type": "String"
+      }
+    }
+  },
+  "testFalseAlarms": "إنذارات زيادة: {n}",
+  "@testFalseAlarms": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "testSummaryBad": "الملخص ما اشتغل",
+  "testRunning": "عم امتحن... ممكن ياخد دقيقة مع نموذج محلي.",
+  "expected": "المتوقع",
+  "got": "صار",
+  "labelEmergency": "إسعاف",
+  "labelDoctor": "لازم دكتور",
+  "labelNormal": "عادي",
+  "bySource": "({source})",
+  "@bySource": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "sourceRules": "القواعد",
+  "sourceModel": "النموذج",
+  "guardBlockedCase": "انمنع رد فيه دوا أو جرعة",
+  "modelDownCase": "النموذج ما جاوب",
+  "examplesSubtitle": "حط مواقف لازم فيها المساعد ينذر المريض: إسعاف أو يروح لدكتور، ومواقف عادية كمان. بتنضاف لفاحص الخطر كأمثلة، وبتصير جزء من الامتحان. ما في تدريب تلقائي.",
+  "addExample": "مثال جديد",
+  "exampleText": "شو كتب المريض",
+  "exampleLabel": "لازم يصير",
+  "exampleNote": "ملاحظة",
+  "examplesEmpty": "ما في أمثلة لسا.",
+  "testCurrent": "امتحن المستعمل هلق",
+  "exampleEnabled": "مستعمل",
+  "sandboxSubtitle": "احكي كأنك مريض. ما في مريض حقيقي وما بينحفظ شي. فيك تجرب المسودات قبل ما تعتمدها.",
+  "useDrafts": "جرّب مع المسودات:",
+  "noDrafts": "ما في مسودات، عم جرّب المستعمل هلق.",
+  "sandboxHint": "اكتب رسالة المريض",
+  "send": "ابعت",
+  "restart": "من الأول",
+  "turnReply": "رد",
+  "turnEmergency": "إسعاف",
+  "turnDoctor": "لازم دكتور",
+  "turnSummary": "ملخص",
+  "turnFallback": "النموذج وقف",
+  "guardBlockedTurn": "الحارس منع رد وحط بداله",
+  "navPatients": "المرضى",
+  "patientsSubtitle": "كل فتحة لملف مريض بتنسجل (مين وإيمتى)، لأنها بيانات طبية.",
+  "searchPatients": "دوّر بالاسم أو الرقم",
+  "noPatients": "ما في مرضى.",
+  "pickPatient": "اختار مريض لتشوف ملفه.",
+  "patientCases": "استشارات: {n}",
+  "@patientCases": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "noFileYet": "بلا ملف",
+  "fileNotAgreed": "المريض ما وافق على ملف صحي، فما في غير استشاراته.",
+  "fileFacts": "الملف هلق",
+  "filePastFacts": "قديم",
+  "fileProposals": "ناطرة تأكيد",
+  "fileHistory": "الاستشارات",
+  "fileOrders": "الطلبات",
+  "fileOpened": "مين فتح هالملف",
+  "factConfirmed": "مؤكد",
+  "factPatient": "المريض قال",
+  "needsPharmacist": "الصيدلي",
+  "needsPatient": "المريض",
+  "fkAllergy": "حساسية",
+  "fkCondition": "مرض مزمن",
+  "fkMedication": "دوا حالي",
+  "fkPregnancy": "حمل أو رضاعة",
+  "fkWeight": "الوزن",
+  "fkNote": "ملاحظة"
+}

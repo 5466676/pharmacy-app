@@ -15,12 +15,12 @@ Future<PickedPhoto?> pickPhoto(BuildContext context, WidgetRef ref) async {
     backgroundColor: DoayaColors.transparent,
     builder: (context) => SafeArea(
       child: Padding(
-        padding: const EdgeInsets.all(DoayaSpacing.floatingInset),
+        padding: EdgeInsets.all(DoayaSpacing.floatingInset),
         child: GlassSurface(
           tone: SurfaceTone.strong,
           blur: true,
           borderRadius: BorderRadius.circular(DoayaRadii.sheet),
-          padding: const EdgeInsets.all(DoayaSpacing.xl),
+          padding: EdgeInsets.all(DoayaSpacing.xl),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -31,7 +31,7 @@ Future<PickedPhoto?> pickPhoto(BuildContext context, WidgetRef ref) async {
                 expand: true,
                 onPressed: () => Navigator.pop(context, PhotoSource.camera),
               ),
-              const SizedBox(height: DoayaSpacing.sm),
+              SizedBox(height: DoayaSpacing.sm),
               GlassPillButton(
                 label: l.fromGallery,
                 icon: DoayaIcons.gallery,
@@ -65,7 +65,7 @@ class PhotoThumb extends ConsumerWidget {
       child: ClipRRect(
         borderRadius: radius,
         child: data == null
-            ? const ColoredBox(
+            ? ColoredBox(
                 color: DoayaColors.imageWell,
                 child: Center(child: Icon(DoayaIcons.camera, color: DoayaColors.textSecondary)),
               )
@@ -87,7 +87,7 @@ class PhotoThumb extends ConsumerWidget {
       barrierColor: DoayaColors.scrim,
       builder: (context) => Dialog(
         backgroundColor: DoayaColors.transparent,
-        insetPadding: const EdgeInsets.all(DoayaSpacing.l),
+        insetPadding: EdgeInsets.all(DoayaSpacing.l),
         child: Stack(
           children: [
             InteractiveViewer(maxScale: 5, child: Image.memory(data)),

@@ -9,9 +9,14 @@ from sqlalchemy import select, text
 from . import (
     __version__,
     accounts,
+    admin,
+    assistant_admin,
     central_proxy,
     consultations,
+    control,
     directory,
+    health_file,
+    knowledge,
     orders,
     patients,
     photos,
@@ -79,6 +84,8 @@ def create_app(
             responder.stop()
         if scheduler:
             scheduler.stop()
+        # Close the pool's connections (tests make one app each).
+        app.state.db.engine.dispose()
 
     app = FastAPI(title="Doaya", version=__version__, lifespan=lifespan)
     app.state.settings = settings
@@ -96,6 +103,11 @@ def create_app(
             allow_headers=["authorization", "content-type"],
         )
     app.include_router(accounts.router)
+    app.include_router(admin.router)
+    app.include_router(assistant_admin.router)
+    app.include_router(control.router)
+    app.include_router(knowledge.router)
+    app.include_router(health_file.router)
     app.include_router(sync.router)
     app.include_router(patients.router)
     app.include_router(directory.router)

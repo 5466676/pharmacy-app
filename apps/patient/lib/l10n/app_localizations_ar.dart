@@ -614,4 +614,281 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get close => 'سكّر';
+
+  @override
+  String get lookTitle => 'المظهر';
+
+  @override
+  String get lookSubtitle => 'ألوان ونمط التطبيق على هالجهاز';
+
+  @override
+  String get lookStyle => 'النمط';
+
+  @override
+  String get lookStyleGlass => 'زجاجي';
+
+  @override
+  String get lookStyleFlat => 'مسطّح';
+
+  @override
+  String get lookStyleSoft => 'ناعم';
+
+  @override
+  String get lookStyleOutline => 'خطوط';
+
+  @override
+  String get lookStyleContrast => 'تباين عالي';
+
+  @override
+  String get lookNoteGlass => 'شفاف ومغبّش';
+
+  @override
+  String get lookNoteFlat => 'ألوان صافية بدون ظلال';
+
+  @override
+  String get lookNoteSoft => 'حواف دايرية وظلال خفيفة';
+
+  @override
+  String get lookNoteOutline => 'بسيط، إطارات رفيعة';
+
+  @override
+  String get lookNoteContrast => 'للنظر الضعيف والشمس';
+
+  @override
+  String get lookMode => 'الوضع';
+
+  @override
+  String get lookModeDark => 'ليلي';
+
+  @override
+  String get lookModeLight => 'نهاري';
+
+  @override
+  String get lookModeBlack => 'أسود كامل';
+
+  @override
+  String get lookModeAuto => 'تلقائي';
+
+  @override
+  String get lookColors => 'الألوان';
+
+  @override
+  String get lookPaletteGreen => 'أخضر دوايا';
+
+  @override
+  String get lookPaletteNavy => 'كحلي';
+
+  @override
+  String get lookPaletteWine => 'خمري';
+
+  @override
+  String get lookPaletteViolet => 'بنفسجي';
+
+  @override
+  String get lookPaletteSky => 'سماوي';
+
+  @override
+  String get lookPaletteRose => 'زهري';
+
+  @override
+  String get lookPaletteAmber => 'عنبري';
+
+  @override
+  String get lookPaletteOlive => 'زيتي';
+
+  @override
+  String get lookPaletteMint => 'نعناعي';
+
+  @override
+  String get lookPaletteSand => 'رملي';
+
+  @override
+  String get lookPaletteChar => 'فحمي';
+
+  @override
+  String get lookCustom => 'تصميمي';
+
+  @override
+  String get lookMain => 'اللون الأساسي';
+
+  @override
+  String get lookBackground => 'لون الخلفية';
+
+  @override
+  String get lookHue => 'اللون';
+
+  @override
+  String get lookLightness => 'الفتاحة';
+
+  @override
+  String get lookDetails => 'التفاصيل';
+
+  @override
+  String get lookCorners => 'الحواف';
+
+  @override
+  String get lookBlur => 'التغبيش';
+
+  @override
+  String get lookTextSize => 'حجم الخط';
+
+  @override
+  String get lookSizeSmall => 'صغير';
+
+  @override
+  String get lookSizeNormal => 'عادي';
+
+  @override
+  String get lookSizeLarge => 'كبير';
+
+  @override
+  String get lookSizeXLarge => 'كبير جداً';
+
+  @override
+  String get lookSpacing => 'المسافات';
+
+  @override
+  String get lookSpacingComfy => 'مريحة';
+
+  @override
+  String get lookSpacingCompact => 'مضغوطة';
+
+  @override
+  String get lookHeadingFont => 'خط العناوين';
+
+  @override
+  String get lookFontAmiri => 'مزخرف';
+
+  @override
+  String get lookFontPlain => 'بسيط';
+
+  @override
+  String get lookReadability => 'وضوح القراءة';
+
+  @override
+  String get lookReadable =>
+      'أي لون بيصعّب القراءة بيتعدّل لحاله. الأحمر للخطر والأصفر للتحذير ما بيتغيّروا.';
+
+  @override
+  String get lookAdjusted => 'اتعدّل ليضل واضح';
+
+  @override
+  String get lookSample => 'هيك بيطلع';
+
+  @override
+  String get lookSampleButton => 'زر';
+
+  @override
+  String get lookSampleWarning => 'هيك بيطلع التحذير.';
+
+  @override
+  String get lookSampleDanger => 'وهيك بتطلع الحالة المستعجلة.';
+
+  @override
+  String get lookReset => 'رجّع للأصل';
+
+  @override
+  String get fileConsent =>
+      'بوافق إنو ينعمل إلي ملف صحي: بينحفظ عند دوايا، وبيشوفه صيدلي صيدليتي. فيني امسحه أي وقت.';
+
+  @override
+  String get fileTitle => 'ملفي الصحي';
+
+  @override
+  String get fileIntro =>
+      'هون حساسياتك وأمراضك والأدوية يلي عم تاخدها وكل استشاراتك. المساعد بيعرفها فما بيسألك عنها كل مرة، والصيدلي بيشوفها قبل ما يقرر.';
+
+  @override
+  String get fileNoConsent =>
+      'ما عندك ملف صحي لسا. إذا فعّلته، بينحفظ عند دوايا وبيشوفه صيدلي صيدليتك بس، وفيك تمسحه أي وقت.';
+
+  @override
+  String get fileEnable => 'فعّل ملفي الصحي';
+
+  @override
+  String get fileConfirmMine => 'بدها تأكيدك';
+
+  @override
+  String get fileConfirmPharmacist => 'ناطرة تأكيد الصيدلي';
+
+  @override
+  String get fileProposalHelp => 'هالشي فهمناه من محادثتك. صحيح؟';
+
+  @override
+  String get yes => 'صح';
+
+  @override
+  String get no => 'لا، مو صح';
+
+  @override
+  String get fileNow => 'هلق';
+
+  @override
+  String get filePast => 'قديم';
+
+  @override
+  String get fileHistory => 'استشاراتي';
+
+  @override
+  String get fileEmpty => 'ما في شي بملفك لسا.';
+
+  @override
+  String get kindAllergy => 'حساسية';
+
+  @override
+  String get kindCondition => 'مرض مزمن';
+
+  @override
+  String get kindMedication => 'دوا عم آخده';
+
+  @override
+  String get kindPregnancy => 'حمل أو رضاعة';
+
+  @override
+  String get kindWeight => 'الوزن';
+
+  @override
+  String get kindNote => 'ملاحظة';
+
+  @override
+  String get factByPharmacist => 'أكّده الصيدلي';
+
+  @override
+  String get factByMe => 'من عندي';
+
+  @override
+  String factUntil(String date) {
+    return 'لحد $date';
+  }
+
+  @override
+  String get factEnd => 'ما عاد صحيح';
+
+  @override
+  String get addFact => 'ضيف لملفي';
+
+  @override
+  String get factText => 'شو بالضبط؟';
+
+  @override
+  String get fileExport => 'خد نسخة';
+
+  @override
+  String get fileExported => 'انتسخ ملفك (JSON). فيك تلصقه وين ما بدك.';
+
+  @override
+  String get fileDelete => 'امسح ملفي';
+
+  @override
+  String get fileDeleteConfirm =>
+      'أكيد؟ رح ينمسح ملفك الصحي كله. استشاراتك بتضل عند الصيدلية كسجلات إلها.';
+
+  @override
+  String get fileDeleted => 'انمسح ملفك الصحي.';
+
+  @override
+  String get doctorAdvisedShort => 'انصح بطبيب';
+
+  @override
+  String get urgentShort => 'مستعجلة';
 }

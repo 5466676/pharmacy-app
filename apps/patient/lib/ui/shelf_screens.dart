@@ -32,7 +32,7 @@ class CartButton extends ConsumerWidget {
             child: Container(
               constraints: const BoxConstraints(minWidth: DoayaSizes.badge),
               height: DoayaSizes.badge,
-              padding: const EdgeInsets.symmetric(horizontal: DoayaSpacing.xs),
+              padding: EdgeInsets.symmetric(horizontal: DoayaSpacing.xs),
               decoration: BoxDecoration(
                 color: DoayaColors.accent,
                 borderRadius: BorderRadius.circular(DoayaRadii.pill),
@@ -127,7 +127,7 @@ class _ShelfScreenState extends ConsumerState<ShelfScreen> {
                   if (q.isEmpty) setState(() => _query = '');
                 },
               ),
-              const SizedBox(height: DoayaSpacing.xl),
+              SizedBox(height: DoayaSpacing.xl),
               ...switch (found) {
                 AsyncData(:final value) when value.isEmpty => [
                   Center(
@@ -150,7 +150,7 @@ class _ShelfScreenState extends ConsumerState<ShelfScreen> {
                 ],
                 _ => [const Center(child: CircularProgressIndicator())],
               },
-              const SizedBox(height: DoayaSpacing.xl),
+              SizedBox(height: DoayaSpacing.xl),
             ],
           ),
         ),
@@ -200,10 +200,10 @@ class _ProductScreenState extends ConsumerState<ProductScreen> {
                     child: ProductImage(url: i.photoUrl, size: DoayaSizes.logoLarge),
                   ),
                 ),
-                const SizedBox(height: DoayaSpacing.xl),
+                SizedBox(height: DoayaSpacing.xl),
                 LatinText(i.tradeName, style: DoayaTypography.title),
                 if (i.arabicName != null) Text(i.arabicName!, style: secondary),
-                const SizedBox(height: DoayaSpacing.ml),
+                SizedBox(height: DoayaSpacing.ml),
                 Wrap(
                   spacing: DoayaSpacing.sm,
                   runSpacing: DoayaSpacing.sm,
@@ -219,7 +219,7 @@ class _ProductScreenState extends ConsumerState<ProductScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: DoayaSpacing.xl),
+                SizedBox(height: DoayaSpacing.xl),
                 for (final (label, value) in [
                   (l.ingredient, i.activeIngredient),
                   (l.strength, i.strength),
@@ -227,7 +227,7 @@ class _ProductScreenState extends ConsumerState<ProductScreen> {
                 ])
                   if (value != null)
                     Padding(
-                      padding: const EdgeInsets.only(bottom: DoayaSpacing.xs),
+                      padding: EdgeInsets.only(bottom: DoayaSpacing.xs),
                       child: Row(
                         children: [
                           SizedBox(
@@ -238,13 +238,13 @@ class _ProductScreenState extends ConsumerState<ProductScreen> {
                         ],
                       ),
                     ),
-                const SizedBox(height: DoayaSpacing.ml),
+                SizedBox(height: DoayaSpacing.ml),
                 NoticeBanner(
                   message: i.prescriptionOnly ? l.rxHint : l.askPharmacistHint,
                   tone: i.prescriptionOnly ? StatusTone.warning : StatusTone.accent,
                   icon: i.prescriptionOnly ? DoayaIcons.warning : DoayaIcons.pharmacy,
                 ),
-                const SizedBox(height: DoayaSpacing.huge),
+                SizedBox(height: DoayaSpacing.huge),
                 Row(
                   children: [
                     Text(formatPrice(i.priceMinor, i.currency), style: DoayaTypography.price),
@@ -258,7 +258,7 @@ class _ProductScreenState extends ConsumerState<ProductScreen> {
                       ),
                   ],
                 ),
-                const SizedBox(height: DoayaSpacing.l),
+                SizedBox(height: DoayaSpacing.l),
                 SagePillButton(
                   label: i.available ? l.orderFromPharmacy : l.unavailable,
                   icon: DoayaIcons.bag,
@@ -272,14 +272,14 @@ class _ProductScreenState extends ConsumerState<ProductScreen> {
                       : null,
                 ),
                 if (inCart > 0) ...[
-                  const SizedBox(height: DoayaSpacing.sm),
+                  SizedBox(height: DoayaSpacing.sm),
                   GlassPillButton(
                     label: '${l.viewCart} (${l.inCart(formatNumber(inCart))})',
                     expand: true,
                     onPressed: () => context.push(Routes.cart),
                   ),
                 ],
-                const SizedBox(height: DoayaSpacing.xl),
+                SizedBox(height: DoayaSpacing.xl),
               ],
             ),
             AsyncError(:final error) => Center(child: NoticeBanner(message: errorText(l, error))),

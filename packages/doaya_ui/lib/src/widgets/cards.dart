@@ -47,7 +47,7 @@ class IconTile extends StatelessWidget {
                 child: Icon(icon, size: DoayaSizes.iconL, color: color),
               ),
             ),
-            const SizedBox(height: DoayaSpacing.s),
+            SizedBox(height: DoayaSpacing.s),
             Text(
               label,
               style: DoayaTypography.micro.copyWith(
@@ -104,7 +104,7 @@ class ProductCard extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.all(DoayaSpacing.sm),
+            padding: EdgeInsets.all(DoayaSpacing.sm),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.min,
@@ -130,7 +130,7 @@ class ProductCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: DoayaSpacing.s),
+                SizedBox(height: DoayaSpacing.s),
                 Row(
                   children: [
                     Expanded(
@@ -151,7 +151,7 @@ class ProductCard extends StatelessWidget {
                       ),
                   ],
                 ),
-                const SizedBox(height: DoayaSpacing.xs),
+                SizedBox(height: DoayaSpacing.xs),
                 Text(price, style: DoayaTypography.priceSmall),
               ],
             ),
@@ -183,7 +183,7 @@ class _FavoriteButton extends StatelessWidget {
       child: InkResponse(
         onTap: onPressed,
         radius: DoayaSizes.iconM,
-        child: Padding(padding: const EdgeInsets.all(DoayaSpacing.xxs), child: icon),
+        child: Padding(padding: EdgeInsets.all(DoayaSpacing.xxs), child: icon),
       ),
     );
   }
@@ -220,7 +220,7 @@ class StatCard extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.all(DoayaSpacing.l),
+            padding: EdgeInsets.all(DoayaSpacing.l),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -235,19 +235,19 @@ class StatCard extends StatelessWidget {
                     child: Icon(icon, size: DoayaSizes.iconS, color: iconFg),
                   ),
                 ),
-                const SizedBox(height: DoayaSpacing.m),
+                SizedBox(height: DoayaSpacing.m),
                 Text(
                   label,
                   style: DoayaTypography.caption.copyWith(color: DoayaColors.textSecondary),
                 ),
-                const SizedBox(height: DoayaSpacing.xs),
+                SizedBox(height: DoayaSpacing.xs),
                 FittedBox(
                   fit: BoxFit.scaleDown,
                   alignment: AlignmentDirectional.centerStart,
                   child: Text(value, style: DoayaTypography.bigNumber, maxLines: 1),
                 ),
                 if (caption != null) ...[
-                  const SizedBox(height: DoayaSpacing.xxs),
+                  SizedBox(height: DoayaSpacing.xxs),
                   Text(caption!, style: DoayaTypography.micro.copyWith(color: iconFg)),
                 ],
               ],
@@ -299,7 +299,7 @@ class CaseRow extends StatelessWidget {
           child: InkWell(
             onTap: onTap,
             child: Padding(
-              padding: const EdgeInsets.all(DoayaSpacing.ml),
+              padding: EdgeInsets.all(DoayaSpacing.ml),
               child: Row(
                 children: [
                   GlassSurface(
@@ -318,7 +318,7 @@ class CaseRow extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: DoayaSpacing.ml),
+                  SizedBox(width: DoayaSpacing.ml),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -330,7 +330,7 @@ class CaseRow extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(height: DoayaSpacing.xxs),
+                        SizedBox(height: DoayaSpacing.xxs),
                         Text(
                           subtitle,
                           style: DoayaTypography.caption.copyWith(
@@ -342,7 +342,7 @@ class CaseRow extends StatelessWidget {
                       ],
                     ),
                   ),
-                  if (trailing != null) ...[const SizedBox(width: DoayaSpacing.sm), trailing!],
+                  if (trailing != null) ...[SizedBox(width: DoayaSpacing.sm), trailing!],
                 ],
               ),
             ),

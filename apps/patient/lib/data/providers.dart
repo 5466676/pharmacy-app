@@ -93,6 +93,7 @@ class AuthController extends Notifier<AuthState> {
     int? birthYear,
     String? sex,
     String? city,
+    bool fileConsent = false,
   }) async => _signedIn(
     await _api.register(
       name: name,
@@ -101,6 +102,7 @@ class AuthController extends Notifier<AuthState> {
       birthYear: birthYear,
       sex: sex,
       city: city,
+      fileConsent: fileConsent,
     ),
   );
 
@@ -159,3 +161,8 @@ final consultationProvider =
     AsyncNotifierProvider.family<ConsultationController, Consultation, String>(
       ConsultationController.new,
     );
+
+/// «ملفي الصحي» (null: no consent yet). Refreshed by invalidating.
+final healthFileProvider = FutureProvider.autoDispose<HealthFile?>(
+  (ref) => ref.read(apiProvider).healthFile(),
+);

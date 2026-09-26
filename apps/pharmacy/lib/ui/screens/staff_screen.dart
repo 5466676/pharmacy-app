@@ -77,7 +77,7 @@ class _StaffScreenState extends ConsumerState<StaffScreen> {
         summaries.where((s) => s.employeeId == _selected).firstOrNull ?? summaries.firstOrNull;
 
     Widget periodChip(ReportPeriod p, String label) => Padding(
-      padding: const EdgeInsetsDirectional.only(start: DoayaSpacing.s),
+      padding: EdgeInsetsDirectional.only(start: DoayaSpacing.s),
       child: GlassPillButton(
         label: label,
         selected: _period == p,
@@ -106,7 +106,7 @@ class _StaffScreenState extends ConsumerState<StaffScreen> {
                       width: DoayaSizes.listPaneWidth,
                       child: ListView.separated(
                         itemCount: summaries.length,
-                        separatorBuilder: (_, _) => const SizedBox(height: DoayaSpacing.sm),
+                        separatorBuilder: (_, _) => SizedBox(height: DoayaSpacing.sm),
                         itemBuilder: (context, i) {
                           final s = summaries[i];
                           final name = employees[s.employeeId]?.name ?? l.none;
@@ -124,7 +124,7 @@ class _StaffScreenState extends ConsumerState<StaffScreen> {
                         },
                       ),
                     ),
-                    const SizedBox(width: DoayaSpacing.huge),
+                    SizedBox(width: DoayaSpacing.huge),
                     Expanded(
                       child: selected == null
                           ? const SizedBox.shrink()
@@ -191,7 +191,7 @@ class _EmployeeAccountState extends ConsumerState<_EmployeeAccount> {
       children: [
         LayoutBuilder(
           builder: (context, box) {
-            const gap = DoayaSpacing.l;
+            final gap = DoayaSpacing.l;
             final w = (box.maxWidth - gap * 2) / 3;
             return Wrap(
               spacing: gap,
@@ -236,15 +236,15 @@ class _EmployeeAccountState extends ConsumerState<_EmployeeAccount> {
             );
           },
         ),
-        const SizedBox(height: DoayaSpacing.l),
+        SizedBox(height: DoayaSpacing.l),
         GlassSurface(
           tone: SurfaceTone.selected,
           borderRadius: BorderRadius.circular(DoayaRadii.card),
-          padding: const EdgeInsets.all(DoayaSpacing.xl),
+          padding: EdgeInsets.all(DoayaSpacing.xl),
           child: Row(
             children: [
-              const Icon(DoayaIcons.cash, color: DoayaColors.accent),
-              const SizedBox(width: DoayaSpacing.ml),
+              Icon(DoayaIcons.cash, color: DoayaColors.accent),
+              SizedBox(width: DoayaSpacing.ml),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -261,7 +261,7 @@ class _EmployeeAccountState extends ConsumerState<_EmployeeAccount> {
             ],
           ),
         ),
-        const SizedBox(height: DoayaSpacing.l),
+        SizedBox(height: DoayaSpacing.l),
         Panel(
           title: l.shiftsTitle,
           child: widget.shifts.isEmpty
@@ -270,7 +270,7 @@ class _EmployeeAccountState extends ConsumerState<_EmployeeAccount> {
                   children: [
                     for (final sh in widget.shifts)
                       Padding(
-                        padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
+                        padding: EdgeInsets.only(bottom: DoayaSpacing.sm),
                         child: Row(
                           children: [
                             Expanded(
@@ -285,7 +285,7 @@ class _EmployeeAccountState extends ConsumerState<_EmployeeAccount> {
                                 color: DoayaColors.textSecondary,
                               ),
                             ),
-                            const SizedBox(width: DoayaSpacing.l),
+                            SizedBox(width: DoayaSpacing.l),
                             differenceChip(l, sh.difference, c),
                           ],
                         ),
@@ -293,7 +293,7 @@ class _EmployeeAccountState extends ConsumerState<_EmployeeAccount> {
                   ],
                 ),
         ),
-        const SizedBox(height: DoayaSpacing.l),
+        SizedBox(height: DoayaSpacing.l),
         Panel(
           title: l.staffTopProducts,
           child: Wrap(
@@ -308,14 +308,14 @@ class _EmployeeAccountState extends ConsumerState<_EmployeeAccount> {
             ],
           ),
         ),
-        const SizedBox(height: DoayaSpacing.l),
+        SizedBox(height: DoayaSpacing.l),
         Panel(
           title: l.staffInvoices,
           child: Column(
             children: [
               for (final sale in s.sales)
                 Padding(
-                  padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
+                  padding: EdgeInsets.only(bottom: DoayaSpacing.sm),
                   child: GlassSurface(
                     shadow: false,
                     borderRadius: BorderRadius.circular(DoayaRadii.tile),
@@ -327,7 +327,7 @@ class _EmployeeAccountState extends ConsumerState<_EmployeeAccount> {
                               _open.contains(sale.id) ? _open.remove(sale.id) : _open.add(sale.id),
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.all(DoayaSpacing.ml),
+                          padding: EdgeInsets.all(DoayaSpacing.ml),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
@@ -356,7 +356,7 @@ class _EmployeeAccountState extends ConsumerState<_EmployeeAccount> {
                                     ),
                                   ),
                                   paymentChip(l, sale.payment),
-                                  const SizedBox(width: DoayaSpacing.l),
+                                  SizedBox(width: DoayaSpacing.l),
                                   SizedBox(
                                     width: DoayaSizes.priceColumn,
                                     child: Text(
@@ -370,7 +370,7 @@ class _EmployeeAccountState extends ConsumerState<_EmployeeAccount> {
                               if (_open.contains(sale.id))
                                 for (final line in lines.value?[sale.id] ?? const <SaleLineRow>[])
                                   Padding(
-                                    padding: const EdgeInsetsDirectional.only(
+                                    padding: EdgeInsetsDirectional.only(
                                       top: DoayaSpacing.s,
                                       start: DoayaSpacing.l,
                                     ),

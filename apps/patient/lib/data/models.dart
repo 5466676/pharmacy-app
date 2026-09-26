@@ -283,3 +283,93 @@ class PatientOrder {
   bool get finished => OrderStatus.finished.contains(status);
   bool get cancellable => status == OrderStatus.sent;
 }
+
+// ─── Phase 5: «ملفي الصحي» ──────────────────────────────────────────────────
+
+/// allergy | condition | medication | pregnancy | weight | note.
+class HealthFact {
+  HealthFact.fromJson(Map<String, Object?> j)
+    : id = j['id']! as String,
+      kind = j['kind']! as String,
+      text = j['text']! as String,
+      detail = j['detail'] as Map<String, Object?>?,
+      fromPharmacist = j['source'] == 'pharmacist',
+      confirmed = j['confirmed'] == true,
+      addedBy = j['added_by'] as String?,
+      createdAt = _date(j['created_at'])!,
+      endsAt = _date(j['ends_at']),
+      endedAt = _date(j['ended_at']);
+
+  final String id;
+  final String kind;
+  final String text;
+
+  /// A medicine: the pharmacist's instructions, times a day, days.
+  final Map<String, Object?>? detail;
+  final bool fromPharmacist;
+  final bool confirmed;
+  final String? addedBy;
+  final DateTime createdAt;
+  final DateTime? endsAt;
+  final DateTime? endedAt;
+
+  String? get instructions => detail?['instructions'] as String?;
+}
+
+class FileProposal {
+  FileProposal.fromJson(Map<String, Object?> j)
+    : id = j['id']! as String,
+      kind = j['kind']! as String,
+      text = j['text']! as String,
+      forMe = j['needs'] == 'patient';
+
+  final String id;
+  final String kind;
+  final String text;
+
+  /// The patient confirms it (else the pharmacist does).
+  final bool forMe;
+}
+
+class FileHistoryItem {
+  FileHistoryItem.fromJson(Map<String, Object?> j)
+    : id = j['id']! as String,
+      pharmacy = j['pharmacy'] as String?,
+      sentAt = _date(j['sent_at'])!,
+      symptoms = [
+        for (final s in ((j['summary'] as Map?)?['symptoms'] as List?) ?? const []) s as String,
+      ],
+      medicines = [
+        for (final i in ((j['decision'] as Map?)?['items'] as List?) ?? const [])
+          (i as Map)['name']! as String,
+      ],
+      doctorAdvice = j['doctor_advice'] != null,
+      urgent = j['urgent'] == true;
+
+  final String id;
+  final String? pharmacy;
+  final DateTime sentAt;
+  final List<String> symptoms;
+  final List<String> medicines;
+  final bool doctorAdvice;
+  final bool urgent;
+}
+
+class HealthFile {
+  HealthFile.fromJson(Map<String, Object?> j)
+    : facts = [for (final f in j['facts']! as List) HealthFact.fromJson(f as Map<String, Object?>)],
+      pastFacts = [
+        for (final f in j['past_facts']! as List) HealthFact.fromJson(f as Map<String, Object?>),
+      ],
+      proposals = [
+        for (final p in j['proposals']! as List) FileProposal.fromJson(p as Map<String, Object?>),
+      ],
+      history = [
+        for (final h in j['history']! as List) FileHistoryItem.fromJson(h as Map<String, Object?>),
+      ];
+
+  final List<HealthFact> facts;
+  final List<HealthFact> pastFacts;
+  final List<FileProposal> proposals;
+  final List<FileHistoryItem> history;
+}

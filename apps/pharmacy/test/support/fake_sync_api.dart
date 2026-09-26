@@ -17,6 +17,10 @@ class FakeSyncApi implements SyncApi {
   final _devices = <String, ({String name, String token, bool revoked})>{};
   String? pharmacyName;
 
+  /// What the server says Doaya online decided (`GET /control`); null: an
+  /// older server without it.
+  Map<String, Object?>? control;
+
   /// The PC is off / not on the Wi-Fi.
   bool offline = false;
 
@@ -187,6 +191,7 @@ class _FakeRemote implements SyncRemote {
         for (final e in api._accounts.entries)
           {'phone': e.key, 'name': e.value.name, 'employee_id': e.value.employeeId},
       ],
+      'control' when api.control != null => api.control,
       _ => throw SyncApiException(404, 'not_found: $path'),
     };
   }

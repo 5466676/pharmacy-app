@@ -39,11 +39,11 @@ class HomeScreen extends ConsumerWidget {
       child: PhoneBody(
         child: ListView(
           children: [
-            const SizedBox(height: DoayaSpacing.l),
+            SizedBox(height: DoayaSpacing.l),
             Row(
               children: [
                 Text(l.appName, style: DoayaTypography.title),
-                const SizedBox(width: DoayaSpacing.ml),
+                SizedBox(width: DoayaSpacing.ml),
                 if (pharmacy != null)
                   Flexible(
                     child: GlassPillButton(
@@ -57,22 +57,22 @@ class HomeScreen extends ConsumerWidget {
                 const CartButton(),
               ],
             ),
-            const SizedBox(height: DoayaSpacing.l),
+            SizedBox(height: DoayaSpacing.l),
             GlassSearchField(
               hint: l.searchHint,
               onSubmitted: (q) => context.push(Routes.shelfSearch(q.trim())),
             ),
-            const SizedBox(height: DoayaSpacing.l),
+            SizedBox(height: DoayaSpacing.l),
             const _Hero(),
-            const SizedBox(height: DoayaSpacing.xl),
+            SizedBox(height: DoayaSpacing.xl),
             NoticeBanner(message: l.safetyLine, icon: DoayaIcons.warning),
-            const SizedBox(height: DoayaSpacing.xl),
+            SizedBox(height: DoayaSpacing.xl),
             SectionHeader(
               title: l.recentConsultations,
               actionLabel: l.seeAll,
               onAction: () => context.go(Routes.consultations),
             ),
-            const SizedBox(height: DoayaSpacing.sm),
+            SizedBox(height: DoayaSpacing.sm),
             ...switch (recent) {
               AsyncData(:final value) when value.isEmpty => [
                 Text(
@@ -83,7 +83,7 @@ class HomeScreen extends ConsumerWidget {
               AsyncData(:final value) => [
                 for (final c in value.take(3))
                   Padding(
-                    padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
+                    padding: EdgeInsets.only(bottom: DoayaSpacing.sm),
                     child: ConsultationTile(
                       consultation: c,
                       onTap: () => context.push(Routes.chat(c.id)),
@@ -103,16 +103,16 @@ class HomeScreen extends ConsumerWidget {
               _ => [const Center(child: CircularProgressIndicator())],
             },
             if (shelf.value case final items? when items.isNotEmpty) ...[
-              const SizedBox(height: DoayaSpacing.xl),
+              SizedBox(height: DoayaSpacing.xl),
               SectionHeader(
                 title: l.availableAtPharmacy,
                 actionLabel: l.seeAll,
                 onAction: () => context.push(Routes.shelf),
               ),
-              const SizedBox(height: DoayaSpacing.sm),
+              SizedBox(height: DoayaSpacing.sm),
               ShelfGrid(items: items.where((i) => i.available).take(6).toList()),
             ],
-            const SizedBox(height: DoayaSpacing.xl),
+            SizedBox(height: DoayaSpacing.xl),
           ],
         ),
       ),
@@ -143,7 +143,7 @@ class _HeroState extends ConsumerState<_Hero> {
       tone: SurfaceTone.strong,
       blur: true,
       borderRadius: BorderRadius.circular(DoayaRadii.hero),
-      padding: const EdgeInsets.all(DoayaSpacing.huge),
+      padding: EdgeInsets.all(DoayaSpacing.huge),
       child: Row(
         children: [
           Expanded(
@@ -151,12 +151,12 @@ class _HeroState extends ConsumerState<_Hero> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(l.heroTitle, style: DoayaTypography.displayLarge.copyWith(height: 1.2)),
-                const SizedBox(height: DoayaSpacing.m),
+                SizedBox(height: DoayaSpacing.m),
                 Text(
                   l.heroSubtitle,
                   style: DoayaTypography.bodySmall.copyWith(color: DoayaColors.textSecondary),
                 ),
-                const SizedBox(height: DoayaSpacing.l),
+                SizedBox(height: DoayaSpacing.l),
                 SagePillButton(
                   label: l.startConsultation,
                   icon: DoayaIcons.chat,

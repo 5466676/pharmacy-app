@@ -14,13 +14,17 @@ from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from .assistant import get_llm
 from .consult import texts
 from .consult.engine import CaseSummary, Emergency, LogEntry, handle_message
-from .consult.llm import ChatMessage, llm_from_settings
+from .consult.llm import ChatMessage
 from .consult.redflags import check
 from .deps import DbSession, Patient, PharmacyCaller, error
 from .events import patient_topic, pharmacy_topic
+from .health_file import medicines_from_decision, profile_lines, propose_from_summary
+from .knowledge import match_notes
 from .models import AiLog, Consultation, ConsultMessage, PatientProfile, User
+from .prompts import load_prompts
 from .security import new_id
 
 router = APIRouter(tags=["consultations"])
@@ -47,6 +51,8 @@ class ConsultationOut(BaseModel):
     status: str
     urgent: bool
     red_flag: str | None
+    # «لازم دكتور»: the category, when the assistant advised a doctor.
+    doctor_advice: str | None
     summary: dict | None
     decision: dict | None
     handled_by: str | None
@@ -57,6 +63,9 @@ class ConsultationOut(BaseModel):
 
 
 class CasePatient(BaseModel):
+    # For the patient's health file (Phase 5).
+    id: str
+    has_file: bool
     name: str
     phone: str
     age: int | None
@@ -68,6 +77,7 @@ class CaseBrief(BaseModel):
     status: str
     urgent: bool
     red_flag: str | None
+    doctor_advice: str | None
     title: str
     patient: CasePatient
     sent_at: datetime | None
@@ -171,20 +181,14 @@ def _profile_text(db: Session, patient_id: str) -> str:
         parts.append(f"age {age}")
     if prof and prof.sex:
         parts.append({"m": "male", "f": "female"}[prof.sex])
+    # From the health file, so the assistant doesn't ask again.
+    parts += profile_lines(db, patient_id)
     return ", ".join(parts)
 
 
 def _emergency_numbers(request: Request) -> Emergency:
     s = request.app.state.settings
     return Emergency(ambulance=s.emergency_ambulance, general=s.emergency_general)
-
-
-def get_llm(request: Request):
-    """The configured model (tests put a scripted one on app.state)."""
-    state = request.app.state
-    if getattr(state, "llm", None) is None:
-        state.llm = llm_from_settings(state.settings)
-    return state.llm
 
 
 # ─── Patient ───────────────────────────────────────────────────────────────
@@ -267,13 +271,20 @@ def patient_says(cid: str, body: TextIn, p: Patient, db: DbSession, request: Req
         for m in _messages(db, c.id)
         if m.role in ("patient", "assistant")
     ]
+    # The admin's notes whose tags the patient mentioned.
+    notes = match_notes(db, [m.content for m in history if m.role == "user"] + [text])
     turn = handle_message(
         get_llm(request),
         history,
         text,
         profile=_profile_text(db, p.user_id),
+        knowledge=[n.text for n in notes],
         emergency=_emergency_numbers(request),
+        prompts=load_prompts(db),
     )
+    for entry in turn.logs:
+        if entry.kind == "assistant_reply" and notes:
+            entry.detail["notes"] = [n.id for n in notes]
     _say(db, c, "patient", text)
     _say(db, c, "assistant", turn.text, quick=turn.quick_replies)
     _log(db, c, turn.logs)
@@ -285,6 +296,12 @@ def patient_says(cid: str, body: TextIn, p: Patient, db: DbSession, request: Req
             turn.red_flag.category,
             _now(),
         )
+        _changed(request, c, "case_new")
+    elif turn.kind == "doctor":
+        # Not an emergency: the patient is told to see a doctor soon, and
+        # the case goes to the pharmacist (no ambulance numbers).
+        c.status, c.sent_at = "sent", _now()
+        c.doctor_advice = turn.red_flag.category
         _changed(request, c, "case_new")
     elif turn.kind == "summary":
         c.status, c.summary = "summary", turn.summary.model_dump()
@@ -342,6 +359,7 @@ def send(cid: str, p: Patient, db: DbSession, request: Request) -> dict:
         raise error(409, "empty_consultation")
     c.status, c.sent_at = "sent", _now()
     _say(db, c, "system", texts.SENT)
+    propose_from_summary(db, c)
     _changed(request, c, "case_new")
     db.commit()
     return _out(db, c)
@@ -360,7 +378,12 @@ def _case(db: Session, caller, cid: str) -> Consultation:
 def _case_patient(db: Session, patient_id: str) -> CasePatient:
     user, prof = db.get(User, patient_id), db.get(PatientProfile, patient_id)
     return CasePatient(
-        name=user.name, phone=user.phone, age=_age(prof), sex=prof.sex if prof else None
+        id=user.id,
+        has_file=bool(prof and prof.file_consent_at),
+        name=user.name,
+        phone=user.phone,
+        age=_age(prof),
+        sex=prof.sex if prof else None,
     )
 
 
@@ -398,6 +421,7 @@ def cases(
             status=c.status,
             urgent=c.urgent,
             red_flag=c.red_flag,
+            doctor_advice=c.doctor_advice,
             title=_title(db, c),
             patient=_case_patient(db, c.patient_id),
             sent_at=c.sent_at,
@@ -415,6 +439,7 @@ def case(cid: str, caller: PharmacyCaller, db: DbSession) -> dict:
 
 def _act(db, request, caller, c: Consultation, kind: str) -> dict:
     c.handled_by = caller.actor or c.handled_by
+    c.first_action_at = c.first_action_at or _now()
     _changed(request, c, kind)
     db.commit()
     return {**_out(db, c), "patient": _case_patient(db, c.patient_id)}
@@ -454,6 +479,7 @@ def decide(
         raise error(409, "bad_status")
     c.decision = {**body.model_dump(), "by": caller.actor, "at": _now().isoformat()}
     c.status = "ready"
+    medicines_from_decision(db, c, caller.actor)
     lines = [f"• {i.name} ({i.quantity}): {i.instructions}" for i in body.items]
     text = "\n".join([texts.READY, *lines, *([body.note] if body.note else [])])
     _say(db, c, "pharmacist", text, author=caller.actor)

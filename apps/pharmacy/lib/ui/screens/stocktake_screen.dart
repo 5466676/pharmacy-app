@@ -118,13 +118,13 @@ class _StartState extends ConsumerState<_Start> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(l.stocktakeHelp, style: secondary),
-              const SizedBox(height: DoayaSpacing.l),
+              SizedBox(height: DoayaSpacing.l),
               Row(
                 children: [
                   Expanded(
                     child: GlassTextField(label: l.scopeLabel, controller: _scope),
                   ),
-                  const SizedBox(width: DoayaSpacing.l),
+                  SizedBox(width: DoayaSpacing.l),
                   SagePillButton(
                     label: l.startStocktake,
                     icon: DoayaIcons.adjust,
@@ -138,7 +138,7 @@ class _StartState extends ConsumerState<_Start> {
             ],
           ),
         ),
-        const SizedBox(height: DoayaSpacing.xl),
+        SizedBox(height: DoayaSpacing.xl),
         Panel(
           title: l.pastStocktakes,
           child: past.isEmpty
@@ -147,7 +147,7 @@ class _StartState extends ConsumerState<_Start> {
                   children: [
                     for (final st in past)
                       Padding(
-                        padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
+                        padding: EdgeInsets.only(bottom: DoayaSpacing.sm),
                         child: Row(
                           children: [
                             Expanded(
@@ -315,7 +315,7 @@ class _SessionState extends ConsumerState<_Session> {
           )
         else
           SizedBox(width: DoayaSizes.invoiceWidth, child: _countPane(l)),
-        const SizedBox(width: DoayaSpacing.huge, height: DoayaSpacing.l),
+        SizedBox(width: DoayaSpacing.huge, height: DoayaSpacing.l),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -327,7 +327,7 @@ class _SessionState extends ConsumerState<_Session> {
                     dot: true,
                   ),
                   if (scope != null) ...[
-                    const SizedBox(width: DoayaSpacing.s),
+                    SizedBox(width: DoayaSpacing.s),
                     StatusChip(label: l.stocktakeScope(scope)),
                   ],
                   const Spacer(),
@@ -346,7 +346,7 @@ class _SessionState extends ConsumerState<_Session> {
                 ],
               ),
               if (owner && (shortage > 0 || surplus > 0)) ...[
-                const SizedBox(height: DoayaSpacing.sm),
+                SizedBox(height: DoayaSpacing.sm),
                 Row(
                   children: [
                     if (shortage > 0)
@@ -354,7 +354,7 @@ class _SessionState extends ConsumerState<_Session> {
                         label: l.shortageValue(formatMoney(shortage, currency)),
                         tone: StatusTone.danger,
                       ),
-                    const SizedBox(width: DoayaSpacing.s),
+                    SizedBox(width: DoayaSpacing.s),
                     if (surplus > 0)
                       StatusChip(
                         label: l.surplusValue(formatMoney(surplus, currency)),
@@ -363,7 +363,7 @@ class _SessionState extends ConsumerState<_Session> {
                   ],
                 ),
               ],
-              const SizedBox(height: DoayaSpacing.l),
+              SizedBox(height: DoayaSpacing.l),
               Row(
                 children: [
                   GlassPillButton(
@@ -371,7 +371,7 @@ class _SessionState extends ConsumerState<_Session> {
                     selected: _showCounted,
                     onPressed: () => setState(() => _showCounted = true),
                   ),
-                  const SizedBox(width: DoayaSpacing.s),
+                  SizedBox(width: DoayaSpacing.s),
                   GlassPillButton(
                     label: l.tabNotCounted(formatQty(notCounted.length)),
                     selected: !_showCounted,
@@ -379,7 +379,7 @@ class _SessionState extends ConsumerState<_Session> {
                   ),
                 ],
               ),
-              const SizedBox(height: DoayaSpacing.ml),
+              SizedBox(height: DoayaSpacing.ml),
               Expanded(
                 child: _showCounted
                     ? _countedList(l, currency, byId, stock, costs, counts)
@@ -387,13 +387,13 @@ class _SessionState extends ConsumerState<_Session> {
                         children: [
                           for (final p in notCounted)
                             Padding(
-                              padding: const EdgeInsets.only(bottom: DoayaSpacing.s),
+                              padding: EdgeInsets.only(bottom: DoayaSpacing.s),
                               child: GestureDetector(
                                 onTap: () => _select(p),
                                 child: GlassSurface(
                                   shadow: false,
                                   borderRadius: BorderRadius.circular(DoayaRadii.tile),
-                                  padding: const EdgeInsets.all(DoayaSpacing.ml),
+                                  padding: EdgeInsets.all(DoayaSpacing.ml),
                                   child: ProductName(product: p),
                                 ),
                               ),
@@ -413,7 +413,7 @@ class _SessionState extends ConsumerState<_Session> {
     return GlassSurface(
       tone: SurfaceTone.strong,
       borderRadius: BorderRadius.circular(DoayaRadii.hero),
-      padding: const EdgeInsets.all(DoayaSpacing.xxl),
+      padding: EdgeInsets.all(DoayaSpacing.xxl),
       child: ListView(
         children: [
           GlassSearchField(
@@ -439,24 +439,24 @@ class _SessionState extends ConsumerState<_Session> {
               }
             },
           ),
-          const SizedBox(height: DoayaSpacing.sm),
+          SizedBox(height: DoayaSpacing.sm),
           for (final r in _results.take(6))
             Padding(
-              padding: const EdgeInsets.only(bottom: DoayaSpacing.s),
+              padding: EdgeInsets.only(bottom: DoayaSpacing.s),
               child: GestureDetector(
                 onTap: () => _select(r),
                 child: GlassSurface(
                   shadow: false,
                   borderRadius: BorderRadius.circular(DoayaRadii.tile),
-                  padding: const EdgeInsets.all(DoayaSpacing.ml),
+                  padding: EdgeInsets.all(DoayaSpacing.ml),
                   child: ProductName(product: r),
                 ),
               ),
             ),
           if (p != null) ...[
-            const SizedBox(height: DoayaSpacing.l),
+            SizedBox(height: DoayaSpacing.l),
             ProductName(product: p),
-            const SizedBox(height: DoayaSpacing.l),
+            SizedBox(height: DoayaSpacing.l),
             GlassTextField(
               label: l.countedBoxesLabel,
               controller: _boxes,
@@ -465,7 +465,7 @@ class _SessionState extends ConsumerState<_Session> {
               onSubmitted: (_) => p.unitsPerPack > 1 ? _stripsFocus.requestFocus() : _save(),
             ),
             if (p.unitsPerPack > 1) ...[
-              const SizedBox(height: DoayaSpacing.l),
+              SizedBox(height: DoayaSpacing.l),
               GlassTextField(
                 label: l.countedStripsLabel,
                 controller: _strips,
@@ -474,9 +474,9 @@ class _SessionState extends ConsumerState<_Session> {
                 onSubmitted: (_) => _save(),
               ),
             ],
-            const SizedBox(height: DoayaSpacing.l),
+            SizedBox(height: DoayaSpacing.l),
             SagePillButton(label: l.saveCount, expand: true, onPressed: _busy ? null : _save),
-            const SizedBox(height: DoayaSpacing.sm),
+            SizedBox(height: DoayaSpacing.sm),
             Text(
               l.blindCountNote,
               style: DoayaTypography.caption.copyWith(color: DoayaColors.textSecondary),
@@ -514,7 +514,7 @@ class _SessionState extends ConsumerState<_Session> {
             Expanded(child: Text(l.colDifference, style: head)),
           ],
         ),
-        const Divider(color: DoayaColors.divider),
+        Divider(color: DoayaColors.divider),
         Expanded(
           child: ListView(
             children: [
@@ -528,7 +528,7 @@ class _SessionState extends ConsumerState<_Session> {
                         ? null
                         : pieceCost(stock, costs, c.productId, d.abs());
                     return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: DoayaSpacing.xs),
+                      padding: EdgeInsets.symmetric(vertical: DoayaSpacing.xs),
                       child: Row(
                         children: [
                           Expanded(

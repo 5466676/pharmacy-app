@@ -3,6 +3,7 @@ whenever there's internet (DOAYA_CENTRAL_URL + DOAYA_CENTRAL_KEY). Only
 product names, prices and available-or-not leave the pharmacy; never sales,
 debts, customers or quantities."""
 
+import contextlib
 import threading
 import time
 from collections import defaultdict
@@ -12,6 +13,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from .config import Settings
+from .control import send_heartbeat
 from .models import Pharmacy, SyncRow
 
 
@@ -84,11 +86,14 @@ def publish_shelf(
 
 
 class ShelfPublisher:
-    """Every [every] seconds while the server runs; failures (no internet)
-    are kept for the owner to see and tried again next time."""
+    """Every [every] seconds while the server runs: the heartbeat to Doaya
+    online (see control.py), then the shelf. Failures (no internet) are kept
+    for the owner to see and tried again next time."""
 
-    def __init__(self, settings: Settings, sessions, every: float = 600) -> None:
+    def __init__(self, settings: Settings, sessions, every: float = 600, backup_error=None) -> None:
         self.settings, self.sessions, self.every = settings, sessions, every
+        # () -> the daily backup's last error, reported with the heartbeat.
+        self.backup_error = backup_error or (lambda: None)
         self.last_error: str | None = None
         self.last_published: float | None = None
         self._stop = threading.Event()
@@ -108,6 +113,15 @@ class ShelfPublisher:
         ):
             try:
                 with self.sessions() as db:
+                    # An older central server has no heartbeat; the shelf
+                    # still goes.
+                    with contextlib.suppress(httpx.HTTPStatusError):
+                        send_heartbeat(
+                            db,
+                            self.settings,
+                            backup_error=self.backup_error(),
+                            shelf_error=self.last_error,
+                        )
                     publish_shelf(db, self.settings)
                 self.last_published, self.last_error = time.time(), None
             except Exception as e:  # no internet, central down: try later

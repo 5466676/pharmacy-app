@@ -29,24 +29,24 @@ class DosesScreen extends ConsumerWidget {
               tone: StatusTone.accent,
               icon: DoayaIcons.clock,
             ),
-            const SizedBox(height: DoayaSpacing.l),
+            SizedBox(height: DoayaSpacing.l),
           ],
           ...switch (all) {
             AsyncData(:final value) when value.isEmpty => [
-              const SizedBox(height: DoayaSpacing.xl),
+              SizedBox(height: DoayaSpacing.xl),
               Text(l.noDoses, textAlign: TextAlign.center, style: secondary),
             ],
             AsyncData(:final value) => [
               for (final r in value)
                 Padding(
-                  padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
+                  padding: EdgeInsets.only(bottom: DoayaSpacing.sm),
                   child: ReminderCard(reminder: r),
                 ),
             ],
             AsyncError(:final error) => [NoticeBanner(message: errorText(l, error))],
             _ => [const Center(child: CircularProgressIndicator())],
           },
-          const SizedBox(height: DoayaSpacing.xl),
+          SizedBox(height: DoayaSpacing.xl),
         ],
       ),
     );
@@ -69,14 +69,14 @@ class ReminderCard extends ConsumerWidget {
     final secondary = DoayaTypography.caption.copyWith(color: DoayaColors.textSecondary);
     return GlassSurface(
       borderRadius: BorderRadius.circular(DoayaRadii.card),
-      padding: const EdgeInsets.all(DoayaSpacing.l),
+      padding: EdgeInsets.all(DoayaSpacing.l),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
             children: [
-              const Icon(DoayaIcons.medicine, color: DoayaColors.accent),
-              const SizedBox(width: DoayaSpacing.ml),
+              Icon(DoayaIcons.medicine, color: DoayaColors.accent),
+              SizedBox(width: DoayaSpacing.ml),
               Expanded(child: LatinText(r.name, style: DoayaTypography.label)),
               Switch(
                 value: r.enabled && !finished,
@@ -85,7 +85,7 @@ class ReminderCard extends ConsumerWidget {
             ],
           ),
           Text(r.instructions, style: DoayaTypography.bodyMedium),
-          const SizedBox(height: DoayaSpacing.xs),
+          SizedBox(height: DoayaSpacing.xs),
           Text(
             [
               if (finished)
@@ -99,9 +99,9 @@ class ReminderCard extends ConsumerWidget {
             ].join('، '),
             style: secondary,
           ),
-          const SizedBox(height: DoayaSpacing.ml),
+          SizedBox(height: DoayaSpacing.ml),
           Text(l.reminderTimes, style: secondary),
-          const SizedBox(height: DoayaSpacing.xs),
+          SizedBox(height: DoayaSpacing.xs),
           Wrap(
             spacing: DoayaSpacing.sm,
             runSpacing: DoayaSpacing.sm,
@@ -145,7 +145,7 @@ class _TimeChip extends StatelessWidget {
       tone: SurfaceTone.accentSoft,
       shadow: false,
       borderRadius: BorderRadius.circular(DoayaRadii.pill),
-      padding: const EdgeInsets.all(DoayaSpacing.xs),
+      padding: EdgeInsets.all(DoayaSpacing.xs),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -156,7 +156,7 @@ class _TimeChip extends StatelessWidget {
             onPressed: onChanged == null ? null : () => onChanged!((minutes - _step + _day) % _day),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: DoayaSpacing.sm),
+            padding: EdgeInsets.symmetric(horizontal: DoayaSpacing.sm),
             child: Text(formatMinutes(minutes), style: DoayaTypography.label),
           ),
           RoundIconButton(

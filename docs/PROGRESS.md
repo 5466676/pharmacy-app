@@ -672,3 +672,428 @@ Server side only so far (the screens are steps 5–7). The tests read as the sce
   - Tests: patient app 27, pharmacy app 97, server 189, core 95.
 
 
+
+## Themes: colour choices and a custom theme · ✅ done 2026-09-26, waiting for review
+
+Users asked for other colours, and for a place to make their own.
+
+### What the user gets (revised after the owner's feedback: more colours, more styles, more control)
+Preview: the «ألوان دوايا» page (version 2). Choices are made in «المظهر» (the pharmacy app's settings, «حسابي» in the patient app, later in admin), with a live preview:
+- **Style («النمط»)**:
+  - «زجاجي»: today's look, translucent and blurred
+  - «مسطّح»: solid colours, no shadows
+  - «ناعم»: rounder, soft shadows
+  - «خطوط»: minimal, thin frames, small corners
+  - «تباين عالي»: for weak eyesight and sunlight; contrast 7:1, thick borders
+- **Mode («الوضع»)**:
+  - «ليلي» (night)
+  - «نهاري» (day)
+  - «أسود كامل» (pure black: saves battery on OLED phones)
+  - «تلقائي» (follows the phone or PC)
+- **Colours («الألوان»)**: 11 ready palettes, each with a night and a day background, plus «تصميمي» (the main colour and the background, from a colour picker). The palettes are:
+  - أخضر دوايا
+  - كحلي
+  - خمري
+  - بنفسجي
+  - سماوي
+  - زهري
+  - عنبري
+  - زيتي
+  - نعناعي
+  - رملي
+  - فحمي
+- **Details**:
+  - corners (sharp to round)
+  - blur strength (glass only)
+  - text size: small / normal / large / extra large; large is for older patients
+  - spacing: comfortable / compact; compact fits more rows at the counter
+  - heading font: ornate Amiri / plain
+- **Rules that never change**:
+  - Red means danger and amber means a warning, in every choice. No palette has a red main colour, so a normal button never looks like an alarm.
+  - Any colour hard to read is adjusted automatically: 4.5:1 normally, 7:1 in «تباين عالي».
+  - English digits; drug names Latin, left to right.
+  - **The pharmacy desktop never blurs**, even in «زجاجي» (old PCs).
+- Saved **per device**, never sent to a server.
+
+### How (engineering)
+- `doaya_ui`: a `DoayaPalette` holds every colour token. The four presets plus `DoayaPalette.custom(main, background)` derive the rest. `DoayaColors.*` keep their names and read the current palette, so screens don't change. Places that were `const` because of a colour lose `const` (mechanical; the analyzer lists them).
+- The solid (no-blur) desktop mode keeps working with every palette.
+- **Tests first**: every preset and a sweep of custom colours pass the contrast check; safety colours never change; the choice survives a restart.
+- The component gallery shows all themes side by side.
+
+### Steps
+1. `DoayaLook` (style, mode, palette, details) → derived palette + surface rules; contrast tests over every palette × mode × style and a sweep of custom colours; safety colours never change (`doaya_ui`).
+2. `DoayaColors`, radii, text scale and density read the current look; remove the colour `const`s; all apps still pass their tests.
+3. «المظهر» screen with the live preview, in the pharmacy app and the patient app; kept per device; «تلقائي» follows the system.
+4. Screenshots of each style and mode on desktop and phone → review.
+
+### Done
+- Steps 1–4 done. The owner chose «المظهر للكل»: every user of every app picks the look, kept per device (pharmacy: `look.json` in the app support folder; patient: the device store).
+- `doaya_ui`: `DoayaLook` + `DoayaPalette.of()` derive every colour with contrast checks; the default look gives exactly the old colours. `DoayaLookScope` applies a look live (screens keep their state). `DoayaLookEditor` is the shared «المظهر» screen body.
+- Pharmacy app: «المظهر» in the side menu for everyone (and in «المزيد»). Desktop never blurs, even with «زجاجي».
+- Patient app: «المظهر» in «حسابي».
+- 589 `const`s that held a colour or size were removed with an analyzer-driven script; no screen code changed otherwise.
+- Screenshots: `docs/screenshots/themes/` (patient web in 7 looks + the «المظهر» screen; pharmacy desktop in 4 looks).
+- Tests: `doaya_ui` 30 (every palette × mode × style and a sweep of custom colours pass the contrast rules; safety colours keep their meaning), pharmacy 98, patient 28.
+
+## Phase 4 — Admin panel · ✅ done 2026-09-26, waiting for review
+
+From SPEC §1.3 and `design/admin_overview_layout.html` (layout only, rebuilt in the dark tokens). Subscriptions and payments stay **off** (owner's decision for the pilot); the screens say so instead of showing fake numbers.
+
+### A. Server (tests before any screen)
+- **Admin accounts**: role `admin` on the central server only, created with `app.cli create-admin` (no sign-up screen). Phone + password once, then long sessions like the pharmacist's, with a sign-in limiter.
+- **Overview** (last 30 days): pharmacies (active / waiting / suspended, new this month), patients (registered, active this month), consultations today, **the pharmacists' median response time** (sent → first pharmacist action), urgent cases, orders.
+- **Pharmacies**: the list with city, code, patients, response time and state. Actions: approve, suspend (its patients see «الصيدلية مو متاحة هلق»), list/unlist in the directory, issue a new key (the old one stops).
+- **Review queue** («مراجعة المحادثات»), from the AI log:
+  - red flags (rules / classifier)
+  - replies blocked by the safety guard
+  - pharmacist corrections
+  - summaries the patient edited
+  - «model down» moments
+  - Each item shows the conversation **without the patient's name or phone** (age, sex and pharmacy only). The admin marks it reviewed, with a note.
+- **Knowledge base («قاعدة المعرفة»)**: short notes the admin curates, usually from a correction («الأطفال تحت سنتين: لا تسأل عن الجرعة، حوّل للصيدلي»). Each note has tags and on/off; every change is logged. The assistant receives the notes that match the conversation (PostgreSQL full-text search, no vector database, no new service). **Never automatic training.**
+- **Settings**: see the model in use and whether it answers, the emergency numbers, the CORS origins (read-only; changed in the server's settings).
+
+### A2. Owner's additions (2026-09-26): the admin panel is for the platform owner (the developer)
+- **Pharmacy performance for rewards**: per pharmacy and month:
+  - cases received / answered / left unanswered
+  - median and 90th-percentile first response time
+  - share answered within 10 minutes
+  - orders prepared and rejected
+  - urgent cases answered in time
+  - A ranking the owner can use to reward pharmacies (the rewards themselves are decided outside the app).
+- **Full control of each pharmacy, including when a contract ends**:
+  - «تعليق» (suspend): at once, Doaya online stops for it (no cases, no orders, hidden from patients). Its own server learns this at its next connection and shows the owner why.
+  - «إيقاف النظام» (stop the pharmacy's system): its server, at its next connection, locks selling and stock changes and shows «انتهى الاشتراك، تواصل مع دوايا». **Export of the pharmacy's own data (sales, debts, stock) always stays open**: their records are theirs (and needed by law).
+  - A pharmacy that never connects again can't be reached this way; the fallback is a **licence that needs renewing**. The pharmacy server keeps working offline up to N days (proposal: 30) after its last contact with Doaya online, then asks to connect once. Selling is never blocked in the middle of a day; it locks at the next start.
+  - «إلغاء» (remove): uninstalling on site. The admin marks it removed and its key stops working.
+  - Every one of these actions asks for confirmation and is logged (who, when, why).
+
+### A3. Owner's answers (2026-09-26, after the design page)
+- **Design**: all three directions from the «لوحة مالك دوايا» page, and the owner switches between them in the panel:
+  - «غرفة القيادة» (dark console)
+  - «الدفتر» (light, navy side menu)
+  - «من عيلة دوايا» (Doaya green, Amiri headings)
+  - Built as three looks on the existing `DoayaLook` system, so no new colour code and no new fonts (Readex Pro + Amiri, bundled).
+- **Always connected, but the pharmacy's business stays private.** The owner sees *whether the pharmacy is running*, never its stock, medicines, sales, profits or debts.
+  - **Heartbeat** every 10 minutes from each pharmacy's server (with the shelf publish). It sends only:
+    - app and server version
+    - how many devices, and when each last synced
+    - last backup time
+    - sync errors
+  - The panel shows each pharmacy as connected / not seen for X.
+  - The heartbeat's reply carries the **control state** (active / suspended / stopped / removed) and the licence date.
+  - **Monthly health check** (the "full access once a month" the owner asked for):
+    - The pharmacy's own server runs it over *all* its data, on its own PC.
+    - It sends up **only the results** («تمام» / «تنبيه» / «مشكلة» per check, with a count at most), never the data. Checks:
+      - backups ran
+      - every device synced
+      - ledgers consistent (no stock below zero, every event has device/employee/time)
+      - open shifts left unclosed
+      - expired items still marked for sale (count only)
+      - disk space
+      - the server version is supported
+    - The owner can ask for a check now from the panel; it runs at the next heartbeat.
+    - Deeper remote access (seeing screens or data) is **not built**. If ever needed, it would need the pharmacy owner's approval on their screen each time (proposal, not in this phase).
+- **Licence**: 30 days without contact by default, changeable per pharmacy from the panel. «إيقاف النظام» means read-only screens + data export (the recommendation; the owner can change it).
+
+### B. Admin app (`apps/admin`, Flutter web, `--no-web-resources-cdn`)
+- Sign-in, then a side menu as in the layout: نظرة عامة، الصيدليات، المرضى، مراجعة المحادثات (with a badge)، قاعدة المعرفة، الإعدادات. «المدفوعات» is shown as off for now.
+- Desktop-first, solid surfaces (no blur), usable on a tablet.
+
+### Steps (tests first; a commit after each; **stop for review at the end**)
+1. Server: admin accounts, overview, pharmacies and their actions; tests (including: a pharmacy or patient token can't reach any admin endpoint).
+2. Server: review queue + knowledge base + the assistant using the notes; tests (a note reaches the prompt only when it matches; a disabled note never does).
+3. Admin app: skeleton, sign-in, overview, pharmacies.
+4. Admin app: review queue and knowledge base, settings.
+5. Real run with screenshots, docs → **review**.
+
+### Done (2026-09-26)
+- **Server**:
+  - Admin accounts: `app.cli create-admin`, with long sessions like the patients' and a sign-in limiter. No other token reaches `/admin/*`, and an admin token reaches nothing else (tested).
+  - Overview.
+  - Pharmacies:
+    - add a pharmacy (its server key is shown once)
+    - approve / suspend / resume / stop / remove
+    - list / hide
+    - new key
+    - licence days
+    - health check now
+    - Each action needs a reason where it matters, and is logged with who, when and why.
+  - First response time is recorded on the pharmacist's first action.
+  - Performance per month for rewards:
+    - answered, median, P90, share within 10 minutes
+    - urgent cases answered in time, orders
+    - tiers: gold (answered ≥95% and ≥90% within 10 minutes) and silver (≥90% and ≥75%)
+    - fewer than 10 cases: not ranked
+- **Control and heartbeat**:
+  - Each pharmacy's server reports with every shelf publish (every 10 minutes). The report is technical only: version, devices, backups, errors, disk. A test proves no product, price, sale or customer leaves the pharmacy.
+  - The answer carries the owner's control and the licence. It is kept in `control.json`, and the devices ask `GET /control`.
+  - The pharmacy app keeps the answer after each sync and reads it once at start. When stopped, removed, or the licence has expired, these close:
+    - selling
+    - receiving stock
+    - stocktake
+    - purchases
+    - the till
+  - Reports, inventory, debts, backups and export stay open.
+  - It never locks in the middle of a day. A reminder shows 5 days before the licence runs out. Unlinking from Doaya online doesn't lift a lock.
+- **Monthly health check**: runs on the pharmacy's PC over all its data and sends only verdicts and counts:
+  - backups
+  - devices synced
+  - stock below zero
+  - expired items still for sale
+  - incomplete ledger events
+  - shifts left open
+  - disk space
+- **Review queue**:
+  - Covers red flags, guard blocks, corrections, edited summaries and model-down moments.
+  - Shown with age, sex and pharmacy only (tested: no patient name or phone).
+  - Items are marked reviewed with a note, and can become a knowledge note.
+- **Knowledge base**:
+  - Notes with tags and on/off. Every change is logged.
+  - A note that states a dose is refused.
+  - The assistant gets up to 3 enabled notes whose tags the patient mentioned. Spelling is folded and stems are allowed. The notes used are logged with the reply.
+  - A «جرّب» box shows which notes a sentence would bring.
+- **Admin app** (`apps/admin`, Flutter web, built with `--no-web-resources-cdn`):
+  - Screens: sign-in, overview (with the response-time chart and the pharmacies needing attention), pharmacies with the detail and the actions, performance, review, knowledge, settings (with a model check).
+  - **The three designs** switch from the top bar and are kept in the browser. No blur.
+- **Found by the real run and fixed**:
+  - Text fields vanished in the flat style (no edge on a card of the same colour). Fields now always show their edge (`doaya_ui`, all apps).
+  - Review details showed raw English keys. They now show in words.
+  - The review button stretched across the banner.
+- Screenshots: `docs/screenshots/phase4/` (the three designs on the overview, a pharmacy with health warnings, a suspended pharmacy, performance, review, knowledge, settings, sign-in).
+- Tests: server 231, pharmacy 108, patient 28, admin 11, `doaya_ui` 30, core 95.
+
+### Questions for the owner
+1. Themes: the preview page's choices. (answered: approved, with more colours and styles)
+2. Themes: «تصميمي» for everyone? (answered: the look is for everyone)
+3. Admin: one admin (the owner) for now; more can be added from the server's command line. (answered)
+4. Admin: reviewing shows no patient name/phone (age, sex, pharmacy only). (answered: approved)
+6. Stopping a pharmacy: licence days and read-only vs export. (answered in A3: 30 days, per pharmacy; read-only + export)
+5. Order: themes first, then Phase 4. (answered: yes)
+
+## Phase 4b — Managing the assistant from the panel · ✅ done 2026-09-26, waiting for review
+
+The owner asked for the AI model to be managed from his panel: its state and its prompts. Today the panel only shows the model's address and name and can test it once. The model is changed in the server's settings file, and the prompts live in the code.
+
+### What the owner gets («المساعد» in the panel)
+1. **Live state**:
+   - Answering or down, and how fast.
+   - Over the last 24 hours and 7 days:
+     - replies
+     - median and slowest reply time
+     - how many times it was down
+     - replies the guard blocked
+     - red flags (from the rules / from the model)
+   - A banner on the overview when the model is down.
+2. **The model**:
+   - Change it from the panel: address, model name, key (hidden once saved), wait time.
+   - Three kinds: a hosted service, LM Studio, or Ollama.
+   - «جرّب قبل ما تعتمد»: a model is only switched to after it answers.
+   - Every change is logged; the server's settings file stays as the fallback.
+3. **The prompts**, with versions:
+   - the questions style (how the assistant asks)
+   - the pharmacist's summary
+   - Workflow: a draft → try it in a sandbox chat, as a patient, with no real patient involved → activate. There is always one step back to the previous version.
+   - Every reply in the log records which version produced it, so the review shows it.
+4. **Safety that no prompt can change** (CLAUDE.md non-negotiables):
+   - These stay in code, are shown read-only, and are always appended by the server whatever the prompt says:
+     - the red-flag rules
+     - the output guard (no dose, no prescription, no "no need for a doctor")
+     - the fixed safety paragraph
+   - Proposed: the red-flag classifier's prompt stays locked too (see the question below).
+5. **A test set before activating**:
+   - About 12 fixed test chats run against a draft, among them:
+     - "what do I take?"
+     - a dose question
+     - chest pain
+     - a baby with fever
+     - pregnancy
+   - A draft whose replies trip the guard, or that misses an emergency, can't be activated.
+
+### Steps (tests first; a commit after each; stop for review)
+1. Server: stats per window, reply time logged, model settings in the database with a check before switching, the change log.
+2. Server: prompt versions (draft / active / previous), the sandbox, the test set, the version on every log entry, the locked safety text always added.
+3. Admin app: «المساعد» screen (state, model, prompts with the sandbox and the test results), the overview banner.
+4. Real run with LM Studio if available, screenshots, docs → review.
+
+### Questions for the owner
+1. Is the plan right?
+2. The red-flag classifier's prompt: locked (proposed, since a mistake there hides emergencies), or editable too, behind the test set?
+3. The model's key: kept in the database, readable only by the server (proposed)? Or only in the server's settings file (safer: a stolen admin session can't change it)?
+
+### Owner's answers (2026-09-26)
+1. The plan is approved.
+2. **The red-flag classifier's prompt is editable too.** The owner will build a dataset of situations where the assistant must warn the patient. So:
+   - **«أمثلة السلامة»**: a dataset in the panel. Each example is a patient message, a label and a short note. Labels:
+     - «إسعاف» (emergency)
+     - «لازم دكتور» (see a doctor)
+     - «عادي» (normal)
+   - Enabled examples are given to the classifier as examples (never used to train anything).
+   - The same examples form the test set: a draft of any prompt can't be activated if it misses an «إسعاف» example, or if a reply trips the guard.
+   - **A new level, «لازم دكتور»**: the classifier can also say the patient should see a doctor soon (not an emergency). The patient gets a clear message to see a doctor, and the case goes to the pharmacy marked as such. No ambulance numbers.
+   - The code rules still run first and can't be edited. The classifier can only add alarms.
+3. **Model in the panel**: «اختر المخدم» (LM Studio / Ollama / a hosted service) with its address, «اختر النموذج» from the list the server offers, and the API key.
+   - The key is stored encrypted on the server (with the server's own secret) and is never sent back to the panel; the panel only shows that one is set.
+   - A model is only switched to after it answers. Every change is logged.
+
+### Done (2026-09-26)
+- **The model from the panel**:
+  - «غيّر النموذج»: choose the server (LM Studio / Ollama / a hosted service), «جيب النماذج» lists what that server offers, pick one, the API key, the wait time.
+  - A model is switched to only after it answers.
+  - The key is stored encrypted with the server's own secret, never sent back, and never carried over to another address.
+  - The server settings stay the fallback. Every change is logged.
+- **State**:
+  - replies and reply time (now logged with every reply)
+  - times the model was down
+  - red flags from the rules / from the model
+  - «نصيحة بطبيب»
+  - guard blocks
+  - A banner on the overview when the model was down in the last hour.
+- **Prompts**:
+  - The three editable parts (the assistant's questions, the pharmacist's summary, the red-flag checker). The fixed parts are shown read-only and always added by the server: the safety rules, the rule for doubt ("choose the more serious one"), and the answer formats.
+  - Workflow: draft → «امتحن» → «اعتمد», and «رجوع خطوة». Every reply logs the version that wrote it.
+- **The test gate**: 12 built-in cases plus the owner's examples run through the real pipeline. A draft can't be activated if any of these happen:
+  - it misses an emergency or a doctor case
+  - a reply trips the guard (a medicine or a dose)
+  - the summary fails
+  - the model doesn't answer
+  - False alarms are reported without blocking.
+- **«أمثلة السلامة»**:
+  - Patient messages labelled «إسعاف» / «لازم دكتور» / «عادي», switchable.
+  - The newest 40 go to the checker as examples, and all of them are in the test. Never used to train anything.
+- **«لازم دكتور»**, a new level from the checker:
+  - The patient is told to see a doctor soon, with no ambulance numbers.
+  - The case goes to the pharmacist, marked «المساعد نصح بطبيب» in the pharmacy app.
+- **«جرّب»**: chat as a patient with any drafts. Nothing is saved.
+- **Real run**: a stand-in OpenAI-compatible model on port 1234 (no LM Studio in the cloud), driven through the real server and panel.
+  - The test gate refused a checker draft twice for real misses: a stroke example (caught by the code rules anyway) and a child with 4 days of fever.
+  - After the model knew them, it passed and was activated.
+  - A patient writing «عندي سعلة صرلها 3 أسابيع» got «لازم دكتور» and the case reached the pharmacy.
+- **Found and fixed**:
+  - The prompt editor freed its text box while the dialog was closing (caught by the panel test).
+  - The locked format showed a raw "%s".
+  - Tests leaked database connections (the server now closes its pool on shutdown).
+- Screenshots: `docs/screenshots/phase4/10-14`.
+- Tests: server 255, admin 12, pharmacy 108.
+
+
+## Phase 4c — A model for each kind of message (photos, prescriptions, voice) · 📝 proposal, waiting for the owner's OK (asked 2026-09-26)
+
+**Today:**
+- One text model does everything the assistant does: the red-flag checker, the questions and the summary. The code rules run before it.
+- Photos (a prescription, a box) go to the pharmacist as they are; no model reads them.
+- There are no voice messages.
+
+### Proposal
+1. **«نموذج لكل شغلة»** in the panel, each with the same server/model/key picker and the same «يجاوب؟» check:
+   - **نصوص**: the one in use now.
+   - **صور ووصفات**: a model that reads images, e.g. Qwen2.5-VL or Llama 3.2 Vision in LM Studio or Ollama, or a hosted one. Optional: without it, photos go to the pharmacist as today.
+   - **صوت**: speech to text, e.g. Whisper on the same PC (faster-whisper / whisper.cpp behind an OpenAI-compatible `/v1/audio/transcriptions`). Optional.
+2. **A prescription or box photo**:
+   - The image model reads it for the pharmacist only: medicine names, strengths, and what is unclear.
+   - The pharmacist sees «قراءة الذكاء — تأكد منها» next to the photo, never as a decision.
+   - The patient never sees the reading, and never a dose.
+   - Handwriting is often unreadable: then it says so.
+3. **Voice messages**:
+   - The patient records; the server turns it into text.
+   - The red-flag rules and the checker run on that text, like any message.
+   - The pharmacist gets both the voice and the text.
+   - If transcription fails, the voice still goes to the pharmacist and the patient is asked to write.
+4. Each part has its own test: photos with known answers, voice samples. It is logged like everything else and can be switched off from the panel.
+
+### Needs the owner's OK (new dependencies)
+- Patient app: `record` (recording the voice).
+- Pharmacy app: `audioplayers` or `just_audio` (listening to it).
+- The server needs nothing new (it calls the models over HTTP).
+
+### Owner's answers on voice (2026-09-26)
+- The patient talks with the assistant by voice or text; the assistant answers in text (no synthetic voice in v1).
+- Each voice message is turned into text at once, so the red-flag rules and the checker run on it. The patient sees «هيك فهمنا عليك» and can correct it.
+- The pharmacist gets, in this order:
+  1. the written summary on top
+  2. every voice message as text, with ▶ to hear the original, and unsure words marked
+  3. the full recording, kept with the case
+- No spoken summary.
+- **Kept**: the text and the summary, always. The voice is deleted after 3 months (proposed, not objected to).
+
+## Phase 5 — The patient's health file («ملف المريض») · ✅ done 2026-09-26, waiting for review
+
+The owner wants one file per patient, kept up to date as their health changes, available on the central system, to the patient and to the pharmacist.
+
+### What it holds
+- **Basics**: age, sex, weight (for children), pregnancy / breastfeeding.
+- **Allergies**, especially to medicines.
+- **Chronic conditions**.
+- **Medicines taken now**, with the doses the pharmacist decided and the reminders.
+- **History**: every consultation (summary, the pharmacist's decision, «لازم دكتور» / emergency), orders, prescription photos with the pharmacist-confirmed reading, and the voice transcripts.
+- A change log: who changed what, and when.
+
+### How it stays up to date (proposal)
+- **The assistant never changes the file by itself.** When a chat reveals something new (a new allergy, a new medicine), it becomes a proposed update:
+  - the patient confirms facts about themselves
+  - the pharmacist confirms the medical ones (allergy, condition, medicine)
+- The pharmacist can add a note or a fact from the case screen.
+- The assistant reads the file, so it doesn't ask again what is already known. The allergies and current medicines also help the pharmacist decide.
+
+### Where it lives
+- **The central server** is the one true copy.
+- **The patient** sees their whole file in the app, can correct their own facts, and can export it or ask for it to be deleted.
+- **The pharmacist** sees the file of their own pharmacy's patients only, when opening a case or an order. It is read from the central server, with a short cache on the pharmacy PC: not a full copy of every patient on every pharmacy PC.
+
+### Questions for the owner
+1. **The platform owner's access**: the rule so far is no patient names or phones in the panel. Should the panel show files by name? Proposal: counts and anonymised files only. Opening one by name only for a complaint or a legal need, with the reason written and logged.
+2. **When the patient moves to another pharmacy**: the new one sees the file (proposal: yes, the patient chose it). The old one keeps only its own past cases.
+3. **Consent**: at sign-up the patient agrees to the file («ملفك الصحي بينحفظ وبيشوفه صيدلي صيدليتك بس»), and can delete it any time.
+4. **Order**: the file first (the voice and the photos then feed into it), or the voice first?
+
+### Owner's answers (2026-09-26)
+1. **The owner sees everything**, patient files by name included. Every time a file is opened from the panel it is still logged (who, when): the data is medical.
+   - The anonymous review queue stays as it is: its purpose is judging the assistant, not people.
+2. A new pharmacy the patient chooses sees the file; the old one keeps only its own past cases.
+3. Consent at sign-up. The text says the file is kept by Doaya and seen by the patient's pharmacy; the patient can delete it any time.
+4. Order: the file first (this phase), then voice and photos (Phase 6).
+   - Libraries approved: `record` (patient app) and `audioplayers` (pharmacy app; chosen because it plays on Windows, Linux and the web).
+
+### Steps (tests first; a commit after each; stop for review at the end)
+1. **Server**:
+   - facts, proposed updates, change log, admin access log, consent
+   - the patient's / pharmacy's / admin's endpoints
+   - proposals made from each summary
+   - the assistant reads the file
+2. **Patient app**: «ملفي الصحي» (facts, confirmations, history, export, delete), and consent at sign-up.
+3. **Pharmacy app**: the file beside each case and order: confirm proposals, add a fact.
+4. **Admin panel**: «المرضى» (search by name or phone; the file; access logged).
+5. Real run, screenshots, docs → review.
+
+### Done (2026-09-26)
+- **Server**:
+  - Facts are ended, never edited. A medicine from the pharmacist's decision ends by itself after its days.
+  - Proposals come from each sent summary. «ما في» / «لا» is nothing, and nothing is proposed twice.
+  - The pharmacist confirms medical facts; the patient confirms the rest.
+  - A change log, and the owner's access log.
+  - Consent at sign-up or later. Delete keeps the pharmacy's cases.
+  - The assistant is told allergies, conditions and current medicines (never doses).
+- **Patient app**: «ملفي الصحي» in «حسابي».
+  - what needs my confirmation, what waits for the pharmacist
+  - current facts, with who confirmed them
+  - medicines with the pharmacist's instructions and end date
+  - my consultations, past facts
+  - add, end, copy the whole file, delete
+  - Consent at sign-up is off by default.
+- **Pharmacy app**: the file beside each case and order.
+  - Allergies as an alert first («انتبه: عنده حساسية من …»).
+  - Confirm what the patient reported; accept or reject what the chat revealed; end or add a fact.
+  - A pharmacy the patient left sees only its own past cases.
+- **Admin panel**: «المرضى», by name or phone, and the file with «مين فتح هالملف».
+- **Real run** (server + patient web + panel, the stand-in model):
+  1. A patient with consent reported «ربو خفيف».
+  2. Her chat proposed an allergy to penicillin and a blood-pressure medicine.
+  3. The pharmacist accepted the allergy.
+  4. The decision added Panadol until 29/9.
+  5. The medicine proposal still waited for the pharmacist.
+  6. The owner opened the file, and the opening was logged.
+- **Found by the tests**: the pharmacy's allergy alert read exactly like the fact row. It now says «انتبه: عنده حساسية من …».
+- Screenshots: `docs/screenshots/phase4/16-17`. The pharmacy panel is covered by its widget test (no desktop run here).
+- Tests: server 266, patient 31, pharmacy 110, admin 13.
+

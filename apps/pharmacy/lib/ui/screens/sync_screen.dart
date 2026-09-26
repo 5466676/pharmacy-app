@@ -103,12 +103,12 @@ class _ServerPickerState extends ConsumerState<ServerPicker> {
           onPressed: _searching ? null : _search,
         ),
         if (_found != null && _found!.isEmpty) ...[
-          const SizedBox(height: DoayaSpacing.sm),
+          SizedBox(height: DoayaSpacing.sm),
           Text(l.noServerFound, style: secondary),
         ],
         for (final s in _found ?? const <FoundServer>[])
           Padding(
-            padding: const EdgeInsets.only(top: DoayaSpacing.sm),
+            padding: EdgeInsets.only(top: DoayaSpacing.sm),
             child: CaseRow(
               initials: initialsOf(s.pharmacyName ?? l.appName),
               title: s.pharmacyName ?? l.newServer,
@@ -116,7 +116,7 @@ class _ServerPickerState extends ConsumerState<ServerPicker> {
               onTap: () => widget.onChosen(s.url),
             ),
           ),
-        const SizedBox(height: DoayaSpacing.l),
+        SizedBox(height: DoayaSpacing.l),
         Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
@@ -130,12 +130,12 @@ class _ServerPickerState extends ConsumerState<ServerPicker> {
                 onSubmitted: (_) => _useTyped(),
               ),
             ),
-            const SizedBox(width: DoayaSpacing.sm),
+            SizedBox(width: DoayaSpacing.sm),
             GlassPillButton(label: l.useThisServer, onPressed: _useTyped),
           ],
         ),
         if (_error != null) ...[
-          const SizedBox(height: DoayaSpacing.sm),
+          SizedBox(height: DoayaSpacing.sm),
           Text(_error!, style: DoayaTypography.bodySmall.copyWith(color: DoayaColors.dangerText)),
         ],
       ],
@@ -211,7 +211,7 @@ class _AccountFormState extends State<AccountForm> {
               autofocus: true,
               validator: (v) => whatsappNumber(v) == null ? l.invalidPhone : null,
             ),
-            const SizedBox(height: DoayaSpacing.l),
+            SizedBox(height: DoayaSpacing.l),
             GlassTextField(
               label: l.passwordLabel,
               controller: _password,
@@ -220,7 +220,7 @@ class _AccountFormState extends State<AccountForm> {
               onSubmitted: widget.confirmPassword ? null : (_) => _submit(),
             ),
             if (widget.confirmPassword) ...[
-              const SizedBox(height: DoayaSpacing.l),
+              SizedBox(height: DoayaSpacing.l),
               GlassTextField(
                 label: l.passwordConfirmLabel,
                 controller: _confirm,
@@ -230,13 +230,13 @@ class _AccountFormState extends State<AccountForm> {
               ),
             ],
             if (_error != null) ...[
-              const SizedBox(height: DoayaSpacing.sm),
+              SizedBox(height: DoayaSpacing.sm),
               Text(
                 _error!,
                 style: DoayaTypography.bodySmall.copyWith(color: DoayaColors.dangerText),
               ),
             ],
-            const SizedBox(height: DoayaSpacing.xl),
+            SizedBox(height: DoayaSpacing.xl),
             SagePillButton(
               label: widget.submitLabel,
               expand: true,
@@ -311,13 +311,13 @@ class _NotLinkedState extends ConsumerState<_NotLinked> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(l.syncNotLinkedHelp, style: secondary),
-                const SizedBox(height: DoayaSpacing.l),
+                SizedBox(height: DoayaSpacing.l),
                 ServerPicker(onChosen: _choose),
               ],
             ),
           ),
         ),
-        const SizedBox(width: DoayaSpacing.xl, height: DoayaSpacing.l),
+        SizedBox(width: DoayaSpacing.xl, height: DoayaSpacing.l),
         cell(
           server == null
               ? const SizedBox.shrink()
@@ -328,10 +328,10 @@ class _NotLinkedState extends ConsumerState<_NotLinked> {
                     children: [
                       Text(serverLabel(l, server), style: secondary),
                       if (serverPin(server) != null) Text(l.serverCodeHelp, style: secondary),
-                      const SizedBox(height: DoayaSpacing.sm),
+                      SizedBox(height: DoayaSpacing.sm),
                       if (_needsSetup!) ...[
                         Text(l.createOnServerHelp, style: secondary),
-                        const SizedBox(height: DoayaSpacing.l),
+                        SizedBox(height: DoayaSpacing.l),
                       ],
                       if (_needsSetup! && !session.isOwner)
                         Text(l.ownerOnly, style: secondary)
@@ -400,11 +400,11 @@ class _Linked extends ConsumerWidget {
               Row(
                 children: [
                   syncStatusChip(l, status, pending),
-                  const SizedBox(width: DoayaSpacing.sm),
+                  SizedBox(width: DoayaSpacing.sm),
                   if (pending > 0) StatusChip(label: l.pendingChanges(formatQty(pending))),
                 ],
               ),
-              const SizedBox(height: DoayaSpacing.sm),
+              SizedBox(height: DoayaSpacing.sm),
               Text(
                 [
                   l.signedInAs(link.userName),
@@ -418,12 +418,12 @@ class _Linked extends ConsumerWidget {
                 style: secondary,
               ),
               if (downloading) ...[
-                const SizedBox(height: DoayaSpacing.sm),
+                SizedBox(height: DoayaSpacing.sm),
                 Text(
                   l.syncDownloading(formatQty((status.cursor * 100) ~/ status.latest)),
                   style: secondary,
                 ),
-                const SizedBox(height: DoayaSpacing.xs),
+                SizedBox(height: DoayaSpacing.xs),
                 LinearProgressIndicator(
                   value: status.cursor / status.latest,
                   color: DoayaColors.accent,
@@ -432,7 +432,7 @@ class _Linked extends ConsumerWidget {
               ],
               if (link.isOwner)
                 if (ref.watch(_serverBackupProvider).value case final b?) ...[
-                  const SizedBox(height: DoayaSpacing.xs),
+                  SizedBox(height: DoayaSpacing.xs),
                   Text(
                     b['error'] != null
                         ? l.serverBackupError
@@ -450,12 +450,12 @@ class _Linked extends ConsumerWidget {
                   ),
                 ],
               if (status.phase == SyncPhase.unlinked || status.phase == SyncPhase.wrongServer) ...[
-                const SizedBox(height: DoayaSpacing.sm),
+                SizedBox(height: DoayaSpacing.sm),
                 NoticeBanner(
                   message: status.phase == SyncPhase.unlinked ? l.unlinkedHelp : l.wrongServerHelp,
                   tone: StatusTone.danger,
                 ),
-                const SizedBox(height: DoayaSpacing.sm),
+                SizedBox(height: DoayaSpacing.sm),
                 Align(
                   alignment: AlignmentDirectional.centerStart,
                   child: GlassPillButton(
@@ -485,28 +485,28 @@ class _Linked extends ConsumerWidget {
                 ),
               ],
               if (status.phase == SyncPhase.serverUnreachable) ...[
-                const SizedBox(height: DoayaSpacing.sm),
+                SizedBox(height: DoayaSpacing.sm),
                 NoticeBanner(message: l.serverMissingHelp),
               ],
             ],
           ),
         ),
         if (owner && link.isOwner) ...[
-          const SizedBox(height: DoayaSpacing.xl),
+          SizedBox(height: DoayaSpacing.xl),
           if (isPhoneLayout(context)) ...[
             const _DevicesPanel(),
-            const SizedBox(height: DoayaSpacing.l),
+            SizedBox(height: DoayaSpacing.l),
             const _AccountsPanel(),
           ] else
-            const Row(
+            Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(child: _DevicesPanel()),
+                const Expanded(child: _DevicesPanel()),
                 SizedBox(width: DoayaSpacing.xl),
-                Expanded(child: _AccountsPanel()),
+                const Expanded(child: _AccountsPanel()),
               ],
             ),
-          const SizedBox(height: DoayaSpacing.l),
+          SizedBox(height: DoayaSpacing.l),
           const _CentralPanel(),
         ],
       ],
@@ -575,7 +575,7 @@ class _DevicesPanel extends ConsumerWidget {
         children: [
           for (final d in devices)
             Padding(
-              padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
+              padding: EdgeInsets.only(bottom: DoayaSpacing.sm),
               child: Row(
                 children: [
                   Expanded(
@@ -662,10 +662,10 @@ class _AccountsPanel extends ConsumerWidget {
             l.accountsHelp,
             style: DoayaTypography.bodySmall.copyWith(color: DoayaColors.textSecondary),
           ),
-          const SizedBox(height: DoayaSpacing.l),
+          SizedBox(height: DoayaSpacing.l),
           for (final e in employees)
             Padding(
-              padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
+              padding: EdgeInsets.only(bottom: DoayaSpacing.sm),
               child: Row(
                 children: [
                   Expanded(child: Text(e.name, style: DoayaTypography.label)),
@@ -776,7 +776,7 @@ class _CentralPanelState extends ConsumerState<_CentralPanel> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(l.centralHelp, style: secondary),
-          const SizedBox(height: DoayaSpacing.l),
+          SizedBox(height: DoayaSpacing.l),
           if (linked)
             Align(
               alignment: AlignmentDirectional.centerStart,
@@ -793,13 +793,13 @@ class _CentralPanelState extends ConsumerState<_CentralPanel> {
               textDirection: TextDirection.ltr,
               keyboardType: TextInputType.url,
             ),
-            const SizedBox(height: DoayaSpacing.sm),
+            SizedBox(height: DoayaSpacing.sm),
             GlassTextField(
               label: l.centralKeyLabel,
               controller: _key,
               textDirection: TextDirection.ltr,
             ),
-            const SizedBox(height: DoayaSpacing.sm),
+            SizedBox(height: DoayaSpacing.sm),
             Align(
               alignment: AlignmentDirectional.centerStart,
               child: SagePillButton(

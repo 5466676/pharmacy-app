@@ -22,26 +22,26 @@ class PageHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final titleRow = Row(
       children: [
-        if (leading != null) ...[leading!, const SizedBox(width: DoayaSpacing.ml)],
+        if (leading != null) ...[leading!, SizedBox(width: DoayaSpacing.ml)],
         Expanded(child: Text(title, style: DoayaTypography.title)),
         if (!isPhoneLayout(context))
-          for (final a in actions) ...[const SizedBox(width: DoayaSpacing.sm), a],
+          for (final a in actions) ...[SizedBox(width: DoayaSpacing.sm), a],
       ],
     );
     if (!isPhoneLayout(context) || actions.isEmpty) {
       return Padding(
-        padding: const EdgeInsets.only(bottom: DoayaSpacing.xl),
+        padding: EdgeInsets.only(bottom: DoayaSpacing.xl),
         child: titleRow,
       );
     }
     // Phone: actions wrap under the title.
     return Padding(
-      padding: const EdgeInsets.only(bottom: DoayaSpacing.l),
+      padding: EdgeInsets.only(bottom: DoayaSpacing.l),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           titleRow,
-          const SizedBox(height: DoayaSpacing.sm),
+          SizedBox(height: DoayaSpacing.sm),
           Wrap(spacing: DoayaSpacing.sm, runSpacing: DoayaSpacing.sm, children: actions),
         ],
       ),
@@ -69,7 +69,7 @@ class SplitPanes extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           main,
-          const SizedBox(height: DoayaSpacing.l),
+          SizedBox(height: DoayaSpacing.l),
           side,
         ],
       );
@@ -78,7 +78,7 @@ class SplitPanes extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(child: main),
-        const SizedBox(width: DoayaSpacing.xl),
+        SizedBox(width: DoayaSpacing.xl),
         SizedBox(width: sideWidth, child: side),
       ],
     );
@@ -108,7 +108,7 @@ class Panel extends StatelessWidget {
             if (isPhoneLayout(context) && trailing != null) ...[
               // Phone: the actions go under the title.
               Text(title!, style: DoayaTypography.lead),
-              const SizedBox(height: DoayaSpacing.sm),
+              SizedBox(height: DoayaSpacing.sm),
               Align(alignment: AlignmentDirectional.centerStart, child: trailing),
             ] else
               Row(
@@ -117,7 +117,7 @@ class Panel extends StatelessWidget {
                   ?trailing,
                 ],
               ),
-            const SizedBox(height: DoayaSpacing.l),
+            SizedBox(height: DoayaSpacing.l),
           ],
           child,
         ],
@@ -134,7 +134,7 @@ class EmptyHint extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.all(DoayaSpacing.huge),
+    padding: EdgeInsets.all(DoayaSpacing.huge),
     child: Center(
       child: Text(
         text,
@@ -204,7 +204,7 @@ class ProductName extends StatelessWidget {
             color: muted ? DoayaColors.textSecondary : DoayaColors.textPrimary,
           ),
         ),
-        const SizedBox(height: DoayaSpacing.xxs),
+        SizedBox(height: DoayaSpacing.xxs),
         Text(
           sub,
           maxLines: 1,
@@ -301,7 +301,7 @@ Future<(int, String?)?> askAmount(
         children: [
           if (help != null) ...[
             Text(help, style: DoayaTypography.bodySmall.copyWith(color: DoayaColors.textSecondary)),
-            const SizedBox(height: DoayaSpacing.l),
+            SizedBox(height: DoayaSpacing.l),
           ],
           GlassTextField(
             label: label,
@@ -316,7 +316,7 @@ Future<(int, String?)?> askAmount(
             onSubmitted: (_) => noteLabel == null ? submit() : null,
           ),
           if (noteLabel != null) ...[
-            const SizedBox(height: DoayaSpacing.l),
+            SizedBox(height: DoayaSpacing.l),
             GlassTextField(
               label: noteLabel,
               controller: note,

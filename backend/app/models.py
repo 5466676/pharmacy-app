@@ -36,9 +36,22 @@ class Pharmacy(Base):
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True)
     name: Mapped[str] = mapped_column(String(200))
-    # pending | active | suspended
+    # pending | active | suspended | stopped | removed. On the central server
+    # only the admin changes it; "stopped" and "removed" also lock the
+    # pharmacy's own system when its server next checks in.
     status: Mapped[str] = mapped_column(String(20), default="active")
+    status_reason: Mapped[str | None] = mapped_column(String(500))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    # Phase 4, central server: how long the pharmacy's system keeps working
+    # without checking in, and what its server last reported (technical
+    # state only: versions, devices, backups; never its business data).
+    licence_days: Mapped[int] = mapped_column(Integer, default=30, server_default="30")
+    last_heartbeat_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    heartbeat: Mapped[dict | None] = mapped_column(JSONB)
+    # The monthly health check's results (verdicts and counts only).
+    health: Mapped[dict | None] = mapped_column(JSONB)
+    health_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    health_requested: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false")
 
 
 class User(Base):
@@ -165,6 +178,8 @@ class PatientProfile(Base):
     city: Mapped[str | None] = mapped_column(String(80))
     # The pharmacy the patient chose; cases and orders go there.
     pharmacy_id: Mapped[str | None] = mapped_column(ForeignKey("pharmacies.id"))
+    # Phase 5: the patient agreed to the health file (null: no file).
+    file_consent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
 
 class PatientSession(Base):
@@ -200,6 +215,11 @@ class Consultation(Base):
     handled_by: Mapped[str | None] = mapped_column(String(200))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     sent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # «لازم دكتور»: the assistant told the patient to see a doctor soon
+    # (the category), and sent the case to the pharmacist.
+    doctor_advice: Mapped[str | None] = mapped_column(String(40))
+    # The pharmacist's first action on the case (response time).
+    first_action_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
@@ -231,6 +251,10 @@ class AiLog(Base):
     kind: Mapped[str] = mapped_column(String(20), index=True)
     detail: Mapped[dict] = mapped_column(JSONB)
     reviewed: Mapped[bool] = mapped_column(Boolean, default=False)
+    # Phase 4: the admin's review.
+    review_note: Mapped[str | None] = mapped_column(String(1000))
+    reviewed_by: Mapped[str | None] = mapped_column(ForeignKey("users.id"))
+    reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
@@ -254,6 +278,7 @@ class PatientOrder(Base):
     handled_by: Mapped[str | None] = mapped_column(String(200))
     # A prescription photo sent with the order.
     photo_id: Mapped[str | None] = mapped_column(ForeignKey("photos.id"))
+    first_action_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
@@ -273,4 +298,221 @@ class Photo(Base):
     # Where it was sent: a consultation, or an order (set when attached).
     consultation_id: Mapped[str | None] = mapped_column(ForeignKey("consultations.id"))
     order_id: Mapped[str | None] = mapped_column(String(36))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+# ─── Phase 4: the platform owner's admin panel ──────────────────────────────
+
+
+class AdminSession(Base):
+    """A signed-in admin panel: its long-lived secret, stored hashed."""
+
+    __tablename__ = "admin_sessions"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    last_seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class AdminAction(Base):
+    """Every admin action on a pharmacy: who, when, what and why."""
+
+    __tablename__ = "admin_actions"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    admin_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    pharmacy_id: Mapped[str | None] = mapped_column(ForeignKey("pharmacies.id"), index=True)
+    # approve | suspend | resume | stop | remove | list | unlist | new_key
+    # | licence | health_check
+    action: Mapped[str] = mapped_column(String(20))
+    reason: Mapped[str | None] = mapped_column(String(500))
+    detail: Mapped[dict | None] = mapped_column(JSONB)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class KnowledgeNote(Base):
+    """A short note the admin curates (usually from a pharmacist's
+    correction) that helps the assistant ask better questions. Given to the
+    assistant when the conversation mentions one of its tags. Never used
+    for automatic training."""
+
+    __tablename__ = "knowledge_notes"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    title: Mapped[str] = mapped_column(String(200))
+    text: Mapped[str] = mapped_column(String(1000))
+    tags: Mapped[list] = mapped_column(JSONB)
+    enabled: Mapped[bool] = mapped_column(Boolean, default=True)
+    # The review item it came from, if any.
+    source_log_id: Mapped[int | None] = mapped_column(ForeignKey("ai_log.id"))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class KnowledgeChange(Base):
+    """Every change to a note: who, when, before and after."""
+
+    __tablename__ = "knowledge_changes"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    note_id: Mapped[str] = mapped_column(ForeignKey("knowledge_notes.id"), index=True)
+    admin_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    # create | update
+    action: Mapped[str] = mapped_column(String(10))
+    before: Mapped[dict | None] = mapped_column(JSONB)
+    after: Mapped[dict] = mapped_column(JSONB)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+# ─── Phase 4b: managing the assistant from the panel ────────────────────────
+
+
+class AssistantConfig(Base):
+    """The model the assistant uses, chosen in the panel (one row). Without
+    it the server's settings (DOAYA_LLM_*) are used. The API key is stored
+    encrypted with the server's own secret and never sent back."""
+
+    __tablename__ = "assistant_config"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    # lm_studio | ollama | hosted
+    provider: Mapped[str] = mapped_column(String(20))
+    base_url: Mapped[str] = mapped_column(String(300))
+    model: Mapped[str] = mapped_column(String(200))
+    api_key_enc: Mapped[str | None] = mapped_column(String(1000))
+    timeout_seconds: Mapped[int] = mapped_column(Integer, default=60)
+    updated_by: Mapped[str | None] = mapped_column(ForeignKey("users.id"))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class AssistantChange(Base):
+    """Every change to the assistant from the panel: the model, a prompt,
+    a safety example. Who, when, before and after (never a key)."""
+
+    __tablename__ = "assistant_changes"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    admin_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    # model | prompt | example
+    kind: Mapped[str] = mapped_column(String(10))
+    before: Mapped[dict | None] = mapped_column(JSONB)
+    after: Mapped[dict | None] = mapped_column(JSONB)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class PromptVersion(Base):
+    """A version of an editable prompt part: assistant | summary |
+    classifier. draft → tested → active; the one before becomes retired and
+    can come back. No active row: the built-in default is used."""
+
+    __tablename__ = "prompt_versions"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    kind: Mapped[str] = mapped_column(String(12), index=True)
+    text: Mapped[str] = mapped_column(String(8000))
+    note: Mapped[str | None] = mapped_column(String(300))
+    # draft | active | retired
+    status: Mapped[str] = mapped_column(String(8))
+    # The last test run's results, and whether it passed.
+    test: Mapped[dict | None] = mapped_column(JSONB)
+    tested_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_by: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    activated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class SafetyExample(Base):
+    """«أمثلة السلامة»: a patient message and what the assistant must do
+    with it: emergency | doctor | normal. Given to the classifier as
+    examples and used as the test set. Never used to train anything."""
+
+    __tablename__ = "safety_examples"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    text: Mapped[str] = mapped_column(String(1000))
+    label: Mapped[str] = mapped_column(String(10))
+    note: Mapped[str | None] = mapped_column(String(300))
+    enabled: Mapped[bool] = mapped_column(Boolean, default=True)
+    created_by: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+# ─── Phase 5: the patient's health file ─────────────────────────────────────
+
+
+class HealthFact(Base):
+    """One fact in a patient's health file: an allergy, a condition, a
+    medicine taken now, pregnancy, weight or a note. Facts are ended, never
+    edited, so the history stays."""
+
+    __tablename__ = "health_facts"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    patient_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    # allergy | condition | medication | pregnancy | weight | note
+    kind: Mapped[str] = mapped_column(String(12))
+    text: Mapped[str] = mapped_column(String(300))
+    # A medicine: the pharmacist's instructions, times a day, days.
+    detail: Mapped[dict | None] = mapped_column(JSONB)
+    # patient: the patient said so · pharmacist: a pharmacist added or
+    # confirmed it.
+    source: Mapped[str] = mapped_column(String(10))
+    confirmed: Mapped[bool] = mapped_column(Boolean, default=False)
+    added_by: Mapped[str | None] = mapped_column(String(200))
+    pharmacy_id: Mapped[str | None] = mapped_column(ForeignKey("pharmacies.id"))
+    consultation_id: Mapped[str | None] = mapped_column(ForeignKey("consultations.id"))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    # A course of medicine ends by itself; anything can be ended by hand.
+    ends_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    ended_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class FileProposal(Base):
+    """Something new a chat revealed, waiting for the patient (facts about
+    themselves) or the pharmacist (medical facts) to confirm. The assistant
+    never writes the file itself."""
+
+    __tablename__ = "file_proposals"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    patient_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    consultation_id: Mapped[str | None] = mapped_column(ForeignKey("consultations.id"))
+    kind: Mapped[str] = mapped_column(String(12))
+    text: Mapped[str] = mapped_column(String(300))
+    # patient | pharmacist
+    needs: Mapped[str] = mapped_column(String(10))
+    # pending | accepted | rejected
+    status: Mapped[str] = mapped_column(String(8), default="pending")
+    decided_by: Mapped[str | None] = mapped_column(String(200))
+    decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class FileChange(Base):
+    """Every change to a health file: who (patient / pharmacist / admin /
+    system), what, when."""
+
+    __tablename__ = "file_changes"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    patient_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    actor: Mapped[str] = mapped_column(String(10))
+    actor_name: Mapped[str | None] = mapped_column(String(200))
+    action: Mapped[str] = mapped_column(String(12))
+    detail: Mapped[dict | None] = mapped_column(JSONB)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class FileAccess(Base):
+    """The platform owner opened a patient's file in the panel."""
+
+    __tablename__ = "file_access"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    admin_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    patient_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

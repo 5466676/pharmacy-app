@@ -11,11 +11,16 @@ String? _str(Object? v) => v as String?;
 
 class CasePatient {
   CasePatient.fromJson(Map<String, Object?> j)
-    : name = j['name']! as String,
+    : id = j['id'] as String?,
+      hasFile = j['has_file'] == true,
+      name = j['name']! as String,
       phone = j['phone']! as String,
       age = j['age'] as int?,
       sex = j['sex'] as String?;
 
+  /// For the patient's health file (Phase 5).
+  final String? id;
+  final bool hasFile;
   final String name;
   final String phone;
   final int? age;
@@ -45,6 +50,7 @@ class CaseBrief {
       status = j['status']! as String,
       urgent = j['urgent']! as bool,
       redFlag = _str(j['red_flag']),
+      doctorAdvice = _str(j['doctor_advice']),
       title = j['title']! as String,
       patient = CasePatient.fromJson(j['patient']! as Map<String, Object?>),
       sentAt = _date(j['sent_at']),
@@ -54,6 +60,9 @@ class CaseBrief {
   final String status;
   final bool urgent;
   final String? redFlag;
+
+  /// «لازم دكتور»: the assistant told the patient to see a doctor soon.
+  final String? doctorAdvice;
   final String title;
   final CasePatient patient;
   final DateTime? sentAt;
@@ -117,6 +126,7 @@ class CaseDetail {
       status = j['status']! as String,
       urgent = j['urgent']! as bool,
       redFlag = _str(j['red_flag']),
+      doctorAdvice = _str(j['doctor_advice']),
       summary = j['summary'] == null
           ? null
           : CaseSummary.fromJson(j['summary']! as Map<String, Object?>),
@@ -132,6 +142,7 @@ class CaseDetail {
   final String status;
   final bool urgent;
   final String? redFlag;
+  final String? doctorAdvice;
   final CaseSummary? summary;
   final Map<String, Object?>? decision;
   final String? handledBy;
@@ -228,6 +239,61 @@ class PatientOrder {
   bool get open => OrderStatus.open.contains(status);
 }
 
+// ─── «ملف المريض» (Phase 5) ────────────────────────────────────────────────
+
+/// allergy | condition | medication | pregnancy | weight | note.
+class FileFact {
+  FileFact.fromJson(Map<String, Object?> j)
+    : id = j['id']! as String,
+      kind = j['kind']! as String,
+      text = j['text']! as String,
+      instructions = (j['detail'] as Map?)?['instructions'] as String?,
+      confirmed = j['confirmed'] == true,
+      addedBy = _str(j['added_by']),
+      endsAt = _date(j['ends_at']);
+
+  final String id;
+  final String kind;
+  final String text;
+  final String? instructions;
+
+  /// Added or checked by a pharmacist (else the patient said so).
+  final bool confirmed;
+  final String? addedBy;
+  final DateTime? endsAt;
+}
+
+class FileProposalItem {
+  FileProposalItem.fromJson(Map<String, Object?> j)
+    : id = j['id']! as String,
+      kind = j['kind']! as String,
+      text = j['text']! as String,
+      forPharmacist = j['needs'] == 'pharmacist';
+
+  final String id;
+  final String kind;
+  final String text;
+  final bool forPharmacist;
+}
+
+class PatientFile {
+  PatientFile.fromJson(Map<String, Object?> j)
+    : facts = [for (final f in j['facts']! as List) FileFact.fromJson(f as Map<String, Object?>)],
+      proposals = [
+        for (final p in j['proposals']! as List)
+          FileProposalItem.fromJson(p as Map<String, Object?>),
+      ],
+      pastCases = (j['history']! as List).length,
+      limited = j['limited'] == true;
+
+  final List<FileFact> facts;
+  final List<FileProposalItem> proposals;
+  final int pastCases;
+
+  /// The patient chose another pharmacy: only this one's past cases.
+  final bool limited;
+}
+
 /// Calls through the linked pharmacy server.
 class CentralApi {
   CentralApi(this._remote);
@@ -279,6 +345,24 @@ class CentralApi {
         'message_id': messageId,
         'field': field,
         'correction': correction,
+      });
+
+  Future<PatientFile> patientFile(String patientId) async => PatientFile.fromJson(
+    (await _remote.getJson('central/patients/$patientId/file'))! as Map<String, Object?>,
+  );
+
+  Future<void> addFact(String patientId, String kind, String text) =>
+      _remote.postJson('central/patients/$patientId/file/facts', {'kind': kind, 'text': text});
+
+  Future<void> confirmFact(String patientId, String factId) =>
+      _remote.postJson('central/patients/$patientId/file/facts/$factId/confirm');
+
+  Future<void> endFact(String patientId, String factId) =>
+      _remote.postJson('central/patients/$patientId/file/facts/$factId/end');
+
+  Future<void> decideProposal(String patientId, String proposalId, {required bool accept}) =>
+      _remote.postJson('central/patients/$patientId/file/proposals/$proposalId', {
+        'accept': accept,
       });
 
   /// A patient's photo, through the pharmacy's own server.

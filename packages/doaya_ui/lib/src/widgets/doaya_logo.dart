@@ -16,14 +16,16 @@ class DoayaLogo extends StatelessWidget {
     super.key,
     this.size = DoayaSizes.logoLarge,
     this.strokeWidth = 3.5,
-    this.color = DoayaColors.accent,
+    this.color,
     this.showPlus = true,
     this.semanticLabel,
   });
 
   final double size;
   final double strokeWidth;
-  final Color color;
+
+  /// Defaults to the accent colour.
+  final Color? color;
   final bool showPlus;
   final String? semanticLabel;
 
@@ -31,7 +33,12 @@ class DoayaLogo extends StatelessWidget {
   Widget build(BuildContext context) {
     final logo = CustomPaint(
       size: Size.square(size),
-      painter: DoayaLogoPainter(strokeWidth: strokeWidth, color: color, showPlus: showPlus),
+      painter: DoayaLogoPainter(
+        strokeWidth: strokeWidth,
+        // Resolved here, so a new palette repaints the logo.
+        color: color ?? DoayaColors.accent,
+        showPlus: showPlus,
+      ),
     );
     if (semanticLabel == null) return ExcludeSemantics(child: logo);
     return Semantics(label: semanticLabel, image: true, child: logo);
@@ -41,21 +48,17 @@ class DoayaLogo extends StatelessWidget {
 /// Paints the Doaya mark in a square canvas. Public so it can be reused
 /// (e.g. app icons or splash generation).
 class DoayaLogoPainter extends CustomPainter {
-  const DoayaLogoPainter({
-    this.strokeWidth = 3.5,
-    this.color = DoayaColors.accent,
-    this.showPlus = true,
-  });
+  const DoayaLogoPainter({this.strokeWidth = 3.5, this.color, this.showPlus = true});
 
   final double strokeWidth;
-  final Color color;
+  final Color? color;
   final bool showPlus;
 
   @override
   void paint(Canvas canvas, Size size) {
     final scale = size.shortestSide / 100;
     final paint = Paint()
-      ..color = color
+      ..color = color ?? DoayaColors.accent
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round
@@ -99,13 +102,13 @@ class DoayaWordmark extends StatelessWidget {
     required this.name,
     this.logoSize = DoayaSizes.logoSmall,
     this.textStyle,
-    this.gap = DoayaSpacing.sm,
+    this.gap,
   });
 
   final String name;
   final double logoSize;
   final TextStyle? textStyle;
-  final double gap;
+  final double? gap;
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +116,7 @@ class DoayaWordmark extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         DoayaLogo(size: logoSize, strokeWidth: 5),
-        SizedBox(width: gap),
+        SizedBox(width: gap ?? DoayaSpacing.sm),
         Text(name, style: textStyle ?? DoayaTypography.titleSmall),
       ],
     );

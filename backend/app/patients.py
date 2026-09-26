@@ -9,7 +9,14 @@ from pydantic import BaseModel, Field
 from sqlalchemy import select
 
 from .deps import DbSession, Patient, error
-from .models import PatientProfile, PatientSession, Pharmacy, PharmacyListing, User
+from .models import (
+    FileChange,
+    PatientProfile,
+    PatientSession,
+    Pharmacy,
+    PharmacyListing,
+    User,
+)
 from .security import (
     Principal,
     check_password,
@@ -33,6 +40,8 @@ class RegisterIn(BaseModel):
     birth_year: int | None = Field(default=None, ge=1900, le=2100)
     sex: Literal["m", "f"] | None = None
     city: str | None = Field(default=None, max_length=80)
+    # «ملفك الصحي بينحفظ...»: agreed at sign-up (Phase 5).
+    file_consent: bool = False
 
 
 class LoginIn(BaseModel):
@@ -157,8 +166,11 @@ def register(body: RegisterIn, db: DbSession, request: Request) -> SessionOut:
             birth_year=body.birth_year,
             sex=body.sex,
             city=body.city.strip() if body.city else None,
+            file_consent_at=datetime.now(UTC) if body.file_consent else None,
         )
     )
+    if body.file_consent:
+        db.add(FileChange(patient_id=user.id, actor="patient", action="consent", detail={}))
     return _new_session(db, request, user)
 
 

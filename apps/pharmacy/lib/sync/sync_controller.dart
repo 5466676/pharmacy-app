@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/database.dart';
 import '../data/people_repository.dart';
 import '../data/sync_store.dart';
+import '../data/system_lock.dart';
 import '../providers.dart';
 import 'sync_api.dart';
 
@@ -185,6 +186,7 @@ class SyncController extends Notifier<SyncStatus> {
       await SyncEngine(store, c).sync(
         onProgress: (p) => state = state.copyWith(cursor: p.cursor, latest: p.latest),
       );
+      await _checkControl(store, c);
       final now = DateTime.now();
       await store.setState('last_sync_at', now.toUtc().toIso8601String());
       state = state.copyWith(phase: SyncPhase.idle, lastSyncAt: now);
@@ -199,6 +201,18 @@ class SyncController extends Notifier<SyncStatus> {
       );
     } on Object catch (e) {
       state = state.copyWith(phase: SyncPhase.failed, error: '$e');
+    }
+  }
+
+  /// What Doaya online last told the server about this pharmacy (stopped,
+  /// licence…). Applied at the app's next start. An older server without
+  /// it, or a hiccup, changes nothing.
+  Future<void> _checkControl(DriftSyncStore store, SyncRemote c) async {
+    try {
+      final j = await c.getJson('control');
+      if (j is Map<String, Object?>) await saveLock(store, j);
+    } on SyncApiException {
+      return;
     }
   }
 

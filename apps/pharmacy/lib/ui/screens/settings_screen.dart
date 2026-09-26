@@ -62,7 +62,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final employees = ref.watch(allEmployeesProvider).value ?? const [];
     final hasData = (ref.watch(productsProvider).value ?? const []).isNotEmpty;
     String? req(String? v) => (v ?? '').trim().isEmpty ? l.required : null;
-    const gap = SizedBox(height: DoayaSpacing.l);
+    final gap = SizedBox(height: DoayaSpacing.l);
 
     return ListView(
       children: [
@@ -103,7 +103,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ),
                 ),
               ),
-              const SizedBox(width: DoayaSpacing.xl),
+              SizedBox(width: DoayaSpacing.xl),
               Expanded(
                 child: Panel(
                   title: l.currencySection,
@@ -129,7 +129,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                   : l.invalidNumber,
                             ),
                           ),
-                          const SizedBox(width: DoayaSpacing.l),
+                          SizedBox(width: DoayaSpacing.l),
                           Expanded(
                             child: GlassTextField(
                               label: l.currencySymbolLabel,
@@ -137,7 +137,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                               validator: req,
                             ),
                           ),
-                          const SizedBox(width: DoayaSpacing.l),
+                          SizedBox(width: DoayaSpacing.l),
                           Expanded(
                             child: IgnorePointer(
                               ignoring: hasData,
@@ -164,7 +164,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ],
           ),
         ),
-        const SizedBox(height: DoayaSpacing.xl),
+        SizedBox(height: DoayaSpacing.xl),
         Panel(
           title: l.employeesSection,
           trailing: SagePillButton(
@@ -177,7 +177,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             children: [
               for (final e in employees)
                 Padding(
-                  padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
+                  padding: EdgeInsets.only(bottom: DoayaSpacing.sm),
                   child: CaseRow(
                     initials: initialsOf(e.name),
                     title: e.name,
@@ -195,10 +195,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ],
           ),
         ),
-        const SizedBox(height: DoayaSpacing.xl),
+        SizedBox(height: DoayaSpacing.xl),
         const BackupPanel(),
         if (!hasData) ...[
-          const SizedBox(height: DoayaSpacing.xl),
+          SizedBox(height: DoayaSpacing.xl),
           Align(
             alignment: AlignmentDirectional.centerStart,
             child: GlassPillButton(
@@ -238,7 +238,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               autofocus: true,
               validator: (v) => (v ?? '').trim().isEmpty ? l.required : null,
             ),
-            const SizedBox(height: DoayaSpacing.l),
+            SizedBox(height: DoayaSpacing.l),
             GlassTextField(
               label: l.pinLabel,
               controller: pin,

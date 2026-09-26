@@ -114,7 +114,7 @@ class _BackupPanelState extends ConsumerState<BackupPanel> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(l.backupHelp, style: secondary),
-          const SizedBox(height: DoayaSpacing.sm),
+          SizedBox(height: DoayaSpacing.sm),
           Text(
             s.last == null ? l.backupNone : l.backupLast(_when(s.last!)),
             style: DoayaTypography.label.copyWith(
@@ -122,10 +122,10 @@ class _BackupPanelState extends ConsumerState<BackupPanel> {
             ),
           ),
           if (s.error != null) ...[
-            const SizedBox(height: DoayaSpacing.sm),
+            SizedBox(height: DoayaSpacing.sm),
             NoticeBanner(message: l.backupFailed, tone: StatusTone.warning),
           ],
-          const SizedBox(height: DoayaSpacing.l),
+          SizedBox(height: DoayaSpacing.l),
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
@@ -136,7 +136,7 @@ class _BackupPanelState extends ConsumerState<BackupPanel> {
                   textDirection: TextDirection.ltr,
                 ),
               ),
-              const SizedBox(width: DoayaSpacing.sm),
+              SizedBox(width: DoayaSpacing.sm),
               GlassPillButton(
                 label: l.saveFolder,
                 onPressed: s.busy
@@ -148,14 +148,14 @@ class _BackupPanelState extends ConsumerState<BackupPanel> {
             ],
           ),
           if (s.files.isNotEmpty) ...[
-            const SizedBox(height: DoayaSpacing.l),
+            SizedBox(height: DoayaSpacing.l),
             if (linked) ...[
               Text(l.restoreLinkedNote, style: secondary),
-              const SizedBox(height: DoayaSpacing.sm),
+              SizedBox(height: DoayaSpacing.sm),
             ],
             for (final f in s.files.take(5))
               Padding(
-                padding: const EdgeInsets.only(bottom: DoayaSpacing.s),
+                padding: EdgeInsets.only(bottom: DoayaSpacing.s),
                 child: Row(
                   children: [
                     Expanded(

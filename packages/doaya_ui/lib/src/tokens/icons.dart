@@ -67,4 +67,20 @@ abstract final class DoayaIcons {
   static const gallery = Icons.photo_library_outlined;
   static const logout = Icons.logout_rounded;
   static const till = Icons.savings_outlined;
+
+  // Admin panel (Phase 4).
+  static const review = Icons.rate_review_outlined;
+  static const knowledge = Icons.menu_book_outlined;
+  static const trophy = Icons.emoji_events_outlined;
+  static const lock = Icons.lock_outline_rounded;
+  static const key = Icons.key_rounded;
+  static const visible = Icons.visibility_outlined;
+  static const hidden = Icons.visibility_off_outlined;
+  static const online = Icons.wifi_tethering_rounded;
+  static const offline = Icons.portable_wifi_off_rounded;
+  static const refresh = Icons.refresh_rounded;
+  static const pause = Icons.pause_circle_outline_rounded;
+  static const play = Icons.play_circle_outline_rounded;
+  static const assistant = Icons.smart_toy_outlined;
+  static const science = Icons.biotech_outlined;
 }

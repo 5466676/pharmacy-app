@@ -108,7 +108,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   ),
                   AsyncError(:final error) => Center(
                     child: Padding(
-                      padding: const EdgeInsets.all(DoayaSpacing.xl),
+                      padding: EdgeInsets.all(DoayaSpacing.xl),
                       child: NoticeBanner(
                         message: errorText(l, error),
                         action: GlassPillButton(
@@ -131,10 +131,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   }
 
   List<Widget> _bottom(AppLocalizations l, Consultation c) {
-    const gutter = EdgeInsets.symmetric(horizontal: DoayaSpacing.screenGutter);
+    final gutter = EdgeInsets.symmetric(horizontal: DoayaSpacing.screenGutter);
     final emergency = c.status == ConsultStatus.emergency || (c.redFlag != null && !c.finished);
     return [
-      if (emergency) const Padding(padding: gutter, child: EmergencyPanel()),
+      if (emergency) Padding(padding: gutter, child: const EmergencyPanel()),
       if (!_busy && c.quickReplies.isNotEmpty)
         Padding(
           padding: gutter.copyWith(top: DoayaSpacing.sm),
@@ -194,7 +194,7 @@ class _Header extends StatelessWidget {
     final l = AppLocalizations.of(context);
     final c = consultation;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(
+      padding: EdgeInsets.fromLTRB(
         DoayaSpacing.screenGutter,
         DoayaSpacing.sm,
         DoayaSpacing.screenGutter,
@@ -207,7 +207,7 @@ class _Header extends StatelessWidget {
             tooltip: l.cancel,
             onPressed: () => context.canPop() ? context.pop() : context.go(Routes.home),
           ),
-          const SizedBox(width: DoayaSpacing.ml),
+          SizedBox(width: DoayaSpacing.ml),
           const GlassSurface(
             tone: SurfaceTone.strong,
             width: DoayaSizes.roundButton,
@@ -215,7 +215,7 @@ class _Header extends StatelessWidget {
             borderRadius: BorderRadius.all(Radius.circular(DoayaRadii.pill)),
             child: Center(child: DoayaLogo(size: DoayaSizes.logoSmall)),
           ),
-          const SizedBox(width: DoayaSpacing.ml),
+          SizedBox(width: DoayaSpacing.ml),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -225,7 +225,7 @@ class _Header extends StatelessWidget {
                   Row(
                     children: [
                       const StatusDot(),
-                      const SizedBox(width: DoayaSpacing.s),
+                      SizedBox(width: DoayaSpacing.s),
                       Flexible(
                         child: Text(
                           l.pharmacyFollowing(pharmacyName!),
@@ -283,7 +283,7 @@ class _Messages extends StatelessWidget {
     if (items.isEmpty) {
       items.add(
         Padding(
-          padding: const EdgeInsets.only(top: DoayaSpacing.huge),
+          padding: EdgeInsets.only(top: DoayaSpacing.huge),
           child: Text(
             l.heroSubtitle,
             textAlign: TextAlign.center,
@@ -295,12 +295,12 @@ class _Messages extends StatelessWidget {
     // Reversed: the newest stays in view as the conversation grows.
     return ListView.separated(
       reverse: true,
-      padding: const EdgeInsets.symmetric(
+      padding: EdgeInsets.symmetric(
         horizontal: DoayaSpacing.screenGutter,
         vertical: DoayaSpacing.sm,
       ),
       itemCount: items.length,
-      separatorBuilder: (_, _) => const SizedBox(height: DoayaSpacing.ml),
+      separatorBuilder: (_, _) => SizedBox(height: DoayaSpacing.ml),
       itemBuilder: (_, i) => items[items.length - 1 - i],
     );
   }
@@ -322,8 +322,8 @@ class _Bubble extends StatelessWidget {
       return NoticeBanner(message: body, tone: StatusTone.accent, icon: DoayaIcons.pharmacy);
     }
     final mine = m == null || m.mine;
-    const r = Radius.circular(DoayaRadii.bubble);
-    const tail = Radius.circular(DoayaRadii.bubbleTail);
+    final r = Radius.circular(DoayaRadii.bubble);
+    final tail = Radius.circular(DoayaRadii.bubbleTail);
     // RTL: the patient's bubbles start on the right, with the tail there.
     final radius = BorderRadiusDirectional.only(
       topStart: r,
@@ -340,7 +340,7 @@ class _Bubble extends StatelessWidget {
       children: [
         if (m?.role == 'pharmacist')
           Padding(
-            padding: const EdgeInsets.only(bottom: DoayaSpacing.xs),
+            padding: EdgeInsets.only(bottom: DoayaSpacing.xs),
             child: Text(
               [l.rolePharmacist, ?m!.author].join(': '),
               style: DoayaTypography.caption.copyWith(color: DoayaColors.accent),
@@ -348,7 +348,7 @@ class _Bubble extends StatelessWidget {
           ),
         if (m?.photoId case final photo?) ...[
           PhotoThumb(id: photo),
-          const SizedBox(height: DoayaSpacing.xs),
+          SizedBox(height: DoayaSpacing.xs),
         ],
         Text(body, style: style),
         if (m != null)
@@ -360,7 +360,7 @@ class _Bubble extends StatelessWidget {
           ),
       ],
     );
-    const padding = EdgeInsets.symmetric(horizontal: DoayaSpacing.xl, vertical: DoayaSpacing.ml);
+    final padding = EdgeInsets.symmetric(horizontal: DoayaSpacing.xl, vertical: DoayaSpacing.ml);
     return Align(
       alignment: mine ? AlignmentDirectional.centerStart : AlignmentDirectional.centerEnd,
       child: FractionallySizedBox(
@@ -374,7 +374,7 @@ class _Bubble extends StatelessWidget {
                 ? DecoratedBox(
                     decoration: BoxDecoration(
                       borderRadius: radius,
-                      gradient: const LinearGradient(
+                      gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [DoayaColors.sageTop, DoayaColors.sageBottom],
@@ -403,7 +403,7 @@ class _Thinking extends StatelessWidget {
     alignment: AlignmentDirectional.centerEnd,
     child: GlassSurface(
       borderRadius: BorderRadius.circular(DoayaRadii.bubble),
-      padding: const EdgeInsets.symmetric(horizontal: DoayaSpacing.xl, vertical: DoayaSpacing.m),
+      padding: EdgeInsets.symmetric(horizontal: DoayaSpacing.xl, vertical: DoayaSpacing.m),
       child: Text(
         AppLocalizations.of(context).thinking,
         style: DoayaTypography.bodySmall.copyWith(color: DoayaColors.textSecondary),
@@ -431,7 +431,7 @@ class _Steps extends StatelessWidget {
     final at = order.indexOf(status);
     return GlassSurface(
       borderRadius: BorderRadius.circular(DoayaRadii.card),
-      padding: const EdgeInsets.all(DoayaSpacing.l),
+      padding: EdgeInsets.all(DoayaSpacing.l),
       child: Row(
         children: [
           for (var i = 0; i < order.length; i++)
@@ -443,7 +443,7 @@ class _Steps extends StatelessWidget {
                     size: DoayaSizes.iconS,
                     color: i <= at ? DoayaColors.accent : DoayaColors.dotInactive,
                   ),
-                  const SizedBox(height: DoayaSpacing.xs),
+                  SizedBox(height: DoayaSpacing.xs),
                   Text(
                     labels[i],
                     textAlign: TextAlign.center,
@@ -477,16 +477,16 @@ class _DecisionCard extends StatelessWidget {
     return GlassSurface(
       tone: SurfaceTone.strong,
       borderRadius: BorderRadius.circular(DoayaRadii.cardLarge),
-      padding: const EdgeInsets.all(DoayaSpacing.xl),
+      padding: EdgeInsets.all(DoayaSpacing.xl),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(l.decisionTitle, style: DoayaTypography.label.copyWith(color: DoayaColors.accent)),
           if (by != null) Text(l.decisionBy(by), style: secondary),
-          const SizedBox(height: DoayaSpacing.ml),
+          SizedBox(height: DoayaSpacing.ml),
           for (final item in items)
             Padding(
-              padding: const EdgeInsets.only(bottom: DoayaSpacing.ml),
+              padding: EdgeInsets.only(bottom: DoayaSpacing.ml),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -504,7 +504,7 @@ class _DecisionCard extends StatelessWidget {
             ),
           if (note != null) Text(note, style: secondary),
           if (pharmacyName != null) ...[
-            const SizedBox(height: DoayaSpacing.sm),
+            SizedBox(height: DoayaSpacing.sm),
             StatusChip(label: l.pickupAt(pharmacyName!), tone: StatusTone.accent),
           ],
         ],
@@ -530,25 +530,25 @@ class EmergencyPanel extends StatelessWidget {
     return GlassSurface(
       tone: SurfaceTone.danger,
       borderRadius: BorderRadius.circular(DoayaRadii.card),
-      padding: const EdgeInsets.all(DoayaSpacing.l),
+      padding: EdgeInsets.all(DoayaSpacing.l),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
             children: [
-              const Icon(DoayaIcons.danger, color: DoayaColors.dangerText),
-              const SizedBox(width: DoayaSpacing.sm),
+              Icon(DoayaIcons.danger, color: DoayaColors.dangerText),
+              SizedBox(width: DoayaSpacing.sm),
               Text(
                 l.emergencyTitle,
                 style: DoayaTypography.label.copyWith(color: DoayaColors.dangerText),
               ),
             ],
           ),
-          const SizedBox(height: DoayaSpacing.ml),
+          SizedBox(height: DoayaSpacing.ml),
           call(l.callAmbulance(ambulanceNumber), ambulanceNumber),
-          const SizedBox(height: DoayaSpacing.sm),
+          SizedBox(height: DoayaSpacing.sm),
           call(l.callEmergency(emergencyNumber), emergencyNumber),
-          const SizedBox(height: DoayaSpacing.sm),
+          SizedBox(height: DoayaSpacing.sm),
           Text(
             l.emergencyStillWrite,
             style: DoayaTypography.caption.copyWith(color: DoayaColors.dangerText),
@@ -583,7 +583,7 @@ class _InputBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.fromLTRB(
+    padding: EdgeInsets.fromLTRB(
       DoayaSpacing.floatingInset,
       DoayaSpacing.m,
       DoayaSpacing.floatingInset,
@@ -594,17 +594,17 @@ class _InputBar extends StatelessWidget {
       blur: true,
       height: DoayaSizes.inputBar,
       borderRadius: BorderRadius.circular(DoayaRadii.pill),
-      padding: const EdgeInsets.symmetric(horizontal: DoayaSpacing.s),
+      padding: EdgeInsets.symmetric(horizontal: DoayaSpacing.s),
       child: Row(
         children: [
           IconButton(
-            icon: const Icon(DoayaIcons.camera, color: DoayaColors.textSecondary),
+            icon: Icon(DoayaIcons.camera, color: DoayaColors.textSecondary),
             tooltip: photoLabel,
             onPressed: onPhoto,
           ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsetsDirectional.only(end: DoayaSpacing.l),
+              padding: EdgeInsetsDirectional.only(end: DoayaSpacing.l),
               child: TextField(
                 controller: controller,
                 focusNode: focusNode,

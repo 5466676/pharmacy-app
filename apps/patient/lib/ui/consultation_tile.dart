@@ -24,7 +24,7 @@ class ConsultationTile extends StatelessWidget {
         onTap: onTap,
         child: GlassSurface(
           borderRadius: radius,
-          padding: const EdgeInsets.all(DoayaSpacing.l),
+          padding: EdgeInsets.all(DoayaSpacing.l),
           child: Row(
             children: [
               Icon(
@@ -32,7 +32,7 @@ class ConsultationTile extends StatelessWidget {
                 size: DoayaSizes.iconM,
                 color: c.urgent ? DoayaColors.dangerText : DoayaColors.accent,
               ),
-              const SizedBox(width: DoayaSpacing.ml),
+              SizedBox(width: DoayaSpacing.ml),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,7 +50,7 @@ class ConsultationTile extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(width: DoayaSpacing.sm),
+              SizedBox(width: DoayaSpacing.sm),
               StatusChip(label: l.status(c.status), tone: consultTone(c.status)),
             ],
           ),

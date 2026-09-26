@@ -193,7 +193,7 @@ class _PosScreenState extends ConsumerState<PosScreen> {
               children: [
                 for (final a in alts)
                   Padding(
-                    padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
+                    padding: EdgeInsets.only(bottom: DoayaSpacing.sm),
                     child: _ResultRow(
                       product: a,
                       onHand: stock?.onHand(a.id) ?? 0,
@@ -427,7 +427,7 @@ class _PosScreenState extends ConsumerState<PosScreen> {
 
     Widget results() => ListView.separated(
       itemCount: _results.length,
-      separatorBuilder: (_, _) => const SizedBox(height: DoayaSpacing.sm),
+      separatorBuilder: (_, _) => SizedBox(height: DoayaSpacing.sm),
       itemBuilder: (context, i) {
         final p = _results[i];
         final onHand = stock?.onHand(p.id) ?? 0;
@@ -470,7 +470,7 @@ class _PosScreenState extends ConsumerState<PosScreen> {
       height: DoayaSizes.inputBar,
       onChanged: _onSearchChanged,
       onSubmitted: _onSubmitted,
-      trailing: const Padding(
+      trailing: Padding(
         padding: EdgeInsetsDirectional.only(end: DoayaSpacing.ml),
         child: Icon(DoayaIcons.barcode, color: DoayaColors.accent),
       ),
@@ -491,7 +491,7 @@ class _PosScreenState extends ConsumerState<PosScreen> {
             ],
           ),
           search,
-          const SizedBox(height: DoayaSpacing.sm),
+          SizedBox(height: DoayaSpacing.sm),
           Expanded(child: _results.isNotEmpty ? results() : invoice(compact: true)),
         ],
       );
@@ -520,13 +520,13 @@ class _PosScreenState extends ConsumerState<PosScreen> {
                   ],
                 ),
                 search,
-                const SizedBox(height: DoayaSpacing.l),
+                SizedBox(height: DoayaSpacing.l),
                 Expanded(child: results()),
                 _ShortcutsBar(l: l),
               ],
             ),
           ),
-          const SizedBox(width: DoayaSpacing.huge),
+          SizedBox(width: DoayaSpacing.huge),
           SizedBox(width: DoayaSizes.invoiceWidth, child: invoice(compact: false)),
         ],
       ),
@@ -568,36 +568,36 @@ class _ResultRow extends StatelessWidget {
       return GlassSurface(
         shadow: false,
         borderRadius: BorderRadius.circular(DoayaRadii.cardLarge),
-        padding: const EdgeInsets.all(DoayaSpacing.ml),
+        padding: EdgeInsets.all(DoayaSpacing.ml),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             ProductName(product: product, muted: out),
             if (nudge != null) ...[
-              const SizedBox(height: DoayaSpacing.xs),
+              SizedBox(height: DoayaSpacing.xs),
               StatusChip(label: nudge!, tone: StatusTone.warning, icon: DoayaIcons.expiry),
             ],
-            const SizedBox(height: DoayaSpacing.sm),
+            SizedBox(height: DoayaSpacing.sm),
             Row(
               children: [
                 Flexible(
                   child: StockChip(product: product, onHand: onHand),
                 ),
                 if (prescriptionLabel != null) ...[
-                  const SizedBox(width: DoayaSpacing.s),
+                  SizedBox(width: DoayaSpacing.s),
                   Flexible(child: StatusChip(label: prescriptionLabel!)),
                 ],
                 const Spacer(),
                 Text(price, style: DoayaTypography.label),
               ],
             ),
-            const SizedBox(height: DoayaSpacing.sm),
+            SizedBox(height: DoayaSpacing.sm),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 if (stripLabel != null) ...[
                   GlassPillButton(label: stripLabel!, onPressed: onAddStrip),
-                  const SizedBox(width: DoayaSpacing.s),
+                  SizedBox(width: DoayaSpacing.s),
                 ],
                 add,
               ],
@@ -609,7 +609,7 @@ class _ResultRow extends StatelessWidget {
     return GlassSurface(
       shadow: false,
       borderRadius: BorderRadius.circular(DoayaRadii.cardLarge),
-      padding: const EdgeInsets.symmetric(horizontal: DoayaSpacing.xl, vertical: DoayaSpacing.ml),
+      padding: EdgeInsets.symmetric(horizontal: DoayaSpacing.xl, vertical: DoayaSpacing.ml),
       child: Row(
         children: [
           Container(
@@ -624,14 +624,14 @@ class _ResultRow extends StatelessWidget {
               color: out ? DoayaColors.textSecondary : DoayaColors.accent,
             ),
           ),
-          const SizedBox(width: DoayaSpacing.l),
+          SizedBox(width: DoayaSpacing.l),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ProductName(product: product, muted: out),
                 if (nudge != null) ...[
-                  const SizedBox(height: DoayaSpacing.xs),
+                  SizedBox(height: DoayaSpacing.xs),
                   StatusChip(label: nudge!, tone: StatusTone.warning, icon: DoayaIcons.expiry),
                 ],
               ],
@@ -639,18 +639,18 @@ class _ResultRow extends StatelessWidget {
           ),
           if (prescriptionLabel != null) ...[
             StatusChip(label: prescriptionLabel!),
-            const SizedBox(width: DoayaSpacing.sm),
+            SizedBox(width: DoayaSpacing.sm),
           ],
           StockChip(product: product, onHand: onHand),
-          const SizedBox(width: DoayaSpacing.l),
+          SizedBox(width: DoayaSpacing.l),
           SizedBox(
             width: DoayaSizes.priceColumn,
             child: Text(price, style: DoayaTypography.label, textAlign: TextAlign.end),
           ),
-          const SizedBox(width: DoayaSpacing.l),
+          SizedBox(width: DoayaSpacing.l),
           if (stripLabel != null) ...[
             GlassPillButton(label: stripLabel!, onPressed: onAddStrip),
-            const SizedBox(width: DoayaSpacing.s),
+            SizedBox(width: DoayaSpacing.s),
           ],
           add,
         ],
@@ -670,10 +670,7 @@ class _ShortcutsBar extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: DoayaSpacing.sm,
-            vertical: DoayaSpacing.xxs,
-          ),
+          padding: EdgeInsets.symmetric(horizontal: DoayaSpacing.sm, vertical: DoayaSpacing.xxs),
           decoration: BoxDecoration(
             color: DoayaColors.surfaceRaised,
             borderRadius: BorderRadius.circular(DoayaRadii.key),
@@ -681,12 +678,12 @@ class _ShortcutsBar extends StatelessWidget {
           ),
           child: LatinText(k, style: DoayaTypography.caption),
         ),
-        const SizedBox(width: DoayaSpacing.xs),
+        SizedBox(width: DoayaSpacing.xs),
         Text(label, style: DoayaTypography.caption.copyWith(color: DoayaColors.textSecondary)),
       ],
     );
     return Padding(
-      padding: const EdgeInsets.only(top: DoayaSpacing.ml),
+      padding: EdgeInsets.only(top: DoayaSpacing.ml),
       child: Wrap(
         spacing: DoayaSpacing.l,
         crossAxisAlignment: WrapCrossAlignment.center,
@@ -766,7 +763,7 @@ class _Invoice extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(l.invoice, style: DoayaTypography.lead),
-        const SizedBox(height: DoayaSpacing.l),
+        SizedBox(height: DoayaSpacing.l),
         Row(
           children: [
             Expanded(
@@ -777,7 +774,7 @@ class _Invoice extends StatelessWidget {
                 onPressed: () => onRegistered(false),
               ),
             ),
-            const SizedBox(width: DoayaSpacing.s),
+            SizedBox(width: DoayaSpacing.s),
             Expanded(
               child: GlassPillButton(
                 label: l.registeredCustomer,
@@ -789,7 +786,7 @@ class _Invoice extends StatelessWidget {
           ],
         ),
         if (registered) ...[
-          const SizedBox(height: DoayaSpacing.sm),
+          SizedBox(height: DoayaSpacing.sm),
           GlassPillButton(
             label: customer?.name ?? l.chooseCustomer,
             icon: DoayaIcons.person,
@@ -798,7 +795,7 @@ class _Invoice extends StatelessWidget {
             onPressed: onPickCustomer,
           ),
         ],
-        const SizedBox(height: DoayaSpacing.l),
+        SizedBox(height: DoayaSpacing.l),
         _grow(
           items.isEmpty
               ? EmptyHint(l.cartEmpty)
@@ -807,7 +804,7 @@ class _Invoice extends StatelessWidget {
                   physics: compact ? const NeverScrollableScrollPhysics() : null,
                   itemCount: items.length,
                   separatorBuilder: (_, _) =>
-                      const Divider(color: DoayaColors.divider, height: DoayaSpacing.xl),
+                      Divider(color: DoayaColors.divider, height: DoayaSpacing.xl),
                   itemBuilder: (context, i) {
                     final item = items[i];
                     final nudge = nudgeFor(item.product.id);
@@ -840,7 +837,7 @@ class _Invoice extends StatelessWidget {
                           ],
                         ),
                         if (nudge != null) ...[
-                          const SizedBox(height: DoayaSpacing.xs),
+                          SizedBox(height: DoayaSpacing.xs),
                           Align(
                             alignment: AlignmentDirectional.centerStart,
                             child: StatusChip(
@@ -855,7 +852,7 @@ class _Invoice extends StatelessWidget {
                   },
                 ),
         ),
-        const SizedBox(height: DoayaSpacing.ml),
+        SizedBox(height: DoayaSpacing.ml),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -868,7 +865,7 @@ class _Invoice extends StatelessWidget {
               ),
             ),
             if (payment == PaymentType.cash) ...[
-              const SizedBox(width: DoayaSpacing.sm),
+              SizedBox(width: DoayaSpacing.sm),
               Expanded(
                 child: GlassTextField(
                   label: l.tenderedLabel(currency.symbol),
@@ -884,20 +881,17 @@ class _Invoice extends StatelessWidget {
             ],
           ],
         ),
-        const SizedBox(height: DoayaSpacing.sm),
+        SizedBox(height: DoayaSpacing.sm),
         GlassSurface(
           shadow: false,
           borderRadius: BorderRadius.circular(DoayaRadii.card),
-          padding: const EdgeInsets.symmetric(
-            horizontal: DoayaSpacing.l,
-            vertical: DoayaSpacing.ml,
-          ),
+          padding: EdgeInsets.symmetric(horizontal: DoayaSpacing.l, vertical: DoayaSpacing.ml),
           child: Column(
             children: [
               _TotalRow(label: l.subtotal, value: formatMoney(subtotal, currency)),
               if (discountMinor > 0)
                 _TotalRow(label: l.discount, value: formatSignedMoney(-discountMinor, currency)),
-              const Divider(color: DoayaColors.divider),
+              Divider(color: DoayaColors.divider),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.baseline,
                 textBaseline: TextBaseline.alphabetic,
@@ -927,7 +921,7 @@ class _Invoice extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: DoayaSpacing.sm),
+        SizedBox(height: DoayaSpacing.sm),
         Row(
           children: [
             for (final (p, label, icon) in [
@@ -935,7 +929,7 @@ class _Invoice extends StatelessWidget {
               (PaymentType.debt, l.paymentDebt, DoayaIcons.debts),
               (PaymentType.transfer, l.paymentTransfer, DoayaIcons.transfer),
             ]) ...[
-              if (p != PaymentType.cash) const SizedBox(width: DoayaSpacing.s),
+              if (p != PaymentType.cash) SizedBox(width: DoayaSpacing.s),
               Expanded(
                 child: _maybeTooltip(
                   p == PaymentType.transfer ? l.paymentTransferHint : null,
@@ -953,7 +947,7 @@ class _Invoice extends StatelessWidget {
             ],
           ],
         ),
-        const SizedBox(height: DoayaSpacing.sm),
+        SizedBox(height: DoayaSpacing.sm),
         if (tillOpen)
           SagePillButton(
             label: l.completeSale,
@@ -1028,7 +1022,7 @@ class _QtyStepper extends StatelessWidget {
     return GlassSurface(
       shadow: false,
       borderRadius: BorderRadius.circular(DoayaRadii.pill),
-      padding: const EdgeInsets.all(DoayaSpacing.xxs),
+      padding: EdgeInsets.all(DoayaSpacing.xxs),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -1089,24 +1083,24 @@ class _CustomerPickerState extends ConsumerState<_CustomerPicker> {
           tone: SurfaceTone.strong,
           blur: true,
           borderRadius: BorderRadius.circular(DoayaRadii.hero),
-          padding: const EdgeInsets.all(DoayaSpacing.huge),
+          padding: EdgeInsets.all(DoayaSpacing.huge),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(l.chooseCustomer, style: DoayaTypography.titleSmall),
-              const SizedBox(height: DoayaSpacing.l),
+              SizedBox(height: DoayaSpacing.l),
               GlassSearchField(
                 hint: l.search,
                 autofocus: true,
                 onChanged: (v) => setState(() => _query = v),
               ),
-              const SizedBox(height: DoayaSpacing.ml),
+              SizedBox(height: DoayaSpacing.ml),
               Expanded(
                 child: list.isEmpty
                     ? EmptyHint(l.noCustomers)
                     : ListView.separated(
                         itemCount: list.length,
-                        separatorBuilder: (_, _) => const SizedBox(height: DoayaSpacing.s),
+                        separatorBuilder: (_, _) => SizedBox(height: DoayaSpacing.s),
                         itemBuilder: (context, i) {
                           final c = list[i];
                           final bal = debts?.balance(c.id) ?? 0;
@@ -1121,7 +1115,7 @@ class _CustomerPickerState extends ConsumerState<_CustomerPicker> {
                         },
                       ),
               ),
-              const SizedBox(height: DoayaSpacing.ml),
+              SizedBox(height: DoayaSpacing.ml),
               GlassPillButton(
                 label: l.newCustomer,
                 icon: DoayaIcons.customer,

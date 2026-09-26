@@ -210,3 +210,56 @@ The server doesn't recreate the app's ~25 tables. Each synced row is stored once
 - **Updates with the app closed**: `workmanager` (owner approved) runs a check about every 15 minutes with a connection. It asks `/updates`, compares with what the phone last knew (kept on the device) and shows only what changed and matters. The first check only learns. No Firebase / Google push anywhere. Android only for now; the web lists reminders and says so.
 - **Prescription photos** are checked by their bytes, not their name (JPEG/PNG/WebP, 5 MB). They are kept as files under the server's `data_dir`, so no object storage is needed for any host. Only the patient and the pharmacy they went to (after sending) can open one; the assistant never reads photos.
 - **Receipts**: `pdf` + `printing` (owner approved) render an 80 mm receipt and open the system print dialog (any printer). The font is **Amiri**: the PDF engine shapes Arabic with presentation-form glyphs, which Readex Pro lacks (a test guards this). `printing` bundles PDFium at build time: the machine that builds needs internet once, the counter never.
+
+## 2026-09-26 · Themes: one look per device, derived palettes, safety colours fixed
+- The look (style, mode, palette or custom colours, details) is chosen by every user and kept on the device only; it never syncs. Owner's decision: «المظهر للكل».
+- Colours are derived, not hand-picked per theme: `DoayaPalette.of(look)` darkens/lightens backgrounds and nudges text and buttons until they meet 4.5:1 (7:1 in «تباين عالي»). The default look returns the original palette unchanged, so nothing moved for current users.
+- Danger red and warning amber keep their meaning in every look; no palette has a red main colour.
+- Tokens (`DoayaColors`, spacing, radii, typography) became getters reading the current look, instead of passing a theme object through every widget. This cost 589 `const`s, removed mechanically by an analyzer-driven script.
+- The pharmacy desktop never blurs, whatever the style (old PCs).
+
+## 2026-09-26 · Admin panel: the owner sees whether pharmacies run, never their business
+- Owner's decision: the panel is the platform owner's. It shows each pharmacy's connection, speed and health, never its stock, medicines, sales, profits or debts.
+- Heartbeat: rides on the shelf publish (every 10 minutes) and sends only technical state. Its answer carries the control state and the licence.
+- The monthly health check: this is the owner's "full access once a month", done so the data stays private. It runs on the pharmacy's own PC over everything, and sends only verdicts and counts. Deeper remote access (seeing screens or data) is not built; if ever wanted, it would need the pharmacy owner's approval each time.
+- Stop / remove: the pharmacy app locks selling and stock changes at its next start, never mid-day. Reading and exporting stay open: the records are the pharmacy's own and the law needs them.
+- Licence: 30 days without contact by default, set per pharmacy from the panel.
+- The licence is not cryptographically signed in v1. Someone editing the app's files could get round it. The real levers are the contract and the key, which stops everything online at once.
+- Response time = the pharmacist's first action on a case, minus the time it was sent.
+- Reward tiers:
+  - gold: answered ≥95% and ≥90% within 10 minutes
+  - silver: answered ≥90% and ≥75% within 10 minutes
+  - fewer than 10 cases a month: not ranked
+  - The rewards themselves are decided outside the app.
+
+## 2026-09-26 · Knowledge base: tags, not a vector database
+- Notes reach the assistant when the patient's words contain one of their tags. Arabic spelling is folded as in the red-flag rules, and tags match inside words, so a stem like «حرار» works.
+- This is chosen over PostgreSQL full-text search: its Arabic stemming is weak, and the curated set is small. The rule is also one the owner can predict ("the note comes when the patient says one of these words") and test with «جرّب».
+- At most 3 notes per turn. A note stating a dose is refused (the same guard as the assistant's replies). Never automatic training.
+
+## 2026-09-26 · Admin app: three designs as looks
+- The owner wanted all three designs from the preview page, switchable: «غرفة القيادة», «الدفتر» and «من عيلة دوايا».
+- Each is a `DoayaLook`, so the colours still come from the design system with its contrast guarantees. No new fonts (Readex Pro + Amiri) and no blur.
+- The choice is kept per browser.
+
+## 2026-09-26 · The assistant is managed from the panel; safety stays in code
+- Owner's decision: the model (server, model, key) and the prompts are managed from the admin panel, including the red-flag checker's prompt. He will build a dataset of situations where the assistant must warn the patient.
+- What the panel can never change:
+  - the red-flag rules (they run first)
+  - the output guard
+  - the fixed safety paragraph
+  - the checker's rule for doubt
+  - the answer formats
+  - The server always adds them, whatever an edited prompt says. The classifier can only add alarms.
+- A prompt change reaches patients only through a draft that passed the test gate after its last edit: the built-in cases plus the owner's examples, with no emergency or doctor case missed, no dose through the guard, and a working summary. Rollback needs no test (it was used before).
+- «أمثلة السلامة» are given to the checker as examples in its prompt (the newest 40) and are the test set. This is few-shot prompting, not training.
+- New level «لازم دكتور» (doctor soon, not an emergency): the patient gets a clear message without ambulance numbers, and the case goes to the pharmacist marked. Stored in `consultations.doctor_advice`, not `red_flag`, so the patient app doesn't show the emergency panel.
+- The API key is encrypted with a key derived from the server's secret (Fernet, `cryptography`, already a dependency). A database copy alone doesn't reveal it. The key is never returned to the panel, and it is not reused for a different address.
+
+## 2026-09-26 · The patient's health file
+- One file per patient on the central server. The patient, the pharmacy they chose and the platform owner see it.
+- The owner sees everything by name (owner's decision). Every opening from the panel is logged; the anonymous review queue stays anonymous.
+- Nothing exists without consent, given at sign-up (off by default) or later. Deleting removes the facts, proposals and change log; the pharmacy's cases stay as its records.
+- **The assistant never writes the file.** What a chat reveals becomes a proposal: medical facts (allergy, condition, medicine) are confirmed by the pharmacist, the others by the patient. The pharmacist's decision adds its medicines directly (the pharmacist made it). Facts are ended, never edited, so the history stays.
+- The assistant is told allergies, conditions and current medicines so it doesn't ask again, but never the doses (it must never repeat one).
+- A pharmacy the patient left keeps only its own past cases. The pharmacy PC doesn't hold copies of every file; it reads the one it needs.

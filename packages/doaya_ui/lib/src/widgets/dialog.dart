@@ -24,23 +24,23 @@ Future<T?> showDoayaDialog<T>({
     builder: (context) => Dialog(
       backgroundColor: DoayaColors.transparent,
       elevation: 0,
-      insetPadding: const EdgeInsets.all(DoayaSpacing.huge),
+      insetPadding: EdgeInsets.all(DoayaSpacing.huge),
       child: ConstrainedBox(
         constraints: BoxConstraints(maxWidth: maxWidth),
         child: GlassSurface(
           tone: SurfaceTone.strong,
           blur: true,
           borderRadius: BorderRadius.circular(DoayaRadii.hero),
-          padding: const EdgeInsets.all(DoayaSpacing.huge),
+          padding: EdgeInsets.all(DoayaSpacing.huge),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(title, style: DoayaTypography.titleSmall),
-              const SizedBox(height: DoayaSpacing.xl),
+              SizedBox(height: DoayaSpacing.xl),
               Flexible(child: SingleChildScrollView(child: content)),
               if (actions.isNotEmpty) ...[
-                const SizedBox(height: DoayaSpacing.xxl),
+                SizedBox(height: DoayaSpacing.xxl),
                 Wrap(
                   alignment: WrapAlignment.end,
                   spacing: DoayaSpacing.m,

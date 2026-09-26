@@ -186,7 +186,7 @@ class _ReturnScreenState extends ConsumerState<ReturnScreen> {
                     ? _invoicePane(l, currency, customers, products, lines, detail?.$2 ?? const {})
                     : _freePane(l, currency),
               ),
-              const SizedBox(width: DoayaSpacing.huge, height: DoayaSpacing.l),
+              SizedBox(width: DoayaSpacing.huge, height: DoayaSpacing.l),
               if (phone)
                 Expanded(
                   flex: 2,
@@ -223,13 +223,13 @@ class _ReturnScreenState extends ConsumerState<ReturnScreen> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         GlassSearchField(hint: l.pickInvoice, onChanged: (v) => setState(() => _saleQuery = v)),
-        const SizedBox(height: DoayaSpacing.ml),
+        SizedBox(height: DoayaSpacing.ml),
         Expanded(
           child: sales.isEmpty
               ? EmptyHint(l.noInvoices)
               : ListView.separated(
                   itemCount: sales.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: DoayaSpacing.s),
+                  separatorBuilder: (_, _) => SizedBox(height: DoayaSpacing.s),
                   itemBuilder: (context, i) {
                     final s = sales[i];
                     final name = s.customerId == null
@@ -260,7 +260,7 @@ class _ReturnScreenState extends ConsumerState<ReturnScreen> {
           Expanded(child: list)
         else if (!phone)
           SizedBox(width: DoayaSizes.listPaneWidth, child: list),
-        if (!phone) const SizedBox(width: DoayaSpacing.xl),
+        if (!phone) SizedBox(width: DoayaSpacing.xl),
         if (!phone || _sale != null)
           Expanded(
             child: _sale == null
@@ -285,11 +285,11 @@ class _ReturnScreenState extends ConsumerState<ReturnScreen> {
                                 ? l.unitStrip
                                 : l.unitBox;
                             return Padding(
-                              padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
+                              padding: EdgeInsets.only(bottom: DoayaSpacing.sm),
                               child: GlassSurface(
                                 shadow: false,
                                 borderRadius: BorderRadius.circular(DoayaRadii.tile),
-                                padding: const EdgeInsets.all(DoayaSpacing.ml),
+                                padding: EdgeInsets.all(DoayaSpacing.ml),
                                 child: Row(
                                   children: [
                                     Expanded(
@@ -314,7 +314,7 @@ class _ReturnScreenState extends ConsumerState<ReturnScreen> {
                                       formatMoney(line.unitPriceMinor, currency),
                                       style: DoayaTypography.caption,
                                     ),
-                                    const SizedBox(width: DoayaSpacing.l),
+                                    SizedBox(width: DoayaSpacing.l),
                                     QtyStepper(
                                       value: _qty[line.id] ?? 0,
                                       max: maxUnits,
@@ -350,20 +350,20 @@ class _ReturnScreenState extends ConsumerState<ReturnScreen> {
     return ListView(
       children: [
         GlassSearchField(hint: l.posSearchHint, onChanged: search),
-        const SizedBox(height: DoayaSpacing.sm),
+        SizedBox(height: DoayaSpacing.sm),
         for (final p in _results)
           Padding(
-            padding: const EdgeInsets.only(bottom: DoayaSpacing.s),
+            padding: EdgeInsets.only(bottom: DoayaSpacing.s),
             child: GlassSurface(
               shadow: false,
               borderRadius: BorderRadius.circular(DoayaRadii.tile),
-              padding: const EdgeInsets.all(DoayaSpacing.ml),
+              padding: EdgeInsets.all(DoayaSpacing.ml),
               child: Row(
                 children: [
                   Expanded(child: ProductName(product: p)),
                   if (p.unitsPerPack > 1) ...[
                     GlassPillButton(label: l.addStrip, onPressed: () => add(p, strip: true)),
-                    const SizedBox(width: DoayaSpacing.s),
+                    SizedBox(width: DoayaSpacing.s),
                   ],
                   SagePillButton(
                     label: p.unitsPerPack > 1 ? l.addBox : l.addToCart,
@@ -374,14 +374,14 @@ class _ReturnScreenState extends ConsumerState<ReturnScreen> {
               ),
             ),
           ),
-        const SizedBox(height: DoayaSpacing.l),
+        SizedBox(height: DoayaSpacing.l),
         for (final f in _free)
           Padding(
-            padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
+            padding: EdgeInsets.only(bottom: DoayaSpacing.sm),
             child: GlassSurface(
               shadow: false,
               borderRadius: BorderRadius.circular(DoayaRadii.tile),
-              padding: const EdgeInsets.all(DoayaSpacing.ml),
+              padding: EdgeInsets.all(DoayaSpacing.ml),
               child: Row(
                 children: [
                   Expanded(
@@ -405,7 +405,7 @@ class _ReturnScreenState extends ConsumerState<ReturnScreen> {
                       onChanged: (_) => setState(() {}),
                     ),
                   ),
-                  const SizedBox(width: DoayaSpacing.l),
+                  SizedBox(width: DoayaSpacing.l),
                   QtyStepper(
                     value: f.quantity,
                     max: 9999,
@@ -430,12 +430,12 @@ class _ReturnScreenState extends ConsumerState<ReturnScreen> {
     return GlassSurface(
       tone: SurfaceTone.strong,
       borderRadius: BorderRadius.circular(DoayaRadii.hero),
-      padding: const EdgeInsets.all(DoayaSpacing.xxl),
+      padding: EdgeInsets.all(DoayaSpacing.xxl),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(l.refundMethod, style: DoayaTypography.lead),
-          const SizedBox(height: DoayaSpacing.l),
+          SizedBox(height: DoayaSpacing.l),
           GlassPillButton(
             label: l.refundCash,
             icon: DoayaIcons.cash,
@@ -444,7 +444,7 @@ class _ReturnScreenState extends ConsumerState<ReturnScreen> {
             selected: _refund == RefundMethod.cash,
             onPressed: () => setState(() => _refund = RefundMethod.cash),
           ),
-          const SizedBox(height: DoayaSpacing.sm),
+          SizedBox(height: DoayaSpacing.sm),
           GlassPillButton(
             label: l.refundDebtCredit,
             icon: DoayaIcons.debts,
@@ -461,10 +461,10 @@ class _ReturnScreenState extends ConsumerState<ReturnScreen> {
             },
           ),
           if (_customer != null) ...[
-            const SizedBox(height: DoayaSpacing.sm),
+            SizedBox(height: DoayaSpacing.sm),
             StatusChip(label: _customer!.name, icon: DoayaIcons.person),
           ],
-          if (isPhoneLayout(context)) const SizedBox(height: DoayaSpacing.l) else const Spacer(),
+          if (isPhoneLayout(context)) SizedBox(height: DoayaSpacing.l) else const Spacer(),
           Row(
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,
@@ -473,7 +473,7 @@ class _ReturnScreenState extends ConsumerState<ReturnScreen> {
               Text(formatMoney(total, currency), style: DoayaTypography.price),
             ],
           ),
-          const SizedBox(height: DoayaSpacing.l),
+          SizedBox(height: DoayaSpacing.l),
           SagePillButton(
             label: l.confirmReturn,
             expand: true,

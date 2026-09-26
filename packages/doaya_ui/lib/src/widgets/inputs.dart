@@ -53,11 +53,11 @@ class GlassSearchField extends StatelessWidget {
       shadow: false,
       height: height,
       borderRadius: BorderRadius.circular(DoayaRadii.pill),
-      padding: const EdgeInsetsDirectional.only(start: DoayaSpacing.xl, end: DoayaSpacing.sm),
+      padding: EdgeInsetsDirectional.only(start: DoayaSpacing.xl, end: DoayaSpacing.sm),
       child: Row(
         children: [
-          const Icon(DoayaIcons.search, size: DoayaSizes.iconS, color: DoayaColors.textPrimary),
-          const SizedBox(width: DoayaSpacing.m),
+          Icon(DoayaIcons.search, size: DoayaSizes.iconS, color: DoayaColors.textPrimary),
+          SizedBox(width: DoayaSpacing.m),
           Expanded(
             child: TextField(
               controller: controller,
@@ -126,6 +126,9 @@ class GlassTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tokens = DoayaTokens.of(context);
+    // A field always shows its edge: in the flat style surfaces have none,
+    // and a field would vanish into the card it sits on.
+    final edge = tokens.surfaceBorder.a == 0 ? DoayaColors.border : tokens.surfaceBorder;
     OutlineInputBorder border(Color c, [double w = DoayaSizes.borderWidth]) => OutlineInputBorder(
       borderRadius: BorderRadius.circular(DoayaRadii.tile),
       borderSide: BorderSide(color: c, width: w),
@@ -135,7 +138,7 @@ class GlassTextField extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
-          padding: const EdgeInsetsDirectional.only(start: DoayaSpacing.xs, bottom: DoayaSpacing.s),
+          padding: EdgeInsetsDirectional.only(start: DoayaSpacing.xs, bottom: DoayaSpacing.s),
           child: Text(
             label,
             style: DoayaTypography.caption.copyWith(color: DoayaColors.textSecondary),
@@ -167,12 +170,12 @@ class GlassTextField extends StatelessWidget {
             filled: true,
             fillColor: tokens.surfaceFill,
             isDense: true,
-            contentPadding: const EdgeInsets.symmetric(
+            contentPadding: EdgeInsets.symmetric(
               horizontal: DoayaSpacing.xl,
               vertical: DoayaSpacing.l,
             ),
-            border: border(tokens.surfaceBorder),
-            enabledBorder: border(tokens.surfaceBorder),
+            border: border(edge),
+            enabledBorder: border(edge),
             focusedBorder: border(DoayaColors.accent, DoayaSizes.focusWidth),
             errorBorder: border(DoayaColors.dangerBorder),
             focusedErrorBorder: border(DoayaColors.dangerText, DoayaSizes.focusWidth),

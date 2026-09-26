@@ -14,6 +14,8 @@ Central (internet) server:
     python -m app.cli list-pharmacy <pharmacy-id> --code SH4F --city دمشق \\
         [--address ...] [--phone ...] [--hours "9 - 23"] [--hide]
     python -m app.cli pharmacy-key <pharmacy-id>   # for its server's DOAYA_CENTRAL_KEY
+    python -m app.cli create-admin --name "..." --phone 09.. --password '...'
+        # the platform owner's admin panel (no sign-up screen)
 """
 
 import argparse
@@ -61,6 +63,10 @@ def main(argv: list[str] | None = None, database_url: str | None = None) -> int:
     lp.add_argument("--hide", action="store_true")
     pk = sub.add_parser("pharmacy-key")
     pk.add_argument("pharmacy_id")
+    ca = sub.add_parser("create-admin")
+    ca.add_argument("--name", required=True)
+    ca.add_argument("--phone", required=True)
+    ca.add_argument("--password", required=True)
     args = parser.parse_args(argv)
 
     settings: Settings = get_settings()
@@ -106,6 +112,26 @@ def main(argv: list[str] | None = None, database_url: str | None = None) -> int:
             )
             session.commit()
             print(ph.id)
+        elif args.cmd == "create-admin":
+            phone = normalize_phone(args.phone)
+            if session.scalar(select(User).where(User.phone == phone)):
+                print("phone already has an account", file=sys.stderr)
+                return 1
+            if len(args.password) < 10:
+                print("password: at least 10 characters", file=sys.stderr)
+                return 1
+            user = User(
+                id=new_id(),
+                pharmacy_id=None,
+                role="admin",
+                name=args.name.strip(),
+                phone=phone,
+                password_hash=hash_password(args.password),
+                active=True,
+            )
+            session.add(user)
+            session.commit()
+            print(user.id)
         elif args.cmd == "list":
             for ph in session.scalars(select(Pharmacy).order_by(Pharmacy.created_at)):
                 print(f"{ph.id}\t{ph.status}\t{ph.name}")

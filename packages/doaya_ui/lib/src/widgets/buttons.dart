@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../theme/doaya_appearance.dart';
 import '../tokens/colors.dart';
 import '../tokens/dimensions.dart';
 import '../tokens/typography.dart';
@@ -9,17 +10,20 @@ import 'painters.dart';
 /// Button sizes shared by the pill buttons.
 enum PillSize {
   /// 38px — inline actions (hero CTA, chat quick replies, chips).
-  small(DoayaSizes.buttonSmall, DoayaSpacing.xxl),
+  small(DoayaSizes.buttonSmall, 18),
 
   /// 48px — POS actions, compact forms.
-  medium(DoayaSizes.buttonMedium, DoayaSpacing.xxxl),
+  medium(DoayaSizes.buttonMedium, 20),
 
   /// 56px — primary screen action.
-  large(DoayaSizes.buttonLarge, DoayaSpacing.huge);
+  large(DoayaSizes.buttonLarge, 24);
 
-  const PillSize(this.height, this.horizontalPadding);
+  const PillSize(this.height, this._padding);
   final double height;
-  final double horizontalPadding;
+  final double _padding;
+
+  /// Side padding, following the user's spacing choice.
+  double get horizontalPadding => _padding * DoayaAppearance.density;
 
   TextStyle get textStyle =>
       this == PillSize.small ? DoayaTypography.buttonSmall : DoayaTypography.button;
@@ -67,7 +71,7 @@ class SagePillButton extends StatelessWidget {
     final spread = iconWidget != null && iconLayout == PillIconLayout.spread;
     final children = <Widget>[
       if (spread) Expanded(child: text) else Flexible(child: text),
-      if (iconWidget != null) ...[if (!spread) const SizedBox(width: DoayaSpacing.m), iconWidget],
+      if (iconWidget != null) ...[if (!spread) SizedBox(width: DoayaSpacing.m), iconWidget],
     ];
 
     final button = Container(
@@ -75,8 +79,12 @@ class SagePillButton extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: radius,
         boxShadow: enabled
-            ? const [
-                BoxShadow(color: DoayaColors.shadowStrong, offset: Offset(0, 8), blurRadius: 20),
+            ? [
+                BoxShadow(
+                  color: DoayaColors.shadowStrong,
+                  offset: const Offset(0, 8),
+                  blurRadius: 20,
+                ),
               ]
             : null,
       ),
@@ -85,7 +93,7 @@ class SagePillButton extends StatelessWidget {
         child: Ink(
           decoration: BoxDecoration(
             borderRadius: radius,
-            gradient: const LinearGradient(
+            gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [DoayaColors.sageTop, DoayaColors.sageBottom],
@@ -174,7 +182,7 @@ class GlassPillButton extends StatelessWidget {
                   children: [
                     if (icon != null) ...[
                       Icon(icon, size: DoayaSizes.iconS, color: color),
-                      const SizedBox(width: DoayaSpacing.sm),
+                      SizedBox(width: DoayaSpacing.sm),
                     ],
                     Flexible(
                       child: Text(
@@ -202,7 +210,7 @@ class RoundIconButton extends StatelessWidget {
     required this.onPressed,
     required this.tooltip,
     this.size = DoayaSizes.roundButton,
-    this.iconColor = DoayaColors.textPrimary,
+    this.iconColor,
     this.tone = SurfaceTone.normal,
   });
 
@@ -212,7 +220,9 @@ class RoundIconButton extends StatelessWidget {
   /// Accessibility label (from ARB).
   final String tooltip;
   final double size;
-  final Color iconColor;
+
+  /// Defaults to the text colour.
+  final Color? iconColor;
   final SurfaceTone tone;
 
   @override
@@ -231,7 +241,11 @@ class RoundIconButton extends StatelessWidget {
             onTap: onPressed,
             customBorder: const CircleBorder(),
             child: Center(
-              child: Icon(icon, size: DoayaSizes.iconS, color: iconColor),
+              child: Icon(
+                icon,
+                size: DoayaSizes.iconS,
+                color: iconColor ?? DoayaColors.textPrimary,
+              ),
             ),
           ),
         ),

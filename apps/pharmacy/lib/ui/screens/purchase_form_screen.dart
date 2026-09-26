@@ -325,11 +325,11 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
               if (isPhoneLayout(context)) ...[
                 // Phone: lines on top, the summary (and save) under them.
                 Expanded(flex: 3, child: _linesPane(l, currency)),
-                const SizedBox(height: DoayaSpacing.l),
+                SizedBox(height: DoayaSpacing.l),
                 Expanded(flex: 2, child: _summary(l, currency)),
               ] else ...[
                 Expanded(child: _linesPane(l, currency)),
-                const SizedBox(width: DoayaSpacing.huge),
+                SizedBox(width: DoayaSpacing.huge),
                 SizedBox(width: DoayaSizes.invoiceWidth, child: _summary(l, currency)),
               ],
             ],
@@ -351,23 +351,23 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
           onChanged: _onSearchChanged,
           onSubmitted: _onSearchSubmitted,
         ),
-        const SizedBox(height: DoayaSpacing.sm),
+        SizedBox(height: DoayaSpacing.sm),
         Expanded(
           child: ListView(
             children: [
               for (final p in _results.take(6))
                 Padding(
-                  padding: const EdgeInsets.only(bottom: DoayaSpacing.s),
+                  padding: EdgeInsets.only(bottom: DoayaSpacing.s),
                   child: GlassSurface(
                     shadow: false,
                     borderRadius: BorderRadius.circular(DoayaRadii.tile),
-                    padding: const EdgeInsets.all(DoayaSpacing.ml),
+                    padding: EdgeInsets.all(DoayaSpacing.ml),
                     child: Row(
                       children: [
                         Expanded(child: ProductName(product: p)),
                         if (p.unitsPerPack > 1) ...[
                           GlassPillButton(label: l.addStrip, onPressed: () => _add(p, strip: true)),
-                          const SizedBox(width: DoayaSpacing.s),
+                          SizedBox(width: DoayaSpacing.s),
                         ],
                         SagePillButton(
                           label: p.unitsPerPack > 1 ? l.addBox : l.add,
@@ -378,7 +378,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
                     ),
                   ),
                 ),
-              if (_results.isNotEmpty) const SizedBox(height: DoayaSpacing.l),
+              if (_results.isNotEmpty) SizedBox(height: DoayaSpacing.l),
               for (final line in _lines) _lineCard(l, currency, line),
               if (_lines.isEmpty && _results.isEmpty) EmptyHint(l.errPurchaseEmpty),
             ],
@@ -412,11 +412,11 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
     );
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
+      padding: EdgeInsets.only(bottom: DoayaSpacing.sm),
       child: GlassSurface(
         shadow: false,
         borderRadius: BorderRadius.circular(DoayaRadii.tile),
-        padding: const EdgeInsets.all(DoayaSpacing.ml),
+        padding: EdgeInsets.all(DoayaSpacing.ml),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -435,7 +435,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
                               style: DoayaTypography.label,
                             ),
                           ),
-                          const SizedBox(width: DoayaSpacing.sm),
+                          SizedBox(width: DoayaSpacing.sm),
                           StatusChip(label: line.strip ? l.unitStrip : l.unitBox),
                         ],
                       ),
@@ -447,7 +447,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
                   item == null ? '' : formatMoney(item.netMinor, currency),
                   style: DoayaTypography.label,
                 ),
-                const SizedBox(width: DoayaSpacing.sm),
+                SizedBox(width: DoayaSpacing.sm),
                 RoundIconButton(
                   icon: DoayaIcons.delete,
                   tooltip: l.close,
@@ -456,7 +456,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: DoayaSpacing.sm),
+            SizedBox(height: DoayaSpacing.sm),
             ...() {
               final fields = [
                 field(l.colQty, line.qty, focus: line.qtyFocus, decimal: false),
@@ -476,11 +476,11 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
               final perRow = isPhoneLayout(context) ? 3 : fields.length;
               return [
                 for (var i = 0; i < fields.length; i += perRow) ...[
-                  if (i > 0) const SizedBox(height: DoayaSpacing.sm),
+                  if (i > 0) SizedBox(height: DoayaSpacing.sm),
                   Row(
                     children: [
                       for (final (j, f) in fields.skip(i).take(perRow).indexed) ...[
-                        if (j > 0) const SizedBox(width: DoayaSpacing.s),
+                        if (j > 0) SizedBox(width: DoayaSpacing.s),
                         f,
                       ],
                     ],
@@ -504,7 +504,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
     final secondary = DoayaTypography.bodySmall.copyWith(color: DoayaColors.textSecondary);
 
     Widget amount(String label, int minor, {bool signed = false, bool strong = false}) => Padding(
-      padding: const EdgeInsets.only(bottom: DoayaSpacing.xs),
+      padding: EdgeInsets.only(bottom: DoayaSpacing.xs),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.baseline,
         textBaseline: TextBaseline.alphabetic,
@@ -521,7 +521,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
     return GlassSurface(
       tone: SurfaceTone.strong,
       borderRadius: BorderRadius.circular(DoayaRadii.hero),
-      padding: const EdgeInsets.all(DoayaSpacing.xxl),
+      padding: EdgeInsets.all(DoayaSpacing.xxl),
       child: ListView(
         children: [
           GlassPillButton(
@@ -535,13 +535,13 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
               if (s != null) setState(() => _supplier = s);
             },
           ),
-          const SizedBox(height: DoayaSpacing.l),
+          SizedBox(height: DoayaSpacing.l),
           GlassTextField(
             label: '${l.supplierInvoiceNoLabel} (${l.optional})',
             controller: _invoiceNo,
             textDirection: TextDirection.ltr,
           ),
-          const SizedBox(height: DoayaSpacing.l),
+          SizedBox(height: DoayaSpacing.l),
           Row(
             children: [
               Expanded(
@@ -552,7 +552,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
                   onChanged: (_) => setState(() {}),
                 ),
               ),
-              const SizedBox(width: DoayaSpacing.sm),
+              SizedBox(width: DoayaSpacing.sm),
               Expanded(
                 child: GlassTextField(
                   label: l.transportLabel,
@@ -563,14 +563,14 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
               ),
             ],
           ),
-          const SizedBox(height: DoayaSpacing.l),
+          SizedBox(height: DoayaSpacing.l),
           amount(l.gross, gross),
           if (lineDiscounts > 0) amount(l.lineDiscounts, -lineDiscounts, signed: true),
           if (discount > 0) amount(l.invoiceDiscountLabel, -discount, signed: true),
           if (transport > 0) amount(l.transportLabel, transport, signed: true),
-          const SizedBox(height: DoayaSpacing.xs),
+          SizedBox(height: DoayaSpacing.xs),
           amount(l.purchaseTotal, total, strong: true),
-          const SizedBox(height: DoayaSpacing.l),
+          SizedBox(height: DoayaSpacing.l),
           Row(
             children: [
               Expanded(
@@ -582,7 +582,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
                   onPressed: () => setState(() => _payment = PurchasePayment.credit),
                 ),
               ),
-              const SizedBox(width: DoayaSpacing.sm),
+              SizedBox(width: DoayaSpacing.sm),
               Expanded(
                 child: GlassPillButton(
                   label: l.payCash,
@@ -595,9 +595,9 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
             ],
           ),
           if (_payment == PurchasePayment.cash) ...[
-            const SizedBox(height: DoayaSpacing.ml),
+            SizedBox(height: DoayaSpacing.ml),
             Text(l.paidFromLabel, style: secondary),
-            const SizedBox(height: DoayaSpacing.s),
+            SizedBox(height: DoayaSpacing.s),
             Row(
               children: [
                 Expanded(
@@ -608,7 +608,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
                     onPressed: () => setState(() => _paidFrom = PaidFrom.drawer),
                   ),
                 ),
-                const SizedBox(width: DoayaSpacing.sm),
+                SizedBox(width: DoayaSpacing.sm),
                 Expanded(
                   child: GlassPillButton(
                     label: l.fromOutside,
@@ -620,7 +620,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
               ],
             ),
           ],
-          const SizedBox(height: DoayaSpacing.xl),
+          SizedBox(height: DoayaSpacing.xl),
           SagePillButton(
             label: '${l.savePurchase} (F9)',
             expand: true,

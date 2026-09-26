@@ -12,6 +12,7 @@ import '../../l10n/app_localizations.dart';
 import '../../providers.dart';
 import '../../router.dart';
 import '../format.dart';
+import '../patient_file_panel.dart';
 import '../patient_photo.dart';
 import '../widgets.dart';
 import 'patient_orders_view.dart';
@@ -123,7 +124,7 @@ class _CasesScreenState extends ConsumerState<CasesScreen> {
     return ListView(
       children: [
         PageHeader(title: l.casesTitle, actions: [tabs]),
-        if (notice != null) ...[notice, const SizedBox(height: DoayaSpacing.l)],
+        if (notice != null) ...[notice, SizedBox(height: DoayaSpacing.l)],
         if (phone)
           list
         else
@@ -131,7 +132,7 @@ class _CasesScreenState extends ConsumerState<CasesScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(width: DoayaSizes.listPaneWidth, child: list),
-              const SizedBox(width: DoayaSpacing.xl),
+              SizedBox(width: DoayaSpacing.xl),
               Expanded(child: detail),
             ],
           ),
@@ -146,13 +147,14 @@ class _CasesScreenState extends ConsumerState<CasesScreen> {
         children: [
           for (final c in inbox.cases)
             Padding(
-              padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
+              padding: EdgeInsets.only(bottom: DoayaSpacing.sm),
               child: CaseRow(
                 initials: initialsOf(c.patient.name),
                 title: c.title.isEmpty ? c.patient.name : c.title,
                 subtitle: [
                   c.patient.name,
                   if (c.urgent && c.redFlag != null) l.redFlag(c.redFlag!),
+                  if (c.doctorAdvice != null) l.doctorAdvised,
                   if (c.sentAt != null) '${formatDate(c.sentAt!)}، ${formatTime(c.sentAt!)}',
                 ].join('، '),
                 urgent: c.urgent && c.open,
@@ -177,7 +179,7 @@ class _CasesScreenState extends ConsumerState<CasesScreen> {
         children: [
           for (final o in inbox.orders)
             Padding(
-              padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
+              padding: EdgeInsets.only(bottom: DoayaSpacing.sm),
               child: CaseRow(
                 initials: initialsOf(o.patient.name),
                 title: o.patient.name,
@@ -235,7 +237,7 @@ class CaseDetailView extends ConsumerWidget {
       return Panel(
         child: async.hasError
             ? EmptyHint(syncErrorText(l, async.error!))
-            : const Center(child: CircularProgressIndicator(color: DoayaColors.accent)),
+            : Center(child: CircularProgressIndicator(color: DoayaColors.accent)),
       );
     }
     final secondary = DoayaTypography.bodySmall.copyWith(color: DoayaColors.textSecondary);
@@ -260,8 +262,12 @@ class CaseDetailView extends ConsumerWidget {
                 ].where((s) => s.isNotEmpty).join('، '),
                 style: secondary,
               ),
+              if (c.doctorAdvice != null && !c.urgent) ...[
+                SizedBox(height: DoayaSpacing.sm),
+                NoticeBanner(message: l.doctorAdvisedHelp, icon: DoayaIcons.warning),
+              ],
               if (c.urgent) ...[
-                const SizedBox(height: DoayaSpacing.sm),
+                SizedBox(height: DoayaSpacing.sm),
                 NoticeBanner(
                   message:
                       '${l.urgentCase}: ${l.redFlag(c.redFlag ?? 'other')}. '
@@ -273,11 +279,15 @@ class CaseDetailView extends ConsumerWidget {
             ],
           ),
         ),
-        const SizedBox(height: DoayaSpacing.l),
+        if (c.patient.hasFile) ...[
+          SizedBox(height: DoayaSpacing.l),
+          PatientFilePanel(patient: c.patient),
+        ],
+        SizedBox(height: DoayaSpacing.l),
         _SummaryPanel(detail: c),
-        const SizedBox(height: DoayaSpacing.l),
+        SizedBox(height: DoayaSpacing.l),
         _Conversation(detail: c),
-        const SizedBox(height: DoayaSpacing.l),
+        SizedBox(height: DoayaSpacing.l),
         _CustomerHistory(phone: c.patient.phone),
       ],
     );
@@ -287,7 +297,7 @@ class CaseDetailView extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           info,
-          const SizedBox(height: DoayaSpacing.l),
+          SizedBox(height: DoayaSpacing.l),
           decision,
         ],
       );
@@ -296,7 +306,7 @@ class CaseDetailView extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(child: info),
-        const SizedBox(width: DoayaSpacing.xl),
+        SizedBox(width: DoayaSpacing.xl),
         Expanded(child: decision),
       ],
     );
@@ -325,7 +335,7 @@ Future<void> _correct(
             l.correctionHelp,
             style: DoayaTypography.bodySmall.copyWith(color: DoayaColors.textSecondary),
           ),
-          const SizedBox(height: DoayaSpacing.l),
+          SizedBox(height: DoayaSpacing.l),
           GlassTextField(
             label: l.correctionTitle,
             controller: text,
@@ -371,7 +381,7 @@ class _SummaryPanel extends ConsumerWidget {
     Widget row(String label, String? value) => value == null || value.isEmpty
         ? const SizedBox.shrink()
         : Padding(
-            padding: const EdgeInsets.only(bottom: DoayaSpacing.xs),
+            padding: EdgeInsets.only(bottom: DoayaSpacing.xs),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -407,7 +417,7 @@ class _SummaryPanel extends ConsumerWidget {
                 row(l.sumConditions, s.conditions),
                 row(l.sumNotes, s.notes),
                 if (s.deniedRedFlags.isNotEmpty) ...[
-                  const SizedBox(height: DoayaSpacing.xs),
+                  SizedBox(height: DoayaSpacing.xs),
                   StatusChip(
                     label: l.sumDenied(s.deniedRedFlags.join('، ')),
                     tone: StatusTone.accent,
@@ -436,7 +446,7 @@ class _Conversation extends ConsumerWidget {
         children: [
           for (final m in detail.messages)
             Padding(
-              padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
+              padding: EdgeInsets.only(bottom: DoayaSpacing.sm),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -451,9 +461,9 @@ class _Conversation extends ConsumerWidget {
                           _ => l.roleSystem,
                         }, style: caption),
                         if (m.photoId case final photo?) ...[
-                          const SizedBox(height: DoayaSpacing.xs),
+                          SizedBox(height: DoayaSpacing.xs),
                           PatientPhoto(id: photo),
-                          const SizedBox(height: DoayaSpacing.xs),
+                          SizedBox(height: DoayaSpacing.xs),
                         ],
                         Text(
                           m.text,
@@ -511,7 +521,7 @@ class _CustomerHistory extends ConsumerWidget {
               style: DoayaTypography.bodySmall.copyWith(color: DoayaColors.warningText),
             ),
           if (sales.isNotEmpty) ...[
-            const SizedBox(height: DoayaSpacing.sm),
+            SizedBox(height: DoayaSpacing.sm),
             Text(l.lastPurchases, style: secondary),
             for (final s in sales)
               Text(
@@ -603,7 +613,7 @@ class _DecisionPanelState extends ConsumerState<_DecisionPanel> {
                 help,
                 style: DoayaTypography.bodySmall.copyWith(color: DoayaColors.textSecondary),
               ),
-              const SizedBox(height: DoayaSpacing.l),
+              SizedBox(height: DoayaSpacing.l),
             ],
             GlassTextField(
               label: title,
@@ -683,7 +693,7 @@ class _DecisionPanelState extends ConsumerState<_DecisionPanel> {
           children: [
             for (final i in items)
               Padding(
-                padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
+                padding: EdgeInsets.only(bottom: DoayaSpacing.sm),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -695,7 +705,7 @@ class _DecisionPanelState extends ConsumerState<_DecisionPanel> {
                   ],
                 ),
               ),
-            const SizedBox(height: DoayaSpacing.sm),
+            SizedBox(height: DoayaSpacing.sm),
             SagePillButton(
               label: l.pickupAndSell,
               icon: DoayaIcons.pos,
@@ -715,11 +725,8 @@ class _DecisionPanelState extends ConsumerState<_DecisionPanel> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(l.decisionHelp, style: secondary),
-          const SizedBox(height: DoayaSpacing.l),
-          for (final i in _items) ...[
-            _itemEditor(l, i, stock),
-            const SizedBox(height: DoayaSpacing.l),
-          ],
+          SizedBox(height: DoayaSpacing.l),
+          for (final i in _items) ...[_itemEditor(l, i, stock), SizedBox(height: DoayaSpacing.l)],
           GlassTextField(
             label: l.addMedicine,
             hint: l.searchStock,
@@ -750,9 +757,9 @@ class _DecisionPanelState extends ConsumerState<_DecisionPanel> {
                 }),
               ),
             ),
-          const SizedBox(height: DoayaSpacing.l),
+          SizedBox(height: DoayaSpacing.l),
           GlassTextField(label: l.decisionNote, controller: _note, maxLines: 2),
-          const SizedBox(height: DoayaSpacing.l),
+          SizedBox(height: DoayaSpacing.l),
           SagePillButton(
             label: l.markReady,
             icon: DoayaIcons.check,
@@ -760,7 +767,7 @@ class _DecisionPanelState extends ConsumerState<_DecisionPanel> {
             expand: true,
             onPressed: _busy || _items.isEmpty ? null : _ready,
           ),
-          const SizedBox(height: DoayaSpacing.sm),
+          SizedBox(height: DoayaSpacing.sm),
           Wrap(
             spacing: DoayaSpacing.sm,
             runSpacing: DoayaSpacing.sm,
@@ -834,9 +841,9 @@ class _DecisionPanelState extends ConsumerState<_DecisionPanel> {
             ),
           ],
         ),
-        const SizedBox(height: DoayaSpacing.sm),
+        SizedBox(height: DoayaSpacing.sm),
         GlassTextField(label: l.instructionsLabel, controller: i.instructions, maxLines: 2),
-        const SizedBox(height: DoayaSpacing.sm),
+        SizedBox(height: DoayaSpacing.sm),
         Row(
           children: [
             Expanded(
@@ -846,7 +853,7 @@ class _DecisionPanelState extends ConsumerState<_DecisionPanel> {
                 keyboardType: TextInputType.number,
               ),
             ),
-            const SizedBox(width: DoayaSpacing.sm),
+            SizedBox(width: DoayaSpacing.sm),
             Expanded(
               child: GlassTextField(
                 label: l.daysLabel,

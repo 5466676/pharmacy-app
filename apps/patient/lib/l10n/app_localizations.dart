@@ -1123,6 +1123,546 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'سكّر'**
   String get close;
+
+  /// No description provided for @lookTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'المظهر'**
+  String get lookTitle;
+
+  /// No description provided for @lookSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'ألوان ونمط التطبيق على هالجهاز'**
+  String get lookSubtitle;
+
+  /// No description provided for @lookStyle.
+  ///
+  /// In ar, this message translates to:
+  /// **'النمط'**
+  String get lookStyle;
+
+  /// No description provided for @lookStyleGlass.
+  ///
+  /// In ar, this message translates to:
+  /// **'زجاجي'**
+  String get lookStyleGlass;
+
+  /// No description provided for @lookStyleFlat.
+  ///
+  /// In ar, this message translates to:
+  /// **'مسطّح'**
+  String get lookStyleFlat;
+
+  /// No description provided for @lookStyleSoft.
+  ///
+  /// In ar, this message translates to:
+  /// **'ناعم'**
+  String get lookStyleSoft;
+
+  /// No description provided for @lookStyleOutline.
+  ///
+  /// In ar, this message translates to:
+  /// **'خطوط'**
+  String get lookStyleOutline;
+
+  /// No description provided for @lookStyleContrast.
+  ///
+  /// In ar, this message translates to:
+  /// **'تباين عالي'**
+  String get lookStyleContrast;
+
+  /// No description provided for @lookNoteGlass.
+  ///
+  /// In ar, this message translates to:
+  /// **'شفاف ومغبّش'**
+  String get lookNoteGlass;
+
+  /// No description provided for @lookNoteFlat.
+  ///
+  /// In ar, this message translates to:
+  /// **'ألوان صافية بدون ظلال'**
+  String get lookNoteFlat;
+
+  /// No description provided for @lookNoteSoft.
+  ///
+  /// In ar, this message translates to:
+  /// **'حواف دايرية وظلال خفيفة'**
+  String get lookNoteSoft;
+
+  /// No description provided for @lookNoteOutline.
+  ///
+  /// In ar, this message translates to:
+  /// **'بسيط، إطارات رفيعة'**
+  String get lookNoteOutline;
+
+  /// No description provided for @lookNoteContrast.
+  ///
+  /// In ar, this message translates to:
+  /// **'للنظر الضعيف والشمس'**
+  String get lookNoteContrast;
+
+  /// No description provided for @lookMode.
+  ///
+  /// In ar, this message translates to:
+  /// **'الوضع'**
+  String get lookMode;
+
+  /// No description provided for @lookModeDark.
+  ///
+  /// In ar, this message translates to:
+  /// **'ليلي'**
+  String get lookModeDark;
+
+  /// No description provided for @lookModeLight.
+  ///
+  /// In ar, this message translates to:
+  /// **'نهاري'**
+  String get lookModeLight;
+
+  /// No description provided for @lookModeBlack.
+  ///
+  /// In ar, this message translates to:
+  /// **'أسود كامل'**
+  String get lookModeBlack;
+
+  /// No description provided for @lookModeAuto.
+  ///
+  /// In ar, this message translates to:
+  /// **'تلقائي'**
+  String get lookModeAuto;
+
+  /// No description provided for @lookColors.
+  ///
+  /// In ar, this message translates to:
+  /// **'الألوان'**
+  String get lookColors;
+
+  /// No description provided for @lookPaletteGreen.
+  ///
+  /// In ar, this message translates to:
+  /// **'أخضر دوايا'**
+  String get lookPaletteGreen;
+
+  /// No description provided for @lookPaletteNavy.
+  ///
+  /// In ar, this message translates to:
+  /// **'كحلي'**
+  String get lookPaletteNavy;
+
+  /// No description provided for @lookPaletteWine.
+  ///
+  /// In ar, this message translates to:
+  /// **'خمري'**
+  String get lookPaletteWine;
+
+  /// No description provided for @lookPaletteViolet.
+  ///
+  /// In ar, this message translates to:
+  /// **'بنفسجي'**
+  String get lookPaletteViolet;
+
+  /// No description provided for @lookPaletteSky.
+  ///
+  /// In ar, this message translates to:
+  /// **'سماوي'**
+  String get lookPaletteSky;
+
+  /// No description provided for @lookPaletteRose.
+  ///
+  /// In ar, this message translates to:
+  /// **'زهري'**
+  String get lookPaletteRose;
+
+  /// No description provided for @lookPaletteAmber.
+  ///
+  /// In ar, this message translates to:
+  /// **'عنبري'**
+  String get lookPaletteAmber;
+
+  /// No description provided for @lookPaletteOlive.
+  ///
+  /// In ar, this message translates to:
+  /// **'زيتي'**
+  String get lookPaletteOlive;
+
+  /// No description provided for @lookPaletteMint.
+  ///
+  /// In ar, this message translates to:
+  /// **'نعناعي'**
+  String get lookPaletteMint;
+
+  /// No description provided for @lookPaletteSand.
+  ///
+  /// In ar, this message translates to:
+  /// **'رملي'**
+  String get lookPaletteSand;
+
+  /// No description provided for @lookPaletteChar.
+  ///
+  /// In ar, this message translates to:
+  /// **'فحمي'**
+  String get lookPaletteChar;
+
+  /// No description provided for @lookCustom.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصميمي'**
+  String get lookCustom;
+
+  /// No description provided for @lookMain.
+  ///
+  /// In ar, this message translates to:
+  /// **'اللون الأساسي'**
+  String get lookMain;
+
+  /// No description provided for @lookBackground.
+  ///
+  /// In ar, this message translates to:
+  /// **'لون الخلفية'**
+  String get lookBackground;
+
+  /// No description provided for @lookHue.
+  ///
+  /// In ar, this message translates to:
+  /// **'اللون'**
+  String get lookHue;
+
+  /// No description provided for @lookLightness.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفتاحة'**
+  String get lookLightness;
+
+  /// No description provided for @lookDetails.
+  ///
+  /// In ar, this message translates to:
+  /// **'التفاصيل'**
+  String get lookDetails;
+
+  /// No description provided for @lookCorners.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحواف'**
+  String get lookCorners;
+
+  /// No description provided for @lookBlur.
+  ///
+  /// In ar, this message translates to:
+  /// **'التغبيش'**
+  String get lookBlur;
+
+  /// No description provided for @lookTextSize.
+  ///
+  /// In ar, this message translates to:
+  /// **'حجم الخط'**
+  String get lookTextSize;
+
+  /// No description provided for @lookSizeSmall.
+  ///
+  /// In ar, this message translates to:
+  /// **'صغير'**
+  String get lookSizeSmall;
+
+  /// No description provided for @lookSizeNormal.
+  ///
+  /// In ar, this message translates to:
+  /// **'عادي'**
+  String get lookSizeNormal;
+
+  /// No description provided for @lookSizeLarge.
+  ///
+  /// In ar, this message translates to:
+  /// **'كبير'**
+  String get lookSizeLarge;
+
+  /// No description provided for @lookSizeXLarge.
+  ///
+  /// In ar, this message translates to:
+  /// **'كبير جداً'**
+  String get lookSizeXLarge;
+
+  /// No description provided for @lookSpacing.
+  ///
+  /// In ar, this message translates to:
+  /// **'المسافات'**
+  String get lookSpacing;
+
+  /// No description provided for @lookSpacingComfy.
+  ///
+  /// In ar, this message translates to:
+  /// **'مريحة'**
+  String get lookSpacingComfy;
+
+  /// No description provided for @lookSpacingCompact.
+  ///
+  /// In ar, this message translates to:
+  /// **'مضغوطة'**
+  String get lookSpacingCompact;
+
+  /// No description provided for @lookHeadingFont.
+  ///
+  /// In ar, this message translates to:
+  /// **'خط العناوين'**
+  String get lookHeadingFont;
+
+  /// No description provided for @lookFontAmiri.
+  ///
+  /// In ar, this message translates to:
+  /// **'مزخرف'**
+  String get lookFontAmiri;
+
+  /// No description provided for @lookFontPlain.
+  ///
+  /// In ar, this message translates to:
+  /// **'بسيط'**
+  String get lookFontPlain;
+
+  /// No description provided for @lookReadability.
+  ///
+  /// In ar, this message translates to:
+  /// **'وضوح القراءة'**
+  String get lookReadability;
+
+  /// No description provided for @lookReadable.
+  ///
+  /// In ar, this message translates to:
+  /// **'أي لون بيصعّب القراءة بيتعدّل لحاله. الأحمر للخطر والأصفر للتحذير ما بيتغيّروا.'**
+  String get lookReadable;
+
+  /// No description provided for @lookAdjusted.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتعدّل ليضل واضح'**
+  String get lookAdjusted;
+
+  /// No description provided for @lookSample.
+  ///
+  /// In ar, this message translates to:
+  /// **'هيك بيطلع'**
+  String get lookSample;
+
+  /// No description provided for @lookSampleButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'زر'**
+  String get lookSampleButton;
+
+  /// No description provided for @lookSampleWarning.
+  ///
+  /// In ar, this message translates to:
+  /// **'هيك بيطلع التحذير.'**
+  String get lookSampleWarning;
+
+  /// No description provided for @lookSampleDanger.
+  ///
+  /// In ar, this message translates to:
+  /// **'وهيك بتطلع الحالة المستعجلة.'**
+  String get lookSampleDanger;
+
+  /// No description provided for @lookReset.
+  ///
+  /// In ar, this message translates to:
+  /// **'رجّع للأصل'**
+  String get lookReset;
+
+  /// No description provided for @fileConsent.
+  ///
+  /// In ar, this message translates to:
+  /// **'بوافق إنو ينعمل إلي ملف صحي: بينحفظ عند دوايا، وبيشوفه صيدلي صيدليتي. فيني امسحه أي وقت.'**
+  String get fileConsent;
+
+  /// No description provided for @fileTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملفي الصحي'**
+  String get fileTitle;
+
+  /// No description provided for @fileIntro.
+  ///
+  /// In ar, this message translates to:
+  /// **'هون حساسياتك وأمراضك والأدوية يلي عم تاخدها وكل استشاراتك. المساعد بيعرفها فما بيسألك عنها كل مرة، والصيدلي بيشوفها قبل ما يقرر.'**
+  String get fileIntro;
+
+  /// No description provided for @fileNoConsent.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما عندك ملف صحي لسا. إذا فعّلته، بينحفظ عند دوايا وبيشوفه صيدلي صيدليتك بس، وفيك تمسحه أي وقت.'**
+  String get fileNoConsent;
+
+  /// No description provided for @fileEnable.
+  ///
+  /// In ar, this message translates to:
+  /// **'فعّل ملفي الصحي'**
+  String get fileEnable;
+
+  /// No description provided for @fileConfirmMine.
+  ///
+  /// In ar, this message translates to:
+  /// **'بدها تأكيدك'**
+  String get fileConfirmMine;
+
+  /// No description provided for @fileConfirmPharmacist.
+  ///
+  /// In ar, this message translates to:
+  /// **'ناطرة تأكيد الصيدلي'**
+  String get fileConfirmPharmacist;
+
+  /// No description provided for @fileProposalHelp.
+  ///
+  /// In ar, this message translates to:
+  /// **'هالشي فهمناه من محادثتك. صحيح؟'**
+  String get fileProposalHelp;
+
+  /// No description provided for @yes.
+  ///
+  /// In ar, this message translates to:
+  /// **'صح'**
+  String get yes;
+
+  /// No description provided for @no.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا، مو صح'**
+  String get no;
+
+  /// No description provided for @fileNow.
+  ///
+  /// In ar, this message translates to:
+  /// **'هلق'**
+  String get fileNow;
+
+  /// No description provided for @filePast.
+  ///
+  /// In ar, this message translates to:
+  /// **'قديم'**
+  String get filePast;
+
+  /// No description provided for @fileHistory.
+  ///
+  /// In ar, this message translates to:
+  /// **'استشاراتي'**
+  String get fileHistory;
+
+  /// No description provided for @fileEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما في شي بملفك لسا.'**
+  String get fileEmpty;
+
+  /// No description provided for @kindAllergy.
+  ///
+  /// In ar, this message translates to:
+  /// **'حساسية'**
+  String get kindAllergy;
+
+  /// No description provided for @kindCondition.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرض مزمن'**
+  String get kindCondition;
+
+  /// No description provided for @kindMedication.
+  ///
+  /// In ar, this message translates to:
+  /// **'دوا عم آخده'**
+  String get kindMedication;
+
+  /// No description provided for @kindPregnancy.
+  ///
+  /// In ar, this message translates to:
+  /// **'حمل أو رضاعة'**
+  String get kindPregnancy;
+
+  /// No description provided for @kindWeight.
+  ///
+  /// In ar, this message translates to:
+  /// **'الوزن'**
+  String get kindWeight;
+
+  /// No description provided for @kindNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملاحظة'**
+  String get kindNote;
+
+  /// No description provided for @factByPharmacist.
+  ///
+  /// In ar, this message translates to:
+  /// **'أكّده الصيدلي'**
+  String get factByPharmacist;
+
+  /// No description provided for @factByMe.
+  ///
+  /// In ar, this message translates to:
+  /// **'من عندي'**
+  String get factByMe;
+
+  /// No description provided for @factUntil.
+  ///
+  /// In ar, this message translates to:
+  /// **'لحد {date}'**
+  String factUntil(String date);
+
+  /// No description provided for @factEnd.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما عاد صحيح'**
+  String get factEnd;
+
+  /// No description provided for @addFact.
+  ///
+  /// In ar, this message translates to:
+  /// **'ضيف لملفي'**
+  String get addFact;
+
+  /// No description provided for @factText.
+  ///
+  /// In ar, this message translates to:
+  /// **'شو بالضبط؟'**
+  String get factText;
+
+  /// No description provided for @fileExport.
+  ///
+  /// In ar, this message translates to:
+  /// **'خد نسخة'**
+  String get fileExport;
+
+  /// No description provided for @fileExported.
+  ///
+  /// In ar, this message translates to:
+  /// **'انتسخ ملفك (JSON). فيك تلصقه وين ما بدك.'**
+  String get fileExported;
+
+  /// No description provided for @fileDelete.
+  ///
+  /// In ar, this message translates to:
+  /// **'امسح ملفي'**
+  String get fileDelete;
+
+  /// No description provided for @fileDeleteConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'أكيد؟ رح ينمسح ملفك الصحي كله. استشاراتك بتضل عند الصيدلية كسجلات إلها.'**
+  String get fileDeleteConfirm;
+
+  /// No description provided for @fileDeleted.
+  ///
+  /// In ar, this message translates to:
+  /// **'انمسح ملفك الصحي.'**
+  String get fileDeleted;
+
+  /// No description provided for @doctorAdvisedShort.
+  ///
+  /// In ar, this message translates to:
+  /// **'انصح بطبيب'**
+  String get doctorAdvisedShort;
+
+  /// No description provided for @urgentShort.
+  ///
+  /// In ar, this message translates to:
+  /// **'مستعجلة'**
+  String get urgentShort;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -2,6 +2,9 @@
 library;
 
 export 'src/format/numbers.dart';
+export 'src/theme/doaya_appearance.dart';
+export 'src/theme/doaya_look.dart';
+export 'src/theme/doaya_look_scope.dart';
 export 'src/theme/doaya_theme.dart';
 export 'src/theme/doaya_tokens.dart';
 export 'src/tokens/colors.dart';
@@ -16,5 +19,6 @@ export 'src/widgets/doaya_logo.dart';
 export 'src/widgets/glass_surface.dart';
 export 'src/widgets/inputs.dart';
 export 'src/widgets/latin_text.dart';
+export 'src/widgets/look_editor.dart';
 export 'src/widgets/navigation.dart';
 export 'src/widgets/status.dart';
