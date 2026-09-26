@@ -1017,7 +1017,7 @@ The owner asked for the AI model to be managed from his panel: its state and its
 - No spoken summary.
 - **Kept**: the text and the summary, always. The voice is deleted after 3 months (proposed, not objected to).
 
-## Phase 5 (proposal) — The patient's health file («ملف المريض») · 📝 waiting for the owner's answers (asked 2026-09-26)
+## Phase 5 — The patient's health file («ملف المريض») · ▶ approved 2026-09-26
 
 The owner wants one file per patient, kept up to date as their health changes, available on the central system, to the patient and to the pharmacist.
 
@@ -1046,4 +1046,23 @@ The owner wants one file per patient, kept up to date as their health changes, a
 2. **When the patient moves to another pharmacy**: the new one sees the file (proposal: yes, the patient chose it). The old one keeps only its own past cases.
 3. **Consent**: at sign-up the patient agrees to the file («ملفك الصحي بينحفظ وبيشوفه صيدلي صيدليتك بس»), and can delete it any time.
 4. **Order**: the file first (the voice and the photos then feed into it), or the voice first?
+
+### Owner's answers (2026-09-26)
+1. **The owner sees everything**, patient files by name included. Every time a file is opened from the panel it is still logged (who, when): the data is medical.
+   - The anonymous review queue stays as it is: its purpose is judging the assistant, not people.
+2. A new pharmacy the patient chooses sees the file; the old one keeps only its own past cases.
+3. Consent at sign-up. The text says the file is kept by Doaya and seen by the patient's pharmacy; the patient can delete it any time.
+4. Order: the file first (this phase), then voice and photos (Phase 6).
+   - Libraries approved: `record` (patient app) and `audioplayers` (pharmacy app; chosen because it plays on Windows, Linux and the web).
+
+### Steps (tests first; a commit after each; stop for review at the end)
+1. **Server**:
+   - facts, proposed updates, change log, admin access log, consent
+   - the patient's / pharmacy's / admin's endpoints
+   - proposals made from each summary
+   - the assistant reads the file
+2. **Patient app**: «ملفي الصحي» (facts, confirmations, history, export, delete), and consent at sign-up.
+3. **Pharmacy app**: the file beside each case and order: confirm proposals, add a fact.
+4. **Admin panel**: «المرضى» (search by name or phone; the file; access logged).
+5. Real run, screenshots, docs → review.
 
