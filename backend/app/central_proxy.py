@@ -48,8 +48,9 @@ def restart_publisher(app) -> None:
         state.shelf_publisher = None
     s = state.settings
     if state.runs_publisher and s.central_url and s.central_key:
+        backups = lambda: state.backups.last_error if getattr(state, "backups", None) else None  # noqa: E731
         state.shelf_publisher = ShelfPublisher(
-            s, state.db.sessions, every=s.shelf_publish_minutes * 60
+            s, state.db.sessions, every=s.shelf_publish_minutes * 60, backup_error=backups
         ).start()
 
 

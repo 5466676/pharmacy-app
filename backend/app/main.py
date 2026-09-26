@@ -12,6 +12,7 @@ from . import (
     admin,
     central_proxy,
     consultations,
+    control,
     directory,
     orders,
     patients,
@@ -98,6 +99,7 @@ def create_app(
         )
     app.include_router(accounts.router)
     app.include_router(admin.router)
+    app.include_router(control.router)
     app.include_router(sync.router)
     app.include_router(patients.router)
     app.include_router(directory.router)
