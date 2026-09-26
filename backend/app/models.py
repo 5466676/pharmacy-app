@@ -15,6 +15,7 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     Index,
+    Integer,
     Sequence,
     String,
     UniqueConstraint,
@@ -213,6 +214,8 @@ class ConsultMessage(Base):
     quick_replies: Mapped[list | None] = mapped_column(JSONB)
     # The pharmacist's name for pharmacist messages.
     author: Mapped[str | None] = mapped_column(String(200))
+    # A photo the patient sent (a prescription, a box).
+    photo_id: Mapped[str | None] = mapped_column(ForeignKey("photos.id"))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
@@ -249,5 +252,25 @@ class PatientOrder(Base):
     note: Mapped[str | None] = mapped_column(String(1000))
     pharmacist_note: Mapped[str | None] = mapped_column(String(1000))
     handled_by: Mapped[str | None] = mapped_column(String(200))
+    # A prescription photo sent with the order.
+    photo_id: Mapped[str | None] = mapped_column(ForeignKey("photos.id"))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class Photo(Base):
+    """A photo a patient sent (a prescription, a medicine box). The file
+    lives in `<data_dir>/photos/<id>`; only its patient and the pharmacy it
+    was sent to can open it."""
+
+    __tablename__ = "photos"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    patient_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    pharmacy_id: Mapped[str] = mapped_column(ForeignKey("pharmacies.id"))
+    content_type: Mapped[str] = mapped_column(String(20))
+    size: Mapped[int] = mapped_column(Integer)
+    # Where it was sent: a consultation, or an order (set when attached).
+    consultation_id: Mapped[str | None] = mapped_column(ForeignKey("consultations.id"))
+    order_id: Mapped[str | None] = mapped_column(String(36))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
