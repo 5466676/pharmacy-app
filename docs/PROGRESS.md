@@ -977,3 +977,32 @@ The owner asked for the AI model to be managed from his panel: its state and its
 - Screenshots: `docs/screenshots/phase4/10-14`.
 - Tests: server 255, admin 12, pharmacy 108.
 
+
+## Phase 4c — A model for each kind of message (photos, prescriptions, voice) · 📝 proposal, waiting for the owner's OK (asked 2026-09-26)
+
+**Today:**
+- One text model does everything the assistant does: the red-flag checker, the questions and the summary. The code rules run before it.
+- Photos (a prescription, a box) go to the pharmacist as they are; no model reads them.
+- There are no voice messages.
+
+### Proposal
+1. **«نموذج لكل شغلة»** in the panel, each with the same server/model/key picker and the same «يجاوب؟» check:
+   - **نصوص**: the one in use now.
+   - **صور ووصفات**: a model that reads images, e.g. Qwen2.5-VL or Llama 3.2 Vision in LM Studio or Ollama, or a hosted one. Optional: without it, photos go to the pharmacist as today.
+   - **صوت**: speech to text, e.g. Whisper on the same PC (faster-whisper / whisper.cpp behind an OpenAI-compatible `/v1/audio/transcriptions`). Optional.
+2. **A prescription or box photo**:
+   - The image model reads it for the pharmacist only: medicine names, strengths, and what is unclear.
+   - The pharmacist sees «قراءة الذكاء — تأكد منها» next to the photo, never as a decision.
+   - The patient never sees the reading, and never a dose.
+   - Handwriting is often unreadable: then it says so.
+3. **Voice messages**:
+   - The patient records; the server turns it into text.
+   - The red-flag rules and the checker run on that text, like any message.
+   - The pharmacist gets both the voice and the text.
+   - If transcription fails, the voice still goes to the pharmacist and the patient is asked to write.
+4. Each part has its own test: photos with known answers, voice samples. It is logged like everything else and can be switched off from the panel.
+
+### Needs the owner's OK (new dependencies)
+- Patient app: `record` (recording the voice).
+- Pharmacy app: `audioplayers` or `just_audio` (listening to it).
+- The server needs nothing new (it calls the models over HTTP).
