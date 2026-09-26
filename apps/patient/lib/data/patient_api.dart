@@ -160,9 +160,10 @@ class PatientApi {
           ))!
           as Map<String, Object?>;
 
-  /// The live-updates socket address, with a fresh access token.
+  /// The live-updates socket address, with a fresh access token (the
+  /// server closes a socket opened with an expired one).
   Future<Uri> liveUri() async {
-    if (_accessToken == null) await _refresh();
+    await _refresh();
     return baseUrl
         .resolve('ws')
         .replace(

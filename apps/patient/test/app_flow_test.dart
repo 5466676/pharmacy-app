@@ -1,6 +1,9 @@
 import 'dart:convert';
 
+import 'dart:async';
+
 import 'package:doaya_patient/app.dart';
+import 'package:doaya_patient/data/live_updates.dart';
 import 'package:doaya_patient/data/patient_api.dart';
 import 'package:doaya_patient/data/providers.dart';
 import 'package:doaya_patient/data/session_store.dart';
@@ -58,6 +61,14 @@ class FakeServer {
         return json({'patient': me, 'session_token': 's.x', 'access_token': 'a'});
       case ('POST', '/patients/token'):
         return json({'access_token': 'a'});
+      case ('GET', '/updates'):
+        return json({
+          'now': '2026-09-26T10:00:00Z',
+          'consultations': [
+            for (final c in consultations.values) {'id': c['id'], 'status': c['status']},
+          ],
+          'orders': [],
+        });
       case ('GET', '/directory'):
         return json([pharmacy]);
       case ('PATCH', '/patients/me'):
@@ -108,6 +119,7 @@ Future<void> pumpApp(WidgetTester tester, FakeServer server, MemorySessionStore 
       overrides: [
         apiProvider.overrideWithValue(PatientApi(Uri.parse('https://x/'), client: server.client)),
         sessionStoreProvider.overrideWithValue(store),
+        liveConnectProvider.overrideWithValue((_) => StreamController<Object?>().stream),
       ],
       child: const PatientApp(),
     ),
