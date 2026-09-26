@@ -745,6 +745,21 @@ From SPEC §1.3 and `design/admin_overview_layout.html` (layout only, rebuilt in
 - **Knowledge base («قاعدة المعرفة»)**: short notes the admin curates, usually from a correction («الأطفال تحت سنتين: لا تسأل عن الجرعة، حوّل للصيدلي»). Each note has tags and on/off; every change is logged. The assistant receives the notes that match the conversation (PostgreSQL full-text search, no vector database, no new service). **Never automatic training.**
 - **Settings**: see the model in use and whether it answers, the emergency numbers, the CORS origins (read-only; changed in the server's settings).
 
+### A2. Owner's additions (2026-09-26): the admin panel is for the platform owner (the developer)
+- **Pharmacy performance for rewards**: per pharmacy and month:
+  - cases received / answered / left unanswered
+  - median and 90th-percentile first response time
+  - share answered within 10 minutes
+  - orders prepared and rejected
+  - urgent cases answered in time
+  - A ranking the owner can use to reward pharmacies (the rewards themselves are decided outside the app).
+- **Full control of each pharmacy, including when a contract ends**:
+  - «تعليق» (suspend): at once, Doaya online stops for it (no cases, no orders, hidden from patients). Its own server learns this at its next connection and shows the owner why.
+  - «إيقاف النظام» (stop the pharmacy's system): its server, at its next connection, locks selling and stock changes and shows «انتهى الاشتراك، تواصل مع دوايا». **Export of the pharmacy's own data (sales, debts, stock) always stays open**: their records are theirs (and needed by law).
+  - A pharmacy that never connects again can't be reached this way; the fallback is a **licence that needs renewing**. The pharmacy server keeps working offline up to N days (proposal: 30) after its last contact with Doaya online, then asks to connect once. Selling is never blocked in the middle of a day; it locks at the next start.
+  - «إلغاء» (remove): uninstalling on site. The admin marks it removed and its key stops working.
+  - Every one of these actions asks for confirmation and is logged (who, when, why).
+
 ### B. Admin app (`apps/admin`, Flutter web, `--no-web-resources-cdn`)
 - Sign-in, then a side menu as in the layout: نظرة عامة، الصيدليات، المرضى، مراجعة المحادثات (with a badge)، قاعدة المعرفة، الإعدادات. «المدفوعات» is shown as off for now.
 - Desktop-first, solid surfaces (no blur), usable on a tablet.
@@ -759,6 +774,7 @@ From SPEC §1.3 and `design/admin_overview_layout.html` (layout only, rebuilt in
 ### Questions for the owner
 1. Themes: is the choice on the preview page (5 styles, 4 modes, 11 palettes + «تصميمي», details) right, or add/remove anything?
 2. Themes: is «تصميمي» for everyone, or only the pharmacy owner in the pharmacy app (so the counter looks the same for all staff)?
-3. Admin: one admin (you) for now, or several with the same rights?
-4. Admin: should reviewing show the patient's name/phone? The proposal is **no** (age, sex, pharmacy only).
+3. Admin: one admin (the owner) for now; more can be added from the server's command line. (answered)
+4. Admin: reviewing shows no patient name/phone (age, sex, pharmacy only). (answered: approved)
+6. Stopping a pharmacy: how many days may a pharmacy server work without contacting Doaya online before it asks to connect (proposal 30)? And should a stopped pharmacy keep read-only access to its screens, or only the data export?
 5. Order: themes first, then Phase 4? (Proposed, since the admin app would then be built on the new palette.)
