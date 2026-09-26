@@ -3745,6 +3745,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'https://…'**
   String get centralUrlHint;
+
+  /// No description provided for @noSummaryUrgent.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما في ملخص: المساعد وقّف الاستشارة أول ما طلعت علامة الخطر. اقرا المحادثة.'**
+  String get noSummaryUrgent;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
