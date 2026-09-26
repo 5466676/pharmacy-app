@@ -6,6 +6,7 @@ environment:
   sdk: ^3.13.0
 
 workspace:
+  - apps/patient
   - apps/pharmacy
   - packages/doaya_core
   - packages/doaya_ui

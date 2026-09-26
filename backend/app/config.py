@@ -46,6 +46,11 @@ class Settings(BaseSettings):
     central_key: str = ""
     shelf_publish_minutes: float = 10
 
+    # Where the patient web app is served from, when that's another address
+    # than this server's (comma-separated, e.g. "https://app.example").
+    # Empty: no browser page elsewhere may call this server.
+    cors_origins: str = ""
+
 
 @lru_cache
 def get_settings() -> Settings:

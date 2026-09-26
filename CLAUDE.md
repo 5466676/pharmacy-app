@@ -33,7 +33,8 @@ Flutter stable (Riverpod, go_router, drift) · FastAPI + PostgreSQL + SQLAlchemy
 ## Layout
 ```
 apps/pharmacy                                Flutter pharmacy app (Phase 1: offline POS)
-apps/patient  apps/admin                     Flutter apps (Phase 3/4)
+apps/patient                                 Flutter patient app (Phase 3: Android + web)
+apps/admin                                   Flutter admin app (Phase 4)
 packages/doaya_ui                            design system + component gallery (example/)
 packages/doaya_core                          pure-Dart ids, money, ledgers, FEFO, sales
 backend/                                     FastAPI server (Phase 2): runs on the pharmacy PC, LAN sync
@@ -50,6 +51,7 @@ cd packages/doaya_ui && flutter test          # design-system tests
 cd apps/pharmacy && dart run build_runner build   # after editing lib/data/database.dart
 cd apps/pharmacy && flutter test && flutter run -d linux   # or -d windows
 cd packages/doaya_ui/example && flutter run -d chrome   # component gallery (or -d windows / linux)
+cd apps/patient && flutter test && flutter run -d chrome --web-port 8200 --dart-define=DOAYA_API=http://127.0.0.1:8100   # patient app (server needs DOAYA_CORS_ORIGINS=http://localhost:8200)
 flutter analyze                               # at repo root
 cd backend && .venv/bin/pytest && .venv/bin/ruff check .   # server (needs PostgreSQL, see backend/README.md)
 ./tool/sync_e2e.sh                            # app ⇄ real server end-to-end sync test

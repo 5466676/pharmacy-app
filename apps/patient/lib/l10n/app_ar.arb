@@ -1,0 +1,150 @@
+{
+  "@@locale": "ar",
+  "appName": "دوايا",
+  "tagline": "استشارة صحية بلهجتك، وصيدليتك بتراجع كل حالة وبتحضّرلك الدوا.",
+  "createAccount": "حساب جديد",
+  "haveAccount": "عندي حساب",
+  "signIn": "دخول",
+  "signUpTitle": "حساب جديد",
+  "signInTitle": "أهلين فيك من جديد",
+  "nameLabel": "الاسم",
+  "phoneLabel": "رقم الموبايل",
+  "passwordLabel": "كلمة السر",
+  "birthYearLabel": "سنة الميلاد",
+  "sexLabel": "الجنس",
+  "male": "ذكر",
+  "female": "أنثى",
+  "cityLabel": "المدينة",
+  "optional": "اختياري",
+  "required": "مطلوب",
+  "invalidPhone": "رقم الموبايل مو مزبوط",
+  "passwordTooShort": "كلمة السر 6 أحرف أو أكتر",
+  "invalidYear": "سنة مو مزبوطة",
+  "signUpHelp": "العمر والجنس بيساعدوا الصيدلي يختارلك الأنسب، وما بيشوفهن غير صيدليتك.",
+  "choosePharmacyTitle": "اختار صيدليتك",
+  "choosePharmacyHelp": "حالاتك وطلباتك بتروح لهالصيدلية. فيك تغيّرها بعدين.",
+  "pharmacyCodeLabel": "رمز الصيدلية",
+  "pharmacyCodeHint": "مكتوب عند الكاونتر، متل SH4F",
+  "findByCode": "دوّر",
+  "orPickFromList": "أو اختار من القائمة",
+  "noPharmacies": "ما في صيدليات بهالمدينة لسا",
+  "chooseThis": "اختار",
+  "pharmacyHours": "الدوام: {hours}",
+  "@pharmacyHours": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "yourPharmacy": "صيدليتك",
+  "change": "غيّر",
+  "navHome": "الرئيسية",
+  "navConsultations": "استشاراتي",
+  "navAccount": "حسابي",
+  "heroTitle": "حاسس بشي؟\nاحكيلي",
+  "heroSubtitle": "مساعد صحي، وصيدليتك بتراجع كل حالة.",
+  "startConsultation": "ابدأ استشارة",
+  "recentConsultations": "آخر استشاراتك",
+  "seeAll": "الكل",
+  "noConsultations": "ما عندك استشارات لسا",
+  "safetyLine": "إذا صار عندك ضيق نفس أو ألم بالصدر، روح عالطوارئ فوراً.",
+  "assistantTitle": "مساعد دوايا",
+  "pharmacyFollowing": "{name} متابعة",
+  "@pharmacyFollowing": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "messageHint": "اكتب رسالتك",
+  "send": "ابعت",
+  "sendToPharmacyNow": "ابعت المحادثة للصيدلي مباشرة",
+  "summaryTitle": "ملخص حالتك",
+  "summaryHelp": "راجعه، وصحّح أي شي قبل ما تبعته.",
+  "sendToPharmacy": "ابعته للصيدلية",
+  "edit": "عدّل",
+  "save": "حفظ",
+  "cancel": "إلغاء",
+  "sumSymptoms": "الأعراض",
+  "sumDuration": "المدة",
+  "sumAge": "العمر",
+  "sumSex": "الجنس",
+  "sumPregnancy": "حمل أو إرضاع",
+  "sumAllergies": "الحساسية",
+  "sumMedications": "أدوية عم تاخدها",
+  "sumConditions": "أمراض مزمنة",
+  "sumDenied": "نفيت",
+  "sumNotes": "ملاحظات",
+  "listHint": "افصل بفاصلة",
+  "status": "{status, select, chatting{مع المساعد} summary{ناطر مراجعتك} sent{وصلت للصيدلية} preparing{الصيدلي عم يحضّر} ready{جاهز للاستلام} picked_up{استلمت} needs_doctor{بحاجة طبيب} emergency{حالة طارئة} closed{مسكّرة} other{{status}}}",
+  "@status": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "stepSent": "وصلت",
+  "stepPreparing": "عم يتحضّر",
+  "stepReady": "جاهز",
+  "stepPickedUp": "استلمت",
+  "decisionTitle": "حضّرلك الصيدلي",
+  "decisionBy": "الصيدلي {name}",
+  "@decisionBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pickupAt": "استلام من {name}، الدفع عند الاستلام",
+  "@pickupAt": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "roleAssistant": "المساعد",
+  "rolePharmacist": "الصيدلي",
+  "emergencyTitle": "اطلب مساعدة هلق",
+  "callAmbulance": "الإسعاف {number}",
+  "@callAmbulance": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "callEmergency": "الطوارئ {number}",
+  "@callEmergency": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "emergencyStillWrite": "فيك تكتب للصيدلية هون كمان.",
+  "consultationClosed": "هالاستشارة خلصت. ابدأ وحدة جديدة إذا احتجت.",
+  "accountTitle": "حسابي",
+  "logout": "تسجيل خروج",
+  "logoutConfirm": "بدك تطلع من حسابك على هالجهاز؟",
+  "confirm": "تأكيد",
+  "errNetwork": "ما في اتصال بالإنترنت. جرّب كمان شوي.",
+  "errPhoneTaken": "في حساب بهالرقم. جرّب «عندي حساب».",
+  "errBadCredentials": "الرقم أو كلمة السر غلط",
+  "errTooMany": "محاولات كتير، استنى شوي وجرّب",
+  "errPharmacyNotFound": "ما لقينا صيدلية بهالرمز",
+  "errGeneric": "صار خطأ ({code})، جرّب كمان مرة",
+  "@errGeneric": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "thinking": "عم يكتب…",
+  "retry": "جرّب كمان مرة"
+}

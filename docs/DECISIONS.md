@@ -194,3 +194,11 @@ The server doesn't recreate the app's ~25 tables. Each synced row is stored once
 - The customer's history is matched **by phone number on the device**; nothing about local customers goes to Doaya online.
 - **HTTP keep-alive**: the app drops idle connections after 4 s and the server keeps them 65 s (uvicorn's default of 5 s caused random "unreachable" errors when a request went out on a socket the server had just closed).
 
+
+## 2026-09-26 · Patient app: session on the device, WebSocket with polling, CORS by setting
+
+- **The patient signs in once.** The long-lived session secret and the last known profile are kept on the device: a file in the app's support folder on Android, `localStorage` on the web. The web side uses `dart:js_interop` directly, so no storage package was added. The short access token is never stored.
+- **Offline, the app opens anyway** on the saved profile. Only a 401/403 from the server signs the patient out.
+- **Live updates while the app is open**: the server's WebSocket. When it drops, the app asks `/updates?since=` every 30 s and reconnects with backoff (2 s → 1 min). Every connect takes a fresh access token, since the server closes a socket opened with an expired one. Each event reloads only that consultation and the list. Updates while the app is closed (notifications) come in step 7.
+- **Emergency numbers in the app** default to 110 / 112 like the server's, and can be changed at build time (`--dart-define=DOAYA_AMBULANCE/DOAYA_EMERGENCY`). The buttons dial through `tel:`.
+- **CORS is off unless configured** (`DOAYA_CORS_ORIGINS`, comma-separated), using FastAPI's built-in middleware. The web app can then be served from any static host. With it empty, no page elsewhere can call the server from a browser.
