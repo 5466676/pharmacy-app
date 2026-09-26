@@ -190,7 +190,7 @@
   "colResponse": "المتوسط",
   "colConnection": "الاتصال",
   "colStatus": "الحالة",
-  "statusActive": "فعّالة",
+  "statusActive": "مستعملة",
   "statusPending": "ناطرة موافقة",
   "statusSuspended": "معلّقة",
   "statusStopped": "النظام موقّف",
@@ -429,5 +429,178 @@
   "detailReply": "رد المساعد",
   "detailError": "الخطأ",
   "detailBy": "الصيدلي",
-  "detailReason": "السبب"
+  "detailReason": "السبب",
+  "navAssistant": "المساعد",
+  "asTitle": "المساعد",
+  "asSubtitle": "النموذج، التعليمات، أمثلة السلامة، وجرّب قبل ما تعتمد. قواعد السلامة الأساسية ثابتة بالكود وما بتتغيّر من هون.",
+  "tabState": "الحالة والنموذج",
+  "tabPrompts": "التعليمات",
+  "tabExamples": "أمثلة السلامة",
+  "tabSandbox": "جرّب",
+  "last24h": "آخر 24 ساعة",
+  "stReplies": "ردود",
+  "stDown": "مرات الوقوف",
+  "stMedian": "متوسط زمن الرد",
+  "stSlowest": "أبطأ رد: {ms}",
+  "@stSlowest": {
+    "placeholders": {
+      "ms": {
+        "type": "String"
+      }
+    }
+  },
+  "msValue": "{n} ملي ثانية",
+  "@msValue": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "stGuard": "ردود انمنعت",
+  "stFlags": "حالات خطرة",
+  "stFlagsCaption": "من القواعد: {rules}، من النموذج: {model}",
+  "@stFlagsCaption": {
+    "placeholders": {
+      "rules": {
+        "type": "String"
+      },
+      "model": {
+        "type": "String"
+      }
+    }
+  },
+  "stDoctor": "نصيحة بطبيب",
+  "lastDown": "آخر وقوف: {ago}",
+  "@lastDown": {
+    "placeholders": {
+      "ago": {
+        "type": "String"
+      }
+    }
+  },
+  "assistantDownBanner": "المساعد وقف {ago}. المرضى عم يبعتوا للصيدلي مباشرة لحد ما يرجع.",
+  "@assistantDownBanner": {
+    "placeholders": {
+      "ago": {
+        "type": "String"
+      }
+    }
+  },
+  "modelTitle": "النموذج",
+  "modelSourcePanel": "مختار من اللوحة",
+  "modelSourceSettings": "من إعدادات السيرفر (ما اخترت من اللوحة لسا)",
+  "modelKeySet": "في مفتاح محفوظ",
+  "modelNoKey": "بلا مفتاح",
+  "changeModel": "غيّر النموذج",
+  "chooseServer": "اختر المخدم",
+  "providerLmStudio": "LM Studio",
+  "providerOllama": "Ollama",
+  "providerHosted": "خدمة أونلاين",
+  "serverUrl": "عنوان المخدم",
+  "apiKey": "مفتاح API",
+  "apiKeyKeep": "اتركه فاضي لتضل على المفتاح المحفوظ",
+  "removeKey": "شيل المفتاح",
+  "fetchModels": "جيب النماذج",
+  "chooseModel": "اختر النموذج",
+  "modelNameManual": "أو اكتب اسم النموذج",
+  "noModels": "المخدم ما رجّع ولا نموذج.",
+  "timeoutSeconds": "مهلة الرد (ثانية)",
+  "switchModel": "جرّب وبدّل",
+  "switched": "تبدّل النموذج، جاوب بـ {ms}",
+  "@switched": {
+    "placeholders": {
+      "ms": {
+        "type": "String"
+      }
+    }
+  },
+  "errServerUnreachable": "ما قدرت وصل للمخدم. تأكد من العنوان وإنو شغّال.",
+  "errModelNotAnswering": "النموذج ما جاوب، فما بدّلت. تأكد من الاسم والمفتاح.",
+  "errTestNotPassed": "لازم تمتحن المسودة وتنجح بعد آخر تعديل قبل ما تعتمدها.",
+  "errNotADraft": "هالنسخة مو مسودة.",
+  "errAlreadyDefault": "هي أصلاً النسخة الأساسية.",
+  "kindAssistant": "أسئلة المساعد",
+  "kindSummary": "ملخص الصيدلي",
+  "kindClassifier": "فاحص الخطر",
+  "kindAssistantNote": "كيف بيحكي المساعد مع المريض وشو بيسأل.",
+  "kindSummaryNote": "كيف بينكتب الملخص يلي بيوصل للصيدلي.",
+  "kindClassifierNote": "شو بيعتبر إسعاف، وشو بيعتبر لازم دكتور. أمثلة السلامة بتنضاف عليه.",
+  "inUse": "المستعمل هلق",
+  "builtIn": "النسخة الأساسية",
+  "versionN": "نسخة {n}",
+  "@versionN": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "statusDraft": "مسودة",
+  "statusRetired": "قديمة",
+  "lockedTitle": "ثابت بالكود (بينضاف دايماً)",
+  "newDraft": "مسودة جديدة",
+  "editDraft": "عدّل",
+  "runTest": "امتحن",
+  "activateDraft": "اعتمد",
+  "rollbackStep": "رجوع خطوة",
+  "rollbackConfirm": "ترجع للنسخة يلي قبلها؟",
+  "draftText": "النص",
+  "draftNote": "ملاحظة (شو غيّرت)",
+  "testPassed": "نجحت: ما فوّتت ولا حالة",
+  "testFailed": "ما نجحت: فوّتت {missed}",
+  "@testFailed": {
+    "placeholders": {
+      "missed": {
+        "type": "String"
+      }
+    }
+  },
+  "testFalseAlarms": "إنذارات زيادة: {n}",
+  "@testFalseAlarms": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "testSummaryBad": "الملخص ما اشتغل",
+  "testRunning": "عم امتحن... ممكن ياخد دقيقة مع نموذج محلي.",
+  "expected": "المتوقع",
+  "got": "صار",
+  "labelEmergency": "إسعاف",
+  "labelDoctor": "لازم دكتور",
+  "labelNormal": "عادي",
+  "bySource": "({source})",
+  "@bySource": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "sourceRules": "القواعد",
+  "sourceModel": "النموذج",
+  "guardBlockedCase": "انمنع رد فيه دوا أو جرعة",
+  "modelDownCase": "النموذج ما جاوب",
+  "examplesSubtitle": "حط مواقف لازم فيها المساعد ينذر المريض: إسعاف أو يروح لدكتور، ومواقف عادية كمان. بتنضاف لفاحص الخطر كأمثلة، وبتصير جزء من الامتحان. ما في تدريب تلقائي.",
+  "addExample": "مثال جديد",
+  "exampleText": "شو كتب المريض",
+  "exampleLabel": "لازم يصير",
+  "exampleNote": "ملاحظة",
+  "examplesEmpty": "ما في أمثلة لسا.",
+  "testCurrent": "امتحن المستعمل هلق",
+  "exampleEnabled": "مستعمل",
+  "sandboxSubtitle": "احكي كأنك مريض. ما في مريض حقيقي وما بينحفظ شي. فيك تجرب المسودات قبل ما تعتمدها.",
+  "useDrafts": "جرّب مع المسودات:",
+  "noDrafts": "ما في مسودات، عم جرّب المستعمل هلق.",
+  "sandboxHint": "اكتب رسالة المريض",
+  "send": "ابعت",
+  "restart": "من الأول",
+  "turnReply": "رد",
+  "turnEmergency": "إسعاف",
+  "turnDoctor": "لازم دكتور",
+  "turnSummary": "ملخص",
+  "turnFallback": "النموذج وقف",
+  "guardBlockedTurn": "الحارس منع رد وحط بداله"
 }

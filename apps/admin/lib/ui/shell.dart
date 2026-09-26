@@ -39,6 +39,7 @@ class AdminShell extends ConsumerWidget {
           badge: waiting > 0 ? formatNumber(waiting) : null,
         ),
       ),
+      (Routes.assistant, DoayaNavItem(icon: DoayaIcons.assistant, label: l.navAssistant)),
       (Routes.knowledge, DoayaNavItem(icon: DoayaIcons.knowledge, label: l.navKnowledge)),
     ];
     final settings = [

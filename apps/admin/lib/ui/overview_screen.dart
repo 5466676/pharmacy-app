@@ -113,6 +113,7 @@ class _Body extends ConsumerWidget {
           },
         ),
         SizedBox(height: DoayaSpacing.m),
+        const _AssistantDown(),
         if (o.reviewWaiting > 0) ...[
           NoticeBanner(
             tone: StatusTone.accent,
@@ -176,6 +177,33 @@ class _Body extends ConsumerWidget {
         ),
         SizedBox(height: DoayaSpacing.xl),
       ],
+    );
+  }
+}
+
+/// «المساعد وقف»: when the model was down in the last hour.
+class _AssistantDown extends ConsumerWidget {
+  const _AssistantDown();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
+    final s = ref.watch(assistantStatsProvider(1)).value;
+    if (s == null || s.down == 0) return const SizedBox.shrink();
+    return Padding(
+      padding: EdgeInsets.only(bottom: DoayaSpacing.m),
+      child: NoticeBanner(
+        tone: StatusTone.warning,
+        icon: DoayaIcons.assistant,
+        message: l.assistantDownBanner(ago(l, s.lastDownAt)),
+        action: Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: GlassPillButton(
+            label: l.navAssistant,
+            onPressed: () => context.go(Routes.assistant),
+          ),
+        ),
+      ),
     );
   }
 }

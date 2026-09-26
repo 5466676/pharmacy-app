@@ -153,6 +153,7 @@ class _CasesScreenState extends ConsumerState<CasesScreen> {
                 subtitle: [
                   c.patient.name,
                   if (c.urgent && c.redFlag != null) l.redFlag(c.redFlag!),
+                  if (c.doctorAdvice != null) l.doctorAdvised,
                   if (c.sentAt != null) '${formatDate(c.sentAt!)}، ${formatTime(c.sentAt!)}',
                 ].join('، '),
                 urgent: c.urgent && c.open,
@@ -260,6 +261,10 @@ class CaseDetailView extends ConsumerWidget {
                 ].where((s) => s.isNotEmpty).join('، '),
                 style: secondary,
               ),
+              if (c.doctorAdvice != null && !c.urgent) ...[
+                SizedBox(height: DoayaSpacing.sm),
+                NoticeBanner(message: l.doctorAdvisedHelp, icon: DoayaIcons.warning),
+              ],
               if (c.urgent) ...[
                 SizedBox(height: DoayaSpacing.sm),
                 NoticeBanner(

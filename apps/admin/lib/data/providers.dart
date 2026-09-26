@@ -129,6 +129,20 @@ final notesProvider = FutureProvider.autoDispose((ref) => guarded(ref, (api) => 
 
 final settingsProvider = FutureProvider.autoDispose((ref) => guarded(ref, (api) => api.settings()));
 
+final assistantProvider = FutureProvider.autoDispose(
+  (ref) => guarded(ref, (api) => api.assistant()),
+);
+
+final assistantStatsProvider = FutureProvider.autoDispose.family(
+  (ref, int hours) => guarded(ref, (api) => api.assistantStats(hours: hours)),
+);
+
+final promptsProvider = FutureProvider.autoDispose((ref) => guarded(ref, (api) => api.prompts()));
+
+final safetyExamplesProvider = FutureProvider.autoDispose(
+  (ref) => guarded(ref, (api) => api.safetyExamples()),
+);
+
 /// A plain settable value.
 class _Value<T> extends Notifier<T> {
   _Value(this._initial);

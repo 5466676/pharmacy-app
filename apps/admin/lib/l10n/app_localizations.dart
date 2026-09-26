@@ -551,7 +551,7 @@ abstract class AppLocalizations {
   /// No description provided for @statusActive.
   ///
   /// In ar, this message translates to:
-  /// **'فعّالة'**
+  /// **'مستعملة'**
   String get statusActive;
 
   /// No description provided for @statusPending.
@@ -1435,6 +1435,606 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'السبب'**
   String get detailReason;
+
+  /// No description provided for @navAssistant.
+  ///
+  /// In ar, this message translates to:
+  /// **'المساعد'**
+  String get navAssistant;
+
+  /// No description provided for @asTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'المساعد'**
+  String get asTitle;
+
+  /// No description provided for @asSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'النموذج، التعليمات، أمثلة السلامة، وجرّب قبل ما تعتمد. قواعد السلامة الأساسية ثابتة بالكود وما بتتغيّر من هون.'**
+  String get asSubtitle;
+
+  /// No description provided for @tabState.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحالة والنموذج'**
+  String get tabState;
+
+  /// No description provided for @tabPrompts.
+  ///
+  /// In ar, this message translates to:
+  /// **'التعليمات'**
+  String get tabPrompts;
+
+  /// No description provided for @tabExamples.
+  ///
+  /// In ar, this message translates to:
+  /// **'أمثلة السلامة'**
+  String get tabExamples;
+
+  /// No description provided for @tabSandbox.
+  ///
+  /// In ar, this message translates to:
+  /// **'جرّب'**
+  String get tabSandbox;
+
+  /// No description provided for @last24h.
+  ///
+  /// In ar, this message translates to:
+  /// **'آخر 24 ساعة'**
+  String get last24h;
+
+  /// No description provided for @stReplies.
+  ///
+  /// In ar, this message translates to:
+  /// **'ردود'**
+  String get stReplies;
+
+  /// No description provided for @stDown.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرات الوقوف'**
+  String get stDown;
+
+  /// No description provided for @stMedian.
+  ///
+  /// In ar, this message translates to:
+  /// **'متوسط زمن الرد'**
+  String get stMedian;
+
+  /// No description provided for @stSlowest.
+  ///
+  /// In ar, this message translates to:
+  /// **'أبطأ رد: {ms}'**
+  String stSlowest(String ms);
+
+  /// No description provided for @msValue.
+  ///
+  /// In ar, this message translates to:
+  /// **'{n} ملي ثانية'**
+  String msValue(String n);
+
+  /// No description provided for @stGuard.
+  ///
+  /// In ar, this message translates to:
+  /// **'ردود انمنعت'**
+  String get stGuard;
+
+  /// No description provided for @stFlags.
+  ///
+  /// In ar, this message translates to:
+  /// **'حالات خطرة'**
+  String get stFlags;
+
+  /// No description provided for @stFlagsCaption.
+  ///
+  /// In ar, this message translates to:
+  /// **'من القواعد: {rules}، من النموذج: {model}'**
+  String stFlagsCaption(String rules, String model);
+
+  /// No description provided for @stDoctor.
+  ///
+  /// In ar, this message translates to:
+  /// **'نصيحة بطبيب'**
+  String get stDoctor;
+
+  /// No description provided for @lastDown.
+  ///
+  /// In ar, this message translates to:
+  /// **'آخر وقوف: {ago}'**
+  String lastDown(String ago);
+
+  /// No description provided for @assistantDownBanner.
+  ///
+  /// In ar, this message translates to:
+  /// **'المساعد وقف {ago}. المرضى عم يبعتوا للصيدلي مباشرة لحد ما يرجع.'**
+  String assistantDownBanner(String ago);
+
+  /// No description provided for @modelTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'النموذج'**
+  String get modelTitle;
+
+  /// No description provided for @modelSourcePanel.
+  ///
+  /// In ar, this message translates to:
+  /// **'مختار من اللوحة'**
+  String get modelSourcePanel;
+
+  /// No description provided for @modelSourceSettings.
+  ///
+  /// In ar, this message translates to:
+  /// **'من إعدادات السيرفر (ما اخترت من اللوحة لسا)'**
+  String get modelSourceSettings;
+
+  /// No description provided for @modelKeySet.
+  ///
+  /// In ar, this message translates to:
+  /// **'في مفتاح محفوظ'**
+  String get modelKeySet;
+
+  /// No description provided for @modelNoKey.
+  ///
+  /// In ar, this message translates to:
+  /// **'بلا مفتاح'**
+  String get modelNoKey;
+
+  /// No description provided for @changeModel.
+  ///
+  /// In ar, this message translates to:
+  /// **'غيّر النموذج'**
+  String get changeModel;
+
+  /// No description provided for @chooseServer.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر المخدم'**
+  String get chooseServer;
+
+  /// No description provided for @providerLmStudio.
+  ///
+  /// In ar, this message translates to:
+  /// **'LM Studio'**
+  String get providerLmStudio;
+
+  /// No description provided for @providerOllama.
+  ///
+  /// In ar, this message translates to:
+  /// **'Ollama'**
+  String get providerOllama;
+
+  /// No description provided for @providerHosted.
+  ///
+  /// In ar, this message translates to:
+  /// **'خدمة أونلاين'**
+  String get providerHosted;
+
+  /// No description provided for @serverUrl.
+  ///
+  /// In ar, this message translates to:
+  /// **'عنوان المخدم'**
+  String get serverUrl;
+
+  /// No description provided for @apiKey.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفتاح API'**
+  String get apiKey;
+
+  /// No description provided for @apiKeyKeep.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتركه فاضي لتضل على المفتاح المحفوظ'**
+  String get apiKeyKeep;
+
+  /// No description provided for @removeKey.
+  ///
+  /// In ar, this message translates to:
+  /// **'شيل المفتاح'**
+  String get removeKey;
+
+  /// No description provided for @fetchModels.
+  ///
+  /// In ar, this message translates to:
+  /// **'جيب النماذج'**
+  String get fetchModels;
+
+  /// No description provided for @chooseModel.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر النموذج'**
+  String get chooseModel;
+
+  /// No description provided for @modelNameManual.
+  ///
+  /// In ar, this message translates to:
+  /// **'أو اكتب اسم النموذج'**
+  String get modelNameManual;
+
+  /// No description provided for @noModels.
+  ///
+  /// In ar, this message translates to:
+  /// **'المخدم ما رجّع ولا نموذج.'**
+  String get noModels;
+
+  /// No description provided for @timeoutSeconds.
+  ///
+  /// In ar, this message translates to:
+  /// **'مهلة الرد (ثانية)'**
+  String get timeoutSeconds;
+
+  /// No description provided for @switchModel.
+  ///
+  /// In ar, this message translates to:
+  /// **'جرّب وبدّل'**
+  String get switchModel;
+
+  /// No description provided for @switched.
+  ///
+  /// In ar, this message translates to:
+  /// **'تبدّل النموذج، جاوب بـ {ms}'**
+  String switched(String ms);
+
+  /// No description provided for @errServerUnreachable.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما قدرت وصل للمخدم. تأكد من العنوان وإنو شغّال.'**
+  String get errServerUnreachable;
+
+  /// No description provided for @errModelNotAnswering.
+  ///
+  /// In ar, this message translates to:
+  /// **'النموذج ما جاوب، فما بدّلت. تأكد من الاسم والمفتاح.'**
+  String get errModelNotAnswering;
+
+  /// No description provided for @errTestNotPassed.
+  ///
+  /// In ar, this message translates to:
+  /// **'لازم تمتحن المسودة وتنجح بعد آخر تعديل قبل ما تعتمدها.'**
+  String get errTestNotPassed;
+
+  /// No description provided for @errNotADraft.
+  ///
+  /// In ar, this message translates to:
+  /// **'هالنسخة مو مسودة.'**
+  String get errNotADraft;
+
+  /// No description provided for @errAlreadyDefault.
+  ///
+  /// In ar, this message translates to:
+  /// **'هي أصلاً النسخة الأساسية.'**
+  String get errAlreadyDefault;
+
+  /// No description provided for @kindAssistant.
+  ///
+  /// In ar, this message translates to:
+  /// **'أسئلة المساعد'**
+  String get kindAssistant;
+
+  /// No description provided for @kindSummary.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملخص الصيدلي'**
+  String get kindSummary;
+
+  /// No description provided for @kindClassifier.
+  ///
+  /// In ar, this message translates to:
+  /// **'فاحص الخطر'**
+  String get kindClassifier;
+
+  /// No description provided for @kindAssistantNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'كيف بيحكي المساعد مع المريض وشو بيسأل.'**
+  String get kindAssistantNote;
+
+  /// No description provided for @kindSummaryNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'كيف بينكتب الملخص يلي بيوصل للصيدلي.'**
+  String get kindSummaryNote;
+
+  /// No description provided for @kindClassifierNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'شو بيعتبر إسعاف، وشو بيعتبر لازم دكتور. أمثلة السلامة بتنضاف عليه.'**
+  String get kindClassifierNote;
+
+  /// No description provided for @inUse.
+  ///
+  /// In ar, this message translates to:
+  /// **'المستعمل هلق'**
+  String get inUse;
+
+  /// No description provided for @builtIn.
+  ///
+  /// In ar, this message translates to:
+  /// **'النسخة الأساسية'**
+  String get builtIn;
+
+  /// No description provided for @versionN.
+  ///
+  /// In ar, this message translates to:
+  /// **'نسخة {n}'**
+  String versionN(String n);
+
+  /// No description provided for @statusDraft.
+  ///
+  /// In ar, this message translates to:
+  /// **'مسودة'**
+  String get statusDraft;
+
+  /// No description provided for @statusRetired.
+  ///
+  /// In ar, this message translates to:
+  /// **'قديمة'**
+  String get statusRetired;
+
+  /// No description provided for @lockedTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'ثابت بالكود (بينضاف دايماً)'**
+  String get lockedTitle;
+
+  /// No description provided for @newDraft.
+  ///
+  /// In ar, this message translates to:
+  /// **'مسودة جديدة'**
+  String get newDraft;
+
+  /// No description provided for @editDraft.
+  ///
+  /// In ar, this message translates to:
+  /// **'عدّل'**
+  String get editDraft;
+
+  /// No description provided for @runTest.
+  ///
+  /// In ar, this message translates to:
+  /// **'امتحن'**
+  String get runTest;
+
+  /// No description provided for @activateDraft.
+  ///
+  /// In ar, this message translates to:
+  /// **'اعتمد'**
+  String get activateDraft;
+
+  /// No description provided for @rollbackStep.
+  ///
+  /// In ar, this message translates to:
+  /// **'رجوع خطوة'**
+  String get rollbackStep;
+
+  /// No description provided for @rollbackConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'ترجع للنسخة يلي قبلها؟'**
+  String get rollbackConfirm;
+
+  /// No description provided for @draftText.
+  ///
+  /// In ar, this message translates to:
+  /// **'النص'**
+  String get draftText;
+
+  /// No description provided for @draftNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملاحظة (شو غيّرت)'**
+  String get draftNote;
+
+  /// No description provided for @testPassed.
+  ///
+  /// In ar, this message translates to:
+  /// **'نجحت: ما فوّتت ولا حالة'**
+  String get testPassed;
+
+  /// No description provided for @testFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما نجحت: فوّتت {missed}'**
+  String testFailed(String missed);
+
+  /// No description provided for @testFalseAlarms.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنذارات زيادة: {n}'**
+  String testFalseAlarms(String n);
+
+  /// No description provided for @testSummaryBad.
+  ///
+  /// In ar, this message translates to:
+  /// **'الملخص ما اشتغل'**
+  String get testSummaryBad;
+
+  /// No description provided for @testRunning.
+  ///
+  /// In ar, this message translates to:
+  /// **'عم امتحن... ممكن ياخد دقيقة مع نموذج محلي.'**
+  String get testRunning;
+
+  /// No description provided for @expected.
+  ///
+  /// In ar, this message translates to:
+  /// **'المتوقع'**
+  String get expected;
+
+  /// No description provided for @got.
+  ///
+  /// In ar, this message translates to:
+  /// **'صار'**
+  String get got;
+
+  /// No description provided for @labelEmergency.
+  ///
+  /// In ar, this message translates to:
+  /// **'إسعاف'**
+  String get labelEmergency;
+
+  /// No description provided for @labelDoctor.
+  ///
+  /// In ar, this message translates to:
+  /// **'لازم دكتور'**
+  String get labelDoctor;
+
+  /// No description provided for @labelNormal.
+  ///
+  /// In ar, this message translates to:
+  /// **'عادي'**
+  String get labelNormal;
+
+  /// No description provided for @bySource.
+  ///
+  /// In ar, this message translates to:
+  /// **'({source})'**
+  String bySource(String source);
+
+  /// No description provided for @sourceRules.
+  ///
+  /// In ar, this message translates to:
+  /// **'القواعد'**
+  String get sourceRules;
+
+  /// No description provided for @sourceModel.
+  ///
+  /// In ar, this message translates to:
+  /// **'النموذج'**
+  String get sourceModel;
+
+  /// No description provided for @guardBlockedCase.
+  ///
+  /// In ar, this message translates to:
+  /// **'انمنع رد فيه دوا أو جرعة'**
+  String get guardBlockedCase;
+
+  /// No description provided for @modelDownCase.
+  ///
+  /// In ar, this message translates to:
+  /// **'النموذج ما جاوب'**
+  String get modelDownCase;
+
+  /// No description provided for @examplesSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'حط مواقف لازم فيها المساعد ينذر المريض: إسعاف أو يروح لدكتور، ومواقف عادية كمان. بتنضاف لفاحص الخطر كأمثلة، وبتصير جزء من الامتحان. ما في تدريب تلقائي.'**
+  String get examplesSubtitle;
+
+  /// No description provided for @addExample.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال جديد'**
+  String get addExample;
+
+  /// No description provided for @exampleText.
+  ///
+  /// In ar, this message translates to:
+  /// **'شو كتب المريض'**
+  String get exampleText;
+
+  /// No description provided for @exampleLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'لازم يصير'**
+  String get exampleLabel;
+
+  /// No description provided for @exampleNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملاحظة'**
+  String get exampleNote;
+
+  /// No description provided for @examplesEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما في أمثلة لسا.'**
+  String get examplesEmpty;
+
+  /// No description provided for @testCurrent.
+  ///
+  /// In ar, this message translates to:
+  /// **'امتحن المستعمل هلق'**
+  String get testCurrent;
+
+  /// No description provided for @exampleEnabled.
+  ///
+  /// In ar, this message translates to:
+  /// **'مستعمل'**
+  String get exampleEnabled;
+
+  /// No description provided for @sandboxSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'احكي كأنك مريض. ما في مريض حقيقي وما بينحفظ شي. فيك تجرب المسودات قبل ما تعتمدها.'**
+  String get sandboxSubtitle;
+
+  /// No description provided for @useDrafts.
+  ///
+  /// In ar, this message translates to:
+  /// **'جرّب مع المسودات:'**
+  String get useDrafts;
+
+  /// No description provided for @noDrafts.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما في مسودات، عم جرّب المستعمل هلق.'**
+  String get noDrafts;
+
+  /// No description provided for @sandboxHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتب رسالة المريض'**
+  String get sandboxHint;
+
+  /// No description provided for @send.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابعت'**
+  String get send;
+
+  /// No description provided for @restart.
+  ///
+  /// In ar, this message translates to:
+  /// **'من الأول'**
+  String get restart;
+
+  /// No description provided for @turnReply.
+  ///
+  /// In ar, this message translates to:
+  /// **'رد'**
+  String get turnReply;
+
+  /// No description provided for @turnEmergency.
+  ///
+  /// In ar, this message translates to:
+  /// **'إسعاف'**
+  String get turnEmergency;
+
+  /// No description provided for @turnDoctor.
+  ///
+  /// In ar, this message translates to:
+  /// **'لازم دكتور'**
+  String get turnDoctor;
+
+  /// No description provided for @turnSummary.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملخص'**
+  String get turnSummary;
+
+  /// No description provided for @turnFallback.
+  ///
+  /// In ar, this message translates to:
+  /// **'النموذج وقف'**
+  String get turnFallback;
+
+  /// No description provided for @guardBlockedTurn.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحارس منع رد وحط بداله'**
+  String get guardBlockedTurn;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

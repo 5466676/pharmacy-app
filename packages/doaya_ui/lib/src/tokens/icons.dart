@@ -81,4 +81,6 @@ abstract final class DoayaIcons {
   static const refresh = Icons.refresh_rounded;
   static const pause = Icons.pause_circle_outline_rounded;
   static const play = Icons.play_circle_outline_rounded;
+  static const assistant = Icons.smart_toy_outlined;
+  static const science = Icons.biotech_outlined;
 }

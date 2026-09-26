@@ -204,6 +204,119 @@ class AdminApi {
     return (ok: j['ok'] == true, ms: j['ms'] as int?, error: j['error'] as String?);
   }
 
+  // ─── The assistant ───────────────────────────────────────────────────────
+
+  Future<AssistantModel> assistant() async =>
+      AssistantModel((await _authorized('GET', 'admin/assistant'))! as Json);
+
+  /// «اختر النموذج»: what the server at [baseUrl] offers. [apiKey] null
+  /// uses the saved key (same address).
+  Future<List<String>> listModels(String provider, String baseUrl, {String? apiKey}) async {
+    final j =
+        (await _authorized('POST', 'admin/assistant/models', {
+              'provider': provider,
+              'base_url': baseUrl,
+              'api_key': ?apiKey,
+            }))!
+            as Json;
+    return [for (final m in j['models']! as List) m as String];
+  }
+
+  /// Switches only after the model answers. [apiKey]: null keeps the saved
+  /// one, "" removes it.
+  Future<AssistantModel> setModel({
+    required String provider,
+    required String baseUrl,
+    required String model,
+    String? apiKey,
+    int timeoutSeconds = 60,
+  }) async => AssistantModel(
+    (await _authorized('PUT', 'admin/assistant/model', {
+          'provider': provider,
+          'base_url': baseUrl,
+          'model': model,
+          'api_key': ?apiKey,
+          'timeout_seconds': timeoutSeconds,
+        }))!
+        as Json,
+  );
+
+  Future<AssistantStats> assistantStats({int hours = 24}) async =>
+      AssistantStats((await _authorized('GET', 'admin/assistant/stats?hours=$hours'))! as Json);
+
+  Future<Map<String, PromptSet>> prompts() async {
+    final j = (await _authorized('GET', 'admin/assistant/prompts'))! as Json;
+    return {for (final e in j.entries) e.key: PromptSet(e.key, e.value! as Json)};
+  }
+
+  Future<PromptVersionView> newDraft(String kind, String text, {String? note}) async =>
+      PromptVersionView(
+        (await _authorized('POST', 'admin/assistant/prompts', {
+              'kind': kind,
+              'text': text,
+              'note': ?note,
+            }))!
+            as Json,
+      );
+
+  Future<PromptVersionView> editDraft(int id, String text) async => PromptVersionView(
+    (await _authorized('PATCH', 'admin/assistant/prompts/$id', {'text': text}))! as Json,
+  );
+
+  Future<PromptVersionView> testDraft(int id) async =>
+      PromptVersionView((await _authorized('POST', 'admin/assistant/prompts/$id/test'))! as Json);
+
+  Future<PromptVersionView> activate(int id) async => PromptVersionView(
+    (await _authorized('POST', 'admin/assistant/prompts/$id/activate'))! as Json,
+  );
+
+  Future<void> rollback(String kind) =>
+      _authorized('POST', 'admin/assistant/prompts/$kind/rollback');
+
+  Future<List<SafetyExample>> safetyExamples() async => [
+    for (final e in (await _authorized('GET', 'admin/assistant/examples'))! as List)
+      SafetyExample(e as Json),
+  ];
+
+  Future<SafetyExample> addExample(String text, String label, {String? note}) async =>
+      SafetyExample(
+        (await _authorized('POST', 'admin/assistant/examples', {
+              'text': text,
+              'label': label,
+              'note': ?note,
+            }))!
+            as Json,
+      );
+
+  Future<SafetyExample> editExample(int id, {String? text, String? label, bool? enabled}) async =>
+      SafetyExample(
+        (await _authorized('PATCH', 'admin/assistant/examples/$id', {
+              'text': ?text,
+              'label': ?label,
+              'enabled': ?enabled,
+            }))!
+            as Json,
+      );
+
+  /// The prompts in use against the built-in cases and the examples.
+  Future<TestResult> testCurrent() async =>
+      TestResult((await _authorized('POST', 'admin/assistant/test'))! as Json);
+
+  Future<SandboxTurn> sandbox(
+    List<({String role, String text})> history,
+    String text, {
+    List<int> drafts = const [],
+  }) async => SandboxTurn(
+    (await _authorized('POST', 'admin/assistant/sandbox', {
+          'history': [
+            for (final m in history) {'role': m.role, 'text': m.text},
+          ],
+          'text': text,
+          'drafts': drafts,
+        }))!
+        as Json,
+  );
+
   // ─── Plumbing ────────────────────────────────────────────────────────────
 
   Future<void> _refresh() async {

@@ -4213,6 +4213,18 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'لازم يتصل سيرفر الصيدلية بدوايا خلال {days} يوم، وإلا بيتسكّر البيع لما ينفتح البرنامج.'**
   String lockEndingSoon(String days);
+
+  /// No description provided for @doctorAdvised.
+  ///
+  /// In ar, this message translates to:
+  /// **'المساعد نصح بطبيب'**
+  String get doctorAdvised;
+
+  /// No description provided for @doctorAdvisedHelp.
+  ///
+  /// In ar, this message translates to:
+  /// **'المساعد نصح المريض يراجع طبيب بأقرب وقت (مو إسعاف). راجع الحالة وأكّد عليه أو وجّهه.'**
+  String get doctorAdvisedHelp;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

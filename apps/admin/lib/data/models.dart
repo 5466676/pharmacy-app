@@ -214,3 +214,128 @@ class AdminSettings {
   ];
   String get serverVersion => j['server_version']! as String;
 }
+
+// ─── The assistant (Phase 4b) ───────────────────────────────────────────────
+
+class AssistantModel {
+  AssistantModel(this.j);
+  final Json j;
+
+  /// lm_studio | ollama | hosted.
+  String get provider => j['provider']! as String;
+  String get baseUrl => j['base_url']! as String;
+  String get model => j['model']! as String;
+  int get timeout => _int(j['timeout_seconds']);
+  bool get hasKey => j['has_key'] == true;
+
+  /// panel | settings.
+  String get source => j['source']! as String;
+  DateTime? get updatedAt => _time(j['updated_at']);
+  String? get updatedBy => j['updated_by'] as String?;
+  Map<String, String> get providers => {
+    for (final e in ((j['providers'] as Json?) ?? const {}).entries) e.key: e.value! as String,
+  };
+  int? get ms => j['ms'] as int?;
+}
+
+class AssistantStats {
+  AssistantStats(this.j);
+  final Json j;
+
+  int get hours => _int(j['hours']);
+  int get replies => _int(j['replies']);
+  int get down => _int(j['down']);
+  int get guardBlocks => _int(j['guard_blocks']);
+  int get redFlagsRules => _int(j['red_flags_rules']);
+  int get redFlagsModel => _int(j['red_flags_model']);
+  int get doctorAdvice => _int(j['doctor_advice']);
+  int? get medianMs => j['median_ms'] as int?;
+  int? get slowestMs => j['slowest_ms'] as int?;
+  DateTime? get lastDownAt => _time(j['last_down_at']);
+}
+
+class PromptSet {
+  PromptSet(this.kind, this.j);
+  final String kind;
+  final Json j;
+
+  int? get activeId => j['active_id'] as int?;
+  String get text => j['text']! as String;
+  String get defaultText => j['default']! as String;
+  List<String> get locked => [for (final t in (j['locked'] as List?) ?? const []) t as String];
+  List<PromptVersionView> get versions => [
+    for (final v in _list(j['versions'])) PromptVersionView(v),
+  ];
+}
+
+class PromptVersionView {
+  PromptVersionView(this.j);
+  final Json j;
+
+  int get id => _int(j['id']);
+  String get kind => j['kind']! as String;
+  String get text => j['text']! as String;
+  String? get note => j['note'] as String?;
+
+  /// draft | active | retired.
+  String get status => j['status']! as String;
+  bool get ready => j['ready'] == true;
+  TestResult? get test => j['test'] == null ? null : TestResult(j['test']! as Json);
+  DateTime get createdAt => _time(j['created_at'])!;
+}
+
+class TestResult {
+  TestResult(this.j);
+  final Json j;
+
+  bool get passed => j['passed'] == true;
+  bool get summaryOk => j['summary_ok'] == true;
+  int get missed => _int(j['missed']);
+  int get falseAlarms => _int(j['false_alarms']);
+  List<TestCase> get cases => [for (final c in _list(j['cases'])) TestCase(c)];
+}
+
+class TestCase {
+  TestCase(this.j);
+  final Json j;
+
+  String get text => j['text']! as String;
+
+  /// emergency | doctor | normal.
+  String get expected => j['expected']! as String;
+  String get got => j['got']! as String;
+  String? get source => j['source'] as String?;
+  bool get passed => j['passed'] == true;
+  bool get guardBlocked => j['guard_blocked'] == true;
+  bool get modelDown => j['model_down'] == true;
+  bool get falseAlarm => j['false_alarm'] == true;
+  String? get reply => j['reply'] as String?;
+}
+
+class SafetyExample {
+  SafetyExample(this.j);
+  final Json j;
+
+  int get id => _int(j['id']);
+  String get text => j['text']! as String;
+
+  /// emergency | doctor | normal.
+  String get label => j['label']! as String;
+  String? get note => j['note'] as String?;
+  bool get enabled => j['enabled'] == true;
+}
+
+class SandboxTurn {
+  SandboxTurn(this.j);
+  final Json j;
+
+  /// reply | emergency | doctor | summary | fallback.
+  String get kind => j['kind']! as String;
+  String get text => j['text']! as String;
+  List<String> get quickReplies => [
+    for (final q in (j['quick_replies'] as List?) ?? const []) q as String,
+  ];
+  String? get redFlagSource => j['red_flag_source'] as String?;
+  bool get guardBlocked => j['guard_blocked'] == true;
+  Json? get summary => j['summary'] as Json?;
+}

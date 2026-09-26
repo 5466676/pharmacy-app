@@ -1349,9 +1349,23 @@
   "lockStopped": "دوايا وقّفت البيع وتعديل المخزون بهالصيدلية. تواصل مع دوايا.",
   "lockLicenceEnded": "صرلو البرنامج أكتر من المدة المسموحة بلا اتصال مع دوايا. وصّل سيرفر الصيدلية عالإنترنت، وبعد ما يتصل سكّر البرنامج وافتحه.",
   "lockReason": "السبب: {reason}",
-  "@lockReason": {"placeholders": {"reason": {"type": "String"}}},
+  "@lockReason": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
   "lockStillOpen": "بتقدر تشوف التقارير والمخزون والديون، وتعمل نسخة احتياطية وتصدّر بياناتك.",
   "lockReadOnly": "النظام موقّف: البيع وتعديل المخزون مسكّرين. الشوفة والتصدير مفتوحين.",
   "lockEndingSoon": "لازم يتصل سيرفر الصيدلية بدوايا خلال {days} يوم، وإلا بيتسكّر البيع لما ينفتح البرنامج.",
-  "@lockEndingSoon": {"placeholders": {"days": {"type": "String"}}}
+  "@lockEndingSoon": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "doctorAdvised": "المساعد نصح بطبيب",
+  "doctorAdvisedHelp": "المساعد نصح المريض يراجع طبيب بأقرب وقت (مو إسعاف). راجع الحالة وأكّد عليه أو وجّهه."
 }

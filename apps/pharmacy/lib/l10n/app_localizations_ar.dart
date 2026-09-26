@@ -2334,4 +2334,11 @@ class AppLocalizationsAr extends AppLocalizations {
   String lockEndingSoon(String days) {
     return 'لازم يتصل سيرفر الصيدلية بدوايا خلال $days يوم، وإلا بيتسكّر البيع لما ينفتح البرنامج.';
   }
+
+  @override
+  String get doctorAdvised => 'المساعد نصح بطبيب';
+
+  @override
+  String get doctorAdvisedHelp =>
+      'المساعد نصح المريض يراجع طبيب بأقرب وقت (مو إسعاف). راجع الحالة وأكّد عليه أو وجّهه.';
 }

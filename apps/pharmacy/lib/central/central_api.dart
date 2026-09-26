@@ -45,6 +45,7 @@ class CaseBrief {
       status = j['status']! as String,
       urgent = j['urgent']! as bool,
       redFlag = _str(j['red_flag']),
+      doctorAdvice = _str(j['doctor_advice']),
       title = j['title']! as String,
       patient = CasePatient.fromJson(j['patient']! as Map<String, Object?>),
       sentAt = _date(j['sent_at']),
@@ -54,6 +55,9 @@ class CaseBrief {
   final String status;
   final bool urgent;
   final String? redFlag;
+
+  /// «لازم دكتور»: the assistant told the patient to see a doctor soon.
+  final String? doctorAdvice;
   final String title;
   final CasePatient patient;
   final DateTime? sentAt;
@@ -117,6 +121,7 @@ class CaseDetail {
       status = j['status']! as String,
       urgent = j['urgent']! as bool,
       redFlag = _str(j['red_flag']),
+      doctorAdvice = _str(j['doctor_advice']),
       summary = j['summary'] == null
           ? null
           : CaseSummary.fromJson(j['summary']! as Map<String, Object?>),
@@ -132,6 +137,7 @@ class CaseDetail {
   final String status;
   final bool urgent;
   final String? redFlag;
+  final String? doctorAdvice;
   final CaseSummary? summary;
   final Map<String, Object?>? decision;
   final String? handledBy;

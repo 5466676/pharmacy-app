@@ -269,7 +269,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get colStatus => 'الحالة';
 
   @override
-  String get statusActive => 'فعّالة';
+  String get statusActive => 'مستعملة';
 
   @override
   String get statusPending => 'ناطرة موافقة';
@@ -739,4 +739,328 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get detailReason => 'السبب';
+
+  @override
+  String get navAssistant => 'المساعد';
+
+  @override
+  String get asTitle => 'المساعد';
+
+  @override
+  String get asSubtitle =>
+      'النموذج، التعليمات، أمثلة السلامة، وجرّب قبل ما تعتمد. قواعد السلامة الأساسية ثابتة بالكود وما بتتغيّر من هون.';
+
+  @override
+  String get tabState => 'الحالة والنموذج';
+
+  @override
+  String get tabPrompts => 'التعليمات';
+
+  @override
+  String get tabExamples => 'أمثلة السلامة';
+
+  @override
+  String get tabSandbox => 'جرّب';
+
+  @override
+  String get last24h => 'آخر 24 ساعة';
+
+  @override
+  String get stReplies => 'ردود';
+
+  @override
+  String get stDown => 'مرات الوقوف';
+
+  @override
+  String get stMedian => 'متوسط زمن الرد';
+
+  @override
+  String stSlowest(String ms) {
+    return 'أبطأ رد: $ms';
+  }
+
+  @override
+  String msValue(String n) {
+    return '$n ملي ثانية';
+  }
+
+  @override
+  String get stGuard => 'ردود انمنعت';
+
+  @override
+  String get stFlags => 'حالات خطرة';
+
+  @override
+  String stFlagsCaption(String rules, String model) {
+    return 'من القواعد: $rules، من النموذج: $model';
+  }
+
+  @override
+  String get stDoctor => 'نصيحة بطبيب';
+
+  @override
+  String lastDown(String ago) {
+    return 'آخر وقوف: $ago';
+  }
+
+  @override
+  String assistantDownBanner(String ago) {
+    return 'المساعد وقف $ago. المرضى عم يبعتوا للصيدلي مباشرة لحد ما يرجع.';
+  }
+
+  @override
+  String get modelTitle => 'النموذج';
+
+  @override
+  String get modelSourcePanel => 'مختار من اللوحة';
+
+  @override
+  String get modelSourceSettings => 'من إعدادات السيرفر (ما اخترت من اللوحة لسا)';
+
+  @override
+  String get modelKeySet => 'في مفتاح محفوظ';
+
+  @override
+  String get modelNoKey => 'بلا مفتاح';
+
+  @override
+  String get changeModel => 'غيّر النموذج';
+
+  @override
+  String get chooseServer => 'اختر المخدم';
+
+  @override
+  String get providerLmStudio => 'LM Studio';
+
+  @override
+  String get providerOllama => 'Ollama';
+
+  @override
+  String get providerHosted => 'خدمة أونلاين';
+
+  @override
+  String get serverUrl => 'عنوان المخدم';
+
+  @override
+  String get apiKey => 'مفتاح API';
+
+  @override
+  String get apiKeyKeep => 'اتركه فاضي لتضل على المفتاح المحفوظ';
+
+  @override
+  String get removeKey => 'شيل المفتاح';
+
+  @override
+  String get fetchModels => 'جيب النماذج';
+
+  @override
+  String get chooseModel => 'اختر النموذج';
+
+  @override
+  String get modelNameManual => 'أو اكتب اسم النموذج';
+
+  @override
+  String get noModels => 'المخدم ما رجّع ولا نموذج.';
+
+  @override
+  String get timeoutSeconds => 'مهلة الرد (ثانية)';
+
+  @override
+  String get switchModel => 'جرّب وبدّل';
+
+  @override
+  String switched(String ms) {
+    return 'تبدّل النموذج، جاوب بـ $ms';
+  }
+
+  @override
+  String get errServerUnreachable => 'ما قدرت وصل للمخدم. تأكد من العنوان وإنو شغّال.';
+
+  @override
+  String get errModelNotAnswering => 'النموذج ما جاوب، فما بدّلت. تأكد من الاسم والمفتاح.';
+
+  @override
+  String get errTestNotPassed => 'لازم تمتحن المسودة وتنجح بعد آخر تعديل قبل ما تعتمدها.';
+
+  @override
+  String get errNotADraft => 'هالنسخة مو مسودة.';
+
+  @override
+  String get errAlreadyDefault => 'هي أصلاً النسخة الأساسية.';
+
+  @override
+  String get kindAssistant => 'أسئلة المساعد';
+
+  @override
+  String get kindSummary => 'ملخص الصيدلي';
+
+  @override
+  String get kindClassifier => 'فاحص الخطر';
+
+  @override
+  String get kindAssistantNote => 'كيف بيحكي المساعد مع المريض وشو بيسأل.';
+
+  @override
+  String get kindSummaryNote => 'كيف بينكتب الملخص يلي بيوصل للصيدلي.';
+
+  @override
+  String get kindClassifierNote =>
+      'شو بيعتبر إسعاف، وشو بيعتبر لازم دكتور. أمثلة السلامة بتنضاف عليه.';
+
+  @override
+  String get inUse => 'المستعمل هلق';
+
+  @override
+  String get builtIn => 'النسخة الأساسية';
+
+  @override
+  String versionN(String n) {
+    return 'نسخة $n';
+  }
+
+  @override
+  String get statusDraft => 'مسودة';
+
+  @override
+  String get statusRetired => 'قديمة';
+
+  @override
+  String get lockedTitle => 'ثابت بالكود (بينضاف دايماً)';
+
+  @override
+  String get newDraft => 'مسودة جديدة';
+
+  @override
+  String get editDraft => 'عدّل';
+
+  @override
+  String get runTest => 'امتحن';
+
+  @override
+  String get activateDraft => 'اعتمد';
+
+  @override
+  String get rollbackStep => 'رجوع خطوة';
+
+  @override
+  String get rollbackConfirm => 'ترجع للنسخة يلي قبلها؟';
+
+  @override
+  String get draftText => 'النص';
+
+  @override
+  String get draftNote => 'ملاحظة (شو غيّرت)';
+
+  @override
+  String get testPassed => 'نجحت: ما فوّتت ولا حالة';
+
+  @override
+  String testFailed(String missed) {
+    return 'ما نجحت: فوّتت $missed';
+  }
+
+  @override
+  String testFalseAlarms(String n) {
+    return 'إنذارات زيادة: $n';
+  }
+
+  @override
+  String get testSummaryBad => 'الملخص ما اشتغل';
+
+  @override
+  String get testRunning => 'عم امتحن... ممكن ياخد دقيقة مع نموذج محلي.';
+
+  @override
+  String get expected => 'المتوقع';
+
+  @override
+  String get got => 'صار';
+
+  @override
+  String get labelEmergency => 'إسعاف';
+
+  @override
+  String get labelDoctor => 'لازم دكتور';
+
+  @override
+  String get labelNormal => 'عادي';
+
+  @override
+  String bySource(String source) {
+    return '($source)';
+  }
+
+  @override
+  String get sourceRules => 'القواعد';
+
+  @override
+  String get sourceModel => 'النموذج';
+
+  @override
+  String get guardBlockedCase => 'انمنع رد فيه دوا أو جرعة';
+
+  @override
+  String get modelDownCase => 'النموذج ما جاوب';
+
+  @override
+  String get examplesSubtitle =>
+      'حط مواقف لازم فيها المساعد ينذر المريض: إسعاف أو يروح لدكتور، ومواقف عادية كمان. بتنضاف لفاحص الخطر كأمثلة، وبتصير جزء من الامتحان. ما في تدريب تلقائي.';
+
+  @override
+  String get addExample => 'مثال جديد';
+
+  @override
+  String get exampleText => 'شو كتب المريض';
+
+  @override
+  String get exampleLabel => 'لازم يصير';
+
+  @override
+  String get exampleNote => 'ملاحظة';
+
+  @override
+  String get examplesEmpty => 'ما في أمثلة لسا.';
+
+  @override
+  String get testCurrent => 'امتحن المستعمل هلق';
+
+  @override
+  String get exampleEnabled => 'مستعمل';
+
+  @override
+  String get sandboxSubtitle =>
+      'احكي كأنك مريض. ما في مريض حقيقي وما بينحفظ شي. فيك تجرب المسودات قبل ما تعتمدها.';
+
+  @override
+  String get useDrafts => 'جرّب مع المسودات:';
+
+  @override
+  String get noDrafts => 'ما في مسودات، عم جرّب المستعمل هلق.';
+
+  @override
+  String get sandboxHint => 'اكتب رسالة المريض';
+
+  @override
+  String get send => 'ابعت';
+
+  @override
+  String get restart => 'من الأول';
+
+  @override
+  String get turnReply => 'رد';
+
+  @override
+  String get turnEmergency => 'إسعاف';
+
+  @override
+  String get turnDoctor => 'لازم دكتور';
+
+  @override
+  String get turnSummary => 'ملخص';
+
+  @override
+  String get turnFallback => 'النموذج وقف';
+
+  @override
+  String get guardBlockedTurn => 'الحارس منع رد وحط بداله';
 }

@@ -23,6 +23,56 @@ class FakeCentral {
   String status = 'active';
   bool reviewed = false;
   final notes = <Map<String, Object?>>[];
+  int down = 0;
+  String model = 'qwen2.5-7b-instruct';
+  bool hasKey = false;
+  final versions = <Map<String, Object?>>[];
+  final examples = <Map<String, Object?>>[];
+
+  Map<String, Object?> assistant() => {
+    'provider': 'lm_studio',
+    'base_url': 'http://localhost:1234/v1',
+    'model': model,
+    'timeout_seconds': 60,
+    'has_key': hasKey,
+    'source': 'panel',
+    'updated_at': null,
+    'updated_by': null,
+    'providers': {
+      'lm_studio': 'http://localhost:1234/v1',
+      'ollama': 'http://localhost:11434/v1',
+      'hosted': '',
+    },
+  };
+
+  Map<String, Object?> testResult(bool passed) => {
+    'passed': passed,
+    'summary_ok': true,
+    'missed': passed ? 0 : 1,
+    'false_alarms': 0,
+    'cases': [
+      {
+        'text': 'عندي ألم بالصدر',
+        'expected': 'emergency',
+        'got': 'emergency',
+        'source': 'rules',
+        'passed': true,
+        'guard_blocked': false,
+        'model_down': false,
+        'false_alarm': false,
+      },
+      {
+        'text': 'عندي سعلة صرلها شهر',
+        'expected': 'doctor',
+        'got': passed ? 'doctor' : 'normal',
+        'source': passed ? 'classifier' : null,
+        'passed': passed,
+        'guard_blocked': false,
+        'model_down': false,
+        'false_alarm': false,
+      },
+    ],
+  };
 
   Map<String, Object?> pharmacy({bool detail = false}) => {
     'id': 'p1',
@@ -140,6 +190,81 @@ class FakeCentral {
       case ('POST', '/admin/review/7'):
         reviewed = true;
         body = _item();
+      case ('GET', '/admin/assistant/stats'):
+        body = {
+          'hours': 24,
+          'replies': 120,
+          'down': down,
+          'guard_blocks': 2,
+          'red_flags_rules': 3,
+          'red_flags_model': 1,
+          'doctor_advice': 4,
+          'median_ms': 1800,
+          'slowest_ms': 9000,
+          'last_down_at': down > 0 ? DateTime.now().toUtc().toIso8601String() : null,
+        };
+      case ('GET', '/admin/assistant'):
+        body = assistant();
+      case ('POST', '/admin/assistant/models'):
+        body = {
+          'models': ['llama-3.1-8b', 'qwen2.5-7b-instruct'],
+        };
+      case ('PUT', '/admin/assistant/model'):
+        final b = jsonDecode(r.body) as Map;
+        model = b['model'] as String;
+        hasKey = (b['api_key'] as String?)?.isNotEmpty ?? hasKey;
+        body = {...assistant(), 'ms': 850};
+      case ('GET', '/admin/assistant/prompts'):
+        body = {
+          for (final k in ['assistant', 'summary', 'classifier'])
+            k: {
+              'active_id': null,
+              'text': 'default $k guide text',
+              'default': 'default $k guide text',
+              'locked': ['Rules you never break'],
+              'versions': [...versions.where((v) => v['kind'] == k)],
+            },
+        };
+      case ('POST', '/admin/assistant/prompts'):
+        final b = jsonDecode(r.body) as Map<String, Object?>;
+        versions.insert(0, {
+          'id': versions.length + 1,
+          ...b,
+          'note': null,
+          'status': 'draft',
+          'test': null,
+          'ready': false,
+          'created_at': '2026-09-26T10:00:00Z',
+        });
+        body = versions.first;
+      case ('POST', final p) when p.endsWith('/test') && p.startsWith('/admin/assistant/prompts/'):
+        final v = versions.first;
+        v['test'] = testResult(true);
+        v['ready'] = true;
+        body = v;
+      case ('POST', final p) when p.endsWith('/activate'):
+        versions.first['status'] = 'active';
+        body = versions.first;
+      case ('GET', '/admin/assistant/examples'):
+        body = examples;
+      case ('POST', '/admin/assistant/examples'):
+        final b = jsonDecode(r.body) as Map<String, Object?>;
+        examples.insert(0, {'id': examples.length + 1, 'note': null, ...b, 'enabled': true});
+        body = examples.first;
+      case ('POST', '/admin/assistant/test'):
+        body = testResult(false);
+      case ('POST', '/admin/assistant/sandbox'):
+        final b = jsonDecode(r.body) as Map;
+        final doctor = (b['text'] as String).contains('سعلة');
+        body = {
+          'kind': doctor ? 'doctor' : 'reply',
+          'text': doctor ? 'من وصفك، هالشي بدو طبيب يفحصك' : 'سلامتك، من إيمتى؟',
+          'quick_replies': <String>[],
+          'red_flag': doctor ? 'other' : null,
+          'red_flag_source': doctor ? 'classifier' : null,
+          'summary': null,
+          'guard_blocked': false,
+        };
       case ('GET', '/admin/knowledge'):
         body = notes;
       case ('POST', '/admin/knowledge'):
@@ -339,5 +464,83 @@ void main() {
     ], now: now);
     expect(rows.map((r) => r.$1.id), ['never', 'gone', 'sick', 'slow']);
     expect(rows[1].$2, 'ما اتصلت من 3 يوم');
+  });
+
+  testWidgets('the assistant: switch the model, add an example, test and activate a draft', (
+    tester,
+  ) async {
+    session.value = const AdminSession(sessionToken: 's.x', name: 'فايز').toJsonString();
+    central.down = 1;
+    await pumpApp(tester);
+    expect(find.textContaining('المساعد وقف'), findsOneWidget);
+
+    await go(tester, Routes.assistant);
+    expect(find.text('120'), findsOneWidget);
+    expect(find.text('qwen2.5-7b-instruct'), findsOneWidget);
+
+    // «اختر المخدم» → «جيب النماذج» → pick → switch.
+    await tester.tap(find.text('غيّر النموذج'));
+    await settle(tester);
+    await tester.tap(find.text('جيب النماذج'));
+    await settle(tester);
+    await tester.tap(find.text('llama-3.1-8b').first);
+    await settle(tester);
+    await tester.enterText(find.byType(TextFormField).at(1), 'sk-123');
+    await tester.tap(find.text('جرّب وبدّل'));
+    await settle(tester);
+    expect(central.bodies['/admin/assistant/model'], {
+      'provider': 'lm_studio',
+      'base_url': 'http://localhost:1234/v1',
+      'model': 'llama-3.1-8b',
+      'api_key': 'sk-123',
+      'timeout_seconds': 60,
+    });
+    expect(find.textContaining('تبدّل النموذج'), findsOneWidget);
+
+    // A safety example.
+    await tester.tap(find.text('أمثلة السلامة'));
+    await settle(tester);
+    await tester.tap(find.text('مثال جديد'));
+    await settle(tester);
+    await tester.enterText(find.byType(TextFormField).first, 'عندي كتلة بصدري من شهر');
+    await tester.tap(find.text('حفظ'));
+    await settle(tester);
+    expect(central.bodies['/admin/assistant/examples'], {
+      'text': 'عندي كتلة بصدري من شهر',
+      'label': 'doctor',
+    });
+    expect(find.text('عندي كتلة بصدري من شهر'), findsOneWidget);
+    await tester.tap(find.text('امتحن المستعمل هلق'));
+    await settle(tester);
+    expect(find.text('ما نجحت: فوّتت 1'), findsOneWidget);
+
+    // A draft: test, then activate.
+    await tester.tap(find.text('التعليمات'));
+    await settle(tester);
+    await tester.tap(find.text('فاحص الخطر'));
+    await settle(tester);
+    await tester.tap(find.text('مسودة جديدة'));
+    await settle(tester);
+    await tester.enterText(
+      find.byType(TextFormField).last,
+      'default classifier guide text, plus lumps.',
+    );
+    await tester.tap(find.text('حفظ'));
+    await settle(tester);
+    expect((central.bodies['/admin/assistant/prompts']! as Map)['kind'], 'classifier');
+    await tester.tap(find.text('امتحن'));
+    await settle(tester);
+    expect(find.text('نجحت: ما فوّتت ولا حالة'), findsOneWidget);
+    await tester.tap(find.text('اعتمد'));
+    await settle(tester);
+    expect(central.versions.first['status'], 'active');
+
+    // The sandbox, with the draft... now active; a doctor case.
+    await tester.tap(find.text('جرّب').first);
+    await settle(tester);
+    await tester.enterText(find.byType(TextFormField).last, 'عندي سعلة صرلها شهر');
+    await tester.tap(find.text('ابعت'));
+    await settle(tester);
+    expect(find.text('لازم دكتور'), findsWidgets);
   });
 }

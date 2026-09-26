@@ -15,6 +15,11 @@ String errorText(AppLocalizations l, Object e) => switch (e) {
   SyncApiException(code: 'code_taken') => l.errCodeTaken,
   SyncApiException(code: 'bad_code') => l.errBadCode,
   SyncApiException(code: 'note_has_dose') => l.errNoteHasDose,
+  SyncApiException(code: 'server_unreachable') => l.errServerUnreachable,
+  SyncApiException(code: 'model_not_answering') => l.errModelNotAnswering,
+  SyncApiException(code: 'test_not_passed') => l.errTestNotPassed,
+  SyncApiException(code: 'not_a_draft') => l.errNotADraft,
+  SyncApiException(code: 'already_default') => l.errAlreadyDefault,
   SyncApiException(:final code) => l.errGeneric(code),
   _ => l.errGeneric('$e'),
 };

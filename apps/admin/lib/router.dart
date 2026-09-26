@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'data/providers.dart';
+import 'ui/assistant_screen.dart';
 import 'ui/knowledge_screen.dart';
 import 'ui/overview_screen.dart';
 import 'ui/performance_screen.dart';
@@ -22,6 +23,7 @@ abstract final class Routes {
   static const review = '/review';
   static String reviewItem(int id) => '$review/$id';
   static const knowledge = '/knowledge';
+  static const assistant = '/assistant';
   static const settings = '/settings';
 }
 
@@ -78,6 +80,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
+          GoRoute(path: Routes.assistant, pageBuilder: (_, _) => page(const AssistantScreen())),
           GoRoute(path: Routes.knowledge, pageBuilder: (_, _) => page(const KnowledgeScreen())),
           GoRoute(path: Routes.settings, pageBuilder: (_, _) => page(const SettingsScreen())),
         ],
