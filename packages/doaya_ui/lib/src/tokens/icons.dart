@@ -62,5 +62,7 @@ abstract final class DoayaIcons {
   static const staff = Icons.people_outline_rounded;
   static const returns = Icons.undo_rounded;
   static const transfer = Icons.phone_iphone_rounded;
+  static const call = Icons.call_rounded;
+  static const logout = Icons.logout_rounded;
   static const till = Icons.savings_outlined;
 }
