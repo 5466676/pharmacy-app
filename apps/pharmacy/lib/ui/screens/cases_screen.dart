@@ -392,7 +392,7 @@ class _SummaryPanel extends ConsumerWidget {
               onPressed: () => _correct(context, ref, detail.id, field: 'summary'),
             ),
       child: s == null
-          ? Text(l.noSummary, style: secondary)
+          ? Text(detail.urgent ? l.noSummaryUrgent : l.noSummary, style: secondary)
           : Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [

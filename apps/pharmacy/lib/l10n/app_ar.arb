@@ -1069,5 +1069,6 @@
   "errBadPharmacyKey": "المفتاح غلط",
   "errCentralUnreachable": "ما قدرنا نوصل لدوايا أونلاين",
   "removeItem": "شيل",
-  "centralUrlHint": "https://…"
+  "centralUrlHint": "https://…",
+  "noSummaryUrgent": "ما في ملخص: المساعد وقّف الاستشارة أول ما طلعت علامة الخطر. اقرا المحادثة."
 }

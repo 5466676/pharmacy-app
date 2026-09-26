@@ -2092,4 +2092,8 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get centralUrlHint => 'https://…';
+
+  @override
+  String get noSummaryUrgent =>
+      'ما في ملخص: المساعد وقّف الاستشارة أول ما طلعت علامة الخطر. اقرا المحادثة.';
 }
