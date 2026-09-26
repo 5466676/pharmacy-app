@@ -210,3 +210,10 @@ The server doesn't recreate the app's ~25 tables. Each synced row is stored once
 - **Updates with the app closed**: `workmanager` (owner approved) runs a check about every 15 minutes with a connection. It asks `/updates`, compares with what the phone last knew (kept on the device) and shows only what changed and matters. The first check only learns. No Firebase / Google push anywhere. Android only for now; the web lists reminders and says so.
 - **Prescription photos** are checked by their bytes, not their name (JPEG/PNG/WebP, 5 MB). They are kept as files under the server's `data_dir`, so no object storage is needed for any host. Only the patient and the pharmacy they went to (after sending) can open one; the assistant never reads photos.
 - **Receipts**: `pdf` + `printing` (owner approved) render an 80 mm receipt and open the system print dialog (any printer). The font is **Amiri**: the PDF engine shapes Arabic with presentation-form glyphs, which Readex Pro lacks (a test guards this). `printing` bundles PDFium at build time: the machine that builds needs internet once, the counter never.
+
+## 2026-09-26 · Themes: one look per device, derived palettes, safety colours fixed
+- The look (style, mode, palette or custom colours, details) is chosen by every user and kept on the device only; it never syncs. Owner's decision: «المظهر للكل».
+- Colours are derived, not hand-picked per theme: `DoayaPalette.of(look)` darkens/lightens backgrounds and nudges text and buttons until they meet 4.5:1 (7:1 in «تباين عالي»). The default look returns the original palette unchanged, so nothing moved for current users.
+- Danger red and warning amber keep their meaning in every look; no palette has a red main colour.
+- Tokens (`DoayaColors`, spacing, radii, typography) became getters reading the current look, instead of passing a theme object through every widget. This cost 589 `const`s, removed mechanically by an analyzer-driven script.
+- The pharmacy desktop never blurs, whatever the style (old PCs).

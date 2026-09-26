@@ -673,7 +673,7 @@ Server side only so far (the screens are steps 5–7). The tests read as the sce
 
 
 
-## Themes: colour choices and a custom theme · 📝 plan, waiting for the owner's OK (asked 2026-09-26)
+## Themes: colour choices and a custom theme · ✅ done 2026-09-26, waiting for review
 
 Users asked for other colours, and for a place to make their own.
 
@@ -727,6 +727,15 @@ Preview: the «ألوان دوايا» page (version 2). Choices are made in «�
 3. «المظهر» screen with the live preview, in the pharmacy app and the patient app; kept per device; «تلقائي» follows the system.
 4. Screenshots of each style and mode on desktop and phone → review.
 
+### Done
+- Steps 1–4 done. The owner chose «المظهر للكل»: every user of every app picks the look, kept per device (pharmacy: `look.json` in the app support folder; patient: the device store).
+- `doaya_ui`: `DoayaLook` + `DoayaPalette.of()` derive every colour with contrast checks; the default look gives exactly the old colours. `DoayaLookScope` applies a look live (screens keep their state). `DoayaLookEditor` is the shared «المظهر» screen body.
+- Pharmacy app: «المظهر» in the side menu for everyone (and in «المزيد»). Desktop never blurs, even with «زجاجي».
+- Patient app: «المظهر» in «حسابي».
+- 589 `const`s that held a colour or size were removed with an analyzer-driven script; no screen code changed otherwise.
+- Screenshots: `docs/screenshots/themes/` (patient web in 7 looks + the «المظهر» screen; pharmacy desktop in 4 looks).
+- Tests: `doaya_ui` 30 (every palette × mode × style and a sweep of custom colours pass the contrast rules; safety colours keep their meaning), pharmacy 98, patient 28.
+
 ## Phase 4 — Admin panel · 📝 plan, waiting for the owner's OK (asked 2026-09-26)
 
 From SPEC §1.3 and `design/admin_overview_layout.html` (layout only, rebuilt in the dark tokens). Subscriptions and payments stay **off** (owner's decision for the pilot); the screens say so instead of showing fake numbers.
@@ -772,9 +781,9 @@ From SPEC §1.3 and `design/admin_overview_layout.html` (layout only, rebuilt in
 5. Real run with screenshots, docs → **review**.
 
 ### Questions for the owner
-1. Themes: is the choice on the preview page (5 styles, 4 modes, 11 palettes + «تصميمي», details) right, or add/remove anything?
-2. Themes: is «تصميمي» for everyone, or only the pharmacy owner in the pharmacy app (so the counter looks the same for all staff)?
+1. Themes: the preview page's choices. (answered: approved, with more colours and styles)
+2. Themes: «تصميمي» for everyone? (answered: the look is for everyone)
 3. Admin: one admin (the owner) for now; more can be added from the server's command line. (answered)
 4. Admin: reviewing shows no patient name/phone (age, sex, pharmacy only). (answered: approved)
 6. Stopping a pharmacy: how many days may a pharmacy server work without contacting Doaya online before it asks to connect (proposal 30)? And should a stopped pharmacy keep read-only access to its screens, or only the data export?
-5. Order: themes first, then Phase 4? (Proposed, since the admin app would then be built on the new palette.)
+5. Order: themes first, then Phase 4. (answered: yes)

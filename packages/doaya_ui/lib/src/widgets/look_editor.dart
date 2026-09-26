@@ -374,11 +374,11 @@ class _StyleCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(DoayaSpacing.sm),
       ),
       DoayaStyle.flat => BoxDecoration(
-        color: p.surfaceRaised,
+        color: p.accent.withValues(alpha: .45),
         borderRadius: BorderRadius.circular(DoayaRadii.key),
       ),
       DoayaStyle.soft => BoxDecoration(
-        color: p.surfaceRaised,
+        color: p.accent.withValues(alpha: .3),
         borderRadius: BorderRadius.circular(DoayaRadii.imageWell),
         boxShadow: [
           BoxShadow(
