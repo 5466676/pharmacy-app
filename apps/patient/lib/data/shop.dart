@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'models.dart';
+import 'photos.dart';
 import 'providers.dart';
 
 /// One product in the cart, with the quantity the patient asks for.
@@ -40,10 +41,14 @@ class Cart extends Notifier<Map<String, CartLine>> {
   void clear() => state = const {};
 
   /// Sends the cart to the pharmacy and empties it.
-  Future<PatientOrder> order({String? note}) async {
-    final o = await ref.read(apiProvider).placeOrder({
-      for (final l in state.values) l.item.productId: l.quantity,
-    }, note: note == null || note.trim().isEmpty ? null : note.trim());
+  Future<PatientOrder> order({String? note, PickedPhoto? photo}) async {
+    final api = ref.read(apiProvider);
+    final photoId = photo == null ? null : await api.uploadPhoto(photo.bytes, photo.name);
+    final o = await api.placeOrder(
+      {for (final l in state.values) l.item.productId: l.quantity},
+      note: note == null || note.trim().isEmpty ? null : note.trim(),
+      photoId: photoId,
+    );
     clear();
     ref.invalidate(ordersProvider);
     return o;

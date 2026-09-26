@@ -8,6 +8,8 @@ import '../data/shop.dart';
 import '../l10n/app_localizations.dart';
 import '../router.dart';
 import 'common.dart';
+import 'photo_widgets.dart';
+import '../data/photos.dart';
 
 /// From design/patient_order.html: the lines, a note, where to pick it up,
 /// the total, «أرسل الطلب للصيدلية». Paid at the pharmacy.
@@ -20,6 +22,7 @@ class CartScreen extends ConsumerStatefulWidget {
 
 class _CartScreenState extends ConsumerState<CartScreen> {
   final _note = TextEditingController();
+  PickedPhoto? _photo;
   var _busy = false;
 
   @override
@@ -32,7 +35,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     final l = AppLocalizations.of(context);
     setState(() => _busy = true);
     try {
-      final o = await ref.read(cartProvider.notifier).order(note: _note.text);
+      final o = await ref.read(cartProvider.notifier).order(note: _note.text, photo: _photo);
       if (!mounted) return;
       toast(context, l.orderSent);
       // Back from the order goes to «طلباتي», not to the empty cart.
@@ -125,6 +128,30 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                   ),
                 const SizedBox(height: DoayaSpacing.l),
                 GlassTextField(label: l.noteToPharmacist, controller: _note, maxLines: 2),
+                const SizedBox(height: DoayaSpacing.l),
+                if (_photo case final photo?)
+                  Row(
+                    children: [
+                      PhotoThumb(bytes: photo.bytes, size: DoayaSizes.productImage),
+                      const SizedBox(width: DoayaSpacing.ml),
+                      Expanded(child: Text(l.prescriptionPhotoHint, style: secondary)),
+                      GlassPillButton(
+                        label: l.removePhoto,
+                        size: PillSize.small,
+                        onPressed: () => setState(() => _photo = null),
+                      ),
+                    ],
+                  )
+                else
+                  GlassPillButton(
+                    label: l.attachPrescription,
+                    icon: DoayaIcons.camera,
+                    expand: true,
+                    onPressed: () async {
+                      final picked = await pickPhoto(context, ref);
+                      if (picked != null && mounted) setState(() => _photo = picked);
+                    },
+                  ),
                 const SizedBox(height: DoayaSpacing.l),
                 if (pharmacy != null)
                   GlassSurface(

@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:doaya_patient/app.dart';
 import 'package:doaya_patient/data/doses.dart';
 import 'package:doaya_patient/data/live_updates.dart';
+import 'package:doaya_patient/data/photos.dart';
 import 'package:doaya_patient/data/patient_api.dart';
 import 'package:doaya_patient/data/providers.dart';
 import 'package:doaya_patient/data/session_store.dart';
@@ -13,6 +14,7 @@ import 'package:doaya_patient/ui/chat_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 
 import 'auth_test.dart' show pharmacy;
@@ -20,6 +22,11 @@ import 'fake_notifications.dart';
 import 'patient_api_test.dart' show json, patientJson;
 
 final l = lookupAppLocalizations(const Locale('ar'));
+
+/// A real 1×1 PNG (Image.memory decodes it in tests).
+final png = base64Decode(
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+);
 
 /// Doaya online in memory: one patient, one pharmacy, a scripted assistant.
 class FakeServer {
@@ -98,10 +105,24 @@ class FakeServer {
         'updated_at': '2026-09-26T10:00:00Z',
       };
 
+  final photos = <String, List<int>>{};
+
   late final client = MockClient((req) async {
     final path = req.url.path;
     seen.add('${req.method} $path');
-    final body = req.body.isEmpty ? null : jsonDecode(req.body);
+    final multipart = req.headers['content-type']?.startsWith('multipart/') ?? false;
+    final body = multipart || req.bodyBytes.isEmpty ? null : jsonDecode(req.body);
+    if (multipart) {
+      final id = 'photo${photos.length + 1}';
+      photos[id] = req.bodyBytes;
+      if (path == '/photos') return json({'id': id});
+      final c = consultations[path.split('/')[2]]!;
+      (c['messages']! as List).add({..._message('patient', 'بعتت صورة'), 'photo_id': id});
+      return json(c);
+    }
+    if (req.method == 'GET' && path.startsWith('/photos/')) {
+      return http.Response.bytes(png, 200, headers: {'content-type': 'image/png'});
+    }
     final parts = path.split('/');
     switch ((req.method, path)) {
       case ('POST', '/patients/register'):
@@ -128,6 +149,7 @@ class FakeServer {
       case ('GET', _) when path.startsWith('/directory/ph1/shelf/'):
         return json(shelf.firstWhere((i) => i['product_id'] == parts.last));
       case ('POST', '/orders'):
+        if (body['photo_id'] != null) seen.add('photo_id ${body['photo_id']}');
         final lines = [
           for (final l in body['lines'] as List)
             {
@@ -140,7 +162,9 @@ class FakeServer {
               )['price_minor'],
             },
         ];
-        return json(order('o${orders.length + 1}', lines, body['note'] as String?));
+        final o = order('o${orders.length + 1}', lines, body['note'] as String?);
+        o['photo_id'] = body['photo_id'];
+        return json(o);
       case ('GET', '/orders'):
         return json(orders.values.toList().reversed.toList());
       case ('GET', _) when path.startsWith('/orders/'):
@@ -203,6 +227,7 @@ Future<void> pumpApp(
   FakeNotifications? notifications,
   MemorySessionStore? reminders,
 }) async {
+  Future<PickedPhoto?> picker(PhotoSource _) async => (bytes: png, name: 'rx.png');
   tester.view
     ..physicalSize = const Size(390, 844)
     ..devicePixelRatio = 1;
@@ -216,6 +241,7 @@ Future<void> pumpApp(
         deviceNotificationsProvider.overrideWithValue(notifications ?? FakeNotifications()),
         remindersStoreProvider.overrideWithValue(reminders ?? MemorySessionStore()),
         watchStoreProvider.overrideWithValue(MemorySessionStore()),
+        photoPickerProvider.overrideWithValue(picker),
       ],
       child: const PatientApp(),
     ),

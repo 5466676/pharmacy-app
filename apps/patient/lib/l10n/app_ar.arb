@@ -314,5 +314,15 @@
       }
     }
   },
-  "remindersActive": "التذكير شغّال لهالأدوية"
+  "remindersActive": "التذكير شغّال لهالأدوية",
+  "attachPhoto": "بعت صورة",
+  "takePhoto": "صوّر بالكاميرا",
+  "fromGallery": "اختار من الصور",
+  "attachPrescription": "أرفق صورة الوصفة",
+  "removePhoto": "شيل الصورة",
+  "prescriptionPhotoHint": "صورة الوصفة بتوصل للصيدلي مع الطلب.",
+  "photoSent": "وصلت الصورة",
+  "errPhotoTooBig": "الصورة كبيرة كتير، جرّب وحدة أصغر",
+  "errNotAnImage": "هاد مو ملف صورة",
+  "close": "سكّر"
 }

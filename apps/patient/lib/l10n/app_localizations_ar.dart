@@ -584,4 +584,34 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get remindersActive => 'التذكير شغّال لهالأدوية';
+
+  @override
+  String get attachPhoto => 'بعت صورة';
+
+  @override
+  String get takePhoto => 'صوّر بالكاميرا';
+
+  @override
+  String get fromGallery => 'اختار من الصور';
+
+  @override
+  String get attachPrescription => 'أرفق صورة الوصفة';
+
+  @override
+  String get removePhoto => 'شيل الصورة';
+
+  @override
+  String get prescriptionPhotoHint => 'صورة الوصفة بتوصل للصيدلي مع الطلب.';
+
+  @override
+  String get photoSent => 'وصلت الصورة';
+
+  @override
+  String get errPhotoTooBig => 'الصورة كبيرة كتير، جرّب وحدة أصغر';
+
+  @override
+  String get errNotAnImage => 'هاد مو ملف صورة';
+
+  @override
+  String get close => 'سكّر';
 }

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:doaya_core/doaya_core.dart' show SyncApiException, SyncNetworkException;
 import 'package:http/http.dart' as http;
@@ -166,14 +167,17 @@ class PatientApi {
   PatientOrder _o(Object? j) => PatientOrder.fromJson(j! as Map<String, Object?>);
 
   /// Product id → quantity asked for; the pharmacist settles the final ones.
-  Future<PatientOrder> placeOrder(Map<String, int> lines, {String? note}) async => _o(
-    await _authorized('POST', 'orders', {
-      'lines': [
-        for (final MapEntry(:key, :value) in lines.entries) {'product_id': key, 'quantity': value},
-      ],
-      'note': ?note,
-    }),
-  );
+  Future<PatientOrder> placeOrder(Map<String, int> lines, {String? note, String? photoId}) async =>
+      _o(
+        await _authorized('POST', 'orders', {
+          'photo_id': ?photoId,
+          'lines': [
+            for (final MapEntry(:key, :value) in lines.entries)
+              {'product_id': key, 'quantity': value},
+          ],
+          'note': ?note,
+        }),
+      );
 
   Future<List<PatientOrder>> orders() async => [
     for (final o in (await _authorized('GET', 'orders'))! as List) _o(o),
@@ -183,6 +187,61 @@ class PatientApi {
 
   Future<PatientOrder> cancelOrder(String id) async =>
       _o(await _authorized('POST', 'orders/$id/cancel'));
+
+  // ─── Photos ──────────────────────────────────────────────────────────────
+
+  /// A prescription photo in the chat: it goes to the pharmacist with the
+  /// case.
+  Future<Consultation> sendPhoto(String consultationId, Uint8List bytes, String filename) async =>
+      _c(await _upload('consultations/$consultationId/photos', bytes, filename));
+
+  /// A photo to attach to an order ([placeOrder]'s `photoId`).
+  Future<String> uploadPhoto(Uint8List bytes, String filename) async =>
+      ((await _upload('photos', bytes, filename))! as Map<String, Object?>)['id']! as String;
+
+  /// A photo the patient sent (the app shows it from memory).
+  Future<Uint8List> photo(String id) async {
+    Future<http.Response> get() => _client
+        .get(baseUrl.resolve('photos/$id'), headers: {'authorization': 'Bearer $_accessToken'})
+        .timeout(timeout);
+    if (_accessToken == null) await _refresh();
+    try {
+      var r = await get();
+      if (r.statusCode == 401) {
+        await _refresh();
+        r = await get();
+      }
+      if (r.statusCode != 200) throw SyncApiException(r.statusCode, 'photo_not_found');
+      return r.bodyBytes;
+    } on TimeoutException {
+      throw const SyncNetworkException('timeout');
+    } on http.ClientException catch (e) {
+      throw SyncNetworkException(e.message);
+    }
+  }
+
+  Future<Object?> _upload(String path, Uint8List bytes, String filename) async {
+    Future<http.Response> send() async {
+      final req = http.MultipartRequest('POST', baseUrl.resolve(path))
+        ..headers['authorization'] = 'Bearer $_accessToken'
+        ..files.add(http.MultipartFile.fromBytes('file', bytes, filename: filename));
+      return http.Response.fromStream(await _client.send(req).timeout(timeout));
+    }
+
+    if (_accessToken == null) await _refresh();
+    try {
+      var r = await send();
+      if (r.statusCode == 401) {
+        await _refresh();
+        r = await send();
+      }
+      return _decode(r);
+    } on TimeoutException {
+      throw const SyncNetworkException('timeout');
+    } on http.ClientException catch (e) {
+      throw SyncNetworkException(e.message);
+    }
+  }
 
   // ─── Consultations ───────────────────────────────────────────────────────
 
@@ -266,6 +325,10 @@ class PatientApi {
     } on http.ClientException catch (e) {
       throw SyncNetworkException(e.message);
     }
+    return _decode(r);
+  }
+
+  Object? _decode(http.Response r) {
     final text = utf8.decode(r.bodyBytes);
     if (r.statusCode >= 200 && r.statusCode < 300) {
       return text.isEmpty ? null : jsonDecode(text);

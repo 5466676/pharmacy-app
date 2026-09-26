@@ -9,6 +9,7 @@ import '../data/shop.dart';
 import '../l10n/app_localizations.dart';
 import '../router.dart';
 import 'common.dart';
+import 'photo_widgets.dart';
 import 'shelf_screens.dart' show CartButton;
 
 /// «طلباتي»: the pickup orders, newest first.
@@ -210,6 +211,10 @@ class OrderScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
+                if (o.photoId case final photo?) ...[
+                  const SizedBox(height: DoayaSpacing.ml),
+                  PhotoThumb(id: photo, size: DoayaSizes.productImage),
+                ],
                 if (o.note != null) ...[
                   const SizedBox(height: DoayaSpacing.ml),
                   Text('${l.noteToPharmacist}: ${o.note}', style: secondary),

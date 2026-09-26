@@ -15,6 +15,8 @@ String errorText(AppLocalizations l, Object e) => switch (e) {
   SyncApiException(code: 'consultation_closed') => l.consultationClosed,
   SyncApiException(code: 'unknown_product') => l.errUnknownProduct,
   SyncApiException(code: 'already_handled') => l.errAlreadyHandled,
+  SyncApiException(code: 'photo_too_big') => l.errPhotoTooBig,
+  SyncApiException(code: 'not_an_image') => l.errNotAnImage,
   SyncApiException(:final code) => l.errGeneric(code),
   _ => l.errGeneric('$e'),
 };

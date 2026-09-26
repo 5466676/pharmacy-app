@@ -95,9 +95,11 @@ class ChatMessage {
       text = j['text']! as String,
       quickReplies = (j['quick_replies'] as List?)?.cast<String>() ?? const [],
       author = j['author'] as String?,
+      photoId = j['photo_id'] as String?,
       createdAt = _date(j['created_at'])!;
 
   final int id;
+  final String? photoId;
 
   /// patient | assistant | pharmacist | system
   final String role;
@@ -261,12 +263,14 @@ class PatientOrder {
       note = j['note'] as String?,
       pharmacistNote = j['pharmacist_note'] as String?,
       handledBy = j['handled_by'] as String?,
+      photoId = j['photo_id'] as String?,
       createdAt = _date(j['created_at'])!,
       updatedAt = _date(j['updated_at'])!;
 
   final String id;
   final String pharmacyId;
   final String status;
+  final String? photoId;
   final List<OrderLine> lines;
   final String currency;
   final int totalMinor;

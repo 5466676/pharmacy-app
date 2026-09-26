@@ -63,6 +63,8 @@ abstract final class DoayaIcons {
   static const returns = Icons.undo_rounded;
   static const transfer = Icons.phone_iphone_rounded;
   static const call = Icons.call_rounded;
+  static const camera = Icons.photo_camera_outlined;
+  static const gallery = Icons.photo_library_outlined;
   static const logout = Icons.logout_rounded;
   static const till = Icons.savings_outlined;
 }

@@ -1063,6 +1063,66 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'التذكير شغّال لهالأدوية'**
   String get remindersActive;
+
+  /// No description provided for @attachPhoto.
+  ///
+  /// In ar, this message translates to:
+  /// **'بعت صورة'**
+  String get attachPhoto;
+
+  /// No description provided for @takePhoto.
+  ///
+  /// In ar, this message translates to:
+  /// **'صوّر بالكاميرا'**
+  String get takePhoto;
+
+  /// No description provided for @fromGallery.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختار من الصور'**
+  String get fromGallery;
+
+  /// No description provided for @attachPrescription.
+  ///
+  /// In ar, this message translates to:
+  /// **'أرفق صورة الوصفة'**
+  String get attachPrescription;
+
+  /// No description provided for @removePhoto.
+  ///
+  /// In ar, this message translates to:
+  /// **'شيل الصورة'**
+  String get removePhoto;
+
+  /// No description provided for @prescriptionPhotoHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'صورة الوصفة بتوصل للصيدلي مع الطلب.'**
+  String get prescriptionPhotoHint;
+
+  /// No description provided for @photoSent.
+  ///
+  /// In ar, this message translates to:
+  /// **'وصلت الصورة'**
+  String get photoSent;
+
+  /// No description provided for @errPhotoTooBig.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصورة كبيرة كتير، جرّب وحدة أصغر'**
+  String get errPhotoTooBig;
+
+  /// No description provided for @errNotAnImage.
+  ///
+  /// In ar, this message translates to:
+  /// **'هاد مو ملف صورة'**
+  String get errNotAnImage;
+
+  /// No description provided for @close.
+  ///
+  /// In ar, this message translates to:
+  /// **'سكّر'**
+  String get close;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
