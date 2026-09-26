@@ -1,11 +1,11 @@
 {
-    "name": "doaya_patient",
-    "short_name": "doaya_patient",
+    "name": "دوايا",
+    "short_name": "دوايا",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#153422",
+    "theme_color": "#1B3F2B",
+    "description": "استشارة صحية بلهجتك، وصيدليتك بتراجع كل حالة.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
@@ -31,5 +31,7 @@
             "type": "image/png",
             "purpose": "maskable"
         }
-    ]
+    ],
+    "lang": "ar",
+    "dir": "rtl"
 }

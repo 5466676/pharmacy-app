@@ -13,3 +13,20 @@ def test_without_a_configured_secret_one_is_generated_once_and_kept(tmp_path, mi
     first = ensure_secret(s).jwt_secret
     assert len(first) >= 48
     assert ensure_secret(s).jwt_secret == first  # same after a restart
+
+
+def test_browsers_elsewhere_are_let_in_only_from_configured_origins(settings, engine):
+    from fastapi.testclient import TestClient
+
+    from app.main import create_app
+
+    ask = {"origin": "https://app.example", "access-control-request-method": "POST"}
+    with TestClient(create_app(settings)) as c:
+        r = c.options("/patients/login", headers=ask)
+        assert "access-control-allow-origin" not in r.headers
+    s = settings.model_copy(update={"cors_origins": "https://app.example, http://localhost:8200"})
+    with TestClient(create_app(s)) as c:
+        r = c.options("/patients/login", headers=ask)
+        assert r.headers["access-control-allow-origin"] == "https://app.example"
+        r = c.get("/health", headers={"origin": "https://evil.example"})
+        assert "access-control-allow-origin" not in r.headers

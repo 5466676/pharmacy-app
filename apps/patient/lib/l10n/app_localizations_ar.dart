@@ -142,7 +142,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String pharmacyFollowing(String name) {
-    return 'صيدلية $name متابعة';
+    return '$name متابعة';
   }
 
   @override

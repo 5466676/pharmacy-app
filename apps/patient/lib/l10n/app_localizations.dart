@@ -353,7 +353,7 @@ abstract class AppLocalizations {
   /// No description provided for @pharmacyFollowing.
   ///
   /// In ar, this message translates to:
-  /// **'صيدلية {name} متابعة'**
+  /// **'{name} متابعة'**
   String pharmacyFollowing(String name);
 
   /// No description provided for @messageHint.

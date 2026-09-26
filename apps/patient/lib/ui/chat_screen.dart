@@ -504,14 +504,12 @@ class EmergencyPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    Widget call(String label, String number) => Expanded(
-      child: SagePillButton(
-        label: label,
-        icon: DoayaIcons.call,
-        expand: true,
-        size: PillSize.medium,
-        onPressed: () => launchUrl(Uri(scheme: 'tel', path: number)),
-      ),
+    Widget call(String label, String number) => SagePillButton(
+      label: label,
+      icon: DoayaIcons.call,
+      expand: true,
+      size: PillSize.large,
+      onPressed: () => launchUrl(Uri(scheme: 'tel', path: number)),
     );
     return GlassSurface(
       tone: SurfaceTone.danger,
@@ -531,13 +529,9 @@ class EmergencyPanel extends StatelessWidget {
             ],
           ),
           const SizedBox(height: DoayaSpacing.ml),
-          Row(
-            children: [
-              call(l.callAmbulance(ambulanceNumber), ambulanceNumber),
-              const SizedBox(width: DoayaSpacing.sm),
-              call(l.callEmergency(emergencyNumber), emergencyNumber),
-            ],
-          ),
+          call(l.callAmbulance(ambulanceNumber), ambulanceNumber),
+          const SizedBox(height: DoayaSpacing.sm),
+          call(l.callEmergency(emergencyNumber), emergencyNumber),
           const SizedBox(height: DoayaSpacing.sm),
           Text(
             l.emergencyStillWrite,

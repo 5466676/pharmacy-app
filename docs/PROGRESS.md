@@ -377,7 +377,7 @@ Patients aren't on the pharmacy's Wi-Fi, so the patient app will need a server r
   - The end-to-end test runs over real TLS: first-contact pinning, linking, syncing, and an impostor certificate refused before anything is sent. Details in DECISIONS.
 - Totals: server 34, core 95, design system 23, app 80 (+ the end-to-end script, over HTTPS).
 
-## Phase 3 — Patient app + AI · ▶ steps 1–5 done; 6–8 next (plan approved 2026-09-25)
+## Phase 3 — Patient app + AI · ▶ steps 1–6 done; 7–8 next (plan approved 2026-09-25)
 
 ### Owner answers (2026-09-25)
 1. **Hosting**: still being decided. Build it host-agnostic (Docker Compose), and run it locally for now.
@@ -616,4 +616,26 @@ Server side only so far (the screens are steps 5–7). The tests read as the sce
     - Search results needed a Material wrapper (caught by a widget test).
     - Stock showed in strips instead of boxes/strips.
   - Tests: server 184, app 93 + the end-to-end script (6 new inbox tests with a fake Doaya online: link, case to pickup at the POS, ask / needs a doctor, order quantities to pickup, no internet, phone pages).
+- [x] Step 6: **the patient app** (`apps/patient`, Android + web; the same `doaya_ui` glass design):
+  - **Account once**: «حساب جديد» (name, phone, password; birth year, sex and city optional, with why we ask) or «عندي حساب». The session stays on the device (a file on Android, the browser's own storage on the web). With no internet the app opens on the last known profile.
+  - **Choosing the pharmacy**: by the code at the counter (`SH4F`) or from the list of the patient's city. «غيّر» from the account page.
+  - **Home** (from `design/patient_home.html`): the pharmacy, «حاسس بشي؟ احكيلي» → a new consultation, the last 3 consultations with their state, and the emergency line («إذا صار عندك ضيق نفس أو ألم بالصدر…»). The shelf comes in step 7.
+  - **The chat** (from `design/patient_chat.html`):
+    - the patient in sage, the assistant in glass, the pharmacist with their name
+    - the assistant's quick replies as buttons
+    - «ابعت المحادثة للصيدلي مباشرة» at any time
+    - **the summary to check**: every field in plain words, «عدّل» (a form; lists split by comma) and «ابعته للصيدلية»
+    - then the steps وصلت → عم يتحضّر → جاهز → استلمت, and **what the pharmacist prepared**: each medicine with the pharmacist's own instructions, their note, «استلام من …، الدفع عند الاستلام»
+    - **an emergency**: a red panel with two large buttons, «الإسعاف 110» and «الطوارئ 112», which dial straight away (changeable at build time). The patient can still write to the pharmacy.
+    - a finished consultation can't take new messages
+  - **Live**: the server's WebSocket while the app is open. When it's down the app asks `/updates` every 30 s and reconnects (2 s up to 1 min). A new token on every connect.
+  - **The server**: `DOAYA_CORS_ORIGINS` lets the web app call the server from another address (off by default; tested).
+  - **Real run** (`docs/screenshots/phase3/10–21-patient-*.png`, 390×844 at 2x):
+    - the web build (`--no-web-resources-cdn`) in Chromium against Doaya online :8100, with the stand-in for LM Studio
+    - sign-up → the pharmacy → question with quick replies → the summary → sent
+    - the pharmacist (through the API) started preparing, then decided (Paracetamol, ORS, a note). **The chat updated by itself** over the WebSocket.
+    - «عندي ألم بالصدر وما عم اقدر اتنفس» → emergency with 110 / 112
+  - **Fixed after the real run**: «صيدلية صيدلية الشفاء متابعة» in the chat header, and «الإسعاف 110» cut off on a phone (the two buttons are now full width, one above the other). A widget test caught localizations being read in `initState` on the pharmacy page.
+  - Tests: patient app 9 (API, sign-in kept after a restart, the whole flow from sign-up to sending the summary against an in-memory server, an emergency, live updates and the polling fallback). Server 185.
+
 

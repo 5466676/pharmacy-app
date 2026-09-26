@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import select, text
 
 from . import (
@@ -86,6 +87,13 @@ def create_app(
     app.state.llm = None  # made from settings on first use
     app.state.shelf_publisher = None
     app.state.runs_publisher = False
+    if origins := [o.strip() for o in settings.cors_origins.split(",") if o.strip()]:
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=origins,
+            allow_methods=["*"],
+            allow_headers=["authorization", "content-type"],
+        )
     app.include_router(accounts.router)
     app.include_router(sync.router)
     app.include_router(patients.router)

@@ -50,7 +50,7 @@
   "noConsultations": "ما عندك استشارات لسا",
   "safetyLine": "إذا صار عندك ضيق نفس أو ألم بالصدر، روح عالطوارئ فوراً.",
   "assistantTitle": "مساعد دوايا",
-  "pharmacyFollowing": "صيدلية {name} متابعة",
+  "pharmacyFollowing": "{name} متابعة",
   "@pharmacyFollowing": {
     "placeholders": {
       "name": {

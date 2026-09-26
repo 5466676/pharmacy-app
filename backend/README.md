@@ -33,3 +33,4 @@ The same app also serves patients: accounts, the pharmacy directory, shelves, AI
 ```
 On the pharmacy's own server set `DOAYA_CENTRAL_URL` and `DOAYA_CENTRAL_KEY`. It then publishes its shelf every 10 minutes, and its devices reach their cases and orders through `/central/…`.
 The AI assistant uses any OpenAI-compatible server (`DOAYA_LLM_BASE_URL`, LM Studio by default). Emergency numbers: `DOAYA_EMERGENCY_AMBULANCE` (110) and `DOAYA_EMERGENCY_GENERAL` (112).
+The patient web app, when served from another address: `DOAYA_CORS_ORIGINS` (comma-separated origins; off by default).
