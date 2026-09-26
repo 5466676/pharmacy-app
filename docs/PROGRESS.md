@@ -1017,7 +1017,7 @@ The owner asked for the AI model to be managed from his panel: its state and its
 - No spoken summary.
 - **Kept**: the text and the summary, always. The voice is deleted after 3 months (proposed, not objected to).
 
-## Phase 5 — The patient's health file («ملف المريض») · ▶ approved 2026-09-26
+## Phase 5 — The patient's health file («ملف المريض») · ✅ done 2026-09-26, waiting for review
 
 The owner wants one file per patient, kept up to date as their health changes, available on the central system, to the patient and to the pharmacist.
 
@@ -1065,4 +1065,35 @@ The owner wants one file per patient, kept up to date as their health changes, a
 3. **Pharmacy app**: the file beside each case and order: confirm proposals, add a fact.
 4. **Admin panel**: «المرضى» (search by name or phone; the file; access logged).
 5. Real run, screenshots, docs → review.
+
+### Done (2026-09-26)
+- **Server**:
+  - Facts are ended, never edited. A medicine from the pharmacist's decision ends by itself after its days.
+  - Proposals come from each sent summary. «ما في» / «لا» is nothing, and nothing is proposed twice.
+  - The pharmacist confirms medical facts; the patient confirms the rest.
+  - A change log, and the owner's access log.
+  - Consent at sign-up or later. Delete keeps the pharmacy's cases.
+  - The assistant is told allergies, conditions and current medicines (never doses).
+- **Patient app**: «ملفي الصحي» in «حسابي».
+  - what needs my confirmation, what waits for the pharmacist
+  - current facts, with who confirmed them
+  - medicines with the pharmacist's instructions and end date
+  - my consultations, past facts
+  - add, end, copy the whole file, delete
+  - Consent at sign-up is off by default.
+- **Pharmacy app**: the file beside each case and order.
+  - Allergies as an alert first («انتبه: عنده حساسية من …»).
+  - Confirm what the patient reported; accept or reject what the chat revealed; end or add a fact.
+  - A pharmacy the patient left sees only its own past cases.
+- **Admin panel**: «المرضى», by name or phone, and the file with «مين فتح هالملف».
+- **Real run** (server + patient web + panel, the stand-in model):
+  1. A patient with consent reported «ربو خفيف».
+  2. Her chat proposed an allergy to penicillin and a blood-pressure medicine.
+  3. The pharmacist accepted the allergy.
+  4. The decision added Panadol until 29/9.
+  5. The medicine proposal still waited for the pharmacist.
+  6. The owner opened the file, and the opening was logged.
+- **Found by the tests**: the pharmacy's allergy alert read exactly like the fact row. It now says «انتبه: عنده حساسية من …».
+- Screenshots: `docs/screenshots/phase4/16-17`. The pharmacy panel is covered by its widget test (no desktop run here).
+- Tests: server 266, patient 31, pharmacy 110, admin 13.
 

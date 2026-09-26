@@ -255,3 +255,11 @@ The server doesn't recreate the app's ~25 tables. Each synced row is stored once
 - «أمثلة السلامة» are given to the checker as examples in its prompt (the newest 40) and are the test set. This is few-shot prompting, not training.
 - New level «لازم دكتور» (doctor soon, not an emergency): the patient gets a clear message without ambulance numbers, and the case goes to the pharmacist marked. Stored in `consultations.doctor_advice`, not `red_flag`, so the patient app doesn't show the emergency panel.
 - The API key is encrypted with a key derived from the server's secret (Fernet, `cryptography`, already a dependency). A database copy alone doesn't reveal it. The key is never returned to the panel, and it is not reused for a different address.
+
+## 2026-09-26 · The patient's health file
+- One file per patient on the central server. The patient, the pharmacy they chose and the platform owner see it.
+- The owner sees everything by name (owner's decision). Every opening from the panel is logged; the anonymous review queue stays anonymous.
+- Nothing exists without consent, given at sign-up (off by default) or later. Deleting removes the facts, proposals and change log; the pharmacy's cases stay as its records.
+- **The assistant never writes the file.** What a chat reveals becomes a proposal: medical facts (allergy, condition, medicine) are confirmed by the pharmacist, the others by the patient. The pharmacist's decision adds its medicines directly (the pharmacist made it). Facts are ended, never edited, so the history stays.
+- The assistant is told allergies, conditions and current medicines so it doesn't ask again, but never the doses (it must never repeat one).
+- A pharmacy the patient left keeps only its own past cases. The pharmacy PC doesn't hold copies of every file; it reads the one it needs.
