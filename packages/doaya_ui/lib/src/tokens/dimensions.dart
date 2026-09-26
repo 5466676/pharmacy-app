@@ -88,6 +88,9 @@ abstract final class DoayaSizes {
   static const double productThumb = 46;
   static const double qtyButton = 30;
   static const double listPaneWidth = 360;
+
+  /// Label column of a key/value summary (a patient's case).
+  static const double summaryLabelWidth = 110;
   static const double priceColumn = 110;
   static const double wideFormWidth = 780;
 

@@ -2,10 +2,15 @@ import 'package:doaya_core/doaya_core.dart';
 import 'package:doaya_core/sync_testing.dart';
 import 'package:doaya_pharmacy/sync/sync_api.dart';
 
+import 'fake_central.dart';
+
 /// A pharmacy server in memory for widget tests: the same sync rules as the
 /// real one (InMemorySyncServer) plus accounts and linked devices.
 class FakeSyncApi implements SyncApi {
   final server = InMemorySyncServer();
+
+  /// Doaya online behind the pharmacy's server (cases, orders).
+  final central = FakeCentral();
   final _accounts = <String, ({String password, String role, String name, String? employeeId})>{};
   final _devices = <String, ({String name, String token, bool revoked})>{};
   String? pharmacyName;
@@ -136,9 +141,34 @@ class _FakeRemote implements SyncRemote {
     return api.server.transportFor(deviceId).pull(after: after, limit: limit);
   }
 
+  Object? _central(String method, String path, [Object? body]) {
+    final r = api.central.handle(method, path, body);
+    // Orders carry their total like the server's.
+    if (r is Map<String, Object?> && r.containsKey('lines')) return r.withTotal();
+    if (r is List) {
+      return [
+        for (final x in r) x is Map<String, Object?> && x.containsKey('lines') ? x.withTotal() : x,
+      ];
+    }
+    return r;
+  }
+
+  @override
+  Future<Object?> putJson(String path, Object body) async {
+    _check();
+    return _central('PUT', path, body);
+  }
+
+  @override
+  Future<Object?> deleteJson(String path) async {
+    _check();
+    return _central('DELETE', path);
+  }
+
   @override
   Future<Object?> getJson(String path) async {
     _check();
+    if (path.startsWith('central')) return _central('GET', path);
     return switch (path) {
       'devices' => [
         for (final e in api._devices.entries)
@@ -156,6 +186,7 @@ class _FakeRemote implements SyncRemote {
   @override
   Future<Object?> postJson(String path, [Object? body]) async {
     _check();
+    if (path.startsWith('central')) return _central('POST', path, body);
     if (path == 'users') {
       final b = body! as Map<String, Object?>;
       final phone = b['phone']! as String;

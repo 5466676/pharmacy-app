@@ -92,6 +92,8 @@ class LinkResult {
 abstract interface class SyncRemote implements SyncTransport {
   Future<Object?> getJson(String path);
   Future<Object?> postJson(String path, [Object? body]);
+  Future<Object?> putJson(String path, Object body);
+  Future<Object?> deleteJson(String path);
   void close();
 }
 
@@ -232,6 +234,15 @@ class HttpSyncClient implements SyncRemote {
           c.post(baseUrl.resolve(path), headers: h, body: body == null ? null : jsonEncode(body)),
     ),
   );
+
+  @override
+  Future<Object?> putJson(String path, Object body) async => _decode(
+    await _authorized((c, h) => c.put(baseUrl.resolve(path), headers: h, body: jsonEncode(body))),
+  );
+
+  @override
+  Future<Object?> deleteJson(String path) async =>
+      _decode(await _authorized((c, h) => c.delete(baseUrl.resolve(path), headers: h)));
 
   Future<Object?> patchJson(String path, Object body) async => _decode(
     await _authorized((c, h) => c.patch(baseUrl.resolve(path), headers: h, body: jsonEncode(body))),

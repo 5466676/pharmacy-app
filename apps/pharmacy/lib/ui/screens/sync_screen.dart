@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/database.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers.dart';
+import '../../central/inbox_controller.dart';
 import '../../sync/discovery.dart';
 import '../../sync/sync_api.dart';
 import '../../sync/sync_controller.dart';
@@ -22,6 +23,9 @@ String syncErrorText(AppLocalizations l, Object e) => switch (e) {
   SyncApiException(code: 'already_set_up') => l.errAlreadySetUp,
   SyncApiException(code: 'device_other_pharmacy') => l.errDeviceOtherPharmacy,
   SyncApiException(code: 'pharmacy_inactive') => l.errPharmacyInactive,
+  SyncApiException(code: 'bad_pharmacy_key') => l.errBadPharmacyKey,
+  SyncApiException(code: 'central_unreachable') => l.errCentralUnreachable,
+  SyncApiException(code: 'central_not_configured') => l.inboxNotConnected,
   SyncApiException(:final code) => l.errServer(code),
   _ => l.errServer('$e'),
 };
@@ -502,6 +506,8 @@ class _Linked extends ConsumerWidget {
                 Expanded(child: _AccountsPanel()),
               ],
             ),
+          const SizedBox(height: DoayaSpacing.l),
+          const _CentralPanel(),
         ],
       ],
     );
@@ -705,6 +711,107 @@ class _AccountsPanel extends ConsumerWidget {
             return syncErrorText(l, err);
           }
         },
+      ),
+    );
+  }
+}
+
+final _centralLinkProvider = FutureProvider.autoDispose<Map<String, Object?>>((ref) async {
+  final api = ref.watch(centralApiProvider);
+  if (api == null) return const {};
+  return api.linkState();
+});
+
+/// Owner: links this pharmacy to Doaya online with the key its team gave,
+/// so patients see the shelf and send cases and orders.
+class _CentralPanel extends ConsumerStatefulWidget {
+  const _CentralPanel();
+
+  @override
+  ConsumerState<_CentralPanel> createState() => _CentralPanelState();
+}
+
+class _CentralPanelState extends ConsumerState<_CentralPanel> {
+  final _url = TextEditingController();
+  final _key = TextEditingController();
+  var _busy = false;
+
+  @override
+  void dispose() {
+    _url.dispose();
+    _key.dispose();
+    super.dispose();
+  }
+
+  Future<void> _do(Future<void> Function() action) async {
+    final l = AppLocalizations.of(context);
+    setState(() => _busy = true);
+    try {
+      await action();
+      ref.invalidate(_centralLinkProvider);
+      await ref.read(inboxProvider.notifier).refresh();
+      if (mounted) toast(context, l.saved);
+    } on Object catch (e) {
+      if (mounted) toast(context, syncErrorText(l, e), error: true);
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final state = ref.watch(_centralLinkProvider).value;
+    final linked = state?['linked'] == true;
+    final api = ref.watch(centralApiProvider);
+    final secondary = DoayaTypography.bodySmall.copyWith(color: DoayaColors.textSecondary);
+    return Panel(
+      title: l.centralSection,
+      trailing: StatusChip(
+        label: linked ? l.centralLinked(ltrIsolate('${state!['url']}')) : l.centralNotLinked,
+        tone: linked ? StatusTone.accent : StatusTone.neutral,
+        dot: true,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(l.centralHelp, style: secondary),
+          const SizedBox(height: DoayaSpacing.l),
+          if (linked)
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: GlassPillButton(
+                label: l.centralUnlink,
+                onPressed: _busy || api == null ? null : () => _do(api.unlink),
+              ),
+            )
+          else ...[
+            GlassTextField(
+              label: l.centralUrlLabel,
+              controller: _url,
+              hint: l.centralUrlHint,
+              textDirection: TextDirection.ltr,
+              keyboardType: TextInputType.url,
+            ),
+            const SizedBox(height: DoayaSpacing.sm),
+            GlassTextField(
+              label: l.centralKeyLabel,
+              controller: _key,
+              textDirection: TextDirection.ltr,
+            ),
+            const SizedBox(height: DoayaSpacing.sm),
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: SagePillButton(
+                label: l.centralLink,
+                size: PillSize.small,
+                onPressed: _busy || api == null
+                    ? null
+                    : () => _do(() => api.link(_url.text.trim(), _key.text.trim())),
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }

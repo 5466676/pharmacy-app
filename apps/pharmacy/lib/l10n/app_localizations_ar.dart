@@ -1775,4 +1775,321 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get restoreLinkedNote =>
       'هالجهاز مربوط بالسيرفر: إذا خرب، ركّبه من جديد واختار «انضمام لصيدلية موجودة» وبتنزل كل البيانات. الاسترجاع من نسخة هون للأجهزة يلي مو مربوطة.';
+
+  @override
+  String get navCases => 'الحالات';
+
+  @override
+  String get casesTitle => 'حالات المرضى وطلباتهم';
+
+  @override
+  String get tabCases => 'الحالات';
+
+  @override
+  String get tabPatientOrders => 'طلبات الاستلام';
+
+  @override
+  String get inboxNotLinked => 'هالجهاز مو مربوط بسيرفر الصيدلية، فالحالات ما بتوصله.';
+
+  @override
+  String get inboxNotConnected =>
+      'الصيدلية مو مربوطة بدوايا أونلاين لسا. صاحب الصيدلية بيربطها من «السيرفر والمزامنة».';
+
+  @override
+  String get inboxOffline =>
+      'ما في إنترنت هلق: الحالات والطلبات الجديدة بتوصل لما يرجع. البيع شغّال عادي.';
+
+  @override
+  String get noCases => 'ما في حالات هلق';
+
+  @override
+  String get noPatientOrders => 'ما في طلبات هلق';
+
+  @override
+  String get chooseCase => 'اختار من القائمة';
+
+  @override
+  String caseStatus(String status) {
+    String _temp0 = intl.Intl.selectLogic(status, {
+      'sent': 'جديدة',
+      'preparing': 'عم تتحضّر',
+      'ready': 'جاهزة',
+      'picked_up': 'مستلمة',
+      'needs_doctor': 'بحاجة طبيب',
+      'emergency': 'طارئة',
+      'closed': 'مسكّرة',
+      'other': '$status',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String orderStatus(String status) {
+    String _temp0 = intl.Intl.selectLogic(status, {
+      'sent': 'جديد',
+      'preparing': 'عم يتحضّر',
+      'ready': 'جاهز',
+      'picked_up': 'مستلم',
+      'rejected': 'مرفوض',
+      'cancelled': 'ملغى',
+      'other': '$status',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String patientAge(String age) {
+    return '$age سنة';
+  }
+
+  @override
+  String get sexMale => 'ذكر';
+
+  @override
+  String get sexFemale => 'أنثى';
+
+  @override
+  String get urgentCase => 'حالة مستعجلة';
+
+  @override
+  String redFlag(String category) {
+    String _temp0 = intl.Intl.selectLogic(category, {
+      'chest_pain': 'ألم بالصدر',
+      'breathing': 'صعوبة بالتنفس',
+      'stroke': 'علامات جلطة',
+      'bleeding': 'نزيف',
+      'infant_fever': 'حرارة عند رضيع',
+      'self_harm': 'خطر إيذاء النفس',
+      'poisoning': 'تسمم أو جرعة زايدة',
+      'seizure': 'اختلاج',
+      'unconscious': 'فقدان وعي',
+      'anaphylaxis': 'تحسس شديد',
+      'pregnancy_bleeding': 'نزيف مع حمل',
+      'severe_headache': 'صداع شديد أو تيبس رقبة',
+      'other': 'علامة خطر',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String urgentHelp(String phone) {
+    return 'المساعد وقّف الاستشارة وطلب من المريض يتصل بالإسعاف. اتصل فيه لتطمّن عليه: $phone';
+  }
+
+  @override
+  String newUrgentToast(String name) {
+    return 'وصلت حالة مستعجلة: $name';
+  }
+
+  @override
+  String get assistantSummary => 'ملخص المساعد';
+
+  @override
+  String get sumSymptoms => 'الأعراض';
+
+  @override
+  String get sumDuration => 'المدة';
+
+  @override
+  String get sumAge => 'العمر';
+
+  @override
+  String get sumSex => 'الجنس';
+
+  @override
+  String get sumPregnancy => 'حمل أو إرضاع';
+
+  @override
+  String get sumAllergies => 'الحساسية';
+
+  @override
+  String get sumMedications => 'أدوية حالية';
+
+  @override
+  String get sumConditions => 'أمراض مزمنة';
+
+  @override
+  String get sumNotes => 'ملاحظات';
+
+  @override
+  String sumDenied(String list) {
+    return 'نفى: $list';
+  }
+
+  @override
+  String get noSummary => 'ما في ملخص (المساعد ما كان متاح): اقرا المحادثة.';
+
+  @override
+  String get conversationTitle => 'المحادثة';
+
+  @override
+  String get roleAssistant => 'المساعد';
+
+  @override
+  String get rolePatient => 'المريض';
+
+  @override
+  String get roleSystem => 'دوايا';
+
+  @override
+  String get correctAssistant => 'صحّح';
+
+  @override
+  String get correctionTitle => 'شو كان الصح؟';
+
+  @override
+  String get correctionHelp => 'بتنسجّل للمراجعة منشان نحسّن المساعد، وما بتنستعمل لتدريب تلقائي.';
+
+  @override
+  String get correctionSaved => 'انسجّل التصحيح، شكراً';
+
+  @override
+  String get customerHistory => 'سجلّه عندك';
+
+  @override
+  String get notACustomer => 'مو زبون مسجّل عندك';
+
+  @override
+  String customerDebt(String amount) {
+    return 'عليه دين: $amount';
+  }
+
+  @override
+  String get lastPurchases => 'آخر مشترياته';
+
+  @override
+  String get yourDecision => 'قرارك';
+
+  @override
+  String get decisionHelp => 'القرار والجرعات دايماً عند الصيدلي';
+
+  @override
+  String get addMedicine => 'أضف دوا';
+
+  @override
+  String get searchStock => 'دوّر بالمخزون';
+
+  @override
+  String onHandShort(String qty) {
+    return 'متوفر: $qty';
+  }
+
+  @override
+  String get instructionsLabel => 'طريقة الاستعمال';
+
+  @override
+  String get timesPerDayLabel => 'مرات باليوم';
+
+  @override
+  String get daysLabel => 'كم يوم';
+
+  @override
+  String get decisionNote => 'ملاحظة للمريض (اختياري)';
+
+  @override
+  String get markReady => 'جاهز، بلّغ المريض';
+
+  @override
+  String get askPatient => 'اسأل المريض سؤال';
+
+  @override
+  String get needsDoctorButton => 'بحاجة طبيب';
+
+  @override
+  String get needsDoctorConfirm =>
+      'رح نقول للمريض إنو حالته بدها طبيب يفحصه، وبتتسكّر الحالة. فيك تضيف كلمة إله:';
+
+  @override
+  String get closeCase => 'سكّر الحالة';
+
+  @override
+  String get startPreparing => 'بلّش التحضير';
+
+  @override
+  String get instructionsRequired => 'اكتب طريقة الاستعمال لكل دوا';
+
+  @override
+  String get decisionSent => 'انبعت للمريض';
+
+  @override
+  String get pickupAndSell => 'استلم وبيع';
+
+  @override
+  String get pickupDone => 'انسجّل الاستلام';
+
+  @override
+  String handledBy(String name) {
+    return 'مسؤول: $name';
+  }
+
+  @override
+  String orderRequested(String qty) {
+    return 'طلب $qty';
+  }
+
+  @override
+  String orderPatientNote(String note) {
+    return 'ملاحظة المريض: $note';
+  }
+
+  @override
+  String get pharmacistNoteLabel => 'ملاحظة للمريض (اختياري)';
+
+  @override
+  String get markOrderReady => 'جاهز للاستلام';
+
+  @override
+  String get rejectOrder => 'ما في';
+
+  @override
+  String orderTotal(String amount) {
+    return 'المجموع: $amount';
+  }
+
+  @override
+  String orderLinesCount(String count) {
+    return '$count صنف';
+  }
+
+  @override
+  String get pickupPartial => 'بعض الأصناف مو متوفرة بالمخزون، زبطها بشاشة البيع';
+
+  @override
+  String get centralSection => 'دوايا أونلاين';
+
+  @override
+  String get centralHelp =>
+      'لما تربط الصيدلية، المرضى بيشوفوا رفوفها (السعر ومتوفر أو لأ بس)، وبيبعتوا حالات وطلبات للاستلام. البيع والحسابات بيضلوا عندك.';
+
+  @override
+  String get centralUrlLabel => 'عنوان دوايا أونلاين';
+
+  @override
+  String get centralKeyLabel => 'مفتاح الصيدلية';
+
+  @override
+  String get centralLink => 'اربط';
+
+  @override
+  String get centralUnlink => 'فك الربط';
+
+  @override
+  String centralLinked(String url) {
+    return 'مربوطة بـ $url';
+  }
+
+  @override
+  String get centralNotLinked => 'مو مربوطة';
+
+  @override
+  String get errBadPharmacyKey => 'المفتاح غلط';
+
+  @override
+  String get errCentralUnreachable => 'ما قدرنا نوصل لدوايا أونلاين';
+
+  @override
+  String get removeItem => 'شيل';
+
+  @override
+  String get centralUrlHint => 'https://…';
 }

@@ -233,6 +233,14 @@ class LedgerRepository {
     });
   }
 
+  /// A customer's latest sales, newest first.
+  Future<List<SaleRow>> salesOfCustomer(String customerId, {int limit = 5}) =>
+      (_db.select(_db.sales)
+            ..where((t) => t.customerId.equals(customerId))
+            ..orderBy([(t) => OrderingTerm.desc(t.occurredAt)])
+            ..limit(limit))
+          .get();
+
   Stream<List<SaleRow>> watchRecentSales({int limit = 20}) =>
       (_db.select(_db.sales)
             ..orderBy([(t) => OrderingTerm.desc(t.occurredAt)])
