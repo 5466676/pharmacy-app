@@ -14,9 +14,10 @@ from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from .assistant import get_llm
 from .consult import texts
 from .consult.engine import CaseSummary, Emergency, LogEntry, handle_message
-from .consult.llm import ChatMessage, llm_from_settings
+from .consult.llm import ChatMessage
 from .consult.redflags import check
 from .deps import DbSession, Patient, PharmacyCaller, error
 from .events import patient_topic, pharmacy_topic
@@ -178,14 +179,6 @@ def _profile_text(db: Session, patient_id: str) -> str:
 def _emergency_numbers(request: Request) -> Emergency:
     s = request.app.state.settings
     return Emergency(ambulance=s.emergency_ambulance, general=s.emergency_general)
-
-
-def get_llm(request: Request):
-    """The configured model (tests put a scripted one on app.state)."""
-    state = request.app.state
-    if getattr(state, "llm", None) is None:
-        state.llm = llm_from_settings(state.settings)
-    return state.llm
 
 
 # ─── Patient ───────────────────────────────────────────────────────────────

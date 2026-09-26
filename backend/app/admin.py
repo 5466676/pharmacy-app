@@ -690,10 +690,14 @@ def performance(_: Admin, db: DbSession, month: str | None = None) -> dict:
 
 @router.get("/settings")
 def settings_view(_: Admin, request: Request) -> dict:
+    from .assistant import effective_config
+
     s = request.app.state.settings
+    with request.app.state.db.sessions() as db:
+        model = effective_config(db, s)
     return {
-        "llm_base_url": s.llm_base_url,
-        "llm_model": s.llm_model,
+        "llm_base_url": model.base_url,
+        "llm_model": model.model,
         "emergency_ambulance": s.emergency_ambulance,
         "emergency_general": s.emergency_general,
         "cors_origins": [o.strip() for o in s.cors_origins.split(",") if o.strip()],
@@ -704,8 +708,8 @@ def settings_view(_: Admin, request: Request) -> dict:
 @router.post("/settings/model-check")
 def model_check(_: Admin, request: Request) -> dict:
     """Asks the model one tiny question: does it answer, and how fast."""
+    from .assistant import get_llm
     from .consult.llm import ChatMessage, LLMUnavailable
-    from .consultations import get_llm
 
     start = time.monotonic()
     try:

@@ -360,3 +360,39 @@ class KnowledgeChange(Base):
     before: Mapped[dict | None] = mapped_column(JSONB)
     after: Mapped[dict] = mapped_column(JSONB)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+# ─── Phase 4b: managing the assistant from the panel ────────────────────────
+
+
+class AssistantConfig(Base):
+    """The model the assistant uses, chosen in the panel (one row). Without
+    it the server's settings (DOAYA_LLM_*) are used. The API key is stored
+    encrypted with the server's own secret and never sent back."""
+
+    __tablename__ = "assistant_config"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    # lm_studio | ollama | hosted
+    provider: Mapped[str] = mapped_column(String(20))
+    base_url: Mapped[str] = mapped_column(String(300))
+    model: Mapped[str] = mapped_column(String(200))
+    api_key_enc: Mapped[str | None] = mapped_column(String(1000))
+    timeout_seconds: Mapped[int] = mapped_column(Integer, default=60)
+    updated_by: Mapped[str | None] = mapped_column(ForeignKey("users.id"))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class AssistantChange(Base):
+    """Every change to the assistant from the panel: the model, a prompt,
+    a safety example. Who, when, before and after (never a key)."""
+
+    __tablename__ = "assistant_changes"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    admin_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    # model | prompt | example
+    kind: Mapped[str] = mapped_column(String(10))
+    before: Mapped[dict | None] = mapped_column(JSONB)
+    after: Mapped[dict | None] = mapped_column(JSONB)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

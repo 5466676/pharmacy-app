@@ -6,6 +6,7 @@ Pure logic over the conversation so far; the API (step 4) stores the
 messages, the case and the log entries this returns.
 """
 
+import time
 from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import Literal
@@ -137,6 +138,7 @@ def handle_message(
             else ""
         ),
     )
+    started = time.monotonic()
     try:
         raw = llm.complete([ChatMessage("system", system), *conversation], json_mode=True)
     except LLMUnavailable as e:
@@ -152,7 +154,13 @@ def handle_message(
     logs = [
         LogEntry(
             "assistant_reply",
-            {"model": llm.model, "prompt": PROMPT_VERSION, "raw": raw, "reply": reply},
+            {
+                "model": llm.model,
+                "prompt": PROMPT_VERSION,
+                "raw": raw,
+                "reply": reply,
+                "ms": round((time.monotonic() - started) * 1000),
+            },
         )
     ]
 
