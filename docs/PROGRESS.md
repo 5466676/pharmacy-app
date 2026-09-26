@@ -677,16 +677,43 @@ Server side only so far (the screens are steps 5–7). The tests read as the sce
 
 Users asked for other colours, and for a place to make their own.
 
-### What the user gets
-- **«المظهر»** (Settings in the pharmacy app, «حسابي» in the patient app, later in admin): a few ready themes as live previews, then **«تصميمي»**.
-- **Ready themes** (proposal, the owner picks the final list):
-  1. «أخضر دوايا» (today's, the default)
-  2. «كحلي» (navy with a teal accent)
-  3. «خمري» (dark wine with a gold accent)
-  4. «فاتح» (a light theme for bright pharmacies and daylight; phones in the sun)
-- **«تصميمي»**: the user picks **the main colour** (buttons, highlights) and **the background colour** from swatches plus a hue/brightness slider (built in, no new library). The whole screen previews live. Everything else is derived: surfaces, borders, text shades.
-- **Safety stays fixed**: red for danger and emergencies, amber for warnings, whatever the theme. The app refuses a custom choice whose text would be hard to read, and adjusts its brightness automatically to reach WCAG contrast 4.5:1.
-- Saved **per device** in the pharmacy app (the counter PC and a phone can differ) and on the phone in the patient app. Not synced, not sent to any server.
+### What the user gets (revised after the owner's feedback: more colours, more styles, more control)
+Preview: the «ألوان دوايا» page (version 2). Choices are made in «المظهر» (the pharmacy app's settings, «حسابي» in the patient app, later in admin), with a live preview:
+- **Style («النمط»)**:
+  - «زجاجي»: today's look, translucent and blurred
+  - «مسطّح»: solid colours, no shadows
+  - «ناعم»: rounder, soft shadows
+  - «خطوط»: minimal, thin frames, small corners
+  - «تباين عالي»: for weak eyesight and sunlight; contrast 7:1, thick borders
+- **Mode («الوضع»)**:
+  - «ليلي» (night)
+  - «نهاري» (day)
+  - «أسود كامل» (pure black: saves battery on OLED phones)
+  - «تلقائي» (follows the phone or PC)
+- **Colours («الألوان»)**: 11 ready palettes, each with a night and a day background, plus «تصميمي» (the main colour and the background, from a colour picker). The palettes are:
+  - أخضر دوايا
+  - كحلي
+  - خمري
+  - بنفسجي
+  - سماوي
+  - زهري
+  - عنبري
+  - زيتي
+  - نعناعي
+  - رملي
+  - فحمي
+- **Details**:
+  - corners (sharp to round)
+  - blur strength (glass only)
+  - text size: small / normal / large / extra large; large is for older patients
+  - spacing: comfortable / compact; compact fits more rows at the counter
+  - heading font: ornate Amiri / plain
+- **Rules that never change**:
+  - Red means danger and amber means a warning, in every choice. No palette has a red main colour, so a normal button never looks like an alarm.
+  - Any colour hard to read is adjusted automatically: 4.5:1 normally, 7:1 in «تباين عالي».
+  - English digits; drug names Latin, left to right.
+  - **The pharmacy desktop never blurs**, even in «زجاجي» (old PCs).
+- Saved **per device**, never sent to a server.
 
 ### How (engineering)
 - `doaya_ui`: a `DoayaPalette` holds every colour token. The four presets plus `DoayaPalette.custom(main, background)` derive the rest. `DoayaColors.*` keep their names and read the current palette, so screens don't change. Places that were `const` because of a colour lose `const` (mechanical; the analyzer lists them).
@@ -695,10 +722,10 @@ Users asked for other colours, and for a place to make their own.
 - The component gallery shows all themes side by side.
 
 ### Steps
-1. Palette + presets + custom derivation + contrast tests (`doaya_ui`).
-2. `DoayaColors` reads the palette; remove the colour `const`s; all apps still pass their tests.
-3. «المظهر» screen with live previews and «تصميمي», in the pharmacy app and the patient app; the setting kept per device.
-4. Screenshots of each theme on desktop and phone → review.
+1. `DoayaLook` (style, mode, palette, details) → derived palette + surface rules; contrast tests over every palette × mode × style and a sweep of custom colours; safety colours never change (`doaya_ui`).
+2. `DoayaColors`, radii, text scale and density read the current look; remove the colour `const`s; all apps still pass their tests.
+3. «المظهر» screen with the live preview, in the pharmacy app and the patient app; kept per device; «تلقائي» follows the system.
+4. Screenshots of each style and mode on desktop and phone → review.
 
 ## Phase 4 — Admin panel · 📝 plan, waiting for the owner's OK (asked 2026-09-26)
 
@@ -730,7 +757,7 @@ From SPEC §1.3 and `design/admin_overview_layout.html` (layout only, rebuilt in
 5. Real run with screenshots, docs → **review**.
 
 ### Questions for the owner
-1. Themes: the four above, or others (and should «فاتح» be there)?
+1. Themes: is the choice on the preview page (5 styles, 4 modes, 11 palettes + «تصميمي», details) right, or add/remove anything?
 2. Themes: is «تصميمي» for everyone, or only the pharmacy owner in the pharmacy app (so the counter looks the same for all staff)?
 3. Admin: one admin (you) for now, or several with the same rights?
 4. Admin: should reviewing show the patient's name/phone? The proposal is **no** (age, sex, pharmacy only).
