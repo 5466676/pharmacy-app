@@ -2035,6 +2035,150 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'الحارس منع رد وحط بداله'**
   String get guardBlockedTurn;
+
+  /// No description provided for @navPatients.
+  ///
+  /// In ar, this message translates to:
+  /// **'المرضى'**
+  String get navPatients;
+
+  /// No description provided for @patientsSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'كل فتحة لملف مريض بتنسجل (مين وإيمتى)، لأنها بيانات طبية.'**
+  String get patientsSubtitle;
+
+  /// No description provided for @searchPatients.
+  ///
+  /// In ar, this message translates to:
+  /// **'دوّر بالاسم أو الرقم'**
+  String get searchPatients;
+
+  /// No description provided for @noPatients.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما في مرضى.'**
+  String get noPatients;
+
+  /// No description provided for @pickPatient.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختار مريض لتشوف ملفه.'**
+  String get pickPatient;
+
+  /// No description provided for @patientCases.
+  ///
+  /// In ar, this message translates to:
+  /// **'استشارات: {n}'**
+  String patientCases(String n);
+
+  /// No description provided for @noFileYet.
+  ///
+  /// In ar, this message translates to:
+  /// **'بلا ملف'**
+  String get noFileYet;
+
+  /// No description provided for @fileNotAgreed.
+  ///
+  /// In ar, this message translates to:
+  /// **'المريض ما وافق على ملف صحي، فما في غير استشاراته.'**
+  String get fileNotAgreed;
+
+  /// No description provided for @fileFacts.
+  ///
+  /// In ar, this message translates to:
+  /// **'الملف هلق'**
+  String get fileFacts;
+
+  /// No description provided for @filePastFacts.
+  ///
+  /// In ar, this message translates to:
+  /// **'قديم'**
+  String get filePastFacts;
+
+  /// No description provided for @fileProposals.
+  ///
+  /// In ar, this message translates to:
+  /// **'ناطرة تأكيد'**
+  String get fileProposals;
+
+  /// No description provided for @fileHistory.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاستشارات'**
+  String get fileHistory;
+
+  /// No description provided for @fileOrders.
+  ///
+  /// In ar, this message translates to:
+  /// **'الطلبات'**
+  String get fileOrders;
+
+  /// No description provided for @fileOpened.
+  ///
+  /// In ar, this message translates to:
+  /// **'مين فتح هالملف'**
+  String get fileOpened;
+
+  /// No description provided for @factConfirmed.
+  ///
+  /// In ar, this message translates to:
+  /// **'مؤكد'**
+  String get factConfirmed;
+
+  /// No description provided for @factPatient.
+  ///
+  /// In ar, this message translates to:
+  /// **'المريض قال'**
+  String get factPatient;
+
+  /// No description provided for @needsPharmacist.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصيدلي'**
+  String get needsPharmacist;
+
+  /// No description provided for @needsPatient.
+  ///
+  /// In ar, this message translates to:
+  /// **'المريض'**
+  String get needsPatient;
+
+  /// No description provided for @fkAllergy.
+  ///
+  /// In ar, this message translates to:
+  /// **'حساسية'**
+  String get fkAllergy;
+
+  /// No description provided for @fkCondition.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرض مزمن'**
+  String get fkCondition;
+
+  /// No description provided for @fkMedication.
+  ///
+  /// In ar, this message translates to:
+  /// **'دوا حالي'**
+  String get fkMedication;
+
+  /// No description provided for @fkPregnancy.
+  ///
+  /// In ar, this message translates to:
+  /// **'حمل أو رضاعة'**
+  String get fkPregnancy;
+
+  /// No description provided for @fkWeight.
+  ///
+  /// In ar, this message translates to:
+  /// **'الوزن'**
+  String get fkWeight;
+
+  /// No description provided for @fkNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملاحظة'**
+  String get fkNote;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

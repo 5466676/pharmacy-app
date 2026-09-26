@@ -667,11 +667,10 @@ Future<bool> confirm(BuildContext context, String message) async {
 }
 
 /// A big text box for a prompt; null when cancelled.
-Future<String?> editText(BuildContext context, String title, String initial) =>
-    showDialog<String>(
-      context: context,
-      builder: (_) => _TextDialog(title: title, initial: initial),
-    );
+Future<String?> editText(BuildContext context, String title, String initial) => showDialog<String>(
+  context: context,
+  builder: (_) => _TextDialog(title: title, initial: initial),
+);
 
 class _TextDialog extends StatefulWidget {
   const _TextDialog({required this.title, required this.initial});

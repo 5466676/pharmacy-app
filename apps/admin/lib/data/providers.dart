@@ -143,6 +143,16 @@ final safetyExamplesProvider = FutureProvider.autoDispose(
   (ref) => guarded(ref, (api) => api.safetyExamples()),
 );
 
+final patientQueryProvider = NotifierProvider<_Value<String>, String>(() => _Value(''));
+
+final patientsProvider = FutureProvider.autoDispose(
+  (ref) => guarded(ref, (api) => api.patients(query: ref.watch(patientQueryProvider))),
+);
+
+final patientFileProvider = FutureProvider.autoDispose.family(
+  (ref, String id) => guarded(ref, (api) => api.patientFile(id)),
+);
+
 /// A plain settable value.
 class _Value<T> extends Notifier<T> {
   _Value(this._initial);

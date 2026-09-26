@@ -28,6 +28,7 @@ class FakeCentral {
   bool hasKey = false;
   final versions = <Map<String, Object?>>[];
   final examples = <Map<String, Object?>>[];
+  int opened = 0;
 
   Map<String, Object?> assistant() => {
     'provider': 'lm_studio',
@@ -264,6 +265,50 @@ class FakeCentral {
           'red_flag_source': doctor ? 'classifier' : null,
           'summary': null,
           'guard_blocked': false,
+        };
+      case ('GET', '/admin/patients'):
+        final q = r.url.queryParameters['q'] ?? '';
+        body = [
+          for (final p in [
+            {'id': 'pt1', 'name': 'مازن', 'phone': '0933111222', 'has_file': true},
+            {'id': 'pt2', 'name': 'خالد', 'phone': '0944000000', 'has_file': false},
+          ])
+            if (q.isEmpty || '${p['name']} ${p['phone']}'.contains(q))
+              {...p, 'age': 34, 'sex': 'm', 'city': 'حلب', 'pharmacy': 'صيدلية الشفاء', 'cases': 2},
+        ];
+      case ('GET', '/admin/patients/pt1/file'):
+        opened++;
+        body = {
+          'patient': {
+            'id': 'pt1',
+            'name': 'مازن',
+            'phone': '0933111222',
+            'age': 34,
+            'sex': 'm',
+            'city': 'حلب',
+          },
+          'consent_at': '2026-09-01T10:00:00Z',
+          'facts': [
+            {'kind': 'allergy', 'text': 'البنسلين', 'confirmed': true},
+          ],
+          'past_facts': [],
+          'proposals': [
+            {'kind': 'medication', 'text': 'دوا ضغط', 'needs': 'pharmacist'},
+          ],
+          'history': [
+            {
+              'sent_at': '2026-09-20T10:00:00Z',
+              'pharmacy': 'صيدلية الشفاء',
+              'summary': {
+                'symptoms': ['صداع'],
+              },
+              'decision': null,
+            },
+          ],
+          'orders': [],
+          'opened': [
+            for (var i = 0; i < opened; i++) {'by': 'فايز', 'at': '2026-09-26T10:00:00Z'},
+          ],
         };
       case ('GET', '/admin/knowledge'):
         body = notes;
@@ -542,5 +587,23 @@ void main() {
     await tester.tap(find.text('ابعت'));
     await settle(tester);
     expect(find.text('لازم دكتور'), findsWidgets);
+  });
+
+  testWidgets('patients: search by name, open a file; the opening is on record', (tester) async {
+    session.value = const AdminSession(sessionToken: 's.x', name: 'فايز').toJsonString();
+    await pumpApp(tester);
+    await go(tester, Routes.patients);
+    expect(find.text('مازن'), findsOneWidget);
+    expect(find.text('بلا ملف'), findsOneWidget);
+    await tester.enterText(find.byType(TextField).first, 'مازن');
+    await settle(tester);
+    expect(find.text('خالد'), findsNothing);
+    await tester.tap(find.text('مازن').last);
+    await settle(tester);
+    expect(central.opened, 1);
+    expect(find.text('حساسية: البنسلين'), findsOneWidget);
+    expect(find.text('دوا حالي: دوا ضغط (الصيدلي)'), findsOneWidget);
+    expect(find.text('صداع'), findsOneWidget);
+    expect(find.textContaining('فايز، '), findsOneWidget);
   });
 }

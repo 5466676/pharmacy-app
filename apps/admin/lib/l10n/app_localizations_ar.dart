@@ -1063,4 +1063,78 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get guardBlockedTurn => 'الحارس منع رد وحط بداله';
+
+  @override
+  String get navPatients => 'المرضى';
+
+  @override
+  String get patientsSubtitle => 'كل فتحة لملف مريض بتنسجل (مين وإيمتى)، لأنها بيانات طبية.';
+
+  @override
+  String get searchPatients => 'دوّر بالاسم أو الرقم';
+
+  @override
+  String get noPatients => 'ما في مرضى.';
+
+  @override
+  String get pickPatient => 'اختار مريض لتشوف ملفه.';
+
+  @override
+  String patientCases(String n) {
+    return 'استشارات: $n';
+  }
+
+  @override
+  String get noFileYet => 'بلا ملف';
+
+  @override
+  String get fileNotAgreed => 'المريض ما وافق على ملف صحي، فما في غير استشاراته.';
+
+  @override
+  String get fileFacts => 'الملف هلق';
+
+  @override
+  String get filePastFacts => 'قديم';
+
+  @override
+  String get fileProposals => 'ناطرة تأكيد';
+
+  @override
+  String get fileHistory => 'الاستشارات';
+
+  @override
+  String get fileOrders => 'الطلبات';
+
+  @override
+  String get fileOpened => 'مين فتح هالملف';
+
+  @override
+  String get factConfirmed => 'مؤكد';
+
+  @override
+  String get factPatient => 'المريض قال';
+
+  @override
+  String get needsPharmacist => 'الصيدلي';
+
+  @override
+  String get needsPatient => 'المريض';
+
+  @override
+  String get fkAllergy => 'حساسية';
+
+  @override
+  String get fkCondition => 'مرض مزمن';
+
+  @override
+  String get fkMedication => 'دوا حالي';
+
+  @override
+  String get fkPregnancy => 'حمل أو رضاعة';
+
+  @override
+  String get fkWeight => 'الوزن';
+
+  @override
+  String get fkNote => 'ملاحظة';
 }

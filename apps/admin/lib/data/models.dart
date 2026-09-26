@@ -339,3 +339,36 @@ class SandboxTurn {
   bool get guardBlocked => j['guard_blocked'] == true;
   Json? get summary => j['summary'] as Json?;
 }
+
+// ─── Patients and their files (Phase 5) ─────────────────────────────────────
+
+class PatientRow {
+  PatientRow(this.j);
+  final Json j;
+
+  String get id => j['id']! as String;
+  String get name => j['name']! as String;
+  String get phone => j['phone']! as String;
+  int? get age => j['age'] as int?;
+  String? get sex => j['sex'] as String?;
+  String? get city => j['city'] as String?;
+  String? get pharmacy => j['pharmacy'] as String?;
+  int get cases => _int(j['cases']);
+  bool get hasFile => j['has_file'] == true;
+}
+
+class PatientFileView {
+  PatientFileView(this.j);
+  final Json j;
+
+  PatientRow get patient => PatientRow(j['patient']! as Json);
+  bool get consented => j['consent_at'] != null;
+  List<Json> get facts => _list(j['facts']);
+  List<Json> get pastFacts => _list(j['past_facts']);
+  List<Json> get proposals => _list(j['proposals']);
+  List<Json> get history => _list(j['history']);
+  List<Json> get orders => _list(j['orders']);
+  List<({String by, DateTime at})> get opened => [
+    for (final o in _list(j['opened'])) (by: o['by']! as String, at: _time(o['at'])!),
+  ];
+}

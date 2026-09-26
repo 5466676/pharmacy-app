@@ -31,6 +31,7 @@ class AdminShell extends ConsumerWidget {
       (Routes.overview, DoayaNavItem(icon: DoayaIcons.dashboard, label: l.navOverview)),
       (Routes.pharmacies, DoayaNavItem(icon: DoayaIcons.pharmacy, label: l.navPharmacies)),
       (Routes.performance, DoayaNavItem(icon: DoayaIcons.trophy, label: l.navPerformance)),
+      (Routes.patients, DoayaNavItem(icon: DoayaIcons.person, label: l.navPatients)),
       (
         Routes.review,
         DoayaNavItem(

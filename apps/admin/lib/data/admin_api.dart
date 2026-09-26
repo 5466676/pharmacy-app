@@ -317,6 +317,19 @@ class AdminApi {
         as Json,
   );
 
+  // ─── Patients (Phase 5) ──────────────────────────────────────────────────
+
+  Future<List<PatientRow>> patients({String? query}) async {
+    final path = query == null || query.trim().isEmpty
+        ? 'admin/patients'
+        : 'admin/patients?${Uri(queryParameters: {'q': query.trim()}).query}';
+    return [for (final p in (await _authorized('GET', path))! as List) PatientRow(p as Json)];
+  }
+
+  /// Every opening is logged on the server.
+  Future<PatientFileView> patientFile(String id) async =>
+      PatientFileView((await _authorized('GET', 'admin/patients/$id/file'))! as Json);
+
   // ─── Plumbing ────────────────────────────────────────────────────────────
 
   Future<void> _refresh() async {

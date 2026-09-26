@@ -602,5 +602,36 @@
   "turnDoctor": "لازم دكتور",
   "turnSummary": "ملخص",
   "turnFallback": "النموذج وقف",
-  "guardBlockedTurn": "الحارس منع رد وحط بداله"
+  "guardBlockedTurn": "الحارس منع رد وحط بداله",
+  "navPatients": "المرضى",
+  "patientsSubtitle": "كل فتحة لملف مريض بتنسجل (مين وإيمتى)، لأنها بيانات طبية.",
+  "searchPatients": "دوّر بالاسم أو الرقم",
+  "noPatients": "ما في مرضى.",
+  "pickPatient": "اختار مريض لتشوف ملفه.",
+  "patientCases": "استشارات: {n}",
+  "@patientCases": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "noFileYet": "بلا ملف",
+  "fileNotAgreed": "المريض ما وافق على ملف صحي، فما في غير استشاراته.",
+  "fileFacts": "الملف هلق",
+  "filePastFacts": "قديم",
+  "fileProposals": "ناطرة تأكيد",
+  "fileHistory": "الاستشارات",
+  "fileOrders": "الطلبات",
+  "fileOpened": "مين فتح هالملف",
+  "factConfirmed": "مؤكد",
+  "factPatient": "المريض قال",
+  "needsPharmacist": "الصيدلي",
+  "needsPatient": "المريض",
+  "fkAllergy": "حساسية",
+  "fkCondition": "مرض مزمن",
+  "fkMedication": "دوا حالي",
+  "fkPregnancy": "حمل أو رضاعة",
+  "fkWeight": "الوزن",
+  "fkNote": "ملاحظة"
 }

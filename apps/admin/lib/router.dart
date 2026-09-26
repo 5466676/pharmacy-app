@@ -6,6 +6,7 @@ import 'data/providers.dart';
 import 'ui/assistant_screen.dart';
 import 'ui/knowledge_screen.dart';
 import 'ui/overview_screen.dart';
+import 'ui/patients_screen.dart';
 import 'ui/performance_screen.dart';
 import 'ui/pharmacies_screen.dart';
 import 'ui/review_screen.dart';
@@ -24,6 +25,8 @@ abstract final class Routes {
   static String reviewItem(int id) => '$review/$id';
   static const knowledge = '/knowledge';
   static const assistant = '/assistant';
+  static const patients = '/patients';
+  static String patient(String id) => '$patients/$id';
   static const settings = '/settings';
 }
 
@@ -77,6 +80,16 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: ':id',
                 pageBuilder: (_, s) =>
                     page(ReviewScreen(selected: int.tryParse(s.pathParameters['id']!))),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: Routes.patients,
+            pageBuilder: (_, _) => page(const PatientsScreen()),
+            routes: [
+              GoRoute(
+                path: ':id',
+                pageBuilder: (_, s) => page(PatientsScreen(selected: s.pathParameters['id'])),
               ),
             ],
           ),
