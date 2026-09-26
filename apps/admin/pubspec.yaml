@@ -1,0 +1,30 @@
+name: doaya_admin
+description: Doaya admin panel for the platform owner — pharmacies, their control and performance, review, knowledge base (Flutter web).
+publish_to: none
+version: 0.1.0+1
+resolution: workspace
+
+environment:
+  sdk: ^3.13.0
+  flutter: ">=3.47.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any
+  doaya_ui: any
+  doaya_core: any
+  flutter_riverpod: ^3.4.3
+  go_router: ^18.0.1
+  http: ^1.6.0
+
+dev_dependencies:
+  flutter_lints: ^6.0.0
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  generate: true
