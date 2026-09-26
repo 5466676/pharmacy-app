@@ -20,13 +20,19 @@ String certificateFingerprint(X509Certificate cert) => sha256.convert(cert.der).
 /// client (http:// addresses, tests).
 http.Client clientFor(Uri url) {
   final pin = serverPin(url);
-  return pin == null ? http.Client() : _PinnedClient(pin);
+  return pin == null ? IOClient(HttpClient()..idleTimeout = idleTimeout) : _PinnedClient(pin);
 }
+
+/// Idle connections are dropped sooner than the server closes them (65 s,
+/// app/serve.py; uvicorn's default is 5 s). Otherwise a request can go out
+/// on a socket the server just closed and fail as "server unreachable".
+const idleTimeout = Duration(seconds: 4);
 
 class _PinnedClient extends http.BaseClient {
   _PinnedClient(String pin) {
     _io = IOClient(
       HttpClient(context: SecurityContext(withTrustedRoots: false))
+        ..idleTimeout = idleTimeout
         ..badCertificateCallback = (cert, host, port) {
           final ok = certificateFingerprint(cert) == pin;
           if (!ok) _mismatch = true;

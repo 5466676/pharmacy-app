@@ -1,4 +1,3 @@
-import 'package:doaya_core/doaya_core.dart';
 import 'package:doaya_pharmacy/app.dart';
 import 'package:doaya_pharmacy/central/inbox_controller.dart';
 import 'package:doaya_pharmacy/data/catalog_repository.dart';
@@ -260,7 +259,7 @@ void main() {
     await tester.pump();
     await tester.tap(find.text('جاهز للاستلام'));
     await settle(tester);
-    final lines = (api.central.orders['o1']!['lines']! as List).cast<Map>();
+    final lines = (api.central.orders['o1']!['lines']! as List).cast<Map<String, Object?>>();
     expect(lines.map((l) => (l['product_id'], l['requested'], l['quantity'])), [(amox.id, 3, 2)]);
     expect(api.central.orders['o1']!['status'], 'ready');
     await tester.tap(find.text('استلم وبيع'));

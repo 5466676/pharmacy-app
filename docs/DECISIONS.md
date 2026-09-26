@@ -187,3 +187,10 @@ The server doesn't recreate the app's ~25 tables. Each synced row is stored once
 - **The pharmacist's decision may contain doses**: the guard applies to the AI only. Dosing belongs to the pharmacist (SPEC §2.1).
 - **Orders**: the patient's quantities are a request. The pharmacist sets the final quantity per line, where 0 drops it, and the order keeps both.
 
+## 2026-09-26 · Pharmacist inbox: polling through the pharmacy server, pickup through the POS
+- Devices refresh the inbox every 15 s through `/central/…` on their own server. That's simple and robust on shaky internet, and a 15 s delay is fine at a counter. An urgent case rings with the system alert sound; there's no new sound dependency.
+- **The pharmacy is linked to Doaya online from the app** (owner, sync screen). The key is checked against the central server, then stored on the pharmacy server in `data/central.json` (mode 600). Environment variables still win when set.
+- **Pickup always goes through the POS**: «استلم وبيع» fills the cart and the case/order is marked picked up only after the sale succeeds. Stock, the till and "who sold it" stay exact. If marking fails (no internet), the sale stands and the case stays "ready".
+- The customer's history is matched **by phone number on the device**; nothing about local customers goes to Doaya online.
+- **HTTP keep-alive**: the app drops idle connections after 4 s and the server keeps them 65 s (uvicorn's default of 5 s caused random "unreachable" errors when a request went out on a socket the server had just closed).
+

@@ -377,7 +377,7 @@ Patients aren't on the pharmacy's Wi-Fi, so the patient app will need a server r
   - The end-to-end test runs over real TLS: first-contact pinning, linking, syncing, and an impostor certificate refused before anything is sent. Details in DECISIONS.
 - Totals: server 34, core 95, design system 23, app 80 (+ the end-to-end script, over HTTPS).
 
-## Phase 3 — Patient app + AI · ⏸ steps 1–4 done, **waiting for review** (plan approved 2026-09-25)
+## Phase 3 — Patient app + AI · ▶ steps 1–5 done; 6–8 next (plan approved 2026-09-25)
 
 ### Owner answers (2026-09-25)
 1. **Hosting**: still being decided. Build it host-agnostic (Docker Compose), and run it locally for now.
@@ -580,4 +580,40 @@ Server side only so far (the screens are steps 5–7). The tests read as the sce
 - `test_orders_live.py`: orders with the pharmacist's final quantities, background updates, WebSocket, a device going through its own server.
 - `test_redflags.py`: the sentence tables.
 - `test_directory.py`: the shelf from synced rows.
+- [x] Step 5: **the pharmacist's side in the pharmacy app**:
+  - **«الحالات»** in the menu. Everyone sees it once the pharmacy is on Doaya online; the owner always sees it, to link it. It carries a badge with what's waiting.
+  - A new **urgent** case rings (system alert sound) and shows «وصلت حالة مستعجلة: …».
+  - The inbox refreshes every 15 s through the pharmacy's own server (`/central/…`). With no internet it says so, and selling is untouched.
+  - **Case list**: urgent first in red, with the red flag named («ألم بالصدر»), status, patient and time.
+  - **Case page** (from `design/pharmacy_case_detail_layout.html`):
+    - the patient: name, age, sex, phone
+    - an urgent banner telling the pharmacist to call them
+    - **the assistant's summary**, with what the patient ruled out («نفى: …»)
+    - the whole **conversation**
+    - **«سجلّه عندك»**: the customer with the same phone, their debt and last purchases
+    - **«صحّح»** on the summary or any assistant message → logged for review
+  - **The decision** («القرار والجرعات دايماً عند الصيدلي»):
+    - add medicines from stock, showing what's available in boxes/strips
+    - quantity and **the pharmacist's own instructions** (required), with optional times/day and days for the patient's reminders
+    - a note
+    - **«جاهز، بلّغ المريض»**, «اسأل المريض سؤال», «بلّش التحضير», «بحاجة طبيب» (with an optional word), «سكّر الحالة» for emergencies
+  - **Pickup orders**: the patient's note; per line what they asked for, the price and our stock. The pharmacist sets the final quantities (− down to 0 drops a line), then ready / «ما في», with a note to the patient.
+  - **«استلم وبيع»** (a case or an order): the POS opens with the cart filled, as far as stock allows. After the sale it's marked picked up on Doaya online. The sale is a normal one (till, stock, who, device). With no internet the sale still goes through and the case stays "ready".
+  - **The owner links Doaya online** in «السيرفر والمزامنة»:
+    - the address + the pharmacy key
+    - checked with the central server, then kept on the pharmacy server (`data/central.json`, 600)
+    - «فك الربط» undoes it
+  - Phone layout: list, then the case / order on its own page.
+  - **Real run** (`docs/screenshots/phase3/`), on one machine:
+    - Doaya online on :8100, the pharmacy server over HTTPS :8443, the Linux app linked to both
+    - a stand-in for LM Studio answering in its API format
+    - two patients played through the real API
+    - The shelf reached Doaya online by itself (Augmentin shown unavailable). The consultation went question → summary → sent. The emergency («وجع بصدري ونفسي مقطوع») stopped before any model call and rang at the counter.
+    - The pharmacist gave Panadol with «حبة كل 8 ساعات بعد الأكل». The patient saw it ready with those words. «استلم وبيع» sold it and the patient saw `picked_up`. The order went from 2 Panadol + 1 Omega to 2 Panadol with «الأوميغا خالصة هلق».
+  - **Bugs found by the real run and fixed**:
+    - A false «ما في إنترنت» banner every so often. The server closed idle connections after 5 s while the app reused them for 15 s. The app now drops idle connections after 4 s and the server keeps them 65 s. The same bug could make sync show «السيرفر مو موجود» at random.
+    - The address hint showed reversed in RTL.
+    - Search results needed a Material wrapper (caught by a widget test).
+    - Stock showed in strips instead of boxes/strips.
+  - Tests: server 184, app 93 + the end-to-end script (6 new inbox tests with a fake Doaya online: link, case to pickup at the POS, ask / needs a doctor, order quantities to pickup, no internet, phone pages).
 

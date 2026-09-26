@@ -789,7 +789,7 @@ class _CentralPanelState extends ConsumerState<_CentralPanel> {
             GlassTextField(
               label: l.centralUrlLabel,
               controller: _url,
-              hint: l.centralUrlHint,
+              hint: ltrIsolate(l.centralUrlHint),
               textDirection: TextDirection.ltr,
               keyboardType: TextInputType.url,
             ),

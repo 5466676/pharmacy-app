@@ -122,13 +122,7 @@ class _OrderDetailViewState extends ConsumerState<OrderDetailView> {
                             switch (stock?.onHand(line.productId) ?? 0) {
                               <= 0 => l.outOfStock,
                               final n => l.onHandShort(
-                                formatQty(
-                                  n ~/
-                                      ((products[line.productId]?.unitsPerPack ?? 1).clamp(
-                                        1,
-                                        1000,
-                                      )),
-                                ),
+                                formatStock(l, n, products[line.productId]?.unitsPerPack ?? 1),
                               ),
                             },
                           ].join('، '),
