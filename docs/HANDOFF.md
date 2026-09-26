@@ -72,6 +72,61 @@ cd backend && python -m venv .venv
 
 ---
 
+## 2.5) تجربة المنصة كاملة على جهازك (متل ما جرّبتها بالسحابة)
+
+قبل ما تبلّش:
+- تطبيق المريض لسا ما انعمل (الخطوة 6 و7). هلق منجرّب المريض بسكربت صغير أو بـ `curl`.
+- الصيدلي بيشتغل بالتطبيق الحقيقي.
+
+1. **قواعد البيانات** (PostgreSQL):
+   ```bash
+   createdb -U doaya doaya_central && createdb -U doaya doaya_run
+   cd backend
+   DOAYA_DATABASE_URL=postgresql+psycopg://doaya:doaya@localhost:5432/doaya_central .venv/bin/alembic upgrade head
+   DOAYA_DATABASE_URL=postgresql+psycopg://doaya:doaya@localhost:5432/doaya_run .venv/bin/alembic upgrade head
+   ```
+2. **LM Studio**:
+   - نزّل نموذج صغير بيحكي عربي، متل `qwen2.5-7b-instruct`.
+   - شغّل «Local Server» على المنفذ 1234.
+3. **دوايا أونلاين** (السيرفر المركزي):
+   ```bash
+   DOAYA_DATABASE_URL=postgresql+psycopg://doaya:doaya@localhost:5432/doaya_central DOAYA_DATA_DIR=data-central \
+   DOAYA_LLM_MODEL=qwen2.5-7b-instruct .venv/bin/uvicorn app.main:create_app --factory --host 0.0.0.0 --port 8100
+   ```
+   وبشباك تاني:
+   ```bash
+   export DOAYA_DATABASE_URL=postgresql+psycopg://doaya:doaya@localhost:5432/doaya_central
+   ID=$(.venv/bin/python -m app.cli create-pharmacy --name "صيدلية الشفاء" --owner-name سامر --owner-phone 0944123456 --password secret-1)
+   .venv/bin/python -m app.cli list-pharmacy $ID --code SH4F --city دمشق
+   .venv/bin/python -m app.cli pharmacy-key $ID      # انسخ المفتاح
+   ```
+4. **سيرفر الصيدلية** (HTTPS):
+   ```bash
+   DOAYA_DATABASE_URL=postgresql+psycopg://doaya:doaya@localhost:5432/doaya_run DOAYA_DATA_DIR=data-pharmacy \
+   DOAYA_HTTP_PORT=8443 .venv/bin/python -m app.serve
+   ```
+   بيطبع رمز السيرفر.
+5. **تطبيق الصيدلية**: `cd apps/pharmacy && flutter run -d windows` (أو `-d linux`).
+   - «السيرفر والمزامنة» ← اكتب `127.0.0.1:8443` ← قارن الرمز ← أنشئ واربط.
+   - بنفس الشاشة، «دوايا أونلاين»: العنوان `http://127.0.0.1:8100` والمفتاح يلي نسخته.
+6. **المريض (مؤقتاً)**: عدّل رقم الصيدلية بالسكربت وشغّله. بيسجّل مريض، وبيعمل استشارة وحالة طارئة وطلب:
+   ```bash
+   .venv/bin/python - <<'PY'
+   import httpx; c = httpx.Client(base_url="http://127.0.0.1:8100", trust_env=False, timeout=120)
+   s = c.post("/patients/register", json={"name": "مازن", "phone": "0933111222", "password": "secret-1", "birth_year": 1992, "sex": "m"}).json()
+   h = {"authorization": "Bearer " + s["access_token"]}
+   c.patch("/patients/me", headers=h, json={"pharmacy_id": "<رقم الصيدلية من الخطوة 3>"})
+   cid = c.post("/consultations", headers=h).json()["id"]
+   for text in ["عندي صداع من يومين وحرارة خفيفة", "لا، ولا شي", "ما عندي حساسية"]:
+       r = c.post(f"/consultations/{cid}/messages", headers=h, json={"text": text}).json()
+       print(r["status"], "|", r["messages"][-1]["text"])
+   print(c.post(f"/consultations/{cid}/send", headers=h).json()["status"])
+   PY
+   ```
+   بعد 15 ثانية بتبيّن الحالة بـ «الحالات» بالتطبيق.
+   - جرّب رسالة متل «عندي وجع بصدري» لتشوف الحالة المستعجلة.
+   - وجرّب «شو باخد للصداع؟» لتشوف إنو المساعد ما بيعطي دوا.
+
 ## 3) برومت عام للاستئناف (استعمله أول شي بأي جلسة جديدة)
 
 ```
