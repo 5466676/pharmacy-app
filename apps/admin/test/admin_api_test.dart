@@ -137,11 +137,7 @@ void main() {
       expect(looks.length, 3);
       for (final i in AdminIdentity.values) {
         final p = DoayaPalette.of(i.look);
-        expect(
-          contrastRatio(p.textPrimary, p.bgMid),
-          greaterThanOrEqualTo(4.5),
-          reason: i.name,
-        );
+        expect(contrastRatio(p.textPrimary, p.bgMid), greaterThanOrEqualTo(4.5), reason: i.name);
         expect(i.look.style, isNot(DoayaStyle.glass), reason: 'no blur on the panel');
       }
       expect(DoayaPalette.of(AdminIdentity.ledger.look).brightness, Brightness.light);
