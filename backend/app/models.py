@@ -36,9 +36,22 @@ class Pharmacy(Base):
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True)
     name: Mapped[str] = mapped_column(String(200))
-    # pending | active | suspended
+    # pending | active | suspended | stopped | removed. On the central server
+    # only the admin changes it; "stopped" and "removed" also lock the
+    # pharmacy's own system when its server next checks in.
     status: Mapped[str] = mapped_column(String(20), default="active")
+    status_reason: Mapped[str | None] = mapped_column(String(500))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    # Phase 4, central server: how long the pharmacy's system keeps working
+    # without checking in, and what its server last reported (technical
+    # state only: versions, devices, backups; never its business data).
+    licence_days: Mapped[int] = mapped_column(Integer, default=30, server_default="30")
+    last_heartbeat_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    heartbeat: Mapped[dict | None] = mapped_column(JSONB)
+    # The monthly health check's results (verdicts and counts only).
+    health: Mapped[dict | None] = mapped_column(JSONB)
+    health_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    health_requested: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false")
 
 
 class User(Base):
@@ -200,6 +213,8 @@ class Consultation(Base):
     handled_by: Mapped[str | None] = mapped_column(String(200))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     sent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # The pharmacist's first action on the case (response time).
+    first_action_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
@@ -254,6 +269,7 @@ class PatientOrder(Base):
     handled_by: Mapped[str | None] = mapped_column(String(200))
     # A prescription photo sent with the order.
     photo_id: Mapped[str | None] = mapped_column(ForeignKey("photos.id"))
+    first_action_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
@@ -273,4 +289,36 @@ class Photo(Base):
     # Where it was sent: a consultation, or an order (set when attached).
     consultation_id: Mapped[str | None] = mapped_column(ForeignKey("consultations.id"))
     order_id: Mapped[str | None] = mapped_column(String(36))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+# ─── Phase 4: the platform owner's admin panel ──────────────────────────────
+
+
+class AdminSession(Base):
+    """A signed-in admin panel: its long-lived secret, stored hashed."""
+
+    __tablename__ = "admin_sessions"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    last_seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class AdminAction(Base):
+    """Every admin action on a pharmacy: who, when, what and why."""
+
+    __tablename__ = "admin_actions"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    admin_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    pharmacy_id: Mapped[str | None] = mapped_column(ForeignKey("pharmacies.id"), index=True)
+    # approve | suspend | resume | stop | remove | list | unlist | new_key
+    # | licence | health_check
+    action: Mapped[str] = mapped_column(String(20))
+    reason: Mapped[str | None] = mapped_column(String(500))
+    detail: Mapped[dict | None] = mapped_column(JSONB)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

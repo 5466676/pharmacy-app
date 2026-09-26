@@ -415,6 +415,7 @@ def case(cid: str, caller: PharmacyCaller, db: DbSession) -> dict:
 
 def _act(db, request, caller, c: Consultation, kind: str) -> dict:
     c.handled_by = caller.actor or c.handled_by
+    c.first_action_at = c.first_action_at or _now()
     _changed(request, c, kind)
     db.commit()
     return {**_out(db, c), "patient": _case_patient(db, c.patient_id)}

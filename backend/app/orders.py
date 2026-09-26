@@ -216,6 +216,7 @@ def set_status(
         o.lines = lines  # a new list, so SQLAlchemy stores the change
     o.status = body.status
     o.handled_by = caller.actor or o.handled_by
+    o.first_action_at = o.first_action_at or datetime.now(UTC)
     if body.note:
         o.pharmacist_note = body.note.strip()
     _changed(request, o)
