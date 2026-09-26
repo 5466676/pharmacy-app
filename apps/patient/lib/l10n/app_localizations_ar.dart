@@ -474,4 +474,114 @@ class AppLocalizationsAr extends AppLocalizations {
   String lineQtyPrice(String quantity, String price) {
     return '$quantity × $price';
   }
+
+  @override
+  String get noticeConsultationReady => 'حضّرلك الصيدلي دواك';
+
+  @override
+  String get noticeConsultationReadyBody => 'جاهز للاستلام من صيدليتك، والتعليمات بالمحادثة.';
+
+  @override
+  String get noticeNeedsDoctor => 'الصيدلي شايف لازم تشوف طبيب';
+
+  @override
+  String get noticeNeedsDoctorBody => 'افتح المحادثة لتقرا شو كتبلك.';
+
+  @override
+  String get noticePreparing => 'الصيدلي عم يحضّر حالتك';
+
+  @override
+  String get noticeOrderReady => 'طلبك جاهز للاستلام';
+
+  @override
+  String get noticeOrderRejected => 'ما قدرت الصيدلية تحضّر طلبك';
+
+  @override
+  String get noticeOrderBody => 'افتح «طلباتي» للتفاصيل.';
+
+  @override
+  String doseTitle(String name) {
+    return 'وقت دوا $name';
+  }
+
+  @override
+  String get navDoses => 'جرعاتي';
+
+  @override
+  String get dosesTitle => 'جرعاتي';
+
+  @override
+  String get noDoses =>
+      'ما عندك تذكيرات. لما الصيدلي يحضّرلك دوا بعدد مرات باليوم، فيك تشغّل التذكير من المحادثة.';
+
+  @override
+  String get remindMe => 'ذكّرني بالجرعات';
+
+  @override
+  String get reminderOn => 'التذكير شغّال';
+
+  @override
+  String get reminderSaved => 'انحفظ التذكير';
+
+  @override
+  String get reminderTimes => 'المواعيد';
+
+  @override
+  String reminderDays(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'لـ $days يوم',
+      few: 'لـ $days أيام',
+      two: 'ليومين',
+      one: 'ليوم واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reminderOngoing => 'لحتى توقّفه';
+
+  @override
+  String get reminderFinished => 'خلص الكورس';
+
+  @override
+  String get reminderWebNote => 'التذكير بيوصلك كإشعار على تطبيق الموبايل. هون بتشوف المواعيد بس.';
+
+  @override
+  String get reminderTimesHelp => 'فيك تزيح المواعيد لتناسبك. عدد المرات من الصيدلي.';
+
+  @override
+  String get deleteReminder => 'احذف التذكير';
+
+  @override
+  String nextDose(String time) {
+    return 'الجاية: $time';
+  }
+
+  @override
+  String get notificationsOff =>
+      'الإشعارات مسكّرة. شغّلها من إعدادات الموبايل منشان يوصلك التذكير.';
+
+  @override
+  String get earlier => 'أبكر نص ساعة';
+
+  @override
+  String get later => 'أبعد نص ساعة';
+
+  @override
+  String remindersAdded(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'انضاف $count تذكير',
+      few: 'انضاف $count تذكيرات',
+      two: 'انضاف تذكيرين',
+      one: 'انضاف تذكير واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get remindersActive => 'التذكير شغّال لهالأدوية';
 }

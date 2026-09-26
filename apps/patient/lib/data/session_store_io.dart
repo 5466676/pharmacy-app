@@ -4,11 +4,14 @@ import 'package:path_provider/path_provider.dart';
 
 import 'session_store.dart';
 
-SessionStore platformSessionStore() => _FileSessionStore();
+SessionStore platformSessionStore(String name) => _FileSessionStore(name);
 
 class _FileSessionStore implements SessionStore {
+  _FileSessionStore(this.name);
+  final String name;
+
   Future<File> _file() async =>
-      File('${(await getApplicationSupportDirectory()).path}${Platform.pathSeparator}session.json');
+      File('${(await getApplicationSupportDirectory()).path}${Platform.pathSeparator}$name.json');
 
   @override
   Future<String?> read() async {

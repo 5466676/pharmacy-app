@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../l10n/app_localizations.dart';
 import '../router.dart';
 
-const _tabs = [Routes.home, Routes.consultations, Routes.orders, Routes.account];
+const _tabs = [Routes.home, Routes.consultations, Routes.doses, Routes.orders, Routes.account];
 
 /// The three tabs with the floating glass nav (design/patient_home.html).
 class PatientShell extends StatelessWidget {
@@ -51,6 +51,7 @@ class PatientShell extends StatelessWidget {
                       activeIcon: DoayaIcons.chatFilled,
                       label: l.navConsultations,
                     ),
+                    DoayaNavItem(icon: DoayaIcons.clock, label: l.navDoses),
                     DoayaNavItem(icon: DoayaIcons.bag, label: l.navOrders),
                     DoayaNavItem(
                       icon: DoayaIcons.person,

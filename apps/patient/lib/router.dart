@@ -8,6 +8,7 @@ import 'ui/cart_screen.dart';
 import 'ui/chat_screen.dart';
 import 'ui/common.dart';
 import 'ui/consultations_screen.dart';
+import 'ui/doses_screen.dart';
 import 'ui/home_screen.dart';
 import 'ui/orders_screens.dart';
 import 'ui/pharmacy_screen.dart';
@@ -24,6 +25,7 @@ abstract final class Routes {
   static const home = '/home';
   static const consultations = '/consultations';
   static const orders = '/orders';
+  static const doses = '/doses';
   static const account = '/account';
   static String chat(String id) => '/chat/$id';
   static const shelf = '/shelf';
@@ -84,6 +86,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(path: Routes.home, builder: (_, _) => const HomeScreen()),
           GoRoute(path: Routes.consultations, builder: (_, _) => const ConsultationsScreen()),
+          GoRoute(path: Routes.doses, builder: (_, _) => const DosesScreen()),
           GoRoute(path: Routes.orders, builder: (_, _) => const OrdersScreen()),
           GoRoute(path: Routes.account, builder: (_, _) => const AccountScreen()),
         ],

@@ -895,6 +895,174 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'{quantity} × {price}'**
   String lineQtyPrice(String quantity, String price);
+
+  /// No description provided for @noticeConsultationReady.
+  ///
+  /// In ar, this message translates to:
+  /// **'حضّرلك الصيدلي دواك'**
+  String get noticeConsultationReady;
+
+  /// No description provided for @noticeConsultationReadyBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاهز للاستلام من صيدليتك، والتعليمات بالمحادثة.'**
+  String get noticeConsultationReadyBody;
+
+  /// No description provided for @noticeNeedsDoctor.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصيدلي شايف لازم تشوف طبيب'**
+  String get noticeNeedsDoctor;
+
+  /// No description provided for @noticeNeedsDoctorBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'افتح المحادثة لتقرا شو كتبلك.'**
+  String get noticeNeedsDoctorBody;
+
+  /// No description provided for @noticePreparing.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصيدلي عم يحضّر حالتك'**
+  String get noticePreparing;
+
+  /// No description provided for @noticeOrderReady.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلبك جاهز للاستلام'**
+  String get noticeOrderReady;
+
+  /// No description provided for @noticeOrderRejected.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما قدرت الصيدلية تحضّر طلبك'**
+  String get noticeOrderRejected;
+
+  /// No description provided for @noticeOrderBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'افتح «طلباتي» للتفاصيل.'**
+  String get noticeOrderBody;
+
+  /// No description provided for @doseTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'وقت دوا {name}'**
+  String doseTitle(String name);
+
+  /// No description provided for @navDoses.
+  ///
+  /// In ar, this message translates to:
+  /// **'جرعاتي'**
+  String get navDoses;
+
+  /// No description provided for @dosesTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'جرعاتي'**
+  String get dosesTitle;
+
+  /// No description provided for @noDoses.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما عندك تذكيرات. لما الصيدلي يحضّرلك دوا بعدد مرات باليوم، فيك تشغّل التذكير من المحادثة.'**
+  String get noDoses;
+
+  /// No description provided for @remindMe.
+  ///
+  /// In ar, this message translates to:
+  /// **'ذكّرني بالجرعات'**
+  String get remindMe;
+
+  /// No description provided for @reminderOn.
+  ///
+  /// In ar, this message translates to:
+  /// **'التذكير شغّال'**
+  String get reminderOn;
+
+  /// No description provided for @reminderSaved.
+  ///
+  /// In ar, this message translates to:
+  /// **'انحفظ التذكير'**
+  String get reminderSaved;
+
+  /// No description provided for @reminderTimes.
+  ///
+  /// In ar, this message translates to:
+  /// **'المواعيد'**
+  String get reminderTimes;
+
+  /// No description provided for @reminderDays.
+  ///
+  /// In ar, this message translates to:
+  /// **'{days, plural, =1{ليوم واحد} =2{ليومين} few{لـ {days} أيام} other{لـ {days} يوم}}'**
+  String reminderDays(int days);
+
+  /// No description provided for @reminderOngoing.
+  ///
+  /// In ar, this message translates to:
+  /// **'لحتى توقّفه'**
+  String get reminderOngoing;
+
+  /// No description provided for @reminderFinished.
+  ///
+  /// In ar, this message translates to:
+  /// **'خلص الكورس'**
+  String get reminderFinished;
+
+  /// No description provided for @reminderWebNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'التذكير بيوصلك كإشعار على تطبيق الموبايل. هون بتشوف المواعيد بس.'**
+  String get reminderWebNote;
+
+  /// No description provided for @reminderTimesHelp.
+  ///
+  /// In ar, this message translates to:
+  /// **'فيك تزيح المواعيد لتناسبك. عدد المرات من الصيدلي.'**
+  String get reminderTimesHelp;
+
+  /// No description provided for @deleteReminder.
+  ///
+  /// In ar, this message translates to:
+  /// **'احذف التذكير'**
+  String get deleteReminder;
+
+  /// No description provided for @nextDose.
+  ///
+  /// In ar, this message translates to:
+  /// **'الجاية: {time}'**
+  String nextDose(String time);
+
+  /// No description provided for @notificationsOff.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإشعارات مسكّرة. شغّلها من إعدادات الموبايل منشان يوصلك التذكير.'**
+  String get notificationsOff;
+
+  /// No description provided for @earlier.
+  ///
+  /// In ar, this message translates to:
+  /// **'أبكر نص ساعة'**
+  String get earlier;
+
+  /// No description provided for @later.
+  ///
+  /// In ar, this message translates to:
+  /// **'أبعد نص ساعة'**
+  String get later;
+
+  /// No description provided for @remindersAdded.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count, plural, =1{انضاف تذكير واحد} =2{انضاف تذكيرين} few{انضاف {count} تذكيرات} other{انضاف {count} تذكير}}'**
+  String remindersAdded(int count);
+
+  /// No description provided for @remindersActive.
+  ///
+  /// In ar, this message translates to:
+  /// **'التذكير شغّال لهالأدوية'**
+  String get remindersActive;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

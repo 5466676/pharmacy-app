@@ -9,6 +9,7 @@ import '../data/providers.dart';
 import '../l10n/app_localizations.dart';
 import '../router.dart';
 import 'common.dart';
+import 'doses_screen.dart' show RemindMeButton;
 import 'summary_editor.dart';
 
 /// From design/patient_chat.html: the assistant asks, summarises, the
@@ -267,6 +268,8 @@ class _Messages extends StatelessWidget {
       if (!c.withAssistant && !c.finished && c.status != ConsultStatus.emergency)
         _Steps(status: c.status),
       if (c.decision != null) _DecisionCard(decision: c.decision!, pharmacyName: pharmacyName),
+      if (c.decision != null && !c.finished)
+        RemindMeButton(consultationId: c.id, decision: c.decision!),
     ];
     if (items.isEmpty) {
       items.add(

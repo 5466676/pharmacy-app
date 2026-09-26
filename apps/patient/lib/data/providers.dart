@@ -9,10 +9,12 @@ import 'session_store.dart';
 
 /// Doaya online's address, set at build time:
 /// `--dart-define=DOAYA_API=https://…`.
-final apiBaseProvider = Provider<Uri>((ref) {
+final Uri apiBaseUrl = () {
   const raw = String.fromEnvironment('DOAYA_API', defaultValue: 'http://127.0.0.1:8100');
   return Uri.parse(raw.endsWith('/') ? raw : '$raw/');
-});
+}();
+
+final apiBaseProvider = Provider<Uri>((ref) => apiBaseUrl);
 
 final sessionStoreProvider = Provider<SessionStore>((ref) => SessionStore());
 

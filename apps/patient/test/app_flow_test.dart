@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:async';
 
 import 'package:doaya_patient/app.dart';
+import 'package:doaya_patient/data/doses.dart';
 import 'package:doaya_patient/data/live_updates.dart';
 import 'package:doaya_patient/data/patient_api.dart';
 import 'package:doaya_patient/data/providers.dart';
@@ -15,6 +16,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/testing.dart';
 
 import 'auth_test.dart' show pharmacy;
+import 'fake_notifications.dart';
 import 'patient_api_test.dart' show json, patientJson;
 
 final l = lookupAppLocalizations(const Locale('ar'));
@@ -198,6 +200,8 @@ Future<void> pumpApp(
   FakeServer server,
   MemorySessionStore store, {
   Stream<Object?>? live,
+  FakeNotifications? notifications,
+  MemorySessionStore? reminders,
 }) async {
   tester.view
     ..physicalSize = const Size(390, 844)
@@ -209,6 +213,9 @@ Future<void> pumpApp(
         apiProvider.overrideWithValue(PatientApi(Uri.parse('https://x/'), client: server.client)),
         sessionStoreProvider.overrideWithValue(store),
         liveConnectProvider.overrideWithValue((_) => live ?? StreamController<Object?>().stream),
+        deviceNotificationsProvider.overrideWithValue(notifications ?? FakeNotifications()),
+        remindersStoreProvider.overrideWithValue(reminders ?? MemorySessionStore()),
+        watchStoreProvider.overrideWithValue(MemorySessionStore()),
       ],
       child: const PatientApp(),
     ),

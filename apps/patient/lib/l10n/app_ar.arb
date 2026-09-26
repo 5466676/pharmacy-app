@@ -258,5 +258,61 @@
         "type": "String"
       }
     }
-  }
+  },
+  "noticeConsultationReady": "حضّرلك الصيدلي دواك",
+  "noticeConsultationReadyBody": "جاهز للاستلام من صيدليتك، والتعليمات بالمحادثة.",
+  "noticeNeedsDoctor": "الصيدلي شايف لازم تشوف طبيب",
+  "noticeNeedsDoctorBody": "افتح المحادثة لتقرا شو كتبلك.",
+  "noticePreparing": "الصيدلي عم يحضّر حالتك",
+  "noticeOrderReady": "طلبك جاهز للاستلام",
+  "noticeOrderRejected": "ما قدرت الصيدلية تحضّر طلبك",
+  "noticeOrderBody": "افتح «طلباتي» للتفاصيل.",
+  "doseTitle": "وقت دوا {name}",
+  "@doseTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "navDoses": "جرعاتي",
+  "dosesTitle": "جرعاتي",
+  "noDoses": "ما عندك تذكيرات. لما الصيدلي يحضّرلك دوا بعدد مرات باليوم، فيك تشغّل التذكير من المحادثة.",
+  "remindMe": "ذكّرني بالجرعات",
+  "reminderOn": "التذكير شغّال",
+  "reminderSaved": "انحفظ التذكير",
+  "reminderTimes": "المواعيد",
+  "reminderDays": "{days, plural, =1{ليوم واحد} =2{ليومين} few{لـ {days} أيام} other{لـ {days} يوم}}",
+  "@reminderDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "reminderOngoing": "لحتى توقّفه",
+  "reminderFinished": "خلص الكورس",
+  "reminderWebNote": "التذكير بيوصلك كإشعار على تطبيق الموبايل. هون بتشوف المواعيد بس.",
+  "reminderTimesHelp": "فيك تزيح المواعيد لتناسبك. عدد المرات من الصيدلي.",
+  "deleteReminder": "احذف التذكير",
+  "nextDose": "الجاية: {time}",
+  "@nextDose": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationsOff": "الإشعارات مسكّرة. شغّلها من إعدادات الموبايل منشان يوصلك التذكير.",
+  "earlier": "أبكر نص ساعة",
+  "later": "أبعد نص ساعة",
+  "remindersAdded": "{count, plural, =1{انضاف تذكير واحد} =2{انضاف تذكيرين} few{انضاف {count} تذكيرات} other{انضاف {count} تذكير}}",
+  "@remindersAdded": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "remindersActive": "التذكير شغّال لهالأدوية"
 }
