@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../central/pickup.dart';
 import '../../data/database.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers.dart';
@@ -54,10 +55,39 @@ class _PosScreenState extends ConsumerState<PosScreen> {
   final _discount = TextEditingController();
   final _tendered = TextEditingController();
 
+  /// Marks a patient's case/order picked up after this cart is sold.
+  Future<void> Function()? _onSold;
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _searchFocus.requestFocus());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _searchFocus.requestFocus();
+      _takePending();
+    });
+  }
+
+  /// A pickup from «حالات المرضى»: fill the cart, as far as stock allows.
+  Future<void> _takePending() async {
+    final pending = ref.read(pendingSaleProvider.notifier).take();
+    if (pending == null) return;
+    final catalog = ref.read(catalogProvider);
+    var partial = false;
+    for (final (id, boxes) in pending.lines) {
+      final p = await catalog.byId(id);
+      if (!mounted) return;
+      if (p == null) {
+        partial = true;
+        continue;
+      }
+      final perBox = p.unitsPerPack < 1 ? 1 : p.unitsPerPack;
+      final fits = (_onHand(id) - _piecesInCart(id)) ~/ perBox;
+      final q = boxes < fits ? boxes : fits;
+      if (q < boxes) partial = true;
+      if (q > 0) setState(() => _cart.add(_CartItem(p, q, strip: false)));
+    }
+    _onSold = pending.onSold;
+    if (partial && mounted) toast(context, AppLocalizations.of(context).pickupPartial, error: true);
   }
 
   @override
@@ -264,6 +294,17 @@ class _PosScreenState extends ConsumerState<PosScreen> {
       );
       _discount.clear();
       _tendered.clear();
+      final onSold = _onSold;
+      _onSold = null;
+      if (onSold != null) {
+        try {
+          await onSold();
+          if (mounted) toast(context, l.pickupDone);
+        } on Object catch (_) {
+          // No internet: the sale is done; the case stays "ready" to mark later.
+        }
+      }
+      if (!mounted) return;
       setState(() {
         _cart.clear();
         _payment = PaymentType.cash;

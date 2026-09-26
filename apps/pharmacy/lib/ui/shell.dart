@@ -4,13 +4,30 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../central/inbox_controller.dart';
 import '../l10n/app_localizations.dart';
 import '../providers.dart';
 import '../router.dart';
 import '../sync/sync_controller.dart';
 import 'format.dart';
 import 'screens/sync_screen.dart' show syncStatusChip;
-import 'widgets.dart' show isPhoneLayout;
+import 'widgets.dart' show isPhoneLayout, toast;
+
+/// Whether «الحالات» is worth a place in the menu: once the pharmacy is
+/// on Doaya online (the owner always sees it, to link it).
+bool showCases(InboxState inbox, bool owner) =>
+    owner || !{InboxPhase.notLinked, InboxPhase.notConnected}.contains(inbox.phase);
+
+/// Rings and shows a toast when an urgent patient case arrives.
+void listenUrgentCases(BuildContext context, WidgetRef ref) {
+  ref.listen(inboxProvider, (prev, next) {
+    if (next.newUrgent.isEmpty || identical(prev?.newUrgent, next.newUrgent)) return;
+    final c = next.cases.where((c) => next.newUrgent.contains(c.id)).firstOrNull;
+    if (c == null) return;
+    SystemSound.play(SystemSoundType.alert);
+    toast(context, AppLocalizations.of(context).newUrgentToast(c.patient.name), error: true);
+  });
+}
 
 /// Desktop shell: sidebar + top bar (who's working, offline status).
 /// F2 anywhere jumps to the POS search.
@@ -29,11 +46,22 @@ class AppShell extends ConsumerWidget {
     final session = ref.watch(requireSessionProvider);
     final pharmacyName = ref.watch(settingsProvider).value?['pharmacy_name'];
     final width = MediaQuery.sizeOf(context).width;
+    final inbox = ref.watch(inboxProvider);
+    listenUrgentCases(context, ref);
 
     // Owner-only destinations are hidden from employees.
     final mainItems = [
       (Routes.dashboard, DoayaNavItem(icon: DoayaIcons.dashboard, label: l.navDashboard)),
       (Routes.pos, DoayaNavItem(icon: DoayaIcons.pos, label: l.navPos)),
+      if (showCases(inbox, session.isOwner))
+        (
+          Routes.cases,
+          DoayaNavItem(
+            icon: DoayaIcons.cases,
+            label: l.navCases,
+            badge: inbox.waiting > 0 ? formatQty(inbox.waiting) : null,
+          ),
+        ),
       (Routes.inventory, DoayaNavItem(icon: DoayaIcons.inventory, label: l.navInventory)),
       (Routes.purchases, DoayaNavItem(icon: DoayaIcons.receive, label: l.navPurchases)),
       (Routes.debts, DoayaNavItem(icon: DoayaIcons.debts, label: l.navDebts)),
@@ -163,6 +191,7 @@ class PhoneShell extends ConsumerWidget {
     final l = AppLocalizations.of(context);
     final session = ref.watch(requireSessionProvider);
     final pharmacyName = ref.watch(settingsProvider).value?['pharmacy_name'];
+    listenUrgentCases(context, ref);
     var tab = _tabs.indexWhere((r) => r != Routes.dashboard && location.startsWith(r));
     if (location.startsWith(Routes.dashboard)) tab = 0;
     if (tab < 0) tab = _tabs.length - 1; // anything else lives under «المزيد»
@@ -256,7 +285,14 @@ class MoreScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
     final owner = ref.watch(requireSessionProvider).isOwner;
+    final inbox = ref.watch(inboxProvider);
     final items = [
+      if (showCases(inbox, owner))
+        (
+          Routes.cases,
+          DoayaIcons.cases,
+          inbox.waiting > 0 ? '${l.navCases} (${formatQty(inbox.waiting)})' : l.navCases,
+        ),
       (Routes.till, DoayaIcons.till, l.navTill),
       (Routes.purchases, DoayaIcons.receive, l.navPurchases),
       (Routes.stocktake, DoayaIcons.adjust, l.stocktakeTitle),

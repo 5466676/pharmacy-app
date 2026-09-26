@@ -5,12 +5,24 @@ from pathlib import Path
 from fastapi import FastAPI
 from sqlalchemy import select, text
 
-from . import __version__, accounts, sync
+from . import (
+    __version__,
+    accounts,
+    central_proxy,
+    consultations,
+    directory,
+    orders,
+    patients,
+    realtime,
+    sync,
+)
 from .backup import BackupScheduler, latest_backup_time, list_backups
+from .central_proxy import load_central_link, restart_publisher
 from .config import Settings, get_settings
 from .db import Database
 from .deps import DbSession, Owner
 from .discovery import DiscoveryResponder
+from .events import Events
 from .models import Pharmacy
 from .security import LoginLimiter
 from .tls import ensure_certificate
@@ -39,7 +51,7 @@ def create_app(
     """[discovery] starts the Wi-Fi discovery responder and [backups] the
     daily database backup (the real server; tests leave them off). With [tls]
     discovery announces https and the certificate fingerprint."""
-    settings = ensure_secret(settings or get_settings())
+    settings = load_central_link(ensure_secret(settings or get_settings()))
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
@@ -56,7 +68,11 @@ def create_app(
             ).start()
         scheduler = BackupScheduler(settings).start() if backups else None
         app.state.backups = scheduler
+        app.state.runs_publisher = backups
+        restart_publisher(app)
         yield
+        if app.state.shelf_publisher:
+            app.state.shelf_publisher.stop()
         if responder:
             responder.stop()
         if scheduler:
@@ -66,8 +82,19 @@ def create_app(
     app.state.settings = settings
     app.state.db = Database(settings.database_url)
     app.state.login_limiter = LoginLimiter()
+    app.state.events = Events()
+    app.state.llm = None  # made from settings on first use
+    app.state.shelf_publisher = None
+    app.state.runs_publisher = False
     app.include_router(accounts.router)
     app.include_router(sync.router)
+    app.include_router(patients.router)
+    app.include_router(directory.router)
+    app.include_router(consultations.router)
+    app.include_router(orders.router)
+    app.include_router(realtime.router)
+    app.include_router(central_proxy.router)
+    app.include_router(central_proxy.link_router)
 
     @app.get("/health")
     def health(db: DbSession) -> dict:

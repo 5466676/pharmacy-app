@@ -98,3 +98,156 @@ class SyncRow(Base):
     received_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
+
+
+# ─── Phase 3: patients, the directory, consultations, orders ─────────────────
+# These live on the central (internet) server. A pharmacy's own server keeps
+# using only the tables above, plus the bridge that publishes its shelf.
+
+
+class PharmacyListing(Base):
+    """How patients find a pharmacy: city, a short code shown at its counter,
+    phone and hours. Only listed pharmacies appear in the directory."""
+
+    __tablename__ = "pharmacy_listings"
+
+    pharmacy_id: Mapped[str] = mapped_column(ForeignKey("pharmacies.id"), primary_key=True)
+    code: Mapped[str] = mapped_column(String(12), unique=True)
+    city: Mapped[str] = mapped_column(String(80), index=True)
+    address: Mapped[str | None] = mapped_column(String(300))
+    phone: Mapped[str | None] = mapped_column(String(30))
+    hours: Mapped[str | None] = mapped_column(String(120))
+    listed: Mapped[bool] = mapped_column(Boolean, default=True)
+
+
+class PharmacyKey(Base):
+    """The key a pharmacy's own server uses to talk to the central server
+    (publish its shelf, handle cases and orders). Stored hashed."""
+
+    __tablename__ = "pharmacy_keys"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    pharmacy_id: Mapped[str] = mapped_column(ForeignKey("pharmacies.id"), index=True)
+    key_hash: Mapped[str] = mapped_column(String(64), unique=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class ShelfItem(Base):
+    """One product as patients see it: price and available or not (never
+    the quantity, owner's decision)."""
+
+    __tablename__ = "shelf_items"
+
+    pharmacy_id: Mapped[str] = mapped_column(ForeignKey("pharmacies.id"), primary_key=True)
+    product_id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    trade_name: Mapped[str] = mapped_column(String(200))
+    arabic_name: Mapped[str | None] = mapped_column(String(200))
+    active_ingredient: Mapped[str | None] = mapped_column(String(200))
+    strength: Mapped[str | None] = mapped_column(String(60))
+    form: Mapped[str | None] = mapped_column(String(60))
+    price_minor: Mapped[int] = mapped_column(BigInteger)
+    currency: Mapped[str] = mapped_column(String(3))
+    available: Mapped[bool] = mapped_column(Boolean)
+    prescription_only: Mapped[bool] = mapped_column(Boolean, default=False)
+    photo_url: Mapped[str | None] = mapped_column(String(300))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class PatientProfile(Base):
+    __tablename__ = "patient_profiles"
+
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), primary_key=True)
+    birth_year: Mapped[int | None] = mapped_column()
+    # m | f
+    sex: Mapped[str | None] = mapped_column(String(1))
+    city: Mapped[str | None] = mapped_column(String(80))
+    # The pharmacy the patient chose; cases and orders go there.
+    pharmacy_id: Mapped[str | None] = mapped_column(ForeignKey("pharmacies.id"))
+
+
+class PatientSession(Base):
+    """A signed-in patient app: its long-lived secret, stored hashed."""
+
+    __tablename__ = "patient_sessions"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    last_seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class Consultation(Base):
+    """A chat with the assistant and, once sent, the pharmacy's case."""
+
+    __tablename__ = "consultations"
+    __table_args__ = (Index("consultations_pharmacy_updated", "pharmacy_id", "updated_at"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    patient_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    pharmacy_id: Mapped[str] = mapped_column(ForeignKey("pharmacies.id"))
+    # chatting | summary | sent | preparing | ready | picked_up | needs_doctor
+    # | emergency | closed
+    status: Mapped[str] = mapped_column(String(20))
+    urgent: Mapped[bool] = mapped_column(Boolean, default=False)
+    red_flag: Mapped[str | None] = mapped_column(String(40))
+    summary: Mapped[dict | None] = mapped_column(JSONB)
+    # The pharmacist's decision: medicines, how to use them, a note.
+    decision: Mapped[dict | None] = mapped_column(JSONB)
+    handled_by: Mapped[str | None] = mapped_column(String(200))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    sent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class ConsultMessage(Base):
+    __tablename__ = "consult_messages"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    consultation_id: Mapped[str] = mapped_column(ForeignKey("consultations.id"), index=True)
+    # patient | assistant | pharmacist | system
+    role: Mapped[str] = mapped_column(String(12))
+    text: Mapped[str] = mapped_column(String(4000))
+    quick_replies: Mapped[list | None] = mapped_column(JSONB)
+    # The pharmacist's name for pharmacist messages.
+    author: Mapped[str | None] = mapped_column(String(200))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class AiLog(Base):
+    """Every AI reply, red flag, guard block and pharmacist correction, for
+    the admin review queue. Never used for automatic fine-tuning."""
+
+    __tablename__ = "ai_log"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    consultation_id: Mapped[str] = mapped_column(ForeignKey("consultations.id"), index=True)
+    # red_flag | assistant_reply | guard_block | summary | llm_down | correction
+    kind: Mapped[str] = mapped_column(String(20), index=True)
+    detail: Mapped[dict] = mapped_column(JSONB)
+    reviewed: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class PatientOrder(Base):
+    """An order for pickup from the shelf. The patient asks for quantities;
+    the pharmacist sets the final ones. Paid at pickup."""
+
+    __tablename__ = "patient_orders"
+    __table_args__ = (Index("patient_orders_pharmacy_updated", "pharmacy_id", "updated_at"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    patient_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    pharmacy_id: Mapped[str] = mapped_column(ForeignKey("pharmacies.id"))
+    # sent | preparing | ready | picked_up | rejected | cancelled
+    status: Mapped[str] = mapped_column(String(20))
+    # [{product_id, name, requested, quantity, price_minor}]
+    lines: Mapped[list] = mapped_column(JSONB)
+    currency: Mapped[str] = mapped_column(String(3))
+    note: Mapped[str | None] = mapped_column(String(1000))
+    pharmacist_note: Mapped[str | None] = mapped_column(String(1000))
+    handled_by: Mapped[str | None] = mapped_column(String(200))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

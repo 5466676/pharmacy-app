@@ -3247,6 +3247,504 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'هالجهاز مربوط بالسيرفر: إذا خرب، ركّبه من جديد واختار «انضمام لصيدلية موجودة» وبتنزل كل البيانات. الاسترجاع من نسخة هون للأجهزة يلي مو مربوطة.'**
   String get restoreLinkedNote;
+
+  /// No description provided for @navCases.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحالات'**
+  String get navCases;
+
+  /// No description provided for @casesTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'حالات المرضى وطلباتهم'**
+  String get casesTitle;
+
+  /// No description provided for @tabCases.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحالات'**
+  String get tabCases;
+
+  /// No description provided for @tabPatientOrders.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلبات الاستلام'**
+  String get tabPatientOrders;
+
+  /// No description provided for @inboxNotLinked.
+  ///
+  /// In ar, this message translates to:
+  /// **'هالجهاز مو مربوط بسيرفر الصيدلية، فالحالات ما بتوصله.'**
+  String get inboxNotLinked;
+
+  /// No description provided for @inboxNotConnected.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصيدلية مو مربوطة بدوايا أونلاين لسا. صاحب الصيدلية بيربطها من «السيرفر والمزامنة».'**
+  String get inboxNotConnected;
+
+  /// No description provided for @inboxOffline.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما في إنترنت هلق: الحالات والطلبات الجديدة بتوصل لما يرجع. البيع شغّال عادي.'**
+  String get inboxOffline;
+
+  /// No description provided for @noCases.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما في حالات هلق'**
+  String get noCases;
+
+  /// No description provided for @noPatientOrders.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما في طلبات هلق'**
+  String get noPatientOrders;
+
+  /// No description provided for @chooseCase.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختار من القائمة'**
+  String get chooseCase;
+
+  /// No description provided for @caseStatus.
+  ///
+  /// In ar, this message translates to:
+  /// **'{status, select, sent{جديدة} preparing{عم تتحضّر} ready{جاهزة} picked_up{مستلمة} needs_doctor{بحاجة طبيب} emergency{طارئة} closed{مسكّرة} other{{status}}}'**
+  String caseStatus(String status);
+
+  /// No description provided for @orderStatus.
+  ///
+  /// In ar, this message translates to:
+  /// **'{status, select, sent{جديد} preparing{عم يتحضّر} ready{جاهز} picked_up{مستلم} rejected{مرفوض} cancelled{ملغى} other{{status}}}'**
+  String orderStatus(String status);
+
+  /// No description provided for @patientAge.
+  ///
+  /// In ar, this message translates to:
+  /// **'{age} سنة'**
+  String patientAge(String age);
+
+  /// No description provided for @sexMale.
+  ///
+  /// In ar, this message translates to:
+  /// **'ذكر'**
+  String get sexMale;
+
+  /// No description provided for @sexFemale.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنثى'**
+  String get sexFemale;
+
+  /// No description provided for @urgentCase.
+  ///
+  /// In ar, this message translates to:
+  /// **'حالة مستعجلة'**
+  String get urgentCase;
+
+  /// No description provided for @redFlag.
+  ///
+  /// In ar, this message translates to:
+  /// **'{category, select, chest_pain{ألم بالصدر} breathing{صعوبة بالتنفس} stroke{علامات جلطة} bleeding{نزيف} infant_fever{حرارة عند رضيع} self_harm{خطر إيذاء النفس} poisoning{تسمم أو جرعة زايدة} seizure{اختلاج} unconscious{فقدان وعي} anaphylaxis{تحسس شديد} pregnancy_bleeding{نزيف مع حمل} severe_headache{صداع شديد أو تيبس رقبة} other{علامة خطر}}'**
+  String redFlag(String category);
+
+  /// No description provided for @urgentHelp.
+  ///
+  /// In ar, this message translates to:
+  /// **'المساعد وقّف الاستشارة وطلب من المريض يتصل بالإسعاف. اتصل فيه لتطمّن عليه: {phone}'**
+  String urgentHelp(String phone);
+
+  /// No description provided for @newUrgentToast.
+  ///
+  /// In ar, this message translates to:
+  /// **'وصلت حالة مستعجلة: {name}'**
+  String newUrgentToast(String name);
+
+  /// No description provided for @assistantSummary.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملخص المساعد'**
+  String get assistantSummary;
+
+  /// No description provided for @sumSymptoms.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأعراض'**
+  String get sumSymptoms;
+
+  /// No description provided for @sumDuration.
+  ///
+  /// In ar, this message translates to:
+  /// **'المدة'**
+  String get sumDuration;
+
+  /// No description provided for @sumAge.
+  ///
+  /// In ar, this message translates to:
+  /// **'العمر'**
+  String get sumAge;
+
+  /// No description provided for @sumSex.
+  ///
+  /// In ar, this message translates to:
+  /// **'الجنس'**
+  String get sumSex;
+
+  /// No description provided for @sumPregnancy.
+  ///
+  /// In ar, this message translates to:
+  /// **'حمل أو إرضاع'**
+  String get sumPregnancy;
+
+  /// No description provided for @sumAllergies.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحساسية'**
+  String get sumAllergies;
+
+  /// No description provided for @sumMedications.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدوية حالية'**
+  String get sumMedications;
+
+  /// No description provided for @sumConditions.
+  ///
+  /// In ar, this message translates to:
+  /// **'أمراض مزمنة'**
+  String get sumConditions;
+
+  /// No description provided for @sumNotes.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملاحظات'**
+  String get sumNotes;
+
+  /// No description provided for @sumDenied.
+  ///
+  /// In ar, this message translates to:
+  /// **'نفى: {list}'**
+  String sumDenied(String list);
+
+  /// No description provided for @noSummary.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما في ملخص (المساعد ما كان متاح): اقرا المحادثة.'**
+  String get noSummary;
+
+  /// No description provided for @conversationTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'المحادثة'**
+  String get conversationTitle;
+
+  /// No description provided for @roleAssistant.
+  ///
+  /// In ar, this message translates to:
+  /// **'المساعد'**
+  String get roleAssistant;
+
+  /// No description provided for @rolePatient.
+  ///
+  /// In ar, this message translates to:
+  /// **'المريض'**
+  String get rolePatient;
+
+  /// No description provided for @roleSystem.
+  ///
+  /// In ar, this message translates to:
+  /// **'دوايا'**
+  String get roleSystem;
+
+  /// No description provided for @correctAssistant.
+  ///
+  /// In ar, this message translates to:
+  /// **'صحّح'**
+  String get correctAssistant;
+
+  /// No description provided for @correctionTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'شو كان الصح؟'**
+  String get correctionTitle;
+
+  /// No description provided for @correctionHelp.
+  ///
+  /// In ar, this message translates to:
+  /// **'بتنسجّل للمراجعة منشان نحسّن المساعد، وما بتنستعمل لتدريب تلقائي.'**
+  String get correctionHelp;
+
+  /// No description provided for @correctionSaved.
+  ///
+  /// In ar, this message translates to:
+  /// **'انسجّل التصحيح، شكراً'**
+  String get correctionSaved;
+
+  /// No description provided for @customerHistory.
+  ///
+  /// In ar, this message translates to:
+  /// **'سجلّه عندك'**
+  String get customerHistory;
+
+  /// No description provided for @notACustomer.
+  ///
+  /// In ar, this message translates to:
+  /// **'مو زبون مسجّل عندك'**
+  String get notACustomer;
+
+  /// No description provided for @customerDebt.
+  ///
+  /// In ar, this message translates to:
+  /// **'عليه دين: {amount}'**
+  String customerDebt(String amount);
+
+  /// No description provided for @lastPurchases.
+  ///
+  /// In ar, this message translates to:
+  /// **'آخر مشترياته'**
+  String get lastPurchases;
+
+  /// No description provided for @yourDecision.
+  ///
+  /// In ar, this message translates to:
+  /// **'قرارك'**
+  String get yourDecision;
+
+  /// No description provided for @decisionHelp.
+  ///
+  /// In ar, this message translates to:
+  /// **'القرار والجرعات دايماً عند الصيدلي'**
+  String get decisionHelp;
+
+  /// No description provided for @addMedicine.
+  ///
+  /// In ar, this message translates to:
+  /// **'أضف دوا'**
+  String get addMedicine;
+
+  /// No description provided for @searchStock.
+  ///
+  /// In ar, this message translates to:
+  /// **'دوّر بالمخزون'**
+  String get searchStock;
+
+  /// No description provided for @onHandShort.
+  ///
+  /// In ar, this message translates to:
+  /// **'متوفر: {qty}'**
+  String onHandShort(String qty);
+
+  /// No description provided for @instructionsLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'طريقة الاستعمال'**
+  String get instructionsLabel;
+
+  /// No description provided for @timesPerDayLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرات باليوم'**
+  String get timesPerDayLabel;
+
+  /// No description provided for @daysLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'كم يوم'**
+  String get daysLabel;
+
+  /// No description provided for @decisionNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملاحظة للمريض (اختياري)'**
+  String get decisionNote;
+
+  /// No description provided for @markReady.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاهز، بلّغ المريض'**
+  String get markReady;
+
+  /// No description provided for @askPatient.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسأل المريض سؤال'**
+  String get askPatient;
+
+  /// No description provided for @needsDoctorButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'بحاجة طبيب'**
+  String get needsDoctorButton;
+
+  /// No description provided for @needsDoctorConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'رح نقول للمريض إنو حالته بدها طبيب يفحصه، وبتتسكّر الحالة. فيك تضيف كلمة إله:'**
+  String get needsDoctorConfirm;
+
+  /// No description provided for @closeCase.
+  ///
+  /// In ar, this message translates to:
+  /// **'سكّر الحالة'**
+  String get closeCase;
+
+  /// No description provided for @startPreparing.
+  ///
+  /// In ar, this message translates to:
+  /// **'بلّش التحضير'**
+  String get startPreparing;
+
+  /// No description provided for @instructionsRequired.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتب طريقة الاستعمال لكل دوا'**
+  String get instructionsRequired;
+
+  /// No description provided for @decisionSent.
+  ///
+  /// In ar, this message translates to:
+  /// **'انبعت للمريض'**
+  String get decisionSent;
+
+  /// No description provided for @pickupAndSell.
+  ///
+  /// In ar, this message translates to:
+  /// **'استلم وبيع'**
+  String get pickupAndSell;
+
+  /// No description provided for @pickupDone.
+  ///
+  /// In ar, this message translates to:
+  /// **'انسجّل الاستلام'**
+  String get pickupDone;
+
+  /// No description provided for @handledBy.
+  ///
+  /// In ar, this message translates to:
+  /// **'مسؤول: {name}'**
+  String handledBy(String name);
+
+  /// No description provided for @orderRequested.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلب {qty}'**
+  String orderRequested(String qty);
+
+  /// No description provided for @orderPatientNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملاحظة المريض: {note}'**
+  String orderPatientNote(String note);
+
+  /// No description provided for @pharmacistNoteLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملاحظة للمريض (اختياري)'**
+  String get pharmacistNoteLabel;
+
+  /// No description provided for @markOrderReady.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاهز للاستلام'**
+  String get markOrderReady;
+
+  /// No description provided for @rejectOrder.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما في'**
+  String get rejectOrder;
+
+  /// No description provided for @orderTotal.
+  ///
+  /// In ar, this message translates to:
+  /// **'المجموع: {amount}'**
+  String orderTotal(String amount);
+
+  /// No description provided for @orderLinesCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} صنف'**
+  String orderLinesCount(String count);
+
+  /// No description provided for @pickupPartial.
+  ///
+  /// In ar, this message translates to:
+  /// **'بعض الأصناف مو متوفرة بالمخزون، زبطها بشاشة البيع'**
+  String get pickupPartial;
+
+  /// No description provided for @centralSection.
+  ///
+  /// In ar, this message translates to:
+  /// **'دوايا أونلاين'**
+  String get centralSection;
+
+  /// No description provided for @centralHelp.
+  ///
+  /// In ar, this message translates to:
+  /// **'لما تربط الصيدلية، المرضى بيشوفوا رفوفها (السعر ومتوفر أو لأ بس)، وبيبعتوا حالات وطلبات للاستلام. البيع والحسابات بيضلوا عندك.'**
+  String get centralHelp;
+
+  /// No description provided for @centralUrlLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'عنوان دوايا أونلاين'**
+  String get centralUrlLabel;
+
+  /// No description provided for @centralKeyLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفتاح الصيدلية'**
+  String get centralKeyLabel;
+
+  /// No description provided for @centralLink.
+  ///
+  /// In ar, this message translates to:
+  /// **'اربط'**
+  String get centralLink;
+
+  /// No description provided for @centralUnlink.
+  ///
+  /// In ar, this message translates to:
+  /// **'فك الربط'**
+  String get centralUnlink;
+
+  /// No description provided for @centralLinked.
+  ///
+  /// In ar, this message translates to:
+  /// **'مربوطة بـ {url}'**
+  String centralLinked(String url);
+
+  /// No description provided for @centralNotLinked.
+  ///
+  /// In ar, this message translates to:
+  /// **'مو مربوطة'**
+  String get centralNotLinked;
+
+  /// No description provided for @errBadPharmacyKey.
+  ///
+  /// In ar, this message translates to:
+  /// **'المفتاح غلط'**
+  String get errBadPharmacyKey;
+
+  /// No description provided for @errCentralUnreachable.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما قدرنا نوصل لدوايا أونلاين'**
+  String get errCentralUnreachable;
+
+  /// No description provided for @removeItem.
+  ///
+  /// In ar, this message translates to:
+  /// **'شيل'**
+  String get removeItem;
+
+  /// No description provided for @centralUrlHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'https://…'**
+  String get centralUrlHint;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

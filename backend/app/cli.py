@@ -9,6 +9,11 @@
     python -m app.cli list-backups
     python -m app.cli restore <file.dump>    # replaces the database's content
     python -m app.cli server-code            # the code devices show when linking
+
+Central (internet) server:
+    python -m app.cli list-pharmacy <pharmacy-id> --code SH4F --city دمشق \\
+        [--address ...] [--phone ...] [--hours "9 - 23"] [--hide]
+    python -m app.cli pharmacy-key <pharmacy-id>   # for its server's DOAYA_CENTRAL_KEY
 """
 
 import argparse
@@ -18,6 +23,7 @@ from pathlib import Path
 from sqlalchemy import select
 
 from .backup import backup_now, list_backups, restore
+from .central import list_pharmacy, new_pharmacy_key
 from .config import Settings, get_settings
 from .db import Database
 from .models import Pharmacy, User
@@ -45,6 +51,16 @@ def main(argv: list[str] | None = None, database_url: str | None = None) -> int:
     rs = sub.add_parser("restore")
     rs.add_argument("file")
     sub.add_parser("server-code")
+    lp = sub.add_parser("list-pharmacy")
+    lp.add_argument("pharmacy_id")
+    lp.add_argument("--code", required=True)
+    lp.add_argument("--city", required=True)
+    lp.add_argument("--address")
+    lp.add_argument("--phone")
+    lp.add_argument("--hours")
+    lp.add_argument("--hide", action="store_true")
+    pk = sub.add_parser("pharmacy-key")
+    pk.add_argument("pharmacy_id")
     args = parser.parse_args(argv)
 
     settings: Settings = get_settings()
@@ -100,6 +116,23 @@ def main(argv: list[str] | None = None, database_url: str | None = None) -> int:
                 return 1
             ph.status = args.status
             session.commit()
+        elif args.cmd in ("list-pharmacy", "pharmacy-key"):
+            if session.get(Pharmacy, args.pharmacy_id) is None:
+                print("no such pharmacy", file=sys.stderr)
+                return 1
+            if args.cmd == "pharmacy-key":
+                print(new_pharmacy_key(session, args.pharmacy_id))
+            else:
+                list_pharmacy(
+                    session,
+                    args.pharmacy_id,
+                    code=args.code,
+                    city=args.city,
+                    address=args.address,
+                    phone=args.phone,
+                    hours=args.hours,
+                    listed=not args.hide,
+                )
         elif args.cmd == "reset-password":
             user = session.scalar(select(User).where(User.phone == normalize_phone(args.phone)))
             if user is None:

@@ -14,7 +14,7 @@
 | 1 | برنامج الصيدلية بدون إنترنت: بيع، مخزون وصلاحية، ظروف، ديون، مرتجعات، صندوق وورديات، حسابات الموظفين | ✅ خالصة |
 | 1.5 | المحاسبة | ✅ كل الخطوات التسعة خالصة وناطرة مراجعة |
 | 2 | السيرفر والمزامنة، مع تشفير الواي فاي | ✅ خالصة وناطرة مراجعة (بقي بس تجربة install.ps1 على ويندوز حقيقي وبناء APK) |
-| 3 | تطبيق المريض والذكاء الاصطناعي | 📝 الخطة مكتوبة بـ PROGRESS.md وناطرة موافقة (7 أسئلة + مكتبات) |
+| 3 | تطبيق المريض والذكاء الاصطناعي | ▶ الخطوات 1–5 خالصة (طبقة الحالات الخطرة، واجهة النموذج، محرّك الاستشارة، السيرفر المركزي، شاشات الصيدلي)؛ باقي 6–8: تطبيق المريض والإشعارات والتجربة مع LM Studio |
 | 4 | لوحة الإدارة | ما بلّشت |
 
 **شو خالص بالمحاسبة (1.5):**
@@ -41,7 +41,7 @@
   - كل جهاز بيحفظ بصمة الشهادة أول ما ينربط، وبيرفض أي شهادة غيرها.
   - الرمز القصير (متل `AB12-CD34`) بيبيّن بالتطبيق وبيطبعه المركّب منشان تقارنهن.
 
-**عدد الاختبارات:** السيرفر 34، والمنطق (`doaya_core`) 95، ونظام التصميم 23، والتطبيق 87، وفوقهم تجربة المزامنة الكاملة (على HTTPS).
+**عدد الاختبارات:** السيرفر 184، والمنطق (`doaya_core`) 95، ونظام التصميم 23، والتطبيق 93، وفوقهم تجربة المزامنة الكاملة (على HTTPS).
 
 **أسئلة لسا ناطرة جواب صاحب المشروع:**
 1. **طباعة الإيصال** بزر صغير (محتاج مكتبتي `pdf` و`printing`). ما انعطت موافقة لسا.
@@ -71,6 +71,61 @@ cd backend && python -m venv .venv
 - `./tool/sync_e2e.sh`
 
 ---
+
+## 2.5) تجربة المنصة كاملة على جهازك (متل ما جرّبتها بالسحابة)
+
+قبل ما تبلّش:
+- تطبيق المريض لسا ما انعمل (الخطوة 6 و7). هلق منجرّب المريض بسكربت صغير أو بـ `curl`.
+- الصيدلي بيشتغل بالتطبيق الحقيقي.
+
+1. **قواعد البيانات** (PostgreSQL):
+   ```bash
+   createdb -U doaya doaya_central && createdb -U doaya doaya_run
+   cd backend
+   DOAYA_DATABASE_URL=postgresql+psycopg://doaya:doaya@localhost:5432/doaya_central .venv/bin/alembic upgrade head
+   DOAYA_DATABASE_URL=postgresql+psycopg://doaya:doaya@localhost:5432/doaya_run .venv/bin/alembic upgrade head
+   ```
+2. **LM Studio**:
+   - نزّل نموذج صغير بيحكي عربي، متل `qwen2.5-7b-instruct`.
+   - شغّل «Local Server» على المنفذ 1234.
+3. **دوايا أونلاين** (السيرفر المركزي):
+   ```bash
+   DOAYA_DATABASE_URL=postgresql+psycopg://doaya:doaya@localhost:5432/doaya_central DOAYA_DATA_DIR=data-central \
+   DOAYA_LLM_MODEL=qwen2.5-7b-instruct .venv/bin/uvicorn app.main:create_app --factory --host 0.0.0.0 --port 8100
+   ```
+   وبشباك تاني:
+   ```bash
+   export DOAYA_DATABASE_URL=postgresql+psycopg://doaya:doaya@localhost:5432/doaya_central
+   ID=$(.venv/bin/python -m app.cli create-pharmacy --name "صيدلية الشفاء" --owner-name سامر --owner-phone 0944123456 --password secret-1)
+   .venv/bin/python -m app.cli list-pharmacy $ID --code SH4F --city دمشق
+   .venv/bin/python -m app.cli pharmacy-key $ID      # انسخ المفتاح
+   ```
+4. **سيرفر الصيدلية** (HTTPS):
+   ```bash
+   DOAYA_DATABASE_URL=postgresql+psycopg://doaya:doaya@localhost:5432/doaya_run DOAYA_DATA_DIR=data-pharmacy \
+   DOAYA_HTTP_PORT=8443 .venv/bin/python -m app.serve
+   ```
+   بيطبع رمز السيرفر.
+5. **تطبيق الصيدلية**: `cd apps/pharmacy && flutter run -d windows` (أو `-d linux`).
+   - «السيرفر والمزامنة» ← اكتب `127.0.0.1:8443` ← قارن الرمز ← أنشئ واربط.
+   - بنفس الشاشة، «دوايا أونلاين»: العنوان `http://127.0.0.1:8100` والمفتاح يلي نسخته.
+6. **المريض (مؤقتاً)**: عدّل رقم الصيدلية بالسكربت وشغّله. بيسجّل مريض، وبيعمل استشارة وحالة طارئة وطلب:
+   ```bash
+   .venv/bin/python - <<'PY'
+   import httpx; c = httpx.Client(base_url="http://127.0.0.1:8100", trust_env=False, timeout=120)
+   s = c.post("/patients/register", json={"name": "مازن", "phone": "0933111222", "password": "secret-1", "birth_year": 1992, "sex": "m"}).json()
+   h = {"authorization": "Bearer " + s["access_token"]}
+   c.patch("/patients/me", headers=h, json={"pharmacy_id": "<رقم الصيدلية من الخطوة 3>"})
+   cid = c.post("/consultations", headers=h).json()["id"]
+   for text in ["عندي صداع من يومين وحرارة خفيفة", "لا، ولا شي", "ما عندي حساسية"]:
+       r = c.post(f"/consultations/{cid}/messages", headers=h, json={"text": text}).json()
+       print(r["status"], "|", r["messages"][-1]["text"])
+   print(c.post(f"/consultations/{cid}/send", headers=h).json()["status"])
+   PY
+   ```
+   بعد 15 ثانية بتبيّن الحالة بـ «الحالات» بالتطبيق.
+   - جرّب رسالة متل «عندي وجع بصدري» لتشوف الحالة المستعجلة.
+   - وجرّب «شو باخد للصداع؟» لتشوف إنو المساعد ما بيعطي دوا.
 
 ## 3) برومت عام للاستئناف (استعمله أول شي بأي جلسة جديدة)
 
@@ -113,7 +168,9 @@ CLAUDE.md، docs/SPEC.md، docs/PROGRESS.md، docs/DECISIONS.md، docs/HANDOFF.m
 
 ### المرحلة 3: تطبيق المريض والذكاء الاصطناعي
 ```
-ابدأ المرحلة 3 حسب docs/SPEC.md. الخطة مكتوبة بـ docs/PROGRESS.md (قسم Phase 3): اقراها، وطبّق أجوبتي على أسئلة القسم E والمكتبات بالقسم F، وبعدين ابدأ بالخطوة 1.
+كمّل المرحلة 3 من الخطوة 6 حسب docs/PROGRESS.md (قسم Phase 3؛ الخطوات 1–5 خالصة، والقرارات بـ DECISIONS).
+الخطوة 6 و7: تطبيق المريض (apps/patient، Flutter، أندرويد + ويب) من تصاميم design/patient_*.html: الحساب، اختيار الصيدلية، الشات مع شاشة الطوارئ، حالة الطلب، الرفوف والطلب للاستلام، طلباتي، تذكير الجرعات (flutter_local_notifications)، صورة الوصفة (image_picker)، وفحص التحديثات بالخلفية (اسأل عن workmanager).
+الخطوة 8: تجربة حقيقية مع LM Studio على جهاز فيه كرت شاشة.
 نقطة معمارية لازم تتقرر بالخطة: المرضى مو على شبكة الصيدلية، يعني لازم سيرفر على الإنترنت. الاقتراح إنو سيرفر الصيدلية المحلي يزامن لفوق مع سيرفر مركزي بنفس البروتوكول لما يكون في إنترنت.
 الخطة لازم تغطي:
 - تطبيق المريض (Flutter، موبايل + ويب، التصميم من design/patient_*.html).

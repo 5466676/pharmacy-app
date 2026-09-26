@@ -40,7 +40,14 @@ def engine(migrated):
     engine = create_engine(migrated)
     yield engine
     with engine.begin() as c:
-        c.execute(text("TRUNCATE sync_rows, devices, users, pharmacies RESTART IDENTITY CASCADE"))
+        c.execute(
+            text(
+                "TRUNCATE sync_rows, devices, users, pharmacies, pharmacy_listings,"
+                " pharmacy_keys, shelf_items, patient_profiles, patient_sessions,"
+                " consultations, consult_messages, ai_log, patient_orders"
+                " RESTART IDENTITY CASCADE"
+            )
+        )
     engine.dispose()
 
 

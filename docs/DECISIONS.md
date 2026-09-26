@@ -164,3 +164,33 @@ The server doesn't recreate the app's ~25 tables. Each synced row is stored once
   - A restore is scheduled and applied at the next start, before the database opens, and the old file is kept as `.before-restore`.
   - **Restore is not offered on a device linked to a server**: the server doesn't send a device its own rows back. A linked device that lost data re-joins the pharmacy as a new device and downloads everything.
 
+## 2026-09-25 · Red-flag rules: normalize, match, negate carefully, fire when in doubt
+- The rules are plain Python regexes on **normalized** text, with no NLP dependency. Syrian dialect is spelled many ways, so normalization does most of the work, and a test forbids patterns containing letters that normalization folds away.
+- **Negation** looks back at most 4 words in the same clause for ما / مافي / لا / ولا / بدون / مو / مش. It stops at بس / لكن / a word joined with و.
+- Self-harm, poisoning and a feverish baby are **never** negated: «ما بدي انتحر بس تعبت» still stops the chat.
+- Some everyday words are deliberately **not** rules because they'd raise constant false alarms at a pharmacy: «حرقة» (heartburn), «صرع» alone (repeat medicine), «شلل» alone (polio vaccine), «تشنج» of a muscle. The LLM classifier (step 2) looks at the whole conversation for what rules miss, and it can only add alarms, never cancel one.
+- **Emergency numbers**: ambulance 110 (Syrian Ministry of Health unified ambulance operations room, launched 2026), 112 police / emergency. Both are server settings.
+
+## 2026-09-26 · Central server: same code, pharmacy keys, devices go through their own server
+- **One codebase.** The central (internet) server is the same FastAPI app with more tables (migration 0002). A pharmacy's own server simply has none of those rows. Hosting is still open (owner), so it's built host-agnostic (Docker Compose) and tested locally.
+- **A pharmacy server authenticates to the central one with a key** (`Authorization: Pharmacy dk_…`, stored hashed, issued by `app.cli pharmacy-key`). The acting pharmacist's name travels percent-encoded in `X-Doaya-Actor`, for the record.
+- **Devices never talk to the central server directly.** They call `/central/…` on their own pharmacy server, which forwards to `/pharmacy-api/…` with the key, and only cases, orders and updates are forwarded.
+  - Nobody links twice.
+  - Phones keep their pinned-TLS link to the pharmacy server.
+  - A lost phone is cut off by unlinking it, as before.
+  - With no internet, only the case inbox is unavailable; selling never depends on it.
+- **Live updates**:
+  - Patients use a WebSocket while the app is open, plus `/updates?since=` for background checks, since there's no Firebase.
+  - Pharmacy devices poll `/central/updates` through their server (every ~15 s while open) in v1. A WebSocket relay on the pharmacy server can come later if polling proves too slow.
+- **The shelf** is recomputed from the synced rows every 10 minutes: active products, sale price, available = ledger total > 0. It is replaced as a whole. Patients never see quantities (owner's decision).
+- **Patients**: phone + password (no SMS in v1), session secrets like device secrets. Patient tokens can't use pharmacy endpoints and vice versa.
+- **The pharmacist's decision may contain doses**: the guard applies to the AI only. Dosing belongs to the pharmacist (SPEC §2.1).
+- **Orders**: the patient's quantities are a request. The pharmacist sets the final quantity per line, where 0 drops it, and the order keeps both.
+
+## 2026-09-26 · Pharmacist inbox: polling through the pharmacy server, pickup through the POS
+- Devices refresh the inbox every 15 s through `/central/…` on their own server. That's simple and robust on shaky internet, and a 15 s delay is fine at a counter. An urgent case rings with the system alert sound; there's no new sound dependency.
+- **The pharmacy is linked to Doaya online from the app** (owner, sync screen). The key is checked against the central server, then stored on the pharmacy server in `data/central.json` (mode 600). Environment variables still win when set.
+- **Pickup always goes through the POS**: «استلم وبيع» fills the cart and the case/order is marked picked up only after the sale succeeds. Stock, the till and "who sold it" stay exact. If marking fails (no internet), the sale stands and the case stays "ready".
+- The customer's history is matched **by phone number on the device**; nothing about local customers goes to Doaya online.
+- **HTTP keep-alive**: the app drops idle connections after 4 s and the server keeps them 65 s (uvicorn's default of 5 s caused random "unreachable" errors when a request went out on a socket the server had just closed).
+

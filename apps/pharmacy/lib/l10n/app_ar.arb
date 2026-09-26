@@ -881,5 +881,193 @@
   "restoreConfirm": "رح ترجع بيانات هالجهاز متل ما كانت بتاريخ {when}، وكل شي صار بعدها على هالجهاز بيروح. البيانات الحالية بتنحفظ على جنب. أكيد؟",
   "@restoreConfirm": {"placeholders": {"when": {"type": "String"}}},
   "restoreRestart": "جاهز. سكّر البرنامج وافتحه من جديد، وبيفتح على النسخة يلي اخترتها.",
-  "restoreLinkedNote": "هالجهاز مربوط بالسيرفر: إذا خرب، ركّبه من جديد واختار «انضمام لصيدلية موجودة» وبتنزل كل البيانات. الاسترجاع من نسخة هون للأجهزة يلي مو مربوطة."
+  "restoreLinkedNote": "هالجهاز مربوط بالسيرفر: إذا خرب، ركّبه من جديد واختار «انضمام لصيدلية موجودة» وبتنزل كل البيانات. الاسترجاع من نسخة هون للأجهزة يلي مو مربوطة.",
+  "navCases": "الحالات",
+  "casesTitle": "حالات المرضى وطلباتهم",
+  "tabCases": "الحالات",
+  "tabPatientOrders": "طلبات الاستلام",
+  "inboxNotLinked": "هالجهاز مو مربوط بسيرفر الصيدلية، فالحالات ما بتوصله.",
+  "inboxNotConnected": "الصيدلية مو مربوطة بدوايا أونلاين لسا. صاحب الصيدلية بيربطها من «السيرفر والمزامنة».",
+  "inboxOffline": "ما في إنترنت هلق: الحالات والطلبات الجديدة بتوصل لما يرجع. البيع شغّال عادي.",
+  "noCases": "ما في حالات هلق",
+  "noPatientOrders": "ما في طلبات هلق",
+  "chooseCase": "اختار من القائمة",
+  "caseStatus": "{status, select, sent{جديدة} preparing{عم تتحضّر} ready{جاهزة} picked_up{مستلمة} needs_doctor{بحاجة طبيب} emergency{طارئة} closed{مسكّرة} other{{status}}}",
+  "@caseStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "orderStatus": "{status, select, sent{جديد} preparing{عم يتحضّر} ready{جاهز} picked_up{مستلم} rejected{مرفوض} cancelled{ملغى} other{{status}}}",
+  "@orderStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "patientAge": "{age} سنة",
+  "@patientAge": {
+    "placeholders": {
+      "age": {
+        "type": "String"
+      }
+    }
+  },
+  "sexMale": "ذكر",
+  "sexFemale": "أنثى",
+  "urgentCase": "حالة مستعجلة",
+  "redFlag": "{category, select, chest_pain{ألم بالصدر} breathing{صعوبة بالتنفس} stroke{علامات جلطة} bleeding{نزيف} infant_fever{حرارة عند رضيع} self_harm{خطر إيذاء النفس} poisoning{تسمم أو جرعة زايدة} seizure{اختلاج} unconscious{فقدان وعي} anaphylaxis{تحسس شديد} pregnancy_bleeding{نزيف مع حمل} severe_headache{صداع شديد أو تيبس رقبة} other{علامة خطر}}",
+  "@redFlag": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "urgentHelp": "المساعد وقّف الاستشارة وطلب من المريض يتصل بالإسعاف. اتصل فيه لتطمّن عليه: {phone}",
+  "@urgentHelp": {
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
+  "newUrgentToast": "وصلت حالة مستعجلة: {name}",
+  "@newUrgentToast": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "assistantSummary": "ملخص المساعد",
+  "sumSymptoms": "الأعراض",
+  "sumDuration": "المدة",
+  "sumAge": "العمر",
+  "sumSex": "الجنس",
+  "sumPregnancy": "حمل أو إرضاع",
+  "sumAllergies": "الحساسية",
+  "sumMedications": "أدوية حالية",
+  "sumConditions": "أمراض مزمنة",
+  "sumNotes": "ملاحظات",
+  "sumDenied": "نفى: {list}",
+  "@sumDenied": {
+    "placeholders": {
+      "list": {
+        "type": "String"
+      }
+    }
+  },
+  "noSummary": "ما في ملخص (المساعد ما كان متاح): اقرا المحادثة.",
+  "conversationTitle": "المحادثة",
+  "roleAssistant": "المساعد",
+  "rolePatient": "المريض",
+  "roleSystem": "دوايا",
+  "correctAssistant": "صحّح",
+  "correctionTitle": "شو كان الصح؟",
+  "correctionHelp": "بتنسجّل للمراجعة منشان نحسّن المساعد، وما بتنستعمل لتدريب تلقائي.",
+  "correctionSaved": "انسجّل التصحيح، شكراً",
+  "customerHistory": "سجلّه عندك",
+  "notACustomer": "مو زبون مسجّل عندك",
+  "customerDebt": "عليه دين: {amount}",
+  "@customerDebt": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "lastPurchases": "آخر مشترياته",
+  "yourDecision": "قرارك",
+  "decisionHelp": "القرار والجرعات دايماً عند الصيدلي",
+  "addMedicine": "أضف دوا",
+  "searchStock": "دوّر بالمخزون",
+  "onHandShort": "متوفر: {qty}",
+  "@onHandShort": {
+    "placeholders": {
+      "qty": {
+        "type": "String"
+      }
+    }
+  },
+  "instructionsLabel": "طريقة الاستعمال",
+  "timesPerDayLabel": "مرات باليوم",
+  "daysLabel": "كم يوم",
+  "decisionNote": "ملاحظة للمريض (اختياري)",
+  "markReady": "جاهز، بلّغ المريض",
+  "askPatient": "اسأل المريض سؤال",
+  "needsDoctorButton": "بحاجة طبيب",
+  "needsDoctorConfirm": "رح نقول للمريض إنو حالته بدها طبيب يفحصه، وبتتسكّر الحالة. فيك تضيف كلمة إله:",
+  "closeCase": "سكّر الحالة",
+  "startPreparing": "بلّش التحضير",
+  "instructionsRequired": "اكتب طريقة الاستعمال لكل دوا",
+  "decisionSent": "انبعت للمريض",
+  "pickupAndSell": "استلم وبيع",
+  "pickupDone": "انسجّل الاستلام",
+  "handledBy": "مسؤول: {name}",
+  "@handledBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "orderRequested": "طلب {qty}",
+  "@orderRequested": {
+    "placeholders": {
+      "qty": {
+        "type": "String"
+      }
+    }
+  },
+  "orderPatientNote": "ملاحظة المريض: {note}",
+  "@orderPatientNote": {
+    "placeholders": {
+      "note": {
+        "type": "String"
+      }
+    }
+  },
+  "pharmacistNoteLabel": "ملاحظة للمريض (اختياري)",
+  "markOrderReady": "جاهز للاستلام",
+  "rejectOrder": "ما في",
+  "orderTotal": "المجموع: {amount}",
+  "@orderTotal": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "orderLinesCount": "{count} صنف",
+  "@orderLinesCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "pickupPartial": "بعض الأصناف مو متوفرة بالمخزون، زبطها بشاشة البيع",
+  "centralSection": "دوايا أونلاين",
+  "centralHelp": "لما تربط الصيدلية، المرضى بيشوفوا رفوفها (السعر ومتوفر أو لأ بس)، وبيبعتوا حالات وطلبات للاستلام. البيع والحسابات بيضلوا عندك.",
+  "centralUrlLabel": "عنوان دوايا أونلاين",
+  "centralKeyLabel": "مفتاح الصيدلية",
+  "centralLink": "اربط",
+  "centralUnlink": "فك الربط",
+  "centralLinked": "مربوطة بـ {url}",
+  "@centralLinked": {
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "centralNotLinked": "مو مربوطة",
+  "errBadPharmacyKey": "المفتاح غلط",
+  "errCentralUnreachable": "ما قدرنا نوصل لدوايا أونلاين",
+  "removeItem": "شيل",
+  "centralUrlHint": "https://…"
 }

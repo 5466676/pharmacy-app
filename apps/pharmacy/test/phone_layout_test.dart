@@ -137,6 +137,8 @@ void main() {
       Routes.stocktake,
       Routes.reports,
       Routes.expenses,
+      Routes.cases,
+      Routes.casesTab('orders'),
       '${Routes.purchases}?tab=shortages',
       '${Routes.purchases}?tab=suppliers',
     ]) {

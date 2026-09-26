@@ -377,7 +377,7 @@ Patients aren't on the pharmacy's Wi-Fi, so the patient app will need a server r
   - The end-to-end test runs over real TLS: first-contact pinning, linking, syncing, and an impostor certificate refused before anything is sent. Details in DECISIONS.
 - Totals: server 34, core 95, design system 23, app 80 (+ the end-to-end script, over HTTPS).
 
-## Phase 3 — Patient app + AI · ✅ plan approved (2026-09-25), starts after Phase 1.5 is finished
+## Phase 3 — Patient app + AI · ▶ steps 1–5 done; 6–8 next (plan approved 2026-09-25)
 
 ### Owner answers (2026-09-25)
 1. **Hosting**: still being decided. Build it host-agnostic (Docker Compose), and run it locally for now.
@@ -515,3 +515,105 @@ Screens from `design/patient_*.html`, same `doaya_ui` dark glass, RTL, English d
 6. **Patient app**: new app skeleton, onboarding and account, choosing the pharmacy, home, chat with the emergency screen, case status.
 7. **Patient app**: the shelf, product detail, order for pickup, my orders, reminders, prescription photo.
 8. **Real run**: central server (in Docker here, standing in for the internet), a pharmacy's local server and PC app, the patient app on web and at phone size. Covers a normal case to pickup, a red-flag case, the model switched off, and the internet cut at the pharmacy → **review**.
+
+### Done
+- [x] Step 1: **red-flag rules** (`backend/app/consult/redflags.py`), with the example table written first (`tests/test_redflags.py`).
+  - Normalization: diacritics and tatweel removed; أ/إ/آ→ا, ى→ي, ة→ه; Arabic digits → Latin; stretched letters folded («كتيييير»).
+  - 12 categories: chest pain, breathing, stroke, heavy bleeding, feverish baby (up to 3 months), self-harm, poisoning / overdose, seizure, unconscious, severe allergy, pregnancy with bleeding, stiff neck / worst headache.
+  - Formal Arabic and Syrian dialect, plus a few English phrases.
+  - Negation cancels a symptom only when it comes just before it, in the same clause («ما عندي وجع بصدري», «ولا ضيق نفس»). «بس / لكن / و…» start a new clause, and negation **never** cancels self-harm, poisoning or a feverish baby.
+  - Examples: 54 that must fire; 27 everyday pharmacy sentences that must not («حرقة بالمعدة», «تشنج بالعضل», «رح موت من الجوع», «عندي صرع وبدي علبة الدوا», «لقاح شلل الأطفال»). A guard test checks every pattern is written on normalized text; it caught «على» in one.
+  - Emergency numbers are settings: ambulance **110** (the Ministry of Health's unified operations room, 2026) and **112** (police / emergency). Server 83.
+- [x] Step 2: **model interface, classifier, output guard** (`backend/app/consult/`):
+  - `OpenAICompatibleLLM`: `POST …/chat/completions` to LM Studio by default (`DOAYA_LLM_BASE_URL/MODEL/API_KEY`); Ollama or a hosted API by settings.
+    - JSON mode, falling back without it when a local server refuses it.
+    - `<think>` blocks of reasoning models stripped.
+    - Every failure becomes one `LLMUnavailable`.
+  - `ScriptedLLM` for tests; `parse_json` finds the object even inside prose or ```json.
+  - **Classifier** (second red-flag layer): reads the last 6 messages, so a bare «اي» to «في تيبّس بالرقبة؟» counts. It returns strict JSON with a category. It can only add an alarm; a down model or an unreadable answer → the rules alone decide.
+  - **Output guard** on every assistant reply:
+    - doses (units, «حبتين مرتين باليوم», «ملعقة ٣ مرات يومياً»)
+    - prescribing («خود بنادول», «جرب Brufen», «بنصحك بمضاد حيوي»)
+    - "no doctor needed" («ما في داعي تروح للدكتور»)
+    - while normal questions and «لازم تروح للدكتور» pass
+  - Dependencies added (approved): `httpx` (runtime), `websockets`, `python-multipart`. Server 154.
+- [x] Step 3: **consultation engine** (`app/consult/engine.py`): one patient message → rules → classifier → assistant → guard → summary.
+  - Rules hit → the emergency message with 110 / 112 and **no model call at all**. Self-harm gets its own gentler words.
+  - The assistant prompt (`assistant-v1`, versioned in every log) asks one short question at a time in Syrian Arabic, with up to 3 quick replies, and never names a medicine or a dose or says no doctor is needed. It knows the patient's profile so it doesn't ask again, and has a hook for curated knowledge-base notes (empty until Phase 4).
+  - When the assistant is `ready` (or after 8 patient messages), a **case summary** is built: a validated schema (symptoms, duration, age, sex, pregnancy, allergies, medicines, conditions, denied danger signs, notes), with one retry with the validation error.
+  - **The model down never blocks the patient**: a fallback turn offers to send the message straight to the pharmacist. With everything down the rules still stop emergencies.
+  - Every step returns log entries (`red_flag`, `assistant_reply` with model / prompt / raw, `guard_block`, `summary`, `llm_down`) for the API to store.
+  - 10 engine tests with a scripted model (a bare «اي» caught by the classifier; the guard replacing «خود بنادول حبتين كل 8 ساعات»). Server 164.
+  - A run against a real LM Studio model needs a machine with one; it's in the step 8 checklist for your PC.
+- [x] Step 4: **central server** (same FastAPI code; migration `0002`). Server 183 tests.
+  - **Patients**:
+    - phone + password once (no SMS), then a long-lived session secret (stored hashed) traded for 15-minute tokens
+    - profile: birth year, sex, city, chosen pharmacy
+    - logout
+    - patient and pharmacy tokens are refused on each other's endpoints
+  - **Directory**: listed pharmacies by city, by name, or by the short code shown at the counter (`app.cli list-pharmacy <id> --code SH4F --city دمشق`).
+  - **Pharmacy key**: `app.cli pharmacy-key <id>` → `DOAYA_CENTRAL_KEY` on that pharmacy's own server (stored hashed on the central one).
+  - **Shelf**:
+    - The pharmacy's server computes it from its synced rows: active products, price, and available = stock ledger > 0.
+    - It publishes the whole shelf every 10 minutes when there's internet. Only names, prices and available-or-not leave the pharmacy.
+    - Patients browse and search it; available items come first, and no quantities are shown.
+  - **Consultations → cases**:
+    - The patient chats through the step-3 pipeline, checks and corrects the summary (the edit is logged), and sends it, or sends the plain chat if the model is down.
+    - An emergency goes to the pharmacy at once as **urgent**, listed first.
+    - After sending, the patient's messages go to the pharmacist, still through the red-flag rules first.
+  - **Pharmacy side** (key + the pharmacist's name in `X-Doaya-Actor`):
+    - list and open cases, with the patient's name, phone, age and sex, so the app can match its own customer
+    - «اسأل المريض سؤال»
+    - the **decision**: medicines, quantities, the pharmacist's own instructions, optional times/day and days for reminders → ready
+    - picked up / needs a doctor / close
+    - **corrections** of an assistant message or a summary field → `ai_log`
+  - **Pickup orders** from the shelf: the patient asks for quantities; the pharmacist sets the final ones (0 drops a line) with a note. Transitions are checked. The patient can cancel until it's handled.
+  - **Live updates**:
+    - `/ws` WebSocket (patient token or pharmacy key) with a ping every 25 s
+    - `/updates?since=` and `/pharmacy-api/updates?since=` so a phone can check in the background and nothing is lost while offline
+  - **The pharmacy's devices** reach all this through **their own server**, at `/central/cases|orders|updates…`. It adds the key and the account's name, so no second login is needed, and devices never hold the central key. With no internet only these calls fail.
+  - Isolation tests: another pharmacy's key can't see a case or an order; another patient can't open a consultation.
+
+### How to review (step 4)
+Server side only so far (the screens are steps 5–7). The tests read as the scenarios:
+- `backend/tests/test_consultations.py`: from the first message to pickup; an emergency; a red flag after sending; the model down; isolation; corrections.
+- `test_orders_live.py`: orders with the pharmacist's final quantities, background updates, WebSocket, a device going through its own server.
+- `test_redflags.py`: the sentence tables.
+- `test_directory.py`: the shelf from synced rows.
+- [x] Step 5: **the pharmacist's side in the pharmacy app**:
+  - **«الحالات»** in the menu. Everyone sees it once the pharmacy is on Doaya online; the owner always sees it, to link it. It carries a badge with what's waiting.
+  - A new **urgent** case rings (system alert sound) and shows «وصلت حالة مستعجلة: …».
+  - The inbox refreshes every 15 s through the pharmacy's own server (`/central/…`). With no internet it says so, and selling is untouched.
+  - **Case list**: urgent first in red, with the red flag named («ألم بالصدر»), status, patient and time.
+  - **Case page** (from `design/pharmacy_case_detail_layout.html`):
+    - the patient: name, age, sex, phone
+    - an urgent banner telling the pharmacist to call them
+    - **the assistant's summary**, with what the patient ruled out («نفى: …»)
+    - the whole **conversation**
+    - **«سجلّه عندك»**: the customer with the same phone, their debt and last purchases
+    - **«صحّح»** on the summary or any assistant message → logged for review
+  - **The decision** («القرار والجرعات دايماً عند الصيدلي»):
+    - add medicines from stock, showing what's available in boxes/strips
+    - quantity and **the pharmacist's own instructions** (required), with optional times/day and days for the patient's reminders
+    - a note
+    - **«جاهز، بلّغ المريض»**, «اسأل المريض سؤال», «بلّش التحضير», «بحاجة طبيب» (with an optional word), «سكّر الحالة» for emergencies
+  - **Pickup orders**: the patient's note; per line what they asked for, the price and our stock. The pharmacist sets the final quantities (− down to 0 drops a line), then ready / «ما في», with a note to the patient.
+  - **«استلم وبيع»** (a case or an order): the POS opens with the cart filled, as far as stock allows. After the sale it's marked picked up on Doaya online. The sale is a normal one (till, stock, who, device). With no internet the sale still goes through and the case stays "ready".
+  - **The owner links Doaya online** in «السيرفر والمزامنة»:
+    - the address + the pharmacy key
+    - checked with the central server, then kept on the pharmacy server (`data/central.json`, 600)
+    - «فك الربط» undoes it
+  - Phone layout: list, then the case / order on its own page.
+  - **Real run** (`docs/screenshots/phase3/`), on one machine:
+    - Doaya online on :8100, the pharmacy server over HTTPS :8443, the Linux app linked to both
+    - a stand-in for LM Studio answering in its API format
+    - two patients played through the real API
+    - The shelf reached Doaya online by itself (Augmentin shown unavailable). The consultation went question → summary → sent. The emergency («وجع بصدري ونفسي مقطوع») stopped before any model call and rang at the counter.
+    - The pharmacist gave Panadol with «حبة كل 8 ساعات بعد الأكل». The patient saw it ready with those words. «استلم وبيع» sold it and the patient saw `picked_up`. The order went from 2 Panadol + 1 Omega to 2 Panadol with «الأوميغا خالصة هلق».
+  - **Bugs found by the real run and fixed**:
+    - A false «ما في إنترنت» banner every so often. The server closed idle connections after 5 s while the app reused them for 15 s. The app now drops idle connections after 4 s and the server keeps them 65 s. The same bug could make sync show «السيرفر مو موجود» at random.
+    - The address hint showed reversed in RTL.
+    - Search results needed a Material wrapper (caught by a widget test).
+    - Stock showed in strips instead of boxes/strips.
+  - Tests: server 184, app 93 + the end-to-end script (6 new inbox tests with a fake Doaya online: link, case to pickup at the POS, ask / needs a doctor, order quantities to pickup, no internet, phone pages).
+

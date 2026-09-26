@@ -25,6 +25,9 @@ def main() -> None:
         ssl_certfile=str(cert.cert_file),
         ssl_keyfile=str(cert.key_file),
         log_level="info",
+        # Longer than the app's idle connections (4 s), so the server never
+        # closes a connection the app is about to reuse.
+        timeout_keep_alive=65,
     )
 
 

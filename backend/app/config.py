@@ -26,6 +26,26 @@ class Settings(BaseSettings):
     backup_keep: int = 30
     http_port: int = 8000
 
+    # Shown with every red-flag stop. Ambulance 110 is the Ministry of
+    # Health's unified operations room (2026); 112 is police / emergency.
+    emergency_ambulance: str = "110"
+    emergency_general: str = "112"
+
+    # The AI assistant: any OpenAI-compatible chat server. Default is LM
+    # Studio on the same machine (owner's choice for the pilot); Ollama is
+    # http://localhost:11434/v1, a hosted service needs llm_api_key.
+    llm_base_url: str = "http://localhost:1234/v1"
+    llm_model: str = "qwen2.5-7b-instruct"
+    llm_api_key: str = ""
+    llm_timeout_seconds: float = 60
+
+    # A pharmacy's own server → the central (internet) server. Empty: the
+    # pharmacy works on its own. The key comes from `app.cli pharmacy-key`
+    # on the central server.
+    central_url: str = ""
+    central_key: str = ""
+    shelf_publish_minutes: float = 10
+
 
 @lru_cache
 def get_settings() -> Settings:
