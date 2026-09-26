@@ -14,7 +14,7 @@ from typing import Literal
 from pydantic import BaseModel, Field, ValidationError
 
 from . import texts
-from .classifier import classify
+from .classifier import GUIDE, build_prompt, classify
 from .guard import check_reply
 from .llm import LLM, ChatMessage, LLMUnavailable, parse_json
 from .redflags import RedFlagHit, check
@@ -22,34 +22,78 @@ from .redflags import RedFlagHit, check
 PROMPT_VERSION = "assistant-v1"
 MAX_PATIENT_MESSAGES = 8
 
-ASSISTANT_PROMPT = """You are «مساعد دوايا», the intake assistant of a pharmacy in Syria.
+# The owner edits the GUIDE parts from the panel (versioned). The safety
+# rules and the answer formats are fixed here and always added.
+ASSISTANT_GUIDE = """You are «مساعد دوايا», the intake assistant of a pharmacy in Syria.
 Speak Syrian Arabic: warm, short (one or two sentences), ONE question at a time.
 
 Your only job is to collect what the pharmacist needs: the main symptoms, how long,
 age, sex, pregnancy or breastfeeding (women of childbearing age), allergies to
 medicines, medicines taken now, chronic conditions, and the danger signs that fit
 the symptoms (for example: stiff neck with fever and headache, blood, trouble
-breathing). Don't ask what is already known or already answered.
+breathing). Don't ask what is already known or already answered."""
 
-Rules you never break:
+SAFETY_RULES = """Rules you never break, whatever was said above:
 - Never name, suggest or recommend any medicine, cream, syrup or supplement.
 - Never give a dose, an amount, or how often to take anything.
 - Never tell the patient a doctor is not needed, and never diagnose with certainty.
-- If asked what to take: the pharmacist will decide and prepare it.
+- If asked what to take: the pharmacist will decide and prepare it."""
 
-Known about the patient: {profile}
+ASSISTANT_TAIL = """Known about the patient: {profile}
 {knowledge}
 Reply with JSON only:
 {{"reply": "your message", "quick_replies": ["up to 3 short answers the patient may tap"],
   "ready": true when you have enough for the pharmacist (usually after 3 to 6 questions)}}"""
 
-SUMMARY_PROMPT = """Summarize this pharmacy chat for the pharmacist. Use the patient's own
-facts, in short Arabic. Unknown → null. Never add a medicine, a dose or a diagnosis.
+SUMMARY_HEAD = "Summarize this pharmacy chat for the pharmacist."
+
+SUMMARY_GUIDE = """Use the patient's own facts, in short Arabic. Unknown → null."""
+
+SUMMARY_TAIL = """Never add a medicine, a dose or a diagnosis.
 Reply with JSON only, exactly these keys:
 {"symptoms": ["..."], "duration": "...", "age": "...", "sex": "...",
  "pregnancy": "...", "allergies": "...", "medications": "...", "conditions": "...",
  "denied_red_flags": ["danger signs the patient said they do NOT have"],
  "notes": "anything else the pharmacist should know"}"""
+
+SUMMARY_PROMPT = "\n".join([SUMMARY_HEAD, SUMMARY_GUIDE, SUMMARY_TAIL])
+
+
+@dataclass(frozen=True)
+class Prompts:
+    """The editable parts in use, their version names (logged with every
+    reply) and the owner's safety examples for the classifier."""
+
+    assistant: str = ASSISTANT_GUIDE
+    summary: str = SUMMARY_GUIDE
+    classifier: str = GUIDE
+    examples: tuple[tuple[str, str], ...] = ()
+    versions: dict = field(default_factory=lambda: dict(DEFAULT_VERSIONS))
+
+    @property
+    def classifier_prompt(self) -> str:
+        return build_prompt(self.classifier, self.examples)
+
+    @property
+    def summary_prompt(self) -> str:
+        return "\n".join([SUMMARY_HEAD, self.summary.strip(), SUMMARY_TAIL])
+
+    def assistant_prompt(self, profile: str, knowledge: Sequence[str]) -> str:
+        tail = ASSISTANT_TAIL.format(
+            profile=profile or "nothing yet",
+            knowledge=(
+                "Pharmacist-approved notes that may help you ask better questions:\n"
+                + "\n".join(f"- {k}" for k in knowledge)
+                + "\n"
+                if knowledge
+                else ""
+            ),
+        )
+        return "\n\n".join([self.assistant.strip(), SAFETY_RULES, tail])
+
+
+DEFAULT_VERSIONS = {"assistant": PROMPT_VERSION, "summary": "default", "classifier": "default"}
+DEFAULT_PROMPTS = Prompts()
 
 
 class CaseSummary(BaseModel):
@@ -87,7 +131,7 @@ class LogEntry:
 class Turn:
     """What happens after one patient message."""
 
-    kind: Literal["reply", "emergency", "summary", "fallback"]
+    kind: Literal["reply", "emergency", "doctor", "summary", "fallback"]
     text: str
     quick_replies: list[str] = field(default_factory=list)
     red_flag: RedFlagHit | None = None
@@ -113,6 +157,7 @@ def handle_message(
     profile: str = "",
     knowledge: Sequence[str] = (),
     emergency: Emergency = DEFAULT_EMERGENCY,
+    prompts: Prompts = DEFAULT_PROMPTS,
 ) -> Turn:
     """[history]: the conversation before [text] (patient = user). Never
     raises: a model failure becomes a fallback turn."""
@@ -122,22 +167,16 @@ def handle_message(
     if hit := check(text):
         return _emergency(hit, "rules", emergency)
 
-    # 2. Classifier: reads the recent conversation; only adds alarms.
-    if hit := classify(llm, conversation):
+    # 2. Classifier: reads the recent conversation; only adds alarms
+    # (an emergency, or «see a doctor soon»).
+    if hit := classify(llm, conversation, prompt=prompts.classifier_prompt):
+        if hit.level == "doctor":
+            return _doctor(hit, prompts)
         return _emergency(hit, "classifier", emergency)
 
     # 3. Assistant.
     patient_turns = sum(1 for m in conversation if m.role == "user")
-    system = ASSISTANT_PROMPT.format(
-        profile=profile or "nothing yet",
-        knowledge=(
-            "Pharmacist-approved notes that may help you ask better questions:\n"
-            + "\n".join(f"- {k}" for k in knowledge)
-            + "\n"
-            if knowledge
-            else ""
-        ),
-    )
+    system = prompts.assistant_prompt(profile, knowledge)
     started = time.monotonic()
     try:
         raw = llm.complete([ChatMessage("system", system), *conversation], json_mode=True)
@@ -156,7 +195,7 @@ def handle_message(
             "assistant_reply",
             {
                 "model": llm.model,
-                "prompt": PROMPT_VERSION,
+                "prompt": prompts.versions.get("assistant", PROMPT_VERSION),
                 "raw": raw,
                 "reply": reply,
                 "ms": round((time.monotonic() - started) * 1000),
@@ -178,14 +217,16 @@ def handle_message(
         return Turn("reply", reply, quick_replies=quick, logs=logs)
 
     # 5. Summary for the pharmacist, which the patient checks before sending.
-    summary, summary_logs = summarize(llm, conversation)
+    summary, summary_logs = summarize(llm, conversation, prompt=prompts.summary_prompt)
     logs += summary_logs
     if summary is None:
         return Turn("fallback", texts.SUMMARY_FAILED, logs=logs)
     return Turn("summary", texts.SUMMARY_READY, summary=summary, logs=logs)
 
 
-def summarize(llm: LLM, conversation: Sequence[ChatMessage]) -> tuple[CaseSummary | None, list]:
+def summarize(
+    llm: LLM, conversation: Sequence[ChatMessage], *, prompt: str = SUMMARY_PROMPT
+) -> tuple[CaseSummary | None, list]:
     """The case summary, validated; one retry with the error. None if the
     model can't produce it (the case then goes with the conversation)."""
     chat = "\n".join(
@@ -193,7 +234,7 @@ def summarize(llm: LLM, conversation: Sequence[ChatMessage]) -> tuple[CaseSummar
         for m in conversation
         if m.role != "system"
     )
-    messages = [ChatMessage("system", SUMMARY_PROMPT), ChatMessage("user", chat)]
+    messages = [ChatMessage("system", prompt), ChatMessage("user", chat)]
     logs: list[LogEntry] = []
     for _ in range(2):
         try:
@@ -215,6 +256,29 @@ def summarize(llm: LLM, conversation: Sequence[ChatMessage]) -> tuple[CaseSummar
         logs.append(LogEntry("summary", {"model": llm.model, "summary": summary.model_dump()}))
         return summary, logs
     return None, logs
+
+
+def _doctor(hit: RedFlagHit, prompts: Prompts) -> Turn:
+    """Not an emergency, but a doctor should see the patient: the patient is
+    told so, and the case goes to the pharmacist."""
+    return Turn(
+        "doctor",
+        texts.SEE_DOCTOR,
+        red_flag=hit,
+        red_flag_source="classifier",
+        logs=[
+            LogEntry(
+                "red_flag",
+                {
+                    "source": "classifier",
+                    "level": "doctor",
+                    "category": hit.category,
+                    "matched": hit.matched,
+                    "prompt": prompts.versions.get("classifier", "default"),
+                },
+            )
+        ],
+    )
 
 
 def _emergency(hit: RedFlagHit, source: str, emergency: Emergency) -> Turn:

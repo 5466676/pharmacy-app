@@ -23,6 +23,7 @@ from .deps import DbSession, Patient, PharmacyCaller, error
 from .events import patient_topic, pharmacy_topic
 from .knowledge import match_notes
 from .models import AiLog, Consultation, ConsultMessage, PatientProfile, User
+from .prompts import load_prompts
 from .security import new_id
 
 router = APIRouter(tags=["consultations"])
@@ -49,6 +50,8 @@ class ConsultationOut(BaseModel):
     status: str
     urgent: bool
     red_flag: str | None
+    # «لازم دكتور»: the category, when the assistant advised a doctor.
+    doctor_advice: str | None
     summary: dict | None
     decision: dict | None
     handled_by: str | None
@@ -70,6 +73,7 @@ class CaseBrief(BaseModel):
     status: str
     urgent: bool
     red_flag: str | None
+    doctor_advice: str | None
     title: str
     patient: CasePatient
     sent_at: datetime | None
@@ -270,6 +274,7 @@ def patient_says(cid: str, body: TextIn, p: Patient, db: DbSession, request: Req
         profile=_profile_text(db, p.user_id),
         knowledge=[n.text for n in notes],
         emergency=_emergency_numbers(request),
+        prompts=load_prompts(db),
     )
     for entry in turn.logs:
         if entry.kind == "assistant_reply" and notes:
@@ -285,6 +290,12 @@ def patient_says(cid: str, body: TextIn, p: Patient, db: DbSession, request: Req
             turn.red_flag.category,
             _now(),
         )
+        _changed(request, c, "case_new")
+    elif turn.kind == "doctor":
+        # Not an emergency: the patient is told to see a doctor soon, and
+        # the case goes to the pharmacist (no ambulance numbers).
+        c.status, c.sent_at = "sent", _now()
+        c.doctor_advice = turn.red_flag.category
         _changed(request, c, "case_new")
     elif turn.kind == "summary":
         c.status, c.summary = "summary", turn.summary.model_dump()
@@ -398,6 +409,7 @@ def cases(
             status=c.status,
             urgent=c.urgent,
             red_flag=c.red_flag,
+            doctor_advice=c.doctor_advice,
             title=_title(db, c),
             patient=_case_patient(db, c.patient_id),
             sent_at=c.sent_at,

@@ -15,10 +15,20 @@ from pydantic import BaseModel, Field
 from sqlalchemy import Float, and_, func, select
 
 from .admin import Admin
-from .assistant import PROVIDERS, ModelConfig, effective_config, encrypt_key, make_llm
+from .assistant import (
+    PROVIDERS,
+    ModelConfig,
+    effective_config,
+    encrypt_key,
+    get_llm,
+    make_llm,
+)
+from .consult.classifier import FORMAT, HEAD, RULE
+from .consult.engine import ASSISTANT_TAIL, SAFETY_RULES, SUMMARY_HEAD, SUMMARY_TAIL, handle_message
 from .consult.llm import ChatMessage, LLMUnavailable
 from .deps import DbSession, error
-from .models import AiLog, AssistantChange, AssistantConfig, User
+from .models import AiLog, AssistantChange, AssistantConfig, PromptVersion, SafetyExample, User
+from .prompts import DEFAULTS, KINDS, active_versions, examples, load_prompts, run_tests
 
 router = APIRouter(prefix="/admin/assistant", tags=["admin"])
 
@@ -144,9 +154,12 @@ def stats(_: Admin, db: DbSession, hours: int = 24) -> dict:
         for k, n in db.execute(select(AiLog.kind, func.count()).where(recent).group_by(AiLog.kind))
     }
     source = AiLog.detail["source"].astext
-    rules, model = db.execute(
+    doctor = AiLog.detail["level"].astext == "doctor"
+    rules, model, doctors = db.execute(
         select(
-            func.count().filter(source == "rules"), func.count().filter(source == "classifier")
+            func.count().filter(source == "rules"),
+            func.count().filter(and_(source == "classifier", ~doctor)),
+            func.count().filter(doctor),
         ).where(recent, AiLog.kind == "red_flag")
     ).one()
     ms = AiLog.detail["ms"].astext.cast(Float)
@@ -162,6 +175,7 @@ def stats(_: Admin, db: DbSession, hours: int = 24) -> dict:
         "guard_blocks": counts.get("guard_block", 0),
         "red_flags_rules": rules,
         "red_flags_model": model,
+        "doctor_advice": doctors,
         "median_ms": round(med) if med is not None else None,
         "slowest_ms": round(slow) if slow is not None else None,
         "last_down_at": last_down.isoformat() if last_down else None,
@@ -183,3 +197,274 @@ def changes(_: Admin, db: DbSession, kind: str | None = None) -> list:
         }
         for c, name in db.execute(stmt.order_by(AssistantChange.id.desc()).limit(100))
     ]
+
+
+# ─── Prompts: draft → test → active, and one step back ──────────────────────
+
+Kind = Literal["assistant", "summary", "classifier"]
+
+# Shown read-only in the panel: always added by the server, never editable.
+LOCKED = {
+    "assistant": [SAFETY_RULES, ASSISTANT_TAIL.replace("{{", "{").replace("}}", "}")],
+    "summary": [SUMMARY_HEAD, SUMMARY_TAIL],
+    "classifier": [HEAD, RULE, FORMAT],
+}
+
+
+def _version(v: PromptVersion) -> dict:
+    return {
+        "id": v.id,
+        "kind": v.kind,
+        "text": v.text,
+        "note": v.note,
+        "status": v.status,
+        "test": v.test,
+        "tested_at": v.tested_at.isoformat() if v.tested_at else None,
+        "created_at": v.created_at.isoformat(),
+        "activated_at": v.activated_at.isoformat() if v.activated_at else None,
+        # Tested after its last edit, and passed: it may be activated.
+        "ready": bool(
+            v.test and v.test.get("passed") and v.tested_at and v.tested_at >= v.updated_at
+        ),
+    }
+
+
+@router.get("/prompts")
+def prompts(_: Admin, db: DbSession) -> dict:
+    """Per kind: the text in use (a version or the built-in one), the fixed
+    safety parts (read-only) and every version, newest first."""
+    active = active_versions(db)
+    out = {}
+    for kind in KINDS:
+        versions = db.scalars(
+            select(PromptVersion)
+            .where(PromptVersion.kind == kind)
+            .order_by(PromptVersion.id.desc())
+        )
+        out[kind] = {
+            "active_id": active[kind].id if kind in active else None,
+            "text": active[kind].text if kind in active else DEFAULTS[kind],
+            "default": DEFAULTS[kind],
+            "locked": LOCKED[kind],
+            "versions": [_version(v) for v in versions],
+        }
+    return out
+
+
+class DraftIn(BaseModel):
+    kind: Kind
+    text: str = Field(min_length=20, max_length=8000)
+    note: str | None = Field(default=None, max_length=300)
+
+
+class DraftPatch(BaseModel):
+    text: str | None = Field(default=None, min_length=20, max_length=8000)
+    note: str | None = Field(default=None, max_length=300)
+
+
+def _log(db, a, kind: str, before, after) -> None:
+    db.add(AssistantChange(admin_id=a.user_id, kind=kind, before=before, after=after))
+
+
+@router.post("/prompts")
+def new_draft(body: DraftIn, a: Admin, db: DbSession) -> dict:
+    v = PromptVersion(
+        kind=body.kind, text=body.text.strip(), note=body.note, status="draft", created_by=a.user_id
+    )
+    db.add(v)
+    db.commit()
+    return _version(v)
+
+
+def _draft(db, vid: int) -> PromptVersion:
+    v = db.get(PromptVersion, vid)
+    if v is None:
+        raise error(404, "not_found")
+    return v
+
+
+@router.patch("/prompts/{vid}")
+def edit_draft(vid: int, body: DraftPatch, _: Admin, db: DbSession) -> dict:
+    """Only a draft changes; a change needs a new test."""
+    v = _draft(db, vid)
+    if v.status != "draft":
+        raise error(409, "not_a_draft")
+    if body.text is not None:
+        v.text = body.text.strip()
+    if body.note is not None:
+        v.note = body.note
+    v.updated_at = _now()
+    db.commit()
+    return _version(v)
+
+
+@router.post("/prompts/{vid}/test")
+def test_draft(vid: int, _: Admin, db: DbSession, request: Request) -> dict:
+    """Runs the built-in cases and the owner's examples with this version in
+    place of the active one."""
+    v = _draft(db, vid)
+    result = run_tests(get_llm(request), load_prompts(db, [v]), examples(db))
+    v.test, v.tested_at = result, _now()
+    db.commit()
+    return _version(v)
+
+
+@router.post("/prompts/{vid}/activate")
+def activate(vid: int, a: Admin, db: DbSession) -> dict:
+    v = _draft(db, vid)
+    if v.status != "draft":
+        raise error(409, "not_a_draft")
+    if not _version(v)["ready"]:
+        raise error(409, "test_not_passed")
+    old = active_versions(db).get(v.kind)
+    if old:
+        old.status = "retired"
+    v.status, v.activated_at = "active", _now()
+    _log(
+        db,
+        a,
+        "prompt",
+        {"kind": v.kind, "version": f"v{old.id}" if old else "default"},
+        {"kind": v.kind, "version": f"v{v.id}"},
+    )
+    db.commit()
+    return _version(v)
+
+
+@router.post("/prompts/{kind}/rollback")
+def rollback(kind: Kind, a: Admin, db: DbSession) -> dict:
+    """One step back: the version active before this one, or the built-in
+    one. It was used with patients already, so it needs no new test."""
+    current = active_versions(db).get(kind)
+    if current is None:
+        raise error(409, "already_default")
+    current.status = "retired"
+    previous = db.scalar(
+        select(PromptVersion)
+        .where(
+            PromptVersion.kind == kind,
+            PromptVersion.status == "retired",
+            PromptVersion.id != current.id,
+            PromptVersion.activated_at.is_not(None),
+            PromptVersion.activated_at < current.activated_at,
+        )
+        .order_by(PromptVersion.activated_at.desc())
+        .limit(1)
+    )
+    if previous:
+        previous.status = "active"
+    _log(
+        db,
+        a,
+        "prompt",
+        {"kind": kind, "version": f"v{current.id}"},
+        {"kind": kind, "version": f"v{previous.id}" if previous else "default"},
+    )
+    db.commit()
+    return {"kind": kind, "active_id": previous.id if previous else None}
+
+
+# ─── Safety examples ────────────────────────────────────────────────────────
+
+Label = Literal["emergency", "doctor", "normal"]
+
+
+class ExampleIn(BaseModel):
+    text: str = Field(min_length=3, max_length=1000)
+    label: Label
+    note: str | None = Field(default=None, max_length=300)
+
+
+class ExamplePatch(BaseModel):
+    text: str | None = Field(default=None, min_length=3, max_length=1000)
+    label: Label | None = None
+    note: str | None = Field(default=None, max_length=300)
+    enabled: bool | None = None
+
+
+def _example(e: SafetyExample) -> dict:
+    return {
+        "id": e.id,
+        "text": e.text,
+        "label": e.label,
+        "note": e.note,
+        "enabled": e.enabled,
+        "created_at": e.created_at.isoformat(),
+    }
+
+
+def _snap(e: SafetyExample) -> dict:
+    return {"text": e.text, "label": e.label, "note": e.note, "enabled": e.enabled}
+
+
+@router.get("/examples")
+def list_examples(_: Admin, db: DbSession) -> list:
+    return [
+        _example(e) for e in db.scalars(select(SafetyExample).order_by(SafetyExample.id.desc()))
+    ]
+
+
+@router.post("/examples")
+def add_example(body: ExampleIn, a: Admin, db: DbSession) -> dict:
+    e = SafetyExample(
+        text=body.text.strip(), label=body.label, note=body.note, created_by=a.user_id
+    )
+    db.add(e)
+    db.flush()
+    _log(db, a, "example", None, {"id": e.id, **_snap(e)})
+    db.commit()
+    return _example(e)
+
+
+@router.patch("/examples/{eid}")
+def edit_example(eid: int, body: ExamplePatch, a: Admin, db: DbSession) -> dict:
+    e = db.get(SafetyExample, eid)
+    if e is None:
+        raise error(404, "not_found")
+    before = _snap(e)
+    for k, v in body.model_dump(exclude_unset=True).items():
+        if v is not None:
+            setattr(e, k, v.strip() if isinstance(v, str) else v)
+    if _snap(e) != before:
+        _log(db, a, "example", {"id": e.id, **before}, {"id": e.id, **_snap(e)})
+    db.commit()
+    return _example(e)
+
+
+@router.post("/test")
+def test_current(_: Admin, db: DbSession, request: Request) -> dict:
+    """The prompts in use against the built-in cases and the examples."""
+    return run_tests(get_llm(request), load_prompts(db), examples(db))
+
+
+# ─── Sandbox: chat as a patient, with drafts, nothing saved ─────────────────
+
+
+class SandboxLine(BaseModel):
+    role: Literal["patient", "assistant"]
+    text: str = Field(max_length=2000)
+
+
+class SandboxIn(BaseModel):
+    history: list[SandboxLine] = Field(default=[], max_length=30)
+    text: str = Field(min_length=1, max_length=2000)
+    # Draft ids to use in place of the active versions.
+    drafts: list[int] = Field(default=[], max_length=3)
+
+
+@router.post("/sandbox")
+def sandbox(body: SandboxIn, _: Admin, db: DbSession, request: Request) -> dict:
+    drafts = [_draft(db, d) for d in body.drafts]
+    history = [
+        ChatMessage("user" if m.role == "patient" else "assistant", m.text) for m in body.history
+    ]
+    turn = handle_message(get_llm(request), history, body.text, prompts=load_prompts(db, drafts))
+    return {
+        "kind": turn.kind,
+        "text": turn.text,
+        "quick_replies": turn.quick_replies,
+        "red_flag": turn.red_flag.category if turn.red_flag else None,
+        "red_flag_source": turn.red_flag_source,
+        "summary": turn.summary.model_dump() if turn.summary else None,
+        "guard_blocked": any(e.kind == "guard_block" for e in turn.logs),
+    }

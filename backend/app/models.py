@@ -213,6 +213,9 @@ class Consultation(Base):
     handled_by: Mapped[str | None] = mapped_column(String(200))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     sent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # «لازم دكتور»: the assistant told the patient to see a doctor soon
+    # (the category), and sent the case to the pharmacist.
+    doctor_advice: Mapped[str | None] = mapped_column(String(40))
     # The pharmacist's first action on the case (response time).
     first_action_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
@@ -395,4 +398,42 @@ class AssistantChange(Base):
     kind: Mapped[str] = mapped_column(String(10))
     before: Mapped[dict | None] = mapped_column(JSONB)
     after: Mapped[dict | None] = mapped_column(JSONB)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class PromptVersion(Base):
+    """A version of an editable prompt part: assistant | summary |
+    classifier. draft → tested → active; the one before becomes retired and
+    can come back. No active row: the built-in default is used."""
+
+    __tablename__ = "prompt_versions"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    kind: Mapped[str] = mapped_column(String(12), index=True)
+    text: Mapped[str] = mapped_column(String(8000))
+    note: Mapped[str | None] = mapped_column(String(300))
+    # draft | active | retired
+    status: Mapped[str] = mapped_column(String(8))
+    # The last test run's results, and whether it passed.
+    test: Mapped[dict | None] = mapped_column(JSONB)
+    tested_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_by: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    activated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class SafetyExample(Base):
+    """«أمثلة السلامة»: a patient message and what the assistant must do
+    with it: emergency | doctor | normal. Given to the classifier as
+    examples and used as the test set. Never used to train anything."""
+
+    __tablename__ = "safety_examples"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    text: Mapped[str] = mapped_column(String(1000))
+    label: Mapped[str] = mapped_column(String(10))
+    note: Mapped[str | None] = mapped_column(String(300))
+    enabled: Mapped[bool] = mapped_column(Boolean, default=True)
+    created_by: Mapped[str] = mapped_column(ForeignKey("users.id"))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

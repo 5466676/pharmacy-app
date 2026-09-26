@@ -49,6 +49,9 @@ def normalize(text: str) -> str:
 class RedFlagHit:
     category: str
     matched: str
+    # emergency: ambulance now (the rules only ever say this) · doctor: not
+    # an emergency, but a doctor should examine the patient soon (model).
+    level: str = "emergency"
 
 
 # Words that cancel a symptom named right after them, and words that start a
