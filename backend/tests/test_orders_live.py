@@ -1,3 +1,4 @@
+import sys
 from urllib.parse import quote
 
 import pytest
@@ -192,7 +193,8 @@ def test_the_owner_links_the_pharmacy_to_the_central_server_from_the_app(
     assert bad.json()["detail"] == "bad_pharmacy_key"
     ok = client.put("/central-link", headers=device, json={"url": "http://testserver/", "key": key})
     assert ok.json() == {"linked": True, "url": "http://testserver"}
-    assert (tmp_path / "central.json").stat().st_mode & 0o777 == 0o600
+    if sys.platform != "win32":  # Windows ignores POSIX modes (chmod only sets read-only)
+        assert (tmp_path / "central.json").stat().st_mode & 0o777 == 0o600
     state.central_client = client
     assert client.get("/central/orders", headers=device).status_code == 200
     # Kept across restarts.
