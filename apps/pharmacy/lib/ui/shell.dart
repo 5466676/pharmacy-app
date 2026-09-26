@@ -10,6 +10,7 @@ import '../providers.dart';
 import '../router.dart';
 import '../sync/sync_controller.dart';
 import 'format.dart';
+import 'lock_gate.dart';
 import 'screens/sync_screen.dart' show syncStatusChip;
 import 'widgets.dart' show isPhoneLayout, toast;
 
@@ -132,7 +133,7 @@ class AppShell extends ConsumerWidget {
               ),
             ],
           ),
-          body: child,
+          body: LockGate(location: location, child: child),
         ),
       ),
     );
@@ -251,7 +252,7 @@ class PhoneShell extends ConsumerWidget {
                         DoayaSpacing.l,
                         navSpace,
                       ),
-                      child: child,
+                      child: LockGate(location: location, child: child),
                     ),
                   ),
                 ],

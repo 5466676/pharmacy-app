@@ -5,6 +5,7 @@ import 'package:doaya_pharmacy/data/database.dart';
 import 'package:doaya_pharmacy/data/ledger_repository.dart';
 import 'package:doaya_pharmacy/data/people_repository.dart';
 import 'package:doaya_pharmacy/data/sync_store.dart';
+import 'package:doaya_pharmacy/data/system_lock.dart';
 import 'package:doaya_pharmacy/providers.dart';
 import 'package:doaya_pharmacy/router.dart';
 import 'package:doaya_pharmacy/sync/sync_api.dart';
@@ -122,8 +123,14 @@ void main() {
     await tester.enterText(field('رقم الموبايل'), '0944123456');
     await tester.enterText(field('كلمة السر'), 'secret-1');
     await tester.enterText(field('تأكيد كلمة السر'), 'secret-1');
+    // Doaya online has stopped this pharmacy: the device keeps the answer,
+    // and applies it only at the next start.
+    api.control = {'state': 'stopped', 'reason': 'انتهى العقد', 'licence_until': null};
     await tester.tap(find.text('أنشئ واربط'));
     await settle(tester, 10);
+    final lock = await tester.runAsync(() => loadLock(DriftSyncStore(db, deviceId: dev.id)));
+    expect((lock!.state, lock.reason), ('stopped', 'انتهى العقد'));
+    expect(find.textContaining('النظام موقّف'), findsNothing);
 
     expect(api.pharmacyName, 'صيدلية الشفاء');
     expect(api.server.latest, greaterThan(5)); // history uploaded

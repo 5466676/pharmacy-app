@@ -5,6 +5,8 @@ import 'package:doaya_pharmacy/data/catalog_repository.dart';
 import 'package:doaya_pharmacy/data/database.dart';
 import 'package:doaya_pharmacy/data/ledger_repository.dart';
 import 'package:doaya_pharmacy/data/people_repository.dart';
+import 'package:doaya_pharmacy/data/sync_store.dart';
+import 'package:doaya_pharmacy/data/system_lock.dart';
 import 'package:doaya_pharmacy/data/till_repository.dart';
 import 'package:doaya_pharmacy/providers.dart';
 import 'package:doaya_pharmacy/router.dart';
@@ -851,6 +853,50 @@ void main() {
       expect(find.byType(BackdropFilter), findsNothing);
       expect(DoayaTokens.of(tester.element(find.byType(Scaffold).first)).blurAllowed, isFalse);
       debugDefaultTargetPlatformOverride = null;
+      await unmount(tester);
+    });
+    Future<void> signInWithLock(WidgetTester tester, Map<String, Object?> control) async {
+      await seed(tester);
+      await tester.runAsync(() async {
+        final device = await PeopleRepository(db).thisDevice();
+        await saveLock(DriftSyncStore(db, deviceId: device!.id), control);
+      });
+      await pumpApp(tester);
+      final device = await tester.runAsync(() => PeopleRepository(db).thisDevice());
+      container.read(sessionProvider.notifier).signIn(device!, owner);
+      await settle(tester);
+    }
+
+    testWidgets('stopped by Doaya: selling is closed, viewing stays open', (tester) async {
+      await signInWithLock(tester, {
+        'state': 'stopped',
+        'reason': 'انتهى العقد',
+        'licence_until': DateTime.now().toUtc().toIso8601String(),
+      });
+      expect(find.textContaining('النظام موقّف: البيع'), findsOneWidget);
+      await tester.sendKeyEvent(LogicalKeyboardKey.f2);
+      await settle(tester);
+      expect(find.text('بيع جديد'), findsNothing);
+      expect(find.text('النظام موقّف'), findsOneWidget);
+      expect(find.text('السبب: انتهى العقد'), findsOneWidget);
+      container.read(routerProvider).go(Routes.inventory);
+      await settle(tester);
+      expect(find.text('Amoxil 500 mg'), findsWidgets);
+      await unmount(tester);
+    });
+
+    testWidgets('licence ending soon: a reminder, selling still open', (tester) async {
+      await signInWithLock(tester, {
+        'state': 'active',
+        'licence_until': DateTime.now()
+            .toUtc()
+            .add(const Duration(days: 3, hours: 1))
+            .toIso8601String(),
+      });
+      expect(find.textContaining('خلال 3 يوم'), findsOneWidget);
+      await tester.sendKeyEvent(LogicalKeyboardKey.f2);
+      await settle(tester);
+      expect(find.text('بيع جديد'), findsWidgets);
       await unmount(tester);
     });
   });

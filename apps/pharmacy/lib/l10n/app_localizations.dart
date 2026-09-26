@@ -4171,6 +4171,48 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'رجّع للأصل'**
   String get lookReset;
+
+  /// No description provided for @lockTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'النظام موقّف'**
+  String get lockTitle;
+
+  /// No description provided for @lockStopped.
+  ///
+  /// In ar, this message translates to:
+  /// **'دوايا وقّفت البيع وتعديل المخزون بهالصيدلية. تواصل مع دوايا.'**
+  String get lockStopped;
+
+  /// No description provided for @lockLicenceEnded.
+  ///
+  /// In ar, this message translates to:
+  /// **'صرلو البرنامج أكتر من المدة المسموحة بلا اتصال مع دوايا. وصّل سيرفر الصيدلية عالإنترنت، وبعد ما يتصل سكّر البرنامج وافتحه.'**
+  String get lockLicenceEnded;
+
+  /// No description provided for @lockReason.
+  ///
+  /// In ar, this message translates to:
+  /// **'السبب: {reason}'**
+  String lockReason(String reason);
+
+  /// No description provided for @lockStillOpen.
+  ///
+  /// In ar, this message translates to:
+  /// **'بتقدر تشوف التقارير والمخزون والديون، وتعمل نسخة احتياطية وتصدّر بياناتك.'**
+  String get lockStillOpen;
+
+  /// No description provided for @lockReadOnly.
+  ///
+  /// In ar, this message translates to:
+  /// **'النظام موقّف: البيع وتعديل المخزون مسكّرين. الشوفة والتصدير مفتوحين.'**
+  String get lockReadOnly;
+
+  /// No description provided for @lockEndingSoon.
+  ///
+  /// In ar, this message translates to:
+  /// **'لازم يتصل سيرفر الصيدلية بدوايا خلال {days} يوم، وإلا بيتسكّر البيع لما ينفتح البرنامج.'**
+  String lockEndingSoon(String days);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

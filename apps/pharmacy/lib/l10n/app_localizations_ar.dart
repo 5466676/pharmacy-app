@@ -2307,4 +2307,31 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get lookReset => 'رجّع للأصل';
+
+  @override
+  String get lockTitle => 'النظام موقّف';
+
+  @override
+  String get lockStopped => 'دوايا وقّفت البيع وتعديل المخزون بهالصيدلية. تواصل مع دوايا.';
+
+  @override
+  String get lockLicenceEnded =>
+      'صرلو البرنامج أكتر من المدة المسموحة بلا اتصال مع دوايا. وصّل سيرفر الصيدلية عالإنترنت، وبعد ما يتصل سكّر البرنامج وافتحه.';
+
+  @override
+  String lockReason(String reason) {
+    return 'السبب: $reason';
+  }
+
+  @override
+  String get lockStillOpen =>
+      'بتقدر تشوف التقارير والمخزون والديون، وتعمل نسخة احتياطية وتصدّر بياناتك.';
+
+  @override
+  String get lockReadOnly => 'النظام موقّف: البيع وتعديل المخزون مسكّرين. الشوفة والتصدير مفتوحين.';
+
+  @override
+  String lockEndingSoon(String days) {
+    return 'لازم يتصل سيرفر الصيدلية بدوايا خلال $days يوم، وإلا بيتسكّر البيع لما ينفتح البرنامج.';
+  }
 }
