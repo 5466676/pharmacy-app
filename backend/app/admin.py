@@ -7,6 +7,7 @@ decision). Patients appear only as counts."""
 
 import re
 import secrets
+import time
 from datetime import UTC, date, datetime, timedelta
 from typing import Annotated, Literal
 
@@ -15,6 +16,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy import and_, extract, func, select
 from sqlalchemy.orm import Session
 
+from . import __version__
 from .central import list_pharmacy, new_pharmacy_key
 from .deps import DbSession, error
 from .models import (
@@ -53,7 +55,7 @@ ANSWER_TARGET_MINUTES = 10
 # Fewer cases than this in a month: not ranked (too few to be fair).
 MIN_CASES_TO_RANK = 10
 # Review queue: what the admin should look at.
-REVIEW_KINDS = ("red_flag", "guard_block", "correction", "llm_down")
+REVIEW_KINDS = ("red_flag", "guard_block", "correction", "patient_edit", "llm_down")
 
 
 def _now() -> datetime:
@@ -681,3 +683,33 @@ def performance(_: Admin, db: DbSession, month: str | None = None) -> dict:
         "min_cases": MIN_CASES_TO_RANK,
         "pharmacies": out,
     }
+
+
+# ─── Settings (read-only; changed in the server's own settings) ─────────────
+
+
+@router.get("/settings")
+def settings_view(_: Admin, request: Request) -> dict:
+    s = request.app.state.settings
+    return {
+        "llm_base_url": s.llm_base_url,
+        "llm_model": s.llm_model,
+        "emergency_ambulance": s.emergency_ambulance,
+        "emergency_general": s.emergency_general,
+        "cors_origins": [o.strip() for o in s.cors_origins.split(",") if o.strip()],
+        "server_version": __version__,
+    }
+
+
+@router.post("/settings/model-check")
+def model_check(_: Admin, request: Request) -> dict:
+    """Asks the model one tiny question: does it answer, and how fast."""
+    from .consult.llm import ChatMessage, LLMUnavailable
+    from .consultations import get_llm
+
+    start = time.monotonic()
+    try:
+        get_llm(request).complete([ChatMessage("user", "قل: تمام")], temperature=0)
+    except LLMUnavailable as e:
+        return {"ok": False, "error": str(e)[:300], "ms": None}
+    return {"ok": True, "error": None, "ms": round((time.monotonic() - start) * 1000)}

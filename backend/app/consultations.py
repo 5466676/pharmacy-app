@@ -20,6 +20,7 @@ from .consult.llm import ChatMessage, llm_from_settings
 from .consult.redflags import check
 from .deps import DbSession, Patient, PharmacyCaller, error
 from .events import patient_topic, pharmacy_topic
+from .knowledge import match_notes
 from .models import AiLog, Consultation, ConsultMessage, PatientProfile, User
 from .security import new_id
 
@@ -267,13 +268,19 @@ def patient_says(cid: str, body: TextIn, p: Patient, db: DbSession, request: Req
         for m in _messages(db, c.id)
         if m.role in ("patient", "assistant")
     ]
+    # The admin's notes whose tags the patient mentioned.
+    notes = match_notes(db, [m.content for m in history if m.role == "user"] + [text])
     turn = handle_message(
         get_llm(request),
         history,
         text,
         profile=_profile_text(db, p.user_id),
+        knowledge=[n.text for n in notes],
         emergency=_emergency_numbers(request),
     )
+    for entry in turn.logs:
+        if entry.kind == "assistant_reply" and notes:
+            entry.detail["notes"] = [n.id for n in notes]
     _say(db, c, "patient", text)
     _say(db, c, "assistant", turn.text, quick=turn.quick_replies)
     _log(db, c, turn.logs)

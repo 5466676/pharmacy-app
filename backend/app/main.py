@@ -14,6 +14,7 @@ from . import (
     consultations,
     control,
     directory,
+    knowledge,
     orders,
     patients,
     photos,
@@ -100,6 +101,7 @@ def create_app(
     app.include_router(accounts.router)
     app.include_router(admin.router)
     app.include_router(control.router)
+    app.include_router(knowledge.router)
     app.include_router(sync.router)
     app.include_router(patients.router)
     app.include_router(directory.router)

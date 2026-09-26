@@ -246,6 +246,10 @@ class AiLog(Base):
     kind: Mapped[str] = mapped_column(String(20), index=True)
     detail: Mapped[dict] = mapped_column(JSONB)
     reviewed: Mapped[bool] = mapped_column(Boolean, default=False)
+    # Phase 4: the admin's review.
+    review_note: Mapped[str | None] = mapped_column(String(1000))
+    reviewed_by: Mapped[str | None] = mapped_column(ForeignKey("users.id"))
+    reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
@@ -321,4 +325,38 @@ class AdminAction(Base):
     action: Mapped[str] = mapped_column(String(20))
     reason: Mapped[str | None] = mapped_column(String(500))
     detail: Mapped[dict | None] = mapped_column(JSONB)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class KnowledgeNote(Base):
+    """A short note the admin curates (usually from a pharmacist's
+    correction) that helps the assistant ask better questions. Given to the
+    assistant when the conversation mentions one of its tags. Never used
+    for automatic training."""
+
+    __tablename__ = "knowledge_notes"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    title: Mapped[str] = mapped_column(String(200))
+    text: Mapped[str] = mapped_column(String(1000))
+    tags: Mapped[list] = mapped_column(JSONB)
+    enabled: Mapped[bool] = mapped_column(Boolean, default=True)
+    # The review item it came from, if any.
+    source_log_id: Mapped[int | None] = mapped_column(ForeignKey("ai_log.id"))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class KnowledgeChange(Base):
+    """Every change to a note: who, when, before and after."""
+
+    __tablename__ = "knowledge_changes"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    note_id: Mapped[str] = mapped_column(ForeignKey("knowledge_notes.id"), index=True)
+    admin_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    # create | update
+    action: Mapped[str] = mapped_column(String(10))
+    before: Mapped[dict | None] = mapped_column(JSONB)
+    after: Mapped[dict] = mapped_column(JSONB)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
