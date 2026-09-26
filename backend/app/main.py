@@ -5,13 +5,14 @@ from pathlib import Path
 from fastapi import FastAPI
 from sqlalchemy import select, text
 
-from . import __version__, accounts, directory, patients, sync
+from . import __version__, accounts, consultations, directory, patients, sync
 from .backup import BackupScheduler, latest_backup_time, list_backups
 from .bridge import ShelfPublisher
 from .config import Settings, get_settings
 from .db import Database
 from .deps import DbSession, Owner
 from .discovery import DiscoveryResponder
+from .events import Events
 from .models import Pharmacy
 from .security import LoginLimiter
 from .tls import ensure_certificate
@@ -75,10 +76,13 @@ def create_app(
     app.state.settings = settings
     app.state.db = Database(settings.database_url)
     app.state.login_limiter = LoginLimiter()
+    app.state.events = Events()
+    app.state.llm = None  # made from settings on first use
     app.include_router(accounts.router)
     app.include_router(sync.router)
     app.include_router(patients.router)
     app.include_router(directory.router)
+    app.include_router(consultations.router)
 
     @app.get("/health")
     def health(db: DbSession) -> dict:

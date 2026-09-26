@@ -70,7 +70,15 @@ class CaseSummary(BaseModel):
 class LogEntry:
     """For the admin review queue (Phase 4); never used for fine-tuning."""
 
-    kind: Literal["red_flag", "assistant_reply", "guard_block", "summary", "llm_down"]
+    kind: Literal[
+        "red_flag",
+        "assistant_reply",
+        "guard_block",
+        "summary",
+        "llm_down",
+        "patient_edit",
+        "correction",
+    ]
     detail: dict
 
 
