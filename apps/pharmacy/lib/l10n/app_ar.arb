@@ -1367,5 +1367,47 @@
     }
   },
   "doctorAdvised": "المساعد نصح بطبيب",
-  "doctorAdvisedHelp": "المساعد نصح المريض يراجع طبيب بأقرب وقت (مو إسعاف). راجع الحالة وأكّد عليه أو وجّهه."
+  "doctorAdvisedHelp": "المساعد نصح المريض يراجع طبيب بأقرب وقت (مو إسعاف). راجع الحالة وأكّد عليه أو وجّهه.",
+  "fileTitle": "ملف المريض",
+  "fileAllergyAlert": "انتبه: عنده حساسية من {items}",
+  "@fileAllergyAlert": {
+    "placeholders": {
+      "items": {
+        "type": "String"
+      }
+    }
+  },
+  "fileNoFacts": "ما في شي بملفه لسا.",
+  "fileToConfirm": "للتأكيد من الصيدلي",
+  "fileProposalFrom": "من محادثة المريض: صحيح؟",
+  "fileAccept": "صحيح",
+  "fileReject": "مو صحيح",
+  "fileConfirm": "أكّد",
+  "fileEnd": "ما عاد صحيح",
+  "fileAdd": "ضيف لملفه",
+  "fileLimited": "المريض اختار صيدلية تانية: بتشوف حالاتك القديمة معه بس.",
+  "fileByPatient": "المريض قال",
+  "filePastCases": "استشارات سابقة: {n}",
+  "@filePastCases": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "factText": "شو بالضبط؟",
+  "fileKindAllergy": "حساسية",
+  "fileKindCondition": "مرض مزمن",
+  "fileKindMedication": "دوا حالي",
+  "fileKindPregnancy": "حمل أو رضاعة",
+  "fileKindWeight": "الوزن",
+  "fileKindNote": "ملاحظة",
+  "fileUntil": "لحد {date}",
+  "@fileUntil": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  }
 }

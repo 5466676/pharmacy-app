@@ -2341,4 +2341,73 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get doctorAdvisedHelp =>
       'المساعد نصح المريض يراجع طبيب بأقرب وقت (مو إسعاف). راجع الحالة وأكّد عليه أو وجّهه.';
+
+  @override
+  String get fileTitle => 'ملف المريض';
+
+  @override
+  String fileAllergyAlert(String items) {
+    return 'انتبه: عنده حساسية من $items';
+  }
+
+  @override
+  String get fileNoFacts => 'ما في شي بملفه لسا.';
+
+  @override
+  String get fileToConfirm => 'للتأكيد من الصيدلي';
+
+  @override
+  String get fileProposalFrom => 'من محادثة المريض: صحيح؟';
+
+  @override
+  String get fileAccept => 'صحيح';
+
+  @override
+  String get fileReject => 'مو صحيح';
+
+  @override
+  String get fileConfirm => 'أكّد';
+
+  @override
+  String get fileEnd => 'ما عاد صحيح';
+
+  @override
+  String get fileAdd => 'ضيف لملفه';
+
+  @override
+  String get fileLimited => 'المريض اختار صيدلية تانية: بتشوف حالاتك القديمة معه بس.';
+
+  @override
+  String get fileByPatient => 'المريض قال';
+
+  @override
+  String filePastCases(String n) {
+    return 'استشارات سابقة: $n';
+  }
+
+  @override
+  String get factText => 'شو بالضبط؟';
+
+  @override
+  String get fileKindAllergy => 'حساسية';
+
+  @override
+  String get fileKindCondition => 'مرض مزمن';
+
+  @override
+  String get fileKindMedication => 'دوا حالي';
+
+  @override
+  String get fileKindPregnancy => 'حمل أو رضاعة';
+
+  @override
+  String get fileKindWeight => 'الوزن';
+
+  @override
+  String get fileKindNote => 'ملاحظة';
+
+  @override
+  String fileUntil(String date) {
+    return 'لحد $date';
+  }
 }

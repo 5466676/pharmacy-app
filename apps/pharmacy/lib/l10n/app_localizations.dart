@@ -4225,6 +4225,132 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'المساعد نصح المريض يراجع طبيب بأقرب وقت (مو إسعاف). راجع الحالة وأكّد عليه أو وجّهه.'**
   String get doctorAdvisedHelp;
+
+  /// No description provided for @fileTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملف المريض'**
+  String get fileTitle;
+
+  /// No description provided for @fileAllergyAlert.
+  ///
+  /// In ar, this message translates to:
+  /// **'انتبه: عنده حساسية من {items}'**
+  String fileAllergyAlert(String items);
+
+  /// No description provided for @fileNoFacts.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما في شي بملفه لسا.'**
+  String get fileNoFacts;
+
+  /// No description provided for @fileToConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'للتأكيد من الصيدلي'**
+  String get fileToConfirm;
+
+  /// No description provided for @fileProposalFrom.
+  ///
+  /// In ar, this message translates to:
+  /// **'من محادثة المريض: صحيح؟'**
+  String get fileProposalFrom;
+
+  /// No description provided for @fileAccept.
+  ///
+  /// In ar, this message translates to:
+  /// **'صحيح'**
+  String get fileAccept;
+
+  /// No description provided for @fileReject.
+  ///
+  /// In ar, this message translates to:
+  /// **'مو صحيح'**
+  String get fileReject;
+
+  /// No description provided for @fileConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'أكّد'**
+  String get fileConfirm;
+
+  /// No description provided for @fileEnd.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما عاد صحيح'**
+  String get fileEnd;
+
+  /// No description provided for @fileAdd.
+  ///
+  /// In ar, this message translates to:
+  /// **'ضيف لملفه'**
+  String get fileAdd;
+
+  /// No description provided for @fileLimited.
+  ///
+  /// In ar, this message translates to:
+  /// **'المريض اختار صيدلية تانية: بتشوف حالاتك القديمة معه بس.'**
+  String get fileLimited;
+
+  /// No description provided for @fileByPatient.
+  ///
+  /// In ar, this message translates to:
+  /// **'المريض قال'**
+  String get fileByPatient;
+
+  /// No description provided for @filePastCases.
+  ///
+  /// In ar, this message translates to:
+  /// **'استشارات سابقة: {n}'**
+  String filePastCases(String n);
+
+  /// No description provided for @factText.
+  ///
+  /// In ar, this message translates to:
+  /// **'شو بالضبط؟'**
+  String get factText;
+
+  /// No description provided for @fileKindAllergy.
+  ///
+  /// In ar, this message translates to:
+  /// **'حساسية'**
+  String get fileKindAllergy;
+
+  /// No description provided for @fileKindCondition.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرض مزمن'**
+  String get fileKindCondition;
+
+  /// No description provided for @fileKindMedication.
+  ///
+  /// In ar, this message translates to:
+  /// **'دوا حالي'**
+  String get fileKindMedication;
+
+  /// No description provided for @fileKindPregnancy.
+  ///
+  /// In ar, this message translates to:
+  /// **'حمل أو رضاعة'**
+  String get fileKindPregnancy;
+
+  /// No description provided for @fileKindWeight.
+  ///
+  /// In ar, this message translates to:
+  /// **'الوزن'**
+  String get fileKindWeight;
+
+  /// No description provided for @fileKindNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملاحظة'**
+  String get fileKindNote;
+
+  /// No description provided for @fileUntil.
+  ///
+  /// In ar, this message translates to:
+  /// **'لحد {date}'**
+  String fileUntil(String date);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

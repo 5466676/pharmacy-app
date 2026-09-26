@@ -12,6 +12,7 @@ import '../../l10n/app_localizations.dart';
 import '../../providers.dart';
 import '../../router.dart';
 import '../format.dart';
+import '../patient_file_panel.dart';
 import '../patient_photo.dart';
 import '../widgets.dart';
 import 'patient_orders_view.dart';
@@ -278,6 +279,10 @@ class CaseDetailView extends ConsumerWidget {
             ],
           ),
         ),
+        if (c.patient.hasFile) ...[
+          SizedBox(height: DoayaSpacing.l),
+          PatientFilePanel(patient: c.patient),
+        ],
         SizedBox(height: DoayaSpacing.l),
         _SummaryPanel(detail: c),
         SizedBox(height: DoayaSpacing.l),

@@ -10,6 +10,7 @@ import '../../l10n/app_localizations.dart';
 import '../../providers.dart';
 import '../../router.dart';
 import '../format.dart';
+import '../patient_file_panel.dart';
 import '../patient_photo.dart';
 import '../widgets.dart';
 import 'cases_screen.dart' show patientLine;
@@ -84,7 +85,7 @@ class _OrderDetailViewState extends ConsumerState<OrderDetailView> {
     int qty(OrderLine line) => _quantities[line.productId] ?? line.quantity;
     final total = o.lines.fold(0, (s, line) => s + qty(line) * line.priceMinor);
 
-    return Panel(
+    final panel = Panel(
       title: o.patient.name,
       trailing: StatusChip(
         label: l.orderStatus(o.status),
@@ -199,6 +200,15 @@ class _OrderDetailViewState extends ConsumerState<OrderDetailView> {
             ),
         ],
       ),
+    );
+    if (!o.patient.hasFile) return panel;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        panel,
+        SizedBox(height: DoayaSpacing.l),
+        PatientFilePanel(patient: o.patient),
+      ],
     );
   }
 }

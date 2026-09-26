@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'support/fake_central.dart';
 import 'support/fake_sync_api.dart';
 
 Future<void> settle(WidgetTester tester, [int rounds = 6]) async {
@@ -239,6 +240,71 @@ void main() {
     await tester.tap(find.text('تأكيد'));
     await settle(tester);
     expect(api.central.cases['c1']!['status'], 'needs_doctor');
+  });
+
+  testWidgets('the patient\'s file: allergies first, confirm what the chat revealed, add a fact', (
+    tester,
+  ) async {
+    await pumpLinked(tester);
+    api.central
+      ..fileFacts.addAll([
+        api.central.fileFact('f1', 'allergy', 'البنسلين'),
+        api.central.fileFact('f2', 'condition', 'سكري', confirmed: false),
+      ])
+      ..fileProposals.add({
+        'id': 'p1',
+        'kind': 'medication',
+        'text': 'دوا ضغط',
+        'needs': 'pharmacist',
+        'status': 'pending',
+      })
+      ..addCase(
+        'c1',
+        messages: [('patient', 'عندي حرارة')],
+        patient: {...FakeCentral.patient(), 'id': 'pt1', 'has_file': true},
+      );
+    await refreshInbox(tester);
+    container.read(routerProvider).go(Routes.cases);
+    await settle(tester);
+    await tester.tap(find.text('عندي حرارة').first);
+    await settle(tester);
+    expect(find.text('ملف المريض'), findsOneWidget);
+    expect(find.text('انتبه: عنده حساسية من البنسلين'), findsOneWidget);
+    expect(find.text('استشارات سابقة: 2'), findsOneWidget);
+
+    // A fact the patient reported: the pharmacist confirms it.
+    await tester.ensureVisible(find.text('أكّد'));
+    await tester.tap(find.text('أكّد'));
+    await settle(tester);
+    expect(api.central.fileFacts[1]['confirmed'], isTrue);
+
+    // What the chat revealed.
+    await tester.ensureVisible(find.text('صحيح'));
+    await tester.tap(find.text('صحيح'));
+    await settle(tester);
+    expect(api.central.fileProposals.first['status'], 'accepted');
+    expect(find.text('دوا حالي: دوا ضغط'), findsOneWidget);
+
+    // Add a fact.
+    await tester.ensureVisible(find.text('ضيف لملفه'));
+    await tester.tap(find.text('ضيف لملفه'));
+    await settle(tester);
+    await tester.enterText(find.byType(TextField).last, 'الأسبرين');
+    await tester.tap(find.text('حفظ'));
+    await settle(tester);
+    expect(api.central.fileFacts.last['text'], 'الأسبرين');
+    expect(find.text('انتبه: عنده حساسية من البنسلين، الأسبرين'), findsOneWidget);
+  });
+
+  testWidgets('no file panel for a patient without a file', (tester) async {
+    await pumpLinked(tester);
+    api.central.addCase('c1', messages: [('patient', 'عندي زكام')]);
+    await refreshInbox(tester);
+    container.read(routerProvider).go(Routes.cases);
+    await settle(tester);
+    await tester.tap(find.text('عندي زكام').first);
+    await settle(tester);
+    expect(find.text('ملف المريض'), findsNothing);
   });
 
   testWidgets('the patient\'s prescription photo shows in the case, full size on a click', (

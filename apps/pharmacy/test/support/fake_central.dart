@@ -83,6 +83,21 @@ class FakeCentral {
   /// Patients' photos by id (PNG bytes).
   final photos = <String, Uint8List>{};
 
+  // «ملف المريض» of patient "pt1".
+  final fileFacts = <Map<String, Object?>>[];
+  final fileProposals = <Map<String, Object?>>[];
+
+  Map<String, Object?> fileFact(String id, String kind, String text, {bool confirmed = true}) => {
+    'id': id,
+    'kind': kind,
+    'text': text,
+    'detail': null,
+    'source': confirmed ? 'pharmacist' : 'patient',
+    'confirmed': confirmed,
+    'added_by': confirmed ? actor : 'مازن',
+    'ends_at': null,
+  };
+
   Object? handle(String method, String path, Object? body) {
     final b = (body as Map<String, Object?>?) ?? const {};
     if (path == 'central-link') {
@@ -149,6 +164,31 @@ class FakeCentral {
         }
         c['handled_by'] = actor;
         return c;
+      case ('GET', ['patients', 'pt1', 'file']):
+        return {
+          'facts': fileFacts,
+          'past_facts': [],
+          'proposals': [...fileProposals.where((p) => p['status'] == 'pending')],
+          'history': [{}, {}],
+          'limited': false,
+        };
+      case ('POST', ['patients', 'pt1', 'file', 'facts']):
+        fileFacts.add(
+          fileFact('f${fileFacts.length + 1}', b['kind']! as String, b['text']! as String),
+        );
+        return fileFacts.last;
+      case ('POST', ['patients', 'pt1', 'file', 'facts', final id, 'confirm']):
+        fileFacts.firstWhere((f) => f['id'] == id)['confirmed'] = true;
+        return {'ok': true};
+      case ('POST', ['patients', 'pt1', 'file', 'proposals', final id]):
+        final p = fileProposals.firstWhere((p) => p['id'] == id);
+        p['status'] = b['accept'] == true ? 'accepted' : 'rejected';
+        if (b['accept'] == true) {
+          fileFacts.add(
+            fileFact('f${fileFacts.length + 1}', p['kind']! as String, p['text']! as String),
+          );
+        }
+        return p;
       case ('GET', ['orders']):
         return orders.values.toList();
       case ('POST', ['orders', final id, 'status']):
