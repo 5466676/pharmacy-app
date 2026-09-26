@@ -136,7 +136,13 @@ Future<Uint8List> receiptPdf(
           if (r.customer != null) row('${t.customer}: ${r.customer}', '', style: small),
           pw.Divider(thickness: 0.5),
           for (final line in r.lines) ...[
-            pw.Text(line.name, style: normal, textDirection: pw.TextDirection.ltr),
+            // Latin, left to right, but on the right edge like the rest.
+            pw.Text(
+              line.name,
+              style: normal,
+              textDirection: pw.TextDirection.ltr,
+              textAlign: pw.TextAlign.right,
+            ),
             row(
               '${formatQty(line.quantity)} × ${formatMoney(line.unitPriceMinor, r.currency)}',
               formatMoney(line.totalMinor, r.currency),
@@ -156,16 +162,17 @@ Future<Uint8List> receiptPdf(
   return doc.save();
 }
 
+/// The one bundled font with Arabic presentation forms (see the test).
+const receiptFont = 'Amiri-Bold';
+
 /// Opens the system print dialog (any printer, the receipt one included).
 Future<void> printReceipt(Receipt r, ReceiptLabels t) async {
   Future<pw.Font> font(String name) async =>
       pw.Font.ttf(await rootBundle.load('packages/doaya_ui/assets/fonts/$name.ttf'));
-  final bytes = await receiptPdf(
-    r,
-    t,
-    regular: await font('ReadexPro-Regular'),
-    bold: await font('ReadexPro-SemiBold'),
-  );
+  // Amiri: the PDF shapes Arabic with presentation-form glyphs, which
+  // Readex Pro doesn't have (its letters print broken).
+  final amiri = await font(receiptFont);
+  final bytes = await receiptPdf(r, t, regular: amiri, bold: amiri);
   await Printing.layoutPdf(
     name: 'receipt-${r.shortId}',
     format: PdfPageFormat.roll80,

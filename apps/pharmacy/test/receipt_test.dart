@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:doaya_core/doaya_core.dart';
 import 'package:doaya_pharmacy/printing/receipt.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pdf/pdf.dart' show TtfParser;
 import 'package:pdf/widgets.dart' as pw;
 
 const labels = ReceiptLabels(
@@ -58,10 +59,25 @@ void main() {
     final bytes = await receiptPdf(
       sale(discount: 50000, tendered: 1200000),
       labels,
-      regular: font('ReadexPro-Regular'),
-      bold: font('ReadexPro-SemiBold'),
+      regular: font(receiptFont),
+      bold: font(receiptFont),
     );
     expect(ascii.decode(bytes.sublist(0, 5)), '%PDF-');
     expect(bytes.length, greaterThan(1000));
+  });
+
+  test('the receipt font has the Arabic shapes the PDF prints with', () {
+    final ttf = TtfParser(
+      File('../../packages/doaya_ui/assets/fonts/$receiptFont.ttf')
+          .readAsBytesSync()
+          .buffer
+          .asByteData(),
+    );
+    // Presentation Forms-B (initial, medial, final letters).
+    final missing = [
+      for (var cp = 0xFE80; cp <= 0xFEFB; cp++)
+        if (!ttf.charToGlyphIndexMap.containsKey(cp)) cp.toRadixString(16),
+    ];
+    expect(missing, isEmpty);
   });
 }

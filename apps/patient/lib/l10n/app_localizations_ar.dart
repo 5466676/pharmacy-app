@@ -531,10 +531,10 @@ class AppLocalizationsAr extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       days,
       locale: localeName,
-      other: 'لـ $days يوم',
-      few: 'لـ $days أيام',
-      two: 'ليومين',
-      one: 'ليوم واحد',
+      other: 'كورس $days يوم',
+      few: 'كورس $days أيام',
+      two: 'كورس يومين',
+      one: 'كورس يوم واحد',
     );
     return '$_temp0';
   }

@@ -213,7 +213,11 @@ class OrderScreen extends ConsumerWidget {
                 ),
                 if (o.photoId case final photo?) ...[
                   const SizedBox(height: DoayaSpacing.ml),
-                  PhotoThumb(id: photo, size: DoayaSizes.productImage),
+                  // A ListView stretches its children: keep the thumbnail square.
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: PhotoThumb(id: photo, size: DoayaSizes.productImage),
+                  ),
                 ],
                 if (o.note != null) ...[
                   const SizedBox(height: DoayaSpacing.ml),

@@ -282,7 +282,7 @@
   "reminderOn": "التذكير شغّال",
   "reminderSaved": "انحفظ التذكير",
   "reminderTimes": "المواعيد",
-  "reminderDays": "{days, plural, =1{ليوم واحد} =2{ليومين} few{لـ {days} أيام} other{لـ {days} يوم}}",
+  "reminderDays": "{days, plural, =1{كورس يوم واحد} =2{كورس يومين} few{كورس {days} أيام} other{كورس {days} يوم}}",
   "@reminderDays": {
     "placeholders": {
       "days": {

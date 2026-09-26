@@ -995,7 +995,7 @@ abstract class AppLocalizations {
   /// No description provided for @reminderDays.
   ///
   /// In ar, this message translates to:
-  /// **'{days, plural, =1{ليوم واحد} =2{ليومين} few{لـ {days} أيام} other{لـ {days} يوم}}'**
+  /// **'{days, plural, =1{كورس يوم واحد} =2{كورس يومين} few{كورس {days} أيام} other{كورس {days} يوم}}'**
   String reminderDays(int days);
 
   /// No description provided for @reminderOngoing.

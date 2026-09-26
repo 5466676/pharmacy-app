@@ -377,7 +377,7 @@ Patients aren't on the pharmacy's Wi-Fi, so the patient app will need a server r
   - The end-to-end test runs over real TLS: first-contact pinning, linking, syncing, and an impostor certificate refused before anything is sent. Details in DECISIONS.
 - Totals: server 34, core 95, design system 23, app 80 (+ the end-to-end script, over HTTPS).
 
-## Phase 3 — Patient app + AI · ▶ steps 1–6 done; 7–8 next (plan approved 2026-09-25)
+## Phase 3 — Patient app + AI · ▶ steps 1–7 done; step 8 (real run with LM Studio) next (plan approved 2026-09-25)
 
 ### Owner answers (2026-09-25)
 1. **Hosting**: still being decided. Build it host-agnostic (Docker Compose), and run it locally for now.
@@ -637,5 +637,38 @@ Server side only so far (the screens are steps 5–7). The tests read as the sce
     - «عندي ألم بالصدر وما عم اقدر اتنفس» → emergency with 110 / 112
   - **Fixed after the real run**: «صيدلية صيدلية الشفاء متابعة» in the chat header, and «الإسعاف 110» cut off on a phone (the two buttons are now full width, one above the other). A widget test caught localizations being read in `initState` on the pharmacy page.
   - Tests: patient app 9 (API, sign-in kept after a restart, the whole flow from sign-up to sending the summary against an in-memory server, an emergency, live updates and the polling fallback). Server 185.
+- [x] Step 7: **the shelf, orders, dose reminders, notifications, prescription photos** (owner approved `workmanager`, 2026-09-26):
+  - **The shelf** (from `design/patient_home.html` and `patient_product_detail.html`):
+    - «متوفر بصيدليتك» on the home page and a search («دوّر على دوا أو منتج…»); price and available-or-not only, never quantities
+    - the product page says «بوصفة» / «بدون وصفة»; an unavailable product can't be ordered
+    - `GET /directory/{id}/shelf/{product}` so a product page survives a reload on the web
+  - **Pickup orders** (`design/patient_order.html`):
+    - a cart per pharmacy (emptied if the pharmacy changes), a note, «أرفق صورة الوصفة», where to pick it up and the hours, the total, «الدفع عند الاستلام بالصيدلية»
+    - «طلباتي» with each order's steps. The pharmacist's final quantities show as «طلبت 2، الصيدلي حضّر 1». The patient can cancel until the pharmacy handles it.
+  - **«جرعاتي» (dose reminders)**:
+    - only from the pharmacist's decision (times per day, days), from «ذكّرني بالجرعات» under it
+    - default times over waking hours (3 a day: 08:00, 14:00, 20:00). The patient can move them by half an hour; the number of doses is the pharmacist's.
+    - each notification carries **the pharmacist's own words**
+    - the next 60 doses are scheduled on the phone, topped up at every start and background round. Nothing goes through a server.
+  - **Notifications** («حضّرلك الصيدلي دواك», «طلبك جاهز للاستلام», needs a doctor, rejected):
+    - app open: from the live socket
+    - app closed: `workmanager` asks `/updates` about every 15 minutes when there's a connection (Android's own scheduler, no Google push)
+    - the first check only learns (no flood of old news); tapping one opens its chat, order or «جرعاتي»
+    - web: reminders are listed and the page says notifications come on the phone app
+  - **Prescription photo**: the camera button in the chat, or with an order.
+    - Shrunk on the phone (~1600 px, JPEG 80). The server checks the bytes (JPEG, PNG, WebP) and a 5 MB limit, and keeps it in `<data_dir>/photos`.
+    - Only the patient and, once sent, the pharmacy it went to can open it (migration `0003`).
+    - The pharmacist sees it in the case conversation and on the order, full size on a click, through the pharmacy's own server.
+  - **Receipt printing** (owner approved `pdf` + `printing`): «اطبع الإيصال» on the sale message opens the system print dialog with an 80 mm receipt. It shows pharmacy, sale number, cashier, customer, lines, discount, total, payment, paid and change, in English digits (sample: `docs/screenshots/phase3/22-receipt-sample.pdf`).
+  - **Real run** (`docs/screenshots/phase3/23–29-patient-*.png`), the web build against Doaya online with the stand-in model:
+    - shelf → product → cart with a photo → order
+    - the pharmacist opened the photo (`image/png`) and set the order ready with a note; the order page updated by itself
+    - a consultation → the pharmacist's decision (Ospamox 3 a day for 7 days) → «ذكّرني بالجرعات» → «جرعاتي» with 08:00, 14:00, 20:00
+  - **Bugs found and fixed**:
+    - **The receipt printed Arabic letters broken.** The PDF shapes Arabic with presentation-form glyphs, which Readex Pro doesn't have. It now prints with Amiri, and a test checks the font has all of them.
+    - On the order page the photo stretched to the full width.
+    - After sending an order, "back" returned to the empty cart; it now goes to «طلباتي».
+    - «لـ 7 أيام» read badly; now «كورس 7 أيام».
+  - Tests: patient app 27, pharmacy app 97, server 189, core 95.
 
 
