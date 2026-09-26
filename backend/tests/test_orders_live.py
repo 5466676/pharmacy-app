@@ -150,3 +150,57 @@ def test_pharmacy_devices_reach_their_cases_through_their_own_server(client, eng
     assert r["handled_by"] == "سامر"  # the device's own account name
     assert client.get("/central/shelf", headers=device).status_code == 404  # not forwarded
     assert client.get("/central/orders").status_code == 401  # devices only
+
+
+def test_the_owner_links_the_pharmacy_to_the_central_server_from_the_app(
+    client, engine, settings, tmp_path
+):
+    from app.cli import main
+
+    _, key, _ = _setup(client, engine)
+    main(
+        [
+            "create-pharmacy",
+            "--name",
+            "محلي",
+            "--owner-name",
+            "سامر",
+            "--owner-phone",
+            "0944000222",
+            "--password",
+            "secret-1",
+        ],
+        settings.database_url,
+    )
+    owner = client.post(
+        "/auth/link",
+        json={
+            "phone": "0944000222",
+            "password": "secret-1",
+            "device": {"id": "counter-pc-2", "name": "الكاونتر"},
+        },
+    ).json()
+    device = {"authorization": f"Bearer {owner['access_token']}"}
+    state = client.app.state
+    state.settings = state.settings.model_copy(update={"data_dir": str(tmp_path)})
+    state.central_probe = lambda url: client
+
+    assert client.get("/central-link", headers=device).json()["linked"] is False
+    bad = client.put(
+        "/central-link", headers=device, json={"url": "http://testserver", "key": "dk_wrong_key"}
+    )
+    assert bad.json()["detail"] == "bad_pharmacy_key"
+    ok = client.put("/central-link", headers=device, json={"url": "http://testserver/", "key": key})
+    assert ok.json() == {"linked": True, "url": "http://testserver"}
+    assert (tmp_path / "central.json").stat().st_mode & 0o777 == 0o600
+    state.central_client = client
+    assert client.get("/central/orders", headers=device).status_code == 200
+    # Kept across restarts.
+    from app.central_proxy import load_central_link
+
+    fresh = load_central_link(settings.model_copy(update={"data_dir": str(tmp_path)}))
+    assert fresh.central_key == key
+    assert client.delete("/central-link", headers=device).json() == {"linked": False}
+    assert (
+        client.get("/central/orders", headers=device).json()["detail"] == "central_not_configured"
+    )

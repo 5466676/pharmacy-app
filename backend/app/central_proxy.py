@@ -4,16 +4,112 @@ only; this server adds its pharmacy key and the pharmacist's name. Selling
 never depends on it: with no internet these calls fail and nothing else
 does."""
 
+import json
+from pathlib import Path
 from urllib.parse import quote
 
 import anyio
 import httpx
 from fastapi import APIRouter, Request, Response
+from pydantic import BaseModel, Field
 
-from .deps import Caller, DbSession, error
+from .bridge import ShelfPublisher
+from .config import Settings
+from .deps import Caller, DbSession, Owner, error
 from .models import User
 
 router = APIRouter(prefix="/central", tags=["central"])
+link_router = APIRouter(prefix="/central-link", tags=["central"])
+
+# ─── The link itself (owner, from the app) ──────────────────────────────────
+# Kept in <data_dir>/central.json so the owner can set it from the app;
+# DOAYA_CENTRAL_URL / _KEY in the environment win when set.
+
+
+def _link_file(settings: Settings) -> Path:
+    return Path(settings.data_dir) / "central.json"
+
+
+def load_central_link(settings: Settings) -> Settings:
+    if settings.central_url and settings.central_key:
+        return settings
+    f = _link_file(settings)
+    if not f.exists():
+        return settings
+    data = json.loads(f.read_text())
+    return settings.model_copy(update={"central_url": data["url"], "central_key": data["key"]})
+
+
+def restart_publisher(app) -> None:
+    """(Re)starts the shelf publisher on the real server once linked."""
+    state = app.state
+    if state.shelf_publisher:
+        state.shelf_publisher.stop()
+        state.shelf_publisher = None
+    s = state.settings
+    if state.runs_publisher and s.central_url and s.central_key:
+        state.shelf_publisher = ShelfPublisher(
+            s, state.db.sessions, every=s.shelf_publish_minutes * 60
+        ).start()
+
+
+class LinkIn(BaseModel):
+    url: str = Field(min_length=8, max_length=300)
+    key: str = Field(min_length=8, max_length=200)
+
+
+@link_router.get("")
+def link_state(_: Caller, request: Request) -> dict:
+    s = request.app.state.settings
+    pub = request.app.state.shelf_publisher
+    return {
+        "linked": bool(s.central_url and s.central_key),
+        "url": s.central_url or None,
+        "last_published": pub.last_published if pub else None,
+        "error": pub.last_error if pub else None,
+    }
+
+
+@link_router.put("")
+def set_link(body: LinkIn, _: Owner, request: Request) -> dict:
+    """Checks the key with the central server, then keeps it."""
+    url = body.url.strip().rstrip("/")
+    key = body.key.strip()
+    probe = getattr(request.app.state, "central_probe", None)  # tests
+    client = probe(url) if probe else httpx.Client(base_url=url, timeout=20)
+    try:
+        r = client.get("/pharmacy-api/updates", headers={"authorization": f"Pharmacy {key}"})
+    except httpx.HTTPError as e:
+        raise error(502, "central_unreachable") from e
+    finally:
+        if not probe:
+            client.close()
+    if r.status_code in (401, 403):
+        raise error(400, "bad_pharmacy_key")
+    if r.status_code != 200:
+        raise error(502, "central_unreachable")
+    state = request.app.state
+    f = _link_file(state.settings)
+    f.parent.mkdir(parents=True, exist_ok=True)
+    f.write_text(json.dumps({"url": url, "key": key}))
+    f.chmod(0o600)
+    state.settings = state.settings.model_copy(update={"central_url": url, "central_key": key})
+    state.central_client = None
+    restart_publisher(request.app)
+    return {"linked": True, "url": url}
+
+
+@link_router.delete("")
+def remove_link(_: Owner, request: Request) -> dict:
+    state = request.app.state
+    _link_file(state.settings).unlink(missing_ok=True)
+    state.settings = state.settings.model_copy(update={"central_url": "", "central_key": ""})
+    state.central_client = None
+    restart_publisher(request.app)
+    return {"linked": False}
+
+
+# ─── Forwarding for the pharmacy's devices ─────────────────────────────────
 
 # Only the pharmacy side of the central API, nothing else.
 ALLOWED = ("cases", "orders", "updates")
@@ -40,6 +136,7 @@ async def forward(path: str, request: Request, caller: Caller, db: DbSession) ->
         "x-doaya-actor": quote(user.name if user else ""),
         "content-type": request.headers.get("content-type", "application/json"),
     }
+
     def send() -> httpx.Response:
         return _client(request).request(
             request.method,

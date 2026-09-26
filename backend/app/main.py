@@ -17,7 +17,7 @@ from . import (
     sync,
 )
 from .backup import BackupScheduler, latest_backup_time, list_backups
-from .bridge import ShelfPublisher
+from .central_proxy import load_central_link, restart_publisher
 from .config import Settings, get_settings
 from .db import Database
 from .deps import DbSession, Owner
@@ -51,7 +51,7 @@ def create_app(
     """[discovery] starts the Wi-Fi discovery responder and [backups] the
     daily database backup (the real server; tests leave them off). With [tls]
     discovery announces https and the certificate fingerprint."""
-    settings = ensure_secret(settings or get_settings())
+    settings = load_central_link(ensure_secret(settings or get_settings()))
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
@@ -68,15 +68,11 @@ def create_app(
             ).start()
         scheduler = BackupScheduler(settings).start() if backups else None
         app.state.backups = scheduler
-        publisher = None
-        if backups and settings.central_url and settings.central_key:
-            publisher = ShelfPublisher(
-                settings, app.state.db.sessions, every=settings.shelf_publish_minutes * 60
-            ).start()
-        app.state.shelf_publisher = publisher
+        app.state.runs_publisher = backups
+        restart_publisher(app)
         yield
-        if publisher:
-            publisher.stop()
+        if app.state.shelf_publisher:
+            app.state.shelf_publisher.stop()
         if responder:
             responder.stop()
         if scheduler:
@@ -88,6 +84,8 @@ def create_app(
     app.state.login_limiter = LoginLimiter()
     app.state.events = Events()
     app.state.llm = None  # made from settings on first use
+    app.state.shelf_publisher = None
+    app.state.runs_publisher = False
     app.include_router(accounts.router)
     app.include_router(sync.router)
     app.include_router(patients.router)
@@ -96,6 +94,7 @@ def create_app(
     app.include_router(orders.router)
     app.include_router(realtime.router)
     app.include_router(central_proxy.router)
+    app.include_router(central_proxy.link_router)
 
     @app.get("/health")
     def health(db: DbSession) -> dict:
