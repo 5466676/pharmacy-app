@@ -614,4 +614,176 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get close => 'سكّر';
+
+  @override
+  String get lookTitle => 'المظهر';
+
+  @override
+  String get lookSubtitle => 'ألوان ونمط التطبيق على هالجهاز';
+
+  @override
+  String get lookStyle => 'النمط';
+
+  @override
+  String get lookStyleGlass => 'زجاجي';
+
+  @override
+  String get lookStyleFlat => 'مسطّح';
+
+  @override
+  String get lookStyleSoft => 'ناعم';
+
+  @override
+  String get lookStyleOutline => 'خطوط';
+
+  @override
+  String get lookStyleContrast => 'تباين عالي';
+
+  @override
+  String get lookNoteGlass => 'شفاف ومغبّش';
+
+  @override
+  String get lookNoteFlat => 'ألوان صافية بدون ظلال';
+
+  @override
+  String get lookNoteSoft => 'حواف دايرية وظلال خفيفة';
+
+  @override
+  String get lookNoteOutline => 'بسيط، إطارات رفيعة';
+
+  @override
+  String get lookNoteContrast => 'للنظر الضعيف والشمس';
+
+  @override
+  String get lookMode => 'الوضع';
+
+  @override
+  String get lookModeDark => 'ليلي';
+
+  @override
+  String get lookModeLight => 'نهاري';
+
+  @override
+  String get lookModeBlack => 'أسود كامل';
+
+  @override
+  String get lookModeAuto => 'تلقائي';
+
+  @override
+  String get lookColors => 'الألوان';
+
+  @override
+  String get lookPaletteGreen => 'أخضر دوايا';
+
+  @override
+  String get lookPaletteNavy => 'كحلي';
+
+  @override
+  String get lookPaletteWine => 'خمري';
+
+  @override
+  String get lookPaletteViolet => 'بنفسجي';
+
+  @override
+  String get lookPaletteSky => 'سماوي';
+
+  @override
+  String get lookPaletteRose => 'زهري';
+
+  @override
+  String get lookPaletteAmber => 'عنبري';
+
+  @override
+  String get lookPaletteOlive => 'زيتي';
+
+  @override
+  String get lookPaletteMint => 'نعناعي';
+
+  @override
+  String get lookPaletteSand => 'رملي';
+
+  @override
+  String get lookPaletteChar => 'فحمي';
+
+  @override
+  String get lookCustom => 'تصميمي';
+
+  @override
+  String get lookMain => 'اللون الأساسي';
+
+  @override
+  String get lookBackground => 'لون الخلفية';
+
+  @override
+  String get lookHue => 'اللون';
+
+  @override
+  String get lookLightness => 'الفتاحة';
+
+  @override
+  String get lookDetails => 'التفاصيل';
+
+  @override
+  String get lookCorners => 'الحواف';
+
+  @override
+  String get lookBlur => 'التغبيش';
+
+  @override
+  String get lookTextSize => 'حجم الخط';
+
+  @override
+  String get lookSizeSmall => 'صغير';
+
+  @override
+  String get lookSizeNormal => 'عادي';
+
+  @override
+  String get lookSizeLarge => 'كبير';
+
+  @override
+  String get lookSizeXLarge => 'كبير جداً';
+
+  @override
+  String get lookSpacing => 'المسافات';
+
+  @override
+  String get lookSpacingComfy => 'مريحة';
+
+  @override
+  String get lookSpacingCompact => 'مضغوطة';
+
+  @override
+  String get lookHeadingFont => 'خط العناوين';
+
+  @override
+  String get lookFontAmiri => 'مزخرف';
+
+  @override
+  String get lookFontPlain => 'بسيط';
+
+  @override
+  String get lookReadability => 'وضوح القراءة';
+
+  @override
+  String get lookReadable =>
+      'أي لون بيصعّب القراءة بيتعدّل لحاله. الأحمر للخطر والأصفر للتحذير ما بيتغيّروا.';
+
+  @override
+  String get lookAdjusted => 'اتعدّل ليضل واضح';
+
+  @override
+  String get lookSample => 'هيك بيطلع';
+
+  @override
+  String get lookSampleButton => 'زر';
+
+  @override
+  String get lookSampleWarning => 'هيك بيطلع التحذير.';
+
+  @override
+  String get lookSampleDanger => 'وهيك بتطلع الحالة المستعجلة.';
+
+  @override
+  String get lookReset => 'رجّع للأصل';
 }

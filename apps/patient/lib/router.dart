@@ -10,6 +10,7 @@ import 'ui/common.dart';
 import 'ui/consultations_screen.dart';
 import 'ui/doses_screen.dart';
 import 'ui/home_screen.dart';
+import 'ui/look_screen.dart';
 import 'ui/orders_screens.dart';
 import 'ui/pharmacy_screen.dart';
 import 'ui/shelf_screens.dart';
@@ -32,6 +33,7 @@ abstract final class Routes {
   static String shelfSearch(String q) => '$shelf?q=${Uri.encodeQueryComponent(q)}';
   static String product(String id) => '/product/$id';
   static const cart = '/cart';
+  static const look = '/look';
   static String order(String id) => '/order/$id';
 }
 
@@ -77,6 +79,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (_, state) => ProductScreen(productId: state.pathParameters['id']!),
       ),
       GoRoute(path: Routes.cart, builder: (_, _) => const CartScreen()),
+      GoRoute(path: Routes.look, builder: (_, _) => const LookScreen()),
       GoRoute(
         path: '/order/:id',
         builder: (_, state) => OrderScreen(id: state.pathParameters['id']!),

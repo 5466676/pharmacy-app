@@ -19,5 +19,6 @@ export 'src/widgets/doaya_logo.dart';
 export 'src/widgets/glass_surface.dart';
 export 'src/widgets/inputs.dart';
 export 'src/widgets/latin_text.dart';
+export 'src/widgets/look_editor.dart';
 export 'src/widgets/navigation.dart';
 export 'src/widgets/status.dart';

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'data/doses.dart';
 import 'data/live_updates.dart';
+import 'data/look.dart';
 import 'data/providers.dart';
 import 'l10n/app_localizations.dart';
 import 'router.dart';
@@ -24,20 +25,28 @@ class PatientApp extends ConsumerWidget {
       ref.read(notificationRouteProvider.notifier).done();
       ref.read(routerProvider).push(route);
     });
-    return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-      onGenerateTitle: (context) => AppLocalizations.of(context).appName,
-      theme: DoayaTheme.glass(),
-      locale: const Locale('ar'),
-      supportedLocales: AppLocalizations.supportedLocales,
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      routerConfig: ref.watch(routerProvider),
-      builder: (context, child) => DoayaBackground(child: child),
+    // The app is built under the scope, after the look is applied, so its
+    // theme is always the current one.
+    return DoayaLookScope(
+      look: ref.watch(lookProvider),
+      child: Builder(
+        builder: (context) => MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          onGenerateTitle: (context) => AppLocalizations.of(context).appName,
+          theme: DoayaTheme.glass(),
+          locale: const Locale('ar'),
+          supportedLocales: AppLocalizations.supportedLocales,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          routerConfig: ref.watch(routerProvider),
+          builder: (context, child) =>
+              DoayaLookScope.textScaled(context, DoayaBackground(child: child)),
+        ),
+      ),
     );
   }
 }

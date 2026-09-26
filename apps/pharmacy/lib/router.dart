@@ -9,6 +9,7 @@ import 'ui/screens/debts_screen.dart';
 import 'ui/screens/expenses_screen.dart';
 import 'ui/screens/inventory_screen.dart';
 import 'ui/screens/login_screen.dart';
+import 'ui/screens/look_screen.dart';
 import 'ui/screens/pos_screen.dart';
 import 'ui/screens/product_screen.dart';
 import 'ui/screens/purchase_form_screen.dart';
@@ -36,6 +37,7 @@ abstract final class Routes {
   static const till = '/till';
   static const returns = '/pos/return';
   static const settings = '/settings';
+  static const look = '/look';
   static const reports = '/reports';
   static const expenses = '/expenses';
   static const cases = '/cases';
@@ -174,6 +176,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: Routes.staff,
             pageBuilder: (_, _) => const NoTransitionPage(child: StaffScreen()),
+          ),
+          GoRoute(
+            path: Routes.look,
+            pageBuilder: (_, _) => const NoTransitionPage(child: LookScreen()),
           ),
           GoRoute(
             path: Routes.settings,

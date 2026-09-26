@@ -105,6 +105,16 @@ abstract final class DoayaSizes {
 
   /// Max content width for phone-style layouts on wide screens.
   static const double phoneMaxWidth = 480;
+
+  // «المظهر» (look editor).
+  static const double lookCardWidth = 132;
+  static const double lookMiniHeight = 40;
+  static const double lookMiniWidth = 64;
+  static const double lookMiniBar = 24;
+  static const double swatch = 44;
+  static const double swatchDot = 14;
+  static const double colorDot = 28;
+  static const double sliderLabelWidth = 110;
 }
 
 /// Blur sigmas (CSS `blur(n)` == sigma n).

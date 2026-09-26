@@ -86,6 +86,13 @@ class AccountScreen extends ConsumerWidget {
             ),
           SizedBox(height: DoayaSpacing.huge),
           GlassPillButton(
+            label: l.lookTitle,
+            icon: DoayaIcons.settings,
+            expand: true,
+            onPressed: () => context.push(Routes.look),
+          ),
+          SizedBox(height: DoayaSpacing.sm),
+          GlassPillButton(
             label: l.logout,
             icon: DoayaIcons.logout,
             expand: true,

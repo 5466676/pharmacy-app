@@ -77,7 +77,9 @@ class AppShell extends ConsumerWidget {
       if (session.isOwner)
         (Routes.settings, DoayaNavItem(icon: DoayaIcons.settings, label: l.navSettings)),
     ];
-    final routes = [...mainItems, ...adminItems].map((e) => e.$1).toList();
+    // «المظهر» is for everyone on this device.
+    final lookItems = [(Routes.look, DoayaNavItem(icon: DoayaIcons.edit, label: l.lookTitle))];
+    final routes = [...mainItems, ...adminItems, ...lookItems].map((e) => e.$1).toList();
     final selected = routes.indexWhere((r) => location.startsWith(r));
 
     return CallbackShortcuts(
@@ -99,6 +101,7 @@ class AppShell extends ConsumerWidget {
                 title: l.navSectionAdmin,
                 items: adminItems.map((e) => e.$2).toList(),
               ),
+            DoayaNavSection(items: lookItems.map((e) => e.$2).toList()),
           ],
           topBar: Row(
             children: [
@@ -301,6 +304,7 @@ class MoreScreen extends ConsumerWidget {
       if (owner) (Routes.staff, DoayaIcons.staff, l.navStaff),
       (Routes.sync, DoayaIcons.sync, l.syncTitle),
       if (owner) (Routes.settings, DoayaIcons.settings, l.navSettings),
+      (Routes.look, DoayaIcons.edit, l.lookTitle),
     ];
     return ListView(
       children: [

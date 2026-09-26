@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:doaya_patient/app.dart';
 import 'package:doaya_patient/data/doses.dart';
 import 'package:doaya_patient/data/live_updates.dart';
+import 'package:doaya_patient/data/look.dart';
 import 'package:doaya_patient/data/photos.dart';
 import 'package:doaya_patient/data/patient_api.dart';
 import 'package:doaya_patient/data/providers.dart';
@@ -226,6 +227,7 @@ Future<void> pumpApp(
   Stream<Object?>? live,
   FakeNotifications? notifications,
   MemorySessionStore? reminders,
+  MemorySessionStore? look,
 }) async {
   Future<PickedPhoto?> picker(PhotoSource _) async => (bytes: png, name: 'rx.png');
   tester.view
@@ -242,6 +244,7 @@ Future<void> pumpApp(
         remindersStoreProvider.overrideWithValue(reminders ?? MemorySessionStore()),
         watchStoreProvider.overrideWithValue(MemorySessionStore()),
         photoPickerProvider.overrideWithValue(picker),
+        lookStoreProvider.overrideWithValue(look ?? MemorySessionStore()),
       ],
       child: const PatientApp(),
     ),
