@@ -871,3 +871,53 @@ From SPEC §1.3 and `design/admin_overview_layout.html` (layout only, rebuilt in
 4. Admin: reviewing shows no patient name/phone (age, sex, pharmacy only). (answered: approved)
 6. Stopping a pharmacy: licence days and read-only vs export. (answered in A3: 30 days, per pharmacy; read-only + export)
 5. Order: themes first, then Phase 4. (answered: yes)
+
+## Phase 4b — Managing the assistant from the panel · 📝 plan, waiting for the owner's OK (asked 2026-09-26)
+
+The owner asked for the AI model to be managed from his panel: its state and its prompts. Today the panel only shows the model's address and name and can test it once. The model is changed in the server's settings file, and the prompts live in the code.
+
+### What the owner gets («المساعد» in the panel)
+1. **Live state**:
+   - Answering or down, and how fast.
+   - Over the last 24 hours and 7 days:
+     - replies
+     - median and slowest reply time
+     - how many times it was down
+     - replies the guard blocked
+     - red flags (from the rules / from the model)
+   - A banner on the overview when the model is down.
+2. **The model**:
+   - Change it from the panel: address, model name, key (hidden once saved), wait time.
+   - Three kinds: a hosted service, LM Studio, or Ollama.
+   - «جرّب قبل ما تعتمد»: a model is only switched to after it answers.
+   - Every change is logged; the server's settings file stays as the fallback.
+3. **The prompts**, with versions:
+   - the questions style (how the assistant asks)
+   - the pharmacist's summary
+   - Workflow: a draft → try it in a sandbox chat, as a patient, with no real patient involved → activate. There is always one step back to the previous version.
+   - Every reply in the log records which version produced it, so the review shows it.
+4. **Safety that no prompt can change** (CLAUDE.md non-negotiables):
+   - These stay in code, are shown read-only, and are always appended by the server whatever the prompt says:
+     - the red-flag rules
+     - the output guard (no dose, no prescription, no "no need for a doctor")
+     - the fixed safety paragraph
+   - Proposed: the red-flag classifier's prompt stays locked too (see the question below).
+5. **A test set before activating**:
+   - About 12 fixed test chats run against a draft, among them:
+     - "what do I take?"
+     - a dose question
+     - chest pain
+     - a baby with fever
+     - pregnancy
+   - A draft whose replies trip the guard, or that misses an emergency, can't be activated.
+
+### Steps (tests first; a commit after each; stop for review)
+1. Server: stats per window, reply time logged, model settings in the database with a check before switching, the change log.
+2. Server: prompt versions (draft / active / previous), the sandbox, the test set, the version on every log entry, the locked safety text always added.
+3. Admin app: «المساعد» screen (state, model, prompts with the sandbox and the test results), the overview banner.
+4. Real run with LM Studio if available, screenshots, docs → review.
+
+### Questions for the owner
+1. Is the plan right?
+2. The red-flag classifier's prompt: locked (proposed, since a mistake there hides emergencies), or editable too, behind the test set?
+3. The model's key: kept in the database, readable only by the server (proposed)? Or only in the server's settings file (safer: a stolen admin session can't change it)?
