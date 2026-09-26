@@ -29,7 +29,7 @@ class PatientPhoto extends ConsumerWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(DoayaRadii.imageWell),
         child: data == null
-            ? const ColoredBox(
+            ? ColoredBox(
                 color: DoayaColors.imageWell,
                 child: Center(child: Icon(DoayaIcons.camera, color: DoayaColors.textSecondary)),
               )
@@ -41,7 +41,7 @@ class PatientPhoto extends ConsumerWidget {
                     barrierColor: DoayaColors.scrim,
                     builder: (context) => Dialog(
                       backgroundColor: DoayaColors.transparent,
-                      insetPadding: const EdgeInsets.all(DoayaSpacing.huge),
+                      insetPadding: EdgeInsets.all(DoayaSpacing.huge),
                       child: Stack(
                         children: [
                           InteractiveViewer(maxScale: 5, child: Image.memory(data)),

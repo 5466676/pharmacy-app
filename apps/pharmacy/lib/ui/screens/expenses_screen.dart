@@ -68,7 +68,7 @@ Future<bool> showAddExpense(BuildContext context, WidgetRef ref) async {
                 l.expenseCategoryLabel,
                 style: DoayaTypography.bodySmall.copyWith(color: DoayaColors.textSecondary),
               ),
-              const SizedBox(height: DoayaSpacing.s),
+              SizedBox(height: DoayaSpacing.s),
               Wrap(
                 spacing: DoayaSpacing.s,
                 runSpacing: DoayaSpacing.s,
@@ -78,7 +78,7 @@ Future<bool> showAddExpense(BuildContext context, WidgetRef ref) async {
                 ],
               ),
               if (category == 'other') ...[
-                const SizedBox(height: DoayaSpacing.l),
+                SizedBox(height: DoayaSpacing.l),
                 GlassTextField(
                   label: l.expenseCustomLabel,
                   controller: custom,
@@ -86,7 +86,7 @@ Future<bool> showAddExpense(BuildContext context, WidgetRef ref) async {
                   validator: (v) => (v ?? '').trim().isEmpty ? l.required : null,
                 ),
               ],
-              const SizedBox(height: DoayaSpacing.l),
+              SizedBox(height: DoayaSpacing.l),
               GlassTextField(
                 label: l.amountLabel(currency.symbol),
                 controller: amount,
@@ -98,21 +98,21 @@ Future<bool> showAddExpense(BuildContext context, WidgetRef ref) async {
                 },
                 onSubmitted: (_) => submit(),
               ),
-              const SizedBox(height: DoayaSpacing.l),
+              SizedBox(height: DoayaSpacing.l),
               GlassTextField(label: '${l.notesLabel} (${l.optional})', controller: note),
-              const SizedBox(height: DoayaSpacing.l),
+              SizedBox(height: DoayaSpacing.l),
               Text(
                 l.paidFromLabel,
                 style: DoayaTypography.bodySmall.copyWith(color: DoayaColors.textSecondary),
               ),
-              const SizedBox(height: DoayaSpacing.s),
+              SizedBox(height: DoayaSpacing.s),
               Row(
                 children: [
                   for (final (i, (f, label)) in [
                     (PaidFrom.drawer, l.fromDrawer),
                     (PaidFrom.outside, l.fromOutside),
                   ].indexed) ...[
-                    if (i > 0) const SizedBox(width: DoayaSpacing.sm),
+                    if (i > 0) SizedBox(width: DoayaSpacing.sm),
                     Expanded(
                       child: GlassPillButton(
                         label: label,
@@ -223,7 +223,7 @@ class _Statement extends ConsumerWidget {
       bool signed = false,
       Color? color,
     }) => Padding(
-      padding: const EdgeInsets.symmetric(vertical: DoayaSpacing.xs),
+      padding: EdgeInsets.symmetric(vertical: DoayaSpacing.xs),
       child: Row(
         children: [
           Expanded(
@@ -243,7 +243,7 @@ class _Statement extends ConsumerWidget {
         ],
       ),
     );
-    const divider = Divider(color: DoayaColors.divider);
+    final divider = Divider(color: DoayaColors.divider);
     final categories = pnl.expensesByCategory.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
     final net = pnl.netProfitMinor;
@@ -276,7 +276,7 @@ class _Statement extends ConsumerWidget {
             color: net >= 0 ? DoayaColors.price : DoayaColors.dangerText,
           ),
           if (pnl.unknownCostPieces > 0) ...[
-            const SizedBox(height: DoayaSpacing.l),
+            SizedBox(height: DoayaSpacing.l),
             NoticeBanner(
               message: l.unknownCostNotice(formatQty(pnl.unknownCostPieces)),
               icon: DoayaIcons.warning,
@@ -312,7 +312,7 @@ class _ExpenseList extends ConsumerWidget {
               children: [
                 for (final e in expenses)
                   Padding(
-                    padding: const EdgeInsets.only(bottom: DoayaSpacing.ml),
+                    padding: EdgeInsets.only(bottom: DoayaSpacing.ml),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [

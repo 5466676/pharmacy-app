@@ -32,7 +32,7 @@ class _GalleryPageState extends State<GalleryPage> {
           child: SafeArea(
             bottom: false,
             child: ListView(
-              padding: const EdgeInsets.fromLTRB(
+              padding: EdgeInsets.fromLTRB(
                 DoayaSpacing.screenGutter,
                 DoayaSpacing.sm,
                 DoayaSpacing.screenGutter,
@@ -91,7 +91,7 @@ class _GalleryPageState extends State<GalleryPage> {
     );
   }
 
-  static const _gap = SizedBox(height: DoayaSpacing.xl);
+  static final _gap = SizedBox(height: DoayaSpacing.xl);
 
   Widget _topBar(AppLocalizations l) {
     return Row(
@@ -103,7 +103,7 @@ class _GalleryPageState extends State<GalleryPage> {
           selected: widget.style == SurfaceStyle.glass,
           onPressed: () => widget.onStyleChanged(SurfaceStyle.glass),
         ),
-        const SizedBox(width: DoayaSpacing.s),
+        SizedBox(width: DoayaSpacing.s),
         GlassPillButton(
           label: l.modeSolid,
           selected: widget.style == SurfaceStyle.solid,
@@ -120,10 +120,7 @@ class _GalleryPageState extends State<GalleryPage> {
           tone: SurfaceTone.strong,
           blur: true,
           borderRadius: BorderRadius.circular(DoayaRadii.hero),
-          padding: const EdgeInsets.symmetric(
-            horizontal: DoayaSpacing.xxxl,
-            vertical: DoayaSpacing.huge,
-          ),
+          padding: EdgeInsets.symmetric(horizontal: DoayaSpacing.xxxl, vertical: DoayaSpacing.huge),
           child: Row(
             children: [
               Expanded(
@@ -131,12 +128,12 @@ class _GalleryPageState extends State<GalleryPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(l.heroTitle, style: DoayaTypography.displayLarge),
-                    const SizedBox(height: DoayaSpacing.m),
+                    SizedBox(height: DoayaSpacing.m),
                     Text(
                       l.heroBody,
                       style: DoayaTypography.bodySmall.copyWith(color: DoayaColors.textSecondary),
                     ),
-                    const SizedBox(height: DoayaSpacing.m),
+                    SizedBox(height: DoayaSpacing.m),
                     SagePillButton(
                       label: l.startConsultation,
                       size: PillSize.small,
@@ -149,14 +146,14 @@ class _GalleryPageState extends State<GalleryPage> {
             ],
           ),
         ),
-        const SizedBox(height: DoayaSpacing.ml),
+        SizedBox(height: DoayaSpacing.ml),
         OutlinedButton(
           onPressed: () =>
               Navigator.of(context)
                   .push(MaterialPageRoute<void>(builder: (_) => const DesktopDemo())),
           style: OutlinedButton.styleFrom(
             foregroundColor: DoayaColors.accent,
-            side: const BorderSide(color: DoayaColors.accentSoftBorder),
+            side: BorderSide(color: DoayaColors.accentSoftBorder),
             shape: const StadiumBorder(),
           ),
           child: Text(l.openDesktop),
@@ -172,7 +169,7 @@ class _GalleryPageState extends State<GalleryPage> {
         Text(l.appName, style: DoayaTypography.wordmark),
         Text(l.typeDisplay, style: DoayaTypography.title),
         Text(l.price(formatNumber(12500)), style: DoayaTypography.price),
-        const SizedBox(height: DoayaSpacing.sm),
+        SizedBox(height: DoayaSpacing.sm),
         Text(l.typeBody, style: DoayaTypography.body),
         for (final w in const [FontWeight.w300, FontWeight.w400, FontWeight.w500, FontWeight.w600])
           Text(
@@ -244,7 +241,7 @@ class _GalleryPageState extends State<GalleryPage> {
             RoundIconButton(icon: DoayaIcons.back, tooltip: l.back, onPressed: () {}),
             const Spacer(),
             RoundIconButton(icon: DoayaIcons.heart, tooltip: l.favorite, onPressed: () {}),
-            const SizedBox(width: DoayaSpacing.sm),
+            SizedBox(width: DoayaSpacing.sm),
             RoundIconButton(icon: DoayaIcons.share, tooltip: l.share, onPressed: () {}),
           ],
         ),
@@ -258,7 +255,7 @@ class _GalleryPageState extends State<GalleryPage> {
         Row(
           children: [
             Expanded(child: GlassSearchField(hint: l.searchHint)),
-            const SizedBox(width: DoayaSpacing.m),
+            SizedBox(width: DoayaSpacing.m),
             RoundIconButton(
               icon: DoayaIcons.filter,
               tooltip: l.filter,
@@ -273,7 +270,7 @@ class _GalleryPageState extends State<GalleryPage> {
           emphasized: true,
           height: DoayaSizes.inputBar,
           textDirection: TextDirection.ltr,
-          trailing: const Padding(
+          trailing: Padding(
             padding: EdgeInsetsDirectional.only(end: DoayaSpacing.sm),
             child: Icon(DoayaIcons.barcode, color: DoayaColors.accent),
           ),
@@ -315,10 +312,10 @@ class _GalleryPageState extends State<GalleryPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         for (var i = 0; i < items.length; i++) ...[
-          if (i > 0) const SizedBox(width: DoayaSpacing.m),
+          if (i > 0) SizedBox(width: DoayaSpacing.m),
           Expanded(
             child: ProductCard(
-              image: const Icon(
+              image: Icon(
                 DoayaIcons.medicine,
                 size: DoayaSizes.productIcon,
                 color: DoayaColors.sageBottom,
@@ -375,7 +372,7 @@ class _GalleryPageState extends State<GalleryPage> {
 
   Widget _cases(AppLocalizations l) => GalleryCases(l: l);
 
-  static const _smallGap = SizedBox(height: DoayaSpacing.ml);
+  static final _smallGap = SizedBox(height: DoayaSpacing.ml);
 }
 
 /// Stat cards, shared with the desktop demo.
@@ -419,7 +416,7 @@ class GalleryStats extends StatelessWidget {
     ];
     return LayoutBuilder(
       builder: (context, constraints) {
-        const gap = DoayaSpacing.ml;
+        final gap = DoayaSpacing.ml;
         final width = (constraints.maxWidth - gap * (columns - 1)) / columns;
         return Wrap(
           spacing: gap,
@@ -456,7 +453,7 @@ class _GalleryCasesState extends State<GalleryCases> {
       children: [
         for (var i = 0; i < rows.length; i++)
           Padding(
-            padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
+            padding: EdgeInsets.only(bottom: DoayaSpacing.sm),
             child: CaseRow(
               initials: rows[i].$1,
               title: rows[i].$2,
@@ -482,12 +479,12 @@ class _Section extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: DoayaSpacing.giant),
+      padding: EdgeInsets.only(bottom: DoayaSpacing.giant),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           SectionHeader(title: title, actionLabel: action, onAction: action == null ? null : () {}),
-          const SizedBox(height: DoayaSpacing.ml),
+          SizedBox(height: DoayaSpacing.ml),
           child,
         ],
       ),
@@ -499,7 +496,7 @@ class _ColorSwatches extends StatelessWidget {
   const _ColorSwatches();
 
   // Token names are developer identifiers, shown as-is.
-  static const _swatches = <(String, Color)>[
+  static final _swatches = <(String, Color)>[
     ('bgTop', DoayaColors.bgTop),
     ('bgMid', DoayaColors.bgMid),
     ('bgBottom', DoayaColors.bgBottom),
@@ -541,7 +538,7 @@ class _ColorSwatches extends StatelessWidget {
                     border: Border.all(color: DoayaColors.glassBorder),
                   ),
                 ),
-                const SizedBox(height: DoayaSpacing.xs),
+                SizedBox(height: DoayaSpacing.xs),
                 LatinText(
                   name,
                   textAlign: TextAlign.center,

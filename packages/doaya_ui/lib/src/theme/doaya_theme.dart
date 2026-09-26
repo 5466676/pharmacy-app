@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../tokens/colors.dart';
 import '../tokens/dimensions.dart';
 import '../tokens/typography.dart';
+import 'doaya_appearance.dart';
 import 'doaya_tokens.dart';
 
 /// Builds the app-wide [ThemeData].
@@ -14,8 +15,9 @@ abstract final class DoayaTheme {
   static ThemeData solid() => _build(DoayaTokens.solid);
 
   static ThemeData _build(DoayaTokens tokens) {
-    const scheme = ColorScheme(
-      brightness: Brightness.dark,
+    final brightness = DoayaAppearance.palette.brightness;
+    final scheme = ColorScheme(
+      brightness: brightness,
       primary: DoayaColors.accent,
       onPrimary: DoayaColors.onSage,
       secondary: DoayaColors.sageBottom,
@@ -47,7 +49,7 @@ abstract final class DoayaTheme {
 
     return ThemeData(
       useMaterial3: true,
-      brightness: Brightness.dark,
+      brightness: brightness,
       colorScheme: scheme,
       fontFamily: DoayaFonts.bodyQualified,
       textTheme: textTheme,
@@ -55,8 +57,8 @@ abstract final class DoayaTheme {
       canvasColor: DoayaColors.bgMid,
       dividerColor: DoayaColors.divider,
       splashFactory: InkRipple.splashFactory,
-      iconTheme: const IconThemeData(color: DoayaColors.textPrimary, size: DoayaSizes.iconL),
-      textSelectionTheme: const TextSelectionThemeData(
+      iconTheme: IconThemeData(color: DoayaColors.textPrimary, size: DoayaSizes.iconL),
+      textSelectionTheme: TextSelectionThemeData(
         cursorColor: DoayaColors.accent,
         selectionColor: DoayaColors.selectedTileFill,
         selectionHandleColor: DoayaColors.accent,

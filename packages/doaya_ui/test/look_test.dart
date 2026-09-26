@@ -19,12 +19,32 @@ Iterable<(String, DoayaLook)> everyLook() sync* {
 
 void readable(String name, DoayaPalette p, {required bool hi}) {
   final t = hi ? 7.0 : 4.5;
-  expect(contrastRatio(p.textPrimary, p.bgMid), greaterThanOrEqualTo(hi ? 12 : 7), reason: '$name text');
-  expect(contrastRatio(p.textPrimary, p.surfaceRaised), greaterThanOrEqualTo(4.5), reason: '$name text on a card');
-  expect(contrastRatio(p.textSecondary, p.bgMid), greaterThanOrEqualTo(t), reason: '$name secondary');
+  expect(
+    contrastRatio(p.textPrimary, p.bgMid),
+    greaterThanOrEqualTo(hi ? 12 : 7),
+    reason: '$name text',
+  );
+  expect(
+    contrastRatio(p.textPrimary, p.surfaceRaised),
+    greaterThanOrEqualTo(4.5),
+    reason: '$name text on a card',
+  );
+  expect(
+    contrastRatio(p.textSecondary, p.bgMid),
+    greaterThanOrEqualTo(t),
+    reason: '$name secondary',
+  );
   expect(contrastRatio(p.accent, p.bgMid), greaterThanOrEqualTo(t), reason: '$name accent');
-  expect(contrastRatio(p.onSage, p.accent), greaterThanOrEqualTo(4.5), reason: '$name text on accent');
-  expect(contrastRatio(p.onSage, p.sageBottom), greaterThanOrEqualTo(4.5), reason: '$name button text');
+  expect(
+    contrastRatio(p.onSage, p.accent),
+    greaterThanOrEqualTo(4.5),
+    reason: '$name text on accent',
+  );
+  expect(
+    contrastRatio(p.onSage, p.sageBottom),
+    greaterThanOrEqualTo(4.5),
+    reason: '$name button text',
+  );
   expect(contrastRatio(p.dangerText, p.bgMid), greaterThanOrEqualTo(4.5), reason: '$name danger');
   expect(contrastRatio(p.warningText, p.bgMid), greaterThanOrEqualTo(4.5), reason: '$name warning');
 }
@@ -68,14 +88,26 @@ void main() {
     for (final (name, look) in everyLook()) {
       final p = DoayaPalette.of(look);
       final light = p.brightness == Brightness.light;
-      expect(p.dangerText, light ? const Color(0xFF8E1F14) : DoayaPalette.classic.dangerText, reason: name);
-      expect(p.warningText, light ? const Color(0xFF6E4600) : DoayaPalette.classic.warningText, reason: name);
+      expect(
+        p.dangerText,
+        light ? const Color(0xFF8E1F14) : DoayaPalette.classic.dangerText,
+        reason: name,
+      );
+      expect(
+        p.warningText,
+        light ? const Color(0xFF6E4600) : DoayaPalette.classic.warningText,
+        reason: name,
+      );
     }
   });
 
   test('a main colour that would be hard to read is adjusted, and says so', () {
     final p = DoayaPalette.of(
-      const DoayaLook(palette: DoayaLook.custom, customMain: Color(0xFF203020), customDark: Color(0xFF101810)),
+      const DoayaLook(
+        palette: DoayaLook.custom,
+        customMain: Color(0xFF203020),
+        customDark: Color(0xFF101810),
+      ),
     );
     expect(p.accentAdjusted, isTrue);
     expect(DoayaPalette.of(const DoayaLook(palette: 'navy')).accentAdjusted, isFalse);
@@ -98,6 +130,9 @@ void main() {
       headingFont: DoayaHeadingFont.readex,
     );
     expect(DoayaLook.fromJson(look.toJson()), look);
-    expect(DoayaLook.fromJson({'style': 'weird', 'radius': 'x', 'text_scale': 9}), const DoayaLook(textScale: 1.4));
+    expect(
+      DoayaLook.fromJson({'style': 'weird', 'radius': 'x', 'text_scale': 9}),
+      const DoayaLook(textScale: 1.4),
+    );
   });
 }

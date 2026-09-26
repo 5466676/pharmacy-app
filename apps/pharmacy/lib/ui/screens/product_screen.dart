@@ -76,7 +76,7 @@ class ProductScreen extends ConsumerWidget {
             ],
           ),
         ),
-        const SizedBox(height: DoayaSpacing.xl),
+        SizedBox(height: DoayaSpacing.xl),
         Panel(
           title: l.batches,
           trailing: Wrap(
@@ -101,7 +101,7 @@ class ProductScreen extends ConsumerWidget {
                   children: [
                     for (final b in batches)
                       Padding(
-                        padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
+                        padding: EdgeInsets.only(bottom: DoayaSpacing.sm),
                         child: Wrap(
                           spacing: DoayaSpacing.l,
                           runSpacing: DoayaSpacing.xs,
@@ -134,14 +134,14 @@ class ProductScreen extends ConsumerWidget {
                   ],
                 ),
         ),
-        const SizedBox(height: DoayaSpacing.xl),
+        SizedBox(height: DoayaSpacing.xl),
         Panel(
           title: l.history,
           child: Column(
             children: [
               for (final e in events.take(50))
                 Padding(
-                  padding: const EdgeInsets.only(bottom: DoayaSpacing.s),
+                  padding: EdgeInsets.only(bottom: DoayaSpacing.s),
                   child: Row(
                     children: [
                       SizedBox(
@@ -196,7 +196,7 @@ class ProductScreen extends ConsumerWidget {
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               validator: (v) => (int.tryParse(v ?? '') ?? 0) > 0 ? null : l.invalidNumber,
             ),
-            const SizedBox(height: DoayaSpacing.l),
+            SizedBox(height: DoayaSpacing.l),
             GlassTextField(
               label: '${l.expiryLabel} (${l.optional})',
               hint: l.expiryHint,
@@ -205,7 +205,7 @@ class ProductScreen extends ConsumerWidget {
               validator: (v) =>
                   (v ?? '').trim().isEmpty || parseDate(v!) != null ? null : l.invalidDate,
             ),
-            const SizedBox(height: DoayaSpacing.l),
+            SizedBox(height: DoayaSpacing.l),
             GlassTextField(
               label: '${l.unitCostLabel} (${l.optional})',
               controller: cost,
@@ -259,7 +259,7 @@ class ProductScreen extends ConsumerWidget {
               l.adjustHelp,
               style: DoayaTypography.bodySmall.copyWith(color: DoayaColors.textSecondary),
             ),
-            const SizedBox(height: DoayaSpacing.l),
+            SizedBox(height: DoayaSpacing.l),
             GlassTextField(
               label: ppu > 1 ? l.receiveQtyBoxes : l.actualQtyLabel,
               controller: actual,
@@ -269,7 +269,7 @@ class ProductScreen extends ConsumerWidget {
               validator: (v) => int.tryParse(v ?? '') == null ? l.invalidNumber : null,
             ),
             if (ppu > 1) ...[
-              const SizedBox(height: DoayaSpacing.l),
+              SizedBox(height: DoayaSpacing.l),
               GlassTextField(
                 label: l.looseStripsLabel,
                 controller: strips,
@@ -449,11 +449,11 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(child: a),
-        const SizedBox(width: DoayaSpacing.l),
+        SizedBox(width: DoayaSpacing.l),
         Expanded(child: b),
       ],
     );
-    const gap = SizedBox(height: DoayaSpacing.l);
+    final gap = SizedBox(height: DoayaSpacing.l);
 
     final body = Form(
       key: _form,
@@ -561,7 +561,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
     // Pushed on top of the shell when editing: give it its own scaffold.
     if (widget.existing != null) {
       return Scaffold(
-        body: Padding(padding: const EdgeInsets.all(DoayaSpacing.huge), child: body),
+        body: Padding(padding: EdgeInsets.all(DoayaSpacing.huge), child: body),
       );
     }
     return body;

@@ -38,12 +38,12 @@ class AccountScreen extends ConsumerWidget {
           ScreenHeader(title: l.accountTitle),
           GlassSurface(
             borderRadius: card,
-            padding: const EdgeInsets.all(DoayaSpacing.xl),
+            padding: EdgeInsets.all(DoayaSpacing.xl),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(p.name, style: DoayaTypography.titleSmall),
-                const SizedBox(height: DoayaSpacing.xs),
+                SizedBox(height: DoayaSpacing.xs),
                 Text(ltrIsolate(p.phone), style: secondary),
                 Text(
                   [
@@ -56,15 +56,15 @@ class AccountScreen extends ConsumerWidget {
               ],
             ),
           ),
-          const SizedBox(height: DoayaSpacing.xl),
+          SizedBox(height: DoayaSpacing.xl),
           if (p.pharmacy case final ph?)
             GlassSurface(
               borderRadius: card,
-              padding: const EdgeInsets.all(DoayaSpacing.xl),
+              padding: EdgeInsets.all(DoayaSpacing.xl),
               child: Row(
                 children: [
-                  const Icon(DoayaIcons.pharmacy, color: DoayaColors.accent),
-                  const SizedBox(width: DoayaSpacing.ml),
+                  Icon(DoayaIcons.pharmacy, color: DoayaColors.accent),
+                  SizedBox(width: DoayaSpacing.ml),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,14 +84,14 @@ class AccountScreen extends ConsumerWidget {
                 ],
               ),
             ),
-          const SizedBox(height: DoayaSpacing.huge),
+          SizedBox(height: DoayaSpacing.huge),
           GlassPillButton(
             label: l.logout,
             icon: DoayaIcons.logout,
             expand: true,
             onPressed: () => _logout(context, ref),
           ),
-          const SizedBox(height: DoayaSpacing.xl),
+          SizedBox(height: DoayaSpacing.xl),
         ],
       ),
     );

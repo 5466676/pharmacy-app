@@ -28,10 +28,11 @@ void main() {
     });
 
     test('tokens lerp between modes', () {
-      final mid = DoayaTokens.glass.lerp(DoayaTokens.solid, 0.5);
+      final glass = DoayaTokens.glass;
+      final mid = glass.lerp(DoayaTokens.solid, 0.5);
       expect(mid.surfaceStyle, SurfaceStyle.solid);
-      expect(DoayaTokens.glass.lerp(DoayaTokens.solid, 0).surfaceFill, DoayaColors.glassFill);
-      expect(DoayaTokens.glass.lerp(null, 0.7), same(DoayaTokens.glass));
+      expect(glass.lerp(DoayaTokens.solid, 0).surfaceFill, DoayaColors.glassFill);
+      expect(glass.lerp(null, 0.7), same(glass));
     });
 
     test('spec colors are exact', () {

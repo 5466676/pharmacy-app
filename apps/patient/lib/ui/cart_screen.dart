@@ -68,9 +68,9 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                 onBack: () => context.canPop() ? context.pop() : context.go(Routes.home),
               ),
               if (lines.isEmpty) ...[
-                const SizedBox(height: DoayaSpacing.huge),
+                SizedBox(height: DoayaSpacing.huge),
                 Text(l.cartEmpty, textAlign: TextAlign.center, style: secondary),
-                const SizedBox(height: DoayaSpacing.l),
+                SizedBox(height: DoayaSpacing.l),
                 Center(
                   child: GlassPillButton(
                     label: l.browseShelf,
@@ -81,10 +81,10 @@ class _CartScreenState extends ConsumerState<CartScreen> {
               ] else ...[
                 for (final line in lines)
                   Padding(
-                    padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
+                    padding: EdgeInsets.only(bottom: DoayaSpacing.sm),
                     child: GlassSurface(
                       borderRadius: card,
-                      padding: const EdgeInsets.all(DoayaSpacing.ml),
+                      padding: EdgeInsets.all(DoayaSpacing.ml),
                       child: Row(
                         children: [
                           SizedBox.square(
@@ -102,7 +102,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                               ),
                             ),
                           ),
-                          const SizedBox(width: DoayaSpacing.ml),
+                          SizedBox(width: DoayaSpacing.ml),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,14 +126,14 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                       ),
                     ),
                   ),
-                const SizedBox(height: DoayaSpacing.l),
+                SizedBox(height: DoayaSpacing.l),
                 GlassTextField(label: l.noteToPharmacist, controller: _note, maxLines: 2),
-                const SizedBox(height: DoayaSpacing.l),
+                SizedBox(height: DoayaSpacing.l),
                 if (_photo case final photo?)
                   Row(
                     children: [
                       PhotoThumb(bytes: photo.bytes, size: DoayaSizes.productImage),
-                      const SizedBox(width: DoayaSpacing.ml),
+                      SizedBox(width: DoayaSpacing.ml),
                       Expanded(child: Text(l.prescriptionPhotoHint, style: secondary)),
                       GlassPillButton(
                         label: l.removePhoto,
@@ -152,15 +152,15 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                       if (picked != null && mounted) setState(() => _photo = picked);
                     },
                   ),
-                const SizedBox(height: DoayaSpacing.l),
+                SizedBox(height: DoayaSpacing.l),
                 if (pharmacy != null)
                   GlassSurface(
                     borderRadius: card,
-                    padding: const EdgeInsets.all(DoayaSpacing.l),
+                    padding: EdgeInsets.all(DoayaSpacing.l),
                     child: Row(
                       children: [
-                        const Icon(DoayaIcons.pharmacy, color: DoayaColors.accent),
-                        const SizedBox(width: DoayaSpacing.ml),
+                        Icon(DoayaIcons.pharmacy, color: DoayaColors.accent),
+                        SizedBox(width: DoayaSpacing.ml),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -174,18 +174,18 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                       ],
                     ),
                   ),
-                const SizedBox(height: DoayaSpacing.l),
+                SizedBox(height: DoayaSpacing.l),
                 Text(
                   l.orderTotal(formatPrice(total, lines.first.item.currency)),
                   style: DoayaTypography.lead.copyWith(color: DoayaColors.price),
                 ),
                 Text(l.finalQuantitiesHint, style: secondary),
-                const SizedBox(height: DoayaSpacing.l),
+                SizedBox(height: DoayaSpacing.l),
                 BusyButton(label: l.sendOrder, busy: _busy, onPressed: _send),
-                const SizedBox(height: DoayaSpacing.sm),
+                SizedBox(height: DoayaSpacing.sm),
                 Text(l.payAtPickup, textAlign: TextAlign.center, style: secondary),
               ],
-              const SizedBox(height: DoayaSpacing.xl),
+              SizedBox(height: DoayaSpacing.xl),
             ],
           ),
         ),

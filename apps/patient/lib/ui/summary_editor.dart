@@ -48,7 +48,7 @@ class SummaryCard extends StatelessWidget {
     return GlassSurface(
       tone: SurfaceTone.strong,
       borderRadius: BorderRadius.circular(DoayaRadii.cardLarge),
-      padding: const EdgeInsets.all(DoayaSpacing.xl),
+      padding: EdgeInsets.all(DoayaSpacing.xl),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -56,7 +56,7 @@ class SummaryCard extends StatelessWidget {
             tone: SurfaceTone.accentSoft,
             shadow: false,
             borderRadius: BorderRadius.circular(DoayaRadii.tile),
-            padding: const EdgeInsets.all(DoayaSpacing.l),
+            padding: EdgeInsets.all(DoayaSpacing.l),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -64,7 +64,7 @@ class SummaryCard extends StatelessWidget {
                   l.summaryTitle,
                   style: DoayaTypography.label.copyWith(color: DoayaColors.accent),
                 ),
-                const SizedBox(height: DoayaSpacing.xs),
+                SizedBox(height: DoayaSpacing.xs),
                 for (final f in summaryFields)
                   if (_text(summary[f]) case final v when v.isNotEmpty)
                     Text.rich(
@@ -82,9 +82,9 @@ class SummaryCard extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: DoayaSpacing.ml),
+          SizedBox(height: DoayaSpacing.ml),
           Text(l.summaryHelp, style: secondary),
-          const SizedBox(height: DoayaSpacing.ml),
+          SizedBox(height: DoayaSpacing.ml),
           Row(
             children: [
               Expanded(
@@ -96,7 +96,7 @@ class SummaryCard extends StatelessWidget {
                   onPressed: busy ? null : onSend,
                 ),
               ),
-              const SizedBox(width: DoayaSpacing.sm),
+              SizedBox(width: DoayaSpacing.sm),
               GlassPillButton(
                 label: l.edit,
                 icon: DoayaIcons.edit,
@@ -172,9 +172,9 @@ class _SummaryEditorState extends State<_SummaryEditor> {
                   ? (v) => (v ?? '').trim().isEmpty ? l.required : null
                   : null,
             ),
-            const SizedBox(height: DoayaSpacing.ml),
+            SizedBox(height: DoayaSpacing.ml),
           ],
-          const SizedBox(height: DoayaSpacing.sm),
+          SizedBox(height: DoayaSpacing.sm),
           Wrap(
             alignment: WrapAlignment.end,
             spacing: DoayaSpacing.m,

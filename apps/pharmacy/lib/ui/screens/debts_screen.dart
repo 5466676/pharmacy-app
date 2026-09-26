@@ -40,7 +40,7 @@ class _DebtsScreenState extends ConsumerState<DebtsScreen> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         GlassSearchField(hint: l.search, onChanged: (v) => setState(() => _query = v)),
-        const SizedBox(height: DoayaSpacing.ml),
+        SizedBox(height: DoayaSpacing.ml),
         Row(
           children: [
             GlassPillButton(
@@ -48,7 +48,7 @@ class _DebtsScreenState extends ConsumerState<DebtsScreen> {
               selected: !_owingOnly,
               onPressed: () => setState(() => _owingOnly = false),
             ),
-            const SizedBox(width: DoayaSpacing.s),
+            SizedBox(width: DoayaSpacing.s),
             GlassPillButton(
               label: l.filterOwing,
               selected: _owingOnly,
@@ -56,13 +56,13 @@ class _DebtsScreenState extends ConsumerState<DebtsScreen> {
             ),
           ],
         ),
-        const SizedBox(height: DoayaSpacing.ml),
+        SizedBox(height: DoayaSpacing.ml),
         Expanded(
           child: list.isEmpty
               ? EmptyHint(l.noCustomers)
               : ListView.separated(
                   itemCount: list.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: DoayaSpacing.sm),
+                  separatorBuilder: (_, _) => SizedBox(height: DoayaSpacing.sm),
                   itemBuilder: (context, i) {
                     final c = list[i];
                     final bal = debts.balance(c.id);
@@ -118,7 +118,7 @@ class _DebtsScreenState extends ConsumerState<DebtsScreen> {
                               onPressed: () => setState(() => _selectedId = null),
                             ),
                           ),
-                          const SizedBox(height: DoayaSpacing.sm),
+                          SizedBox(height: DoayaSpacing.sm),
                           _CustomerDetail(customer: selected, balance: debts.balance(selected.id)),
                         ],
                       ))
@@ -126,7 +126,7 @@ class _DebtsScreenState extends ConsumerState<DebtsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     SizedBox(width: DoayaSizes.listPaneWidth, child: listPane),
-                    const SizedBox(width: DoayaSpacing.huge),
+                    SizedBox(width: DoayaSpacing.huge),
                     Expanded(
                       child: selected == null
                           ? const SizedBox.shrink()
@@ -172,7 +172,7 @@ class _CustomerDetail extends ConsumerWidget {
                 l.balance,
                 style: DoayaTypography.bodySmall.copyWith(color: DoayaColors.textSecondary),
               ),
-              const SizedBox(width: DoayaSpacing.ml),
+              SizedBox(width: DoayaSpacing.ml),
               Text(
                 balance > 0 ? formatMoney(balance, currency) : l.settled,
                 style: DoayaTypography.price.copyWith(
@@ -186,10 +186,10 @@ class _CustomerDetail extends ConsumerWidget {
               customer.phone!,
               style: DoayaTypography.bodySmall.copyWith(color: DoayaColors.textSecondary),
             ),
-          const SizedBox(height: DoayaSpacing.l),
+          SizedBox(height: DoayaSpacing.l),
           for (final e in history)
             Padding(
-              padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
+              padding: EdgeInsets.only(bottom: DoayaSpacing.sm),
               child: Row(
                 children: [
                   StatusChip(
@@ -200,7 +200,7 @@ class _CustomerDetail extends ConsumerWidget {
                     },
                     tone: e.type == 'debt_added' ? StatusTone.warning : StatusTone.accent,
                   ),
-                  const SizedBox(width: DoayaSpacing.ml),
+                  SizedBox(width: DoayaSpacing.ml),
                   Expanded(
                     child: Text(
                       '${formatDate(e.occurredAt)}، ${formatTime(e.occurredAt)}',
@@ -296,7 +296,7 @@ Future<CustomerRow?> showAddCustomerDialog(
             autofocus: true,
             validator: (v) => (v ?? '').trim().isEmpty ? l.required : null,
           ),
-          const SizedBox(height: DoayaSpacing.l),
+          SizedBox(height: DoayaSpacing.l),
           GlassTextField(
             label: '${l.phoneLabel} (${l.optional})',
             controller: phone,

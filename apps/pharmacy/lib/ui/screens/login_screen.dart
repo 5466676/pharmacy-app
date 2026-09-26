@@ -133,24 +133,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         onKeyEvent: _onKey,
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(DoayaSpacing.huge),
+            padding: EdgeInsets.all(DoayaSpacing.huge),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: DoayaSizes.formWidth),
               child: GlassSurface(
                 tone: SurfaceTone.strong,
                 blur: true,
                 borderRadius: BorderRadius.circular(DoayaRadii.splashCard),
-                padding: const EdgeInsets.all(DoayaSpacing.giant),
+                padding: EdgeInsets.all(DoayaSpacing.giant),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Center(
                       child: DoayaWordmark(name: l.appName, textStyle: DoayaTypography.title),
                     ),
-                    const SizedBox(height: DoayaSpacing.xxl),
+                    SizedBox(height: DoayaSpacing.xxl),
                     if (_selected == null) ...[
                       Text(l.loginTitle, style: DoayaTypography.lead, textAlign: TextAlign.center),
-                      const SizedBox(height: DoayaSpacing.xl),
+                      SizedBox(height: DoayaSpacing.xl),
                       Wrap(
                         alignment: WrapAlignment.center,
                         spacing: DoayaSpacing.ml,
@@ -203,7 +203,7 @@ class _EmployeeTile extends StatelessWidget {
           child: InkWell(
             onTap: onTap,
             child: Padding(
-              padding: const EdgeInsets.all(DoayaSpacing.l),
+              padding: EdgeInsets.all(DoayaSpacing.l),
               child: Column(
                 children: [
                   CircleAvatar(
@@ -214,7 +214,7 @@ class _EmployeeTile extends StatelessWidget {
                       style: DoayaTypography.label.copyWith(color: DoayaColors.accent),
                     ),
                   ),
-                  const SizedBox(height: DoayaSpacing.sm),
+                  SizedBox(height: DoayaSpacing.sm),
                   Text(name, style: DoayaTypography.label, textAlign: TextAlign.center),
                   Text(
                     role,
@@ -252,7 +252,7 @@ class _PinPad extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget key(Widget child, VoidCallback onTap, {String? semantics}) => Padding(
-      padding: const EdgeInsets.all(DoayaSpacing.xs),
+      padding: EdgeInsets.all(DoayaSpacing.xs),
       child: SizedBox.square(
         dimension: DoayaSizes.pinKey,
         child: Semantics(
@@ -278,13 +278,13 @@ class _PinPad extends StatelessWidget {
     return Column(
       children: [
         Text(title, style: DoayaTypography.lead, textAlign: TextAlign.center),
-        const SizedBox(height: DoayaSpacing.xl),
+        SizedBox(height: DoayaSpacing.xl),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             for (var i = 0; i < 4; i++)
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: DoayaSpacing.s),
+                margin: EdgeInsets.symmetric(horizontal: DoayaSpacing.s),
                 width: DoayaSpacing.l,
                 height: DoayaSpacing.l,
                 decoration: BoxDecoration(
@@ -320,7 +320,7 @@ class _PinPad extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox.square(dimension: DoayaSizes.pinKey + DoayaSpacing.sm),
+                  SizedBox.square(dimension: DoayaSizes.pinKey + DoayaSpacing.sm),
                   digit(0),
                   key(const Icon(DoayaIcons.backspace, size: DoayaSizes.iconM), onBackspace),
                 ],
@@ -328,7 +328,7 @@ class _PinPad extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: DoayaSpacing.ml),
+        SizedBox(height: DoayaSpacing.ml),
         TextButton(
           onPressed: onBack,
           child: Text(

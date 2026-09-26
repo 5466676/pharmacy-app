@@ -36,9 +36,9 @@ class FloatingBottomNav extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       top: false,
-      minimum: const EdgeInsets.only(bottom: DoayaSpacing.floatingBottom),
+      minimum: EdgeInsets.only(bottom: DoayaSpacing.floatingBottom),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: DoayaSpacing.floatingInset),
+        padding: EdgeInsets.symmetric(horizontal: DoayaSpacing.floatingInset),
         child: GlassSurface(
           tone: SurfaceTone.strong,
           blur: true,
@@ -76,10 +76,7 @@ class _BottomNavButton extends StatelessWidget {
         ? Container(
             width: DoayaSizes.bottomNavActive,
             height: DoayaSizes.bottomNavActive,
-            decoration: const BoxDecoration(
-              color: DoayaColors.navActiveFill,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: DoayaColors.navActiveFill, shape: BoxShape.circle),
             child: Icon(item.activeIcon ?? item.icon, size: DoayaSizes.iconS, color: color),
           )
         : Icon(item.icon, size: DoayaSizes.iconM, color: color);
@@ -96,7 +93,7 @@ class _BottomNavButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _Badged(badge: item.badge, child: icon),
-            const SizedBox(height: DoayaSpacing.xs),
+            SizedBox(height: DoayaSpacing.xs),
             Text(
               item.label,
               style: DoayaTypography.micro.copyWith(color: color),
@@ -163,11 +160,11 @@ class DesktopShell extends StatelessWidget {
         ),
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.all(DoayaSpacing.huge),
+            padding: EdgeInsets.all(DoayaSpacing.huge),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                if (topBar != null) ...[topBar!, const SizedBox(height: DoayaSpacing.xl)],
+                if (topBar != null) ...[topBar!, SizedBox(height: DoayaSpacing.xl)],
                 Expanded(child: body),
               ],
             ),
@@ -214,7 +211,7 @@ class _Sidebar extends StatelessWidget {
       if (!compact && section.title != null) {
         children.add(
           Padding(
-            padding: const EdgeInsets.fromLTRB(
+            padding: EdgeInsets.fromLTRB(
               DoayaSpacing.ml,
               DoayaSpacing.l,
               DoayaSpacing.ml,
@@ -224,13 +221,13 @@ class _Sidebar extends StatelessWidget {
           ),
         );
       } else if (compact && index > 0) {
-        children.add(const SizedBox(height: DoayaSpacing.sm));
+        children.add(SizedBox(height: DoayaSpacing.sm));
       }
       for (final item in section.items) {
         final i = index++;
         children.add(
           Padding(
-            padding: const EdgeInsets.only(bottom: DoayaSpacing.xs),
+            padding: EdgeInsets.only(bottom: DoayaSpacing.xs),
             child: compact
                 ? _RailButton(item: item, selected: i == selectedIndex, onTap: () => onSelect(i))
                 : _SidebarButton(
@@ -245,7 +242,7 @@ class _Sidebar extends StatelessWidget {
 
     return Container(
       width: compact ? DoayaSizes.railWidth : DoayaSizes.sidebarWidth,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: DoayaColors.surface,
         border: BorderDirectional(
           end: BorderSide(color: DoayaColors.border, width: DoayaSizes.borderWidth),
@@ -293,7 +290,7 @@ class _SidebarButton extends StatelessWidget {
                 width: DoayaSizes.borderWidth,
               ),
             ),
-            padding: const EdgeInsets.symmetric(horizontal: DoayaSpacing.sm),
+            padding: EdgeInsets.symmetric(horizontal: DoayaSpacing.sm),
             child: Row(
               children: [
                 Container(
@@ -309,7 +306,7 @@ class _SidebarButton extends StatelessWidget {
                     color: selected ? DoayaColors.onSage : DoayaColors.textSecondary,
                   ),
                 ),
-                const SizedBox(width: DoayaSpacing.m),
+                SizedBox(width: DoayaSpacing.m),
                 Expanded(
                   child: Text(
                     item.label,
@@ -393,7 +390,7 @@ class _Badged extends StatelessWidget {
           child: Container(
             constraints: const BoxConstraints(minWidth: DoayaSizes.badge),
             height: DoayaSizes.badge,
-            padding: const EdgeInsets.symmetric(horizontal: DoayaSpacing.xs),
+            padding: EdgeInsets.symmetric(horizontal: DoayaSpacing.xs),
             decoration: BoxDecoration(
               color: DoayaColors.accent,
               borderRadius: BorderRadius.circular(DoayaRadii.pill),
@@ -415,7 +412,7 @@ class _BadgePill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: DoayaSpacing.sm, vertical: DoayaSpacing.xxs),
+      padding: EdgeInsets.symmetric(horizontal: DoayaSpacing.sm, vertical: DoayaSpacing.xxs),
       decoration: BoxDecoration(
         color: DoayaColors.accent,
         borderRadius: BorderRadius.circular(DoayaRadii.pill),

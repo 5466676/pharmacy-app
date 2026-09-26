@@ -54,9 +54,9 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
   /// Joining: this device's name, the server, then the account.
   List<Widget> _joinFields(AppLocalizations l) => [
     Text(l.joinHelp, style: DoayaTypography.bodySmall.copyWith(color: DoayaColors.textSecondary)),
-    const SizedBox(height: DoayaSpacing.l),
+    SizedBox(height: DoayaSpacing.l),
     GlassTextField(label: l.deviceNameLabel, hint: l.deviceNameHint, controller: _device),
-    const SizedBox(height: DoayaSpacing.l),
+    SizedBox(height: DoayaSpacing.l),
     if (_server == null)
       ServerPicker(onChosen: (url) => setState(() => _server = url))
     else ...[
@@ -64,7 +64,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
         '${_server!.host}:${_server!.port}',
         style: DoayaTypography.bodySmall.copyWith(color: DoayaColors.textSecondary),
       ),
-      const SizedBox(height: DoayaSpacing.l),
+      SizedBox(height: DoayaSpacing.l),
       AccountForm(
         submitLabel: l.linkButton,
         onSubmit: (phone, password) async {
@@ -91,29 +91,29 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(DoayaSpacing.huge),
+          padding: EdgeInsets.all(DoayaSpacing.huge),
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: DoayaSizes.formWidth),
             child: GlassSurface(
               tone: SurfaceTone.strong,
               blur: true,
               borderRadius: BorderRadius.circular(DoayaRadii.splashCard),
-              padding: const EdgeInsets.all(DoayaSpacing.giant),
+              padding: EdgeInsets.all(DoayaSpacing.giant),
               child: Form(
                 key: _form,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const Center(child: DoayaLogo(size: DoayaSizes.logoLarge)),
-                    const SizedBox(height: DoayaSpacing.ml),
+                    SizedBox(height: DoayaSpacing.ml),
                     Text(l.setupTitle, style: DoayaTypography.title, textAlign: TextAlign.center),
-                    const SizedBox(height: DoayaSpacing.sm),
+                    SizedBox(height: DoayaSpacing.sm),
                     Text(
                       l.setupSubtitle,
                       textAlign: TextAlign.center,
                       style: DoayaTypography.bodySmall.copyWith(color: DoayaColors.textSecondary),
                     ),
-                    const SizedBox(height: DoayaSpacing.xl),
+                    SizedBox(height: DoayaSpacing.xl),
                     Row(
                       children: [
                         Expanded(
@@ -124,7 +124,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                             onPressed: () => setState(() => _joining = false),
                           ),
                         ),
-                        const SizedBox(width: DoayaSpacing.sm),
+                        SizedBox(width: DoayaSpacing.sm),
                         Expanded(
                           child: GlassPillButton(
                             label: l.joinExisting,
@@ -135,7 +135,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: DoayaSpacing.xl),
+                    SizedBox(height: DoayaSpacing.xl),
                     if (_joining)
                       ..._joinFields(l)
                     else ...[
@@ -145,20 +145,20 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                         validator: requiredField,
                         autofocus: true,
                       ),
-                      const SizedBox(height: DoayaSpacing.l),
+                      SizedBox(height: DoayaSpacing.l),
                       GlassTextField(
                         label: l.deviceNameLabel,
                         hint: l.deviceNameHint,
                         controller: _device,
                         validator: requiredField,
                       ),
-                      const SizedBox(height: DoayaSpacing.l),
+                      SizedBox(height: DoayaSpacing.l),
                       GlassTextField(
                         label: l.ownerNameLabel,
                         controller: _owner,
                         validator: requiredField,
                       ),
-                      const SizedBox(height: DoayaSpacing.l),
+                      SizedBox(height: DoayaSpacing.l),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -174,7 +174,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                                   PeopleRepository.isValidPin(v ?? '') ? null : l.pinInvalid,
                             ),
                           ),
-                          const SizedBox(width: DoayaSpacing.ml),
+                          SizedBox(width: DoayaSpacing.ml),
                           Expanded(
                             child: GlassTextField(
                               label: l.pinConfirmLabel,
@@ -189,7 +189,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: DoayaSpacing.huge),
+                      SizedBox(height: DoayaSpacing.huge),
                       SagePillButton(
                         label: l.startButton,
                         icon: DoayaIcons.forward,

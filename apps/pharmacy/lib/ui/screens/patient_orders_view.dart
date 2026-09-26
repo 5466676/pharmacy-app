@@ -102,23 +102,23 @@ class _OrderDetailViewState extends ConsumerState<OrderDetailView> {
             style: secondary,
           ),
           if (o.photoId case final photo?) ...[
-            const SizedBox(height: DoayaSpacing.sm),
+            SizedBox(height: DoayaSpacing.sm),
             Row(
               children: [
                 PatientPhoto(id: photo),
-                const SizedBox(width: DoayaSpacing.ml),
+                SizedBox(width: DoayaSpacing.ml),
                 Expanded(child: Text(l.prescriptionPhoto, style: secondary)),
               ],
             ),
           ],
           if (o.note != null) ...[
-            const SizedBox(height: DoayaSpacing.sm),
+            SizedBox(height: DoayaSpacing.sm),
             NoticeBanner(message: l.orderPatientNote(o.note!)),
           ],
-          const SizedBox(height: DoayaSpacing.l),
+          SizedBox(height: DoayaSpacing.l),
           for (final line in o.lines)
             Padding(
-              padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
+              padding: EdgeInsets.only(bottom: DoayaSpacing.sm),
               child: Row(
                 children: [
                   Expanded(
@@ -153,19 +153,19 @@ class _OrderDetailViewState extends ConsumerState<OrderDetailView> {
                 ],
               ),
             ),
-          const Divider(color: DoayaColors.divider),
+          Divider(color: DoayaColors.divider),
           Text(
             l.orderTotal(formatMoney(total, currency)),
             style: DoayaTypography.label.copyWith(color: DoayaColors.price),
           ),
           if (o.pharmacistNote != null) ...[
-            const SizedBox(height: DoayaSpacing.sm),
+            SizedBox(height: DoayaSpacing.sm),
             Text(o.pharmacistNote!, style: secondary),
           ],
-          const SizedBox(height: DoayaSpacing.l),
+          SizedBox(height: DoayaSpacing.l),
           if (o.open) ...[
             GlassTextField(label: l.pharmacistNoteLabel, controller: _note, maxLines: 2),
-            const SizedBox(height: DoayaSpacing.l),
+            SizedBox(height: DoayaSpacing.l),
             SagePillButton(
               label: l.markOrderReady,
               icon: DoayaIcons.check,
@@ -173,7 +173,7 @@ class _OrderDetailViewState extends ConsumerState<OrderDetailView> {
               expand: true,
               onPressed: _busy ? null : () => _set(OrderStatus.ready),
             ),
-            const SizedBox(height: DoayaSpacing.sm),
+            SizedBox(height: DoayaSpacing.sm),
             Wrap(
               spacing: DoayaSpacing.sm,
               children: [

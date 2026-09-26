@@ -58,7 +58,7 @@ class PhoneBody extends StatelessWidget {
       constraints: const BoxConstraints(maxWidth: DoayaSizes.phoneMaxWidth),
       child: padding
           ? Padding(
-              padding: const EdgeInsets.symmetric(horizontal: DoayaSpacing.screenGutter),
+              padding: EdgeInsets.symmetric(horizontal: DoayaSpacing.screenGutter),
               child: child,
             )
           : child,
@@ -109,7 +109,7 @@ class ScreenHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: DoayaSpacing.l),
+    padding: EdgeInsets.symmetric(vertical: DoayaSpacing.l),
     child: Row(
       children: [
         if (onBack != null) ...[
@@ -118,7 +118,7 @@ class ScreenHeader extends StatelessWidget {
             tooltip: AppLocalizations.of(context).cancel,
             onPressed: onBack,
           ),
-          const SizedBox(width: DoayaSpacing.ml),
+          SizedBox(width: DoayaSpacing.ml),
         ],
         Expanded(child: Text(title, style: DoayaTypography.title)),
         ?trailing,
@@ -185,7 +185,7 @@ class QuantityStepper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    const size = DoayaSizes.qtyButton + DoayaSpacing.sm;
+    final size = DoayaSizes.qtyButton + DoayaSpacing.sm;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [

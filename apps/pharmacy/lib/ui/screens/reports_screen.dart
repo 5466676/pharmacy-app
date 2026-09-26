@@ -112,7 +112,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   for (final (i, card) in cards.indexed) ...[
-                    if (i > 0) const SizedBox(width: DoayaSpacing.l),
+                    if (i > 0) SizedBox(width: DoayaSpacing.l),
                     Expanded(child: card),
                   ],
                 ],
@@ -121,13 +121,13 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
           },
         ),
         if (!total.complete) ...[
-          const SizedBox(height: DoayaSpacing.l),
+          SizedBox(height: DoayaSpacing.l),
           NoticeBanner(
             message: l.unknownCostNotice(formatQty(total.unknownCostPieces)),
             icon: DoayaIcons.warning,
           ),
         ],
-        const SizedBox(height: DoayaSpacing.xl),
+        SizedBox(height: DoayaSpacing.xl),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
@@ -142,12 +142,12 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                   selected: _group == g,
                   onPressed: () => setState(() => _group = g),
                 ),
-                const SizedBox(width: DoayaSpacing.s),
+                SizedBox(width: DoayaSpacing.s),
               ],
             ],
           ),
         ),
-        const SizedBox(height: DoayaSpacing.l),
+        SizedBox(height: DoayaSpacing.l),
         Panel(child: report == null ? const SizedBox.shrink() : _table(l, currency, report)),
       ],
     );
@@ -193,7 +193,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
         children: [
           for (final (name, p) in rows)
             Padding(
-              padding: const EdgeInsets.only(bottom: DoayaSpacing.ml),
+              padding: EdgeInsets.only(bottom: DoayaSpacing.ml),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -235,10 +235,10 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
             num(l.colMargin, style: head),
           ],
         ),
-        const Divider(color: DoayaColors.divider),
+        Divider(color: DoayaColors.divider),
         for (final (name, p) in rows)
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: DoayaSpacing.xs),
+            padding: EdgeInsets.symmetric(vertical: DoayaSpacing.xs),
             child: Row(
               children: [
                 Expanded(
@@ -247,7 +247,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                     children: [
                       Flexible(child: name),
                       if (!p.complete) ...[
-                        const SizedBox(width: DoayaSpacing.s),
+                        SizedBox(width: DoayaSpacing.s),
                         StatusChip(label: l.costIncomplete, tone: StatusTone.warning),
                       ],
                     ],

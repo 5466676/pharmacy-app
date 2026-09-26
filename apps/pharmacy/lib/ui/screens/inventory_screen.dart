@@ -55,7 +55,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
     }).toList();
 
     Widget filter(InventoryFilter f, String label) => Padding(
-      padding: const EdgeInsetsDirectional.only(end: DoayaSpacing.s),
+      padding: EdgeInsetsDirectional.only(end: DoayaSpacing.s),
       child: GlassPillButton(
         label: label,
         selected: _filter == f,
@@ -93,12 +93,12 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
         ),
         if (phone) ...[
           GlassSearchField(hint: l.search, onChanged: (v) => setState(() => _query = v)),
-          const SizedBox(height: DoayaSpacing.sm),
+          SizedBox(height: DoayaSpacing.sm),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(children: filters),
           ),
-          const SizedBox(height: DoayaSpacing.sm),
+          SizedBox(height: DoayaSpacing.sm),
         ] else ...[
           Row(
             children: [
@@ -109,11 +109,11 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                   onChanged: (v) => setState(() => _query = v),
                 ),
               ),
-              const SizedBox(width: DoayaSpacing.l),
+              SizedBox(width: DoayaSpacing.l),
               ...filters,
             ],
           ),
-          const SizedBox(height: DoayaSpacing.l),
+          SizedBox(height: DoayaSpacing.l),
           _HeaderRow(l: l),
         ],
         Expanded(
@@ -121,7 +121,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
               ? EmptyHint(l.noProducts)
               : ListView.separated(
                   itemCount: list.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: DoayaSpacing.s),
+                  separatorBuilder: (_, _) => SizedBox(height: DoayaSpacing.s),
                   itemBuilder: (context, i) {
                     final p = list[i];
                     final exp = nearest(p.id);
@@ -134,7 +134,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                         child: InkWell(
                           onTap: () => context.go(Routes.product(p.id)),
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(
+                            padding: EdgeInsets.symmetric(
                               horizontal: DoayaSpacing.xl,
                               vertical: DoayaSpacing.ml,
                             ),
@@ -146,7 +146,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             ProductName(product: p),
-                                            const SizedBox(height: DoayaSpacing.xs),
+                                            SizedBox(height: DoayaSpacing.xs),
                                             StockChip(product: p, onHand: stock.onHand(p.id)),
                                           ],
                                         ),
@@ -219,7 +219,7 @@ class _HeaderRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = DoayaTypography.caption.copyWith(color: DoayaColors.textSecondary);
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: DoayaSpacing.xl, vertical: DoayaSpacing.sm),
+      padding: EdgeInsets.symmetric(horizontal: DoayaSpacing.xl, vertical: DoayaSpacing.sm),
       child: Row(
         children: [
           Expanded(flex: 4, child: Text(l.colProduct, style: s)),

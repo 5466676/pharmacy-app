@@ -1,43 +1,45 @@
+import '../theme/doaya_appearance.dart';
+
 /// Spacing scale, taken from the mockups.
 abstract final class DoayaSpacing {
-  static const double xxs = 2;
-  static const double xs = 4;
-  static const double s = 6;
-  static const double sm = 8;
-  static const double m = 10;
-  static const double ml = 12;
-  static const double l = 14;
-  static const double xl = 16;
-  static const double xxl = 18;
-  static const double xxxl = 20;
-  static const double huge = 24;
-  static const double giant = 28;
+  static double get xxs => 2 * DoayaAppearance.density;
+  static double get xs => 4 * DoayaAppearance.density;
+  static double get s => 6 * DoayaAppearance.density;
+  static double get sm => 8 * DoayaAppearance.density;
+  static double get m => 10 * DoayaAppearance.density;
+  static double get ml => 12 * DoayaAppearance.density;
+  static double get l => 14 * DoayaAppearance.density;
+  static double get xl => 16 * DoayaAppearance.density;
+  static double get xxl => 18 * DoayaAppearance.density;
+  static double get xxxl => 20 * DoayaAppearance.density;
+  static double get huge => 24 * DoayaAppearance.density;
+  static double get giant => 28 * DoayaAppearance.density;
 
   /// Horizontal padding of phone screens.
-  static const double screenGutter = 18;
+  static double get screenGutter => 18 * DoayaAppearance.density;
 
   /// Floating bottom nav / input bar distance from the screen sides.
-  static const double floatingInset = 14;
+  static double get floatingInset => 14 * DoayaAppearance.density;
 
   /// Floating bottom nav distance from the screen bottom.
-  static const double floatingBottom = 18;
+  static double get floatingBottom => 18 * DoayaAppearance.density;
 }
 
 /// Corner radii.
 abstract final class DoayaRadii {
   static const double pill = 999;
-  static const double hairline = 3;
-  static const double key = 8;
-  static const double imageWell = 14;
-  static const double tile = 18;
-  static const double card = 20;
-  static const double cardLarge = 22;
-  static const double bottomNav = 26;
-  static const double hero = 28;
-  static const double sheet = 30;
-  static const double splashCard = 34;
-  static const double bubble = 22;
-  static const double bubbleTail = 6;
+  static double get hairline => 3 * DoayaAppearance.roundness;
+  static double get key => 8 * DoayaAppearance.roundness;
+  static double get imageWell => 14 * DoayaAppearance.roundness;
+  static double get tile => 18 * DoayaAppearance.roundness;
+  static double get card => 20 * DoayaAppearance.roundness;
+  static double get cardLarge => 22 * DoayaAppearance.roundness;
+  static double get bottomNav => 26 * DoayaAppearance.roundness;
+  static double get hero => 28 * DoayaAppearance.roundness;
+  static double get sheet => 30 * DoayaAppearance.roundness;
+  static double get splashCard => 34 * DoayaAppearance.roundness;
+  static double get bubble => 22 * DoayaAppearance.roundness;
+  static double get bubbleTail => 6 * DoayaAppearance.roundness;
 }
 
 /// Fixed component sizes.
@@ -107,8 +109,8 @@ abstract final class DoayaSizes {
 
 /// Blur sigmas (CSS `blur(n)` == sigma n).
 abstract final class DoayaBlur {
-  static const double glass = 18;
-  static const double glassStrong = 22;
+  static double get glass => DoayaAppearance.look.blur;
+  static double get glassStrong => DoayaAppearance.look.blur + 4;
   static const double leafNear = 4;
   static const double leafFar = 6;
   static const double photo = 12;

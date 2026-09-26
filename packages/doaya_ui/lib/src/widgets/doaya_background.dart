@@ -2,6 +2,8 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 
+import '../theme/doaya_appearance.dart';
+import '../theme/doaya_look.dart';
 import '../tokens/colors.dart';
 import '../tokens/dimensions.dart';
 
@@ -26,7 +28,14 @@ class DoayaBackground extends StatelessWidget {
       fit: StackFit.expand,
       children: [
         RepaintBoundary(
-          child: CustomPaint(painter: _BackgroundPainter(leaves: leaves)),
+          child: CustomPaint(
+            painter: _BackgroundPainter(
+              leaves: leaves,
+              palette: DoayaAppearance.palette,
+              // Only the glass style has the blobs and leaves; the others are plain.
+              plain: DoayaAppearance.look.style != DoayaStyle.glass,
+            ),
+          ),
         ),
         if (photo != null)
           RepaintBoundary(
@@ -52,9 +61,11 @@ class DoayaBackground extends StatelessWidget {
 }
 
 class _BackgroundPainter extends CustomPainter {
-  const _BackgroundPainter({required this.leaves});
+  _BackgroundPainter({required this.leaves, required this.palette, required this.plain});
 
   final bool leaves;
+  final DoayaPalette palette;
+  final bool plain;
 
   // Leaf outline in a 100×200 box (from the mockups).
   static final _leafPath = Path()
@@ -66,11 +77,15 @@ class _BackgroundPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final rect = Offset.zero & size;
+    if (plain) {
+      canvas.drawRect(rect, Paint()..color = DoayaColors.bgMid);
+      return;
+    }
 
     canvas.drawRect(
       rect,
       Paint()
-        ..shader = const LinearGradient(
+        ..shader = LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [DoayaColors.bgTop, DoayaColors.bgMid, DoayaColors.bgBottom],
@@ -174,5 +189,6 @@ class _BackgroundPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_BackgroundPainter old) => old.leaves != leaves;
+  bool shouldRepaint(_BackgroundPainter old) =>
+      old.leaves != leaves || !identical(old.palette, palette) || old.plain != plain;
 }

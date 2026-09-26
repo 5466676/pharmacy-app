@@ -86,7 +86,7 @@ class _ChoosePharmacyScreenState extends ConsumerState<ChoosePharmacyScreen> {
                 onBack: context.canPop() ? () => context.pop() : null,
               ),
               Text(l.choosePharmacyHelp, style: secondary),
-              const SizedBox(height: DoayaSpacing.xl),
+              SizedBox(height: DoayaSpacing.xl),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -99,7 +99,7 @@ class _ChoosePharmacyScreenState extends ConsumerState<ChoosePharmacyScreen> {
                       onSubmitted: (_) => _byCode(),
                     ),
                   ),
-                  const SizedBox(width: DoayaSpacing.sm),
+                  SizedBox(width: DoayaSpacing.sm),
                   SagePillButton(
                     label: l.findByCode,
                     size: PillSize.medium,
@@ -107,9 +107,9 @@ class _ChoosePharmacyScreenState extends ConsumerState<ChoosePharmacyScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: DoayaSpacing.xl),
+              SizedBox(height: DoayaSpacing.xl),
               Text(l.orPickFromList, style: DoayaTypography.label),
-              const SizedBox(height: DoayaSpacing.sm),
+              SizedBox(height: DoayaSpacing.sm),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -120,7 +120,7 @@ class _ChoosePharmacyScreenState extends ConsumerState<ChoosePharmacyScreen> {
                       onSubmitted: (_) => _search(),
                     ),
                   ),
-                  const SizedBox(width: DoayaSpacing.sm),
+                  SizedBox(width: DoayaSpacing.sm),
                   GlassPillButton(
                     label: l.findByCode,
                     icon: DoayaIcons.search,
@@ -129,7 +129,7 @@ class _ChoosePharmacyScreenState extends ConsumerState<ChoosePharmacyScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: DoayaSpacing.xl),
+              SizedBox(height: DoayaSpacing.xl),
               if (_found == null && _busy)
                 const Center(child: CircularProgressIndicator())
               else if (_found case final found? when found.isEmpty)
@@ -137,14 +137,14 @@ class _ChoosePharmacyScreenState extends ConsumerState<ChoosePharmacyScreen> {
               else
                 for (final p in _found ?? const <PharmacyBrief>[])
                   Padding(
-                    padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
+                    padding: EdgeInsets.only(bottom: DoayaSpacing.sm),
                     child: _PharmacyCard(
                       pharmacy: p,
                       current: p.id == current?.id,
                       onChoose: _busy ? null : () => _choose(p),
                     ),
                   ),
-              const SizedBox(height: DoayaSpacing.xl),
+              SizedBox(height: DoayaSpacing.xl),
             ],
           ),
         ),
@@ -168,11 +168,11 @@ class _PharmacyCard extends StatelessWidget {
     return GlassSurface(
       tone: current ? SurfaceTone.selected : SurfaceTone.normal,
       borderRadius: BorderRadius.circular(DoayaRadii.card),
-      padding: const EdgeInsets.all(DoayaSpacing.l),
+      padding: EdgeInsets.all(DoayaSpacing.l),
       child: Row(
         children: [
-          const Icon(DoayaIcons.pharmacy, color: DoayaColors.accent, size: DoayaSizes.iconL),
-          const SizedBox(width: DoayaSpacing.ml),
+          Icon(DoayaIcons.pharmacy, color: DoayaColors.accent, size: DoayaSizes.iconL),
+          SizedBox(width: DoayaSpacing.ml),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -184,9 +184,9 @@ class _PharmacyCard extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(width: DoayaSpacing.sm),
+          SizedBox(width: DoayaSpacing.sm),
           if (current)
-            const Icon(DoayaIcons.check, color: DoayaColors.accent)
+            Icon(DoayaIcons.check, color: DoayaColors.accent)
           else
             SagePillButton(label: l.chooseThis, size: PillSize.small, onPressed: onChoose),
         ],

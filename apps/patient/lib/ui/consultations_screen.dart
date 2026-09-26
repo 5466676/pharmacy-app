@@ -33,7 +33,7 @@ class ConsultationsScreen extends ConsumerWidget {
             ),
             ...switch (all) {
               AsyncData(:final value) when value.isEmpty => [
-                const SizedBox(height: DoayaSpacing.huge),
+                SizedBox(height: DoayaSpacing.huge),
                 Center(
                   child: Text(
                     l.noConsultations,
@@ -44,7 +44,7 @@ class ConsultationsScreen extends ConsumerWidget {
               AsyncData(:final value) => [
                 for (final c in value)
                   Padding(
-                    padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
+                    padding: EdgeInsets.only(bottom: DoayaSpacing.sm),
                     child: ConsultationTile(
                       consultation: c,
                       onTap: () => context.push(Routes.chat(c.id)),

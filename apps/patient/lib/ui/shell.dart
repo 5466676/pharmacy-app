@@ -24,9 +24,7 @@ class PatientShell extends StatelessWidget {
         children: [
           Positioned.fill(
             child: Padding(
-              padding: const EdgeInsets.only(
-                bottom: DoayaSizes.bottomNav + DoayaSpacing.floatingBottom,
-              ),
+              padding: EdgeInsets.only(bottom: DoayaSizes.bottomNav + DoayaSpacing.floatingBottom),
               child: SafeArea(bottom: false, child: child),
             ),
           ),

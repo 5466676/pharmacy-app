@@ -53,11 +53,11 @@ class GlassSearchField extends StatelessWidget {
       shadow: false,
       height: height,
       borderRadius: BorderRadius.circular(DoayaRadii.pill),
-      padding: const EdgeInsetsDirectional.only(start: DoayaSpacing.xl, end: DoayaSpacing.sm),
+      padding: EdgeInsetsDirectional.only(start: DoayaSpacing.xl, end: DoayaSpacing.sm),
       child: Row(
         children: [
-          const Icon(DoayaIcons.search, size: DoayaSizes.iconS, color: DoayaColors.textPrimary),
-          const SizedBox(width: DoayaSpacing.m),
+          Icon(DoayaIcons.search, size: DoayaSizes.iconS, color: DoayaColors.textPrimary),
+          SizedBox(width: DoayaSpacing.m),
           Expanded(
             child: TextField(
               controller: controller,
@@ -135,7 +135,7 @@ class GlassTextField extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
-          padding: const EdgeInsetsDirectional.only(start: DoayaSpacing.xs, bottom: DoayaSpacing.s),
+          padding: EdgeInsetsDirectional.only(start: DoayaSpacing.xs, bottom: DoayaSpacing.s),
           child: Text(
             label,
             style: DoayaTypography.caption.copyWith(color: DoayaColors.textSecondary),
@@ -167,7 +167,7 @@ class GlassTextField extends StatelessWidget {
             filled: true,
             fillColor: tokens.surfaceFill,
             isDense: true,
-            contentPadding: const EdgeInsets.symmetric(
+            contentPadding: EdgeInsets.symmetric(
               horizontal: DoayaSpacing.xl,
               vertical: DoayaSpacing.l,
             ),

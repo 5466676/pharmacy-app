@@ -116,11 +116,11 @@ class _ShortagesTabState extends ConsumerState<ShortagesTab> {
             ),
           ],
         ),
-        const SizedBox(height: DoayaSpacing.ml),
+        SizedBox(height: DoayaSpacing.ml),
         Expanded(
           child: ListView.separated(
             itemCount: list.length,
-            separatorBuilder: (_, _) => const SizedBox(height: DoayaSpacing.s),
+            separatorBuilder: (_, _) => SizedBox(height: DoayaSpacing.s),
             itemBuilder: (context, i) {
               final s = list[i];
               final p = products[s.productId]!;
@@ -143,7 +143,7 @@ class _ShortagesTabState extends ConsumerState<ShortagesTab> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   StatusChip(label: reason, tone: tone),
-                  const SizedBox(height: DoayaSpacing.xxs),
+                  SizedBox(height: DoayaSpacing.xxs),
                   Text(
                     [
                       formatStock(l, s.onHandPieces, p.unitsPerPack),
@@ -181,7 +181,7 @@ class _ShortagesTabState extends ConsumerState<ShortagesTab> {
                   ),
                   if (owner && lp != null && lp.supplierId == supplier?.id)
                     Padding(
-                      padding: const EdgeInsets.only(top: DoayaSpacing.xxs),
+                      padding: EdgeInsets.only(top: DoayaSpacing.xxs),
                       child: Text(
                         l.lastPrice(formatMoney(lp.unitPriceMinor, currency)),
                         textAlign: TextAlign.center,
@@ -195,7 +195,7 @@ class _ShortagesTabState extends ConsumerState<ShortagesTab> {
                 return GlassSurface(
                   shadow: false,
                   borderRadius: BorderRadius.circular(DoayaRadii.tile),
-                  padding: const EdgeInsets.all(DoayaSpacing.ml),
+                  padding: EdgeInsets.all(DoayaSpacing.ml),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -208,9 +208,9 @@ class _ShortagesTabState extends ConsumerState<ShortagesTab> {
                           qty,
                         ],
                       ),
-                      const SizedBox(height: DoayaSpacing.xs),
+                      SizedBox(height: DoayaSpacing.xs),
                       reasonInfo,
-                      const SizedBox(height: DoayaSpacing.sm),
+                      SizedBox(height: DoayaSpacing.sm),
                       supplierPick,
                     ],
                   ),
@@ -219,18 +219,18 @@ class _ShortagesTabState extends ConsumerState<ShortagesTab> {
               return GlassSurface(
                 shadow: false,
                 borderRadius: BorderRadius.circular(DoayaRadii.tile),
-                padding: const EdgeInsets.all(DoayaSpacing.ml),
+                padding: EdgeInsets.all(DoayaSpacing.ml),
                 child: Row(
                   children: [
                     check,
-                    const SizedBox(width: DoayaSpacing.sm),
+                    SizedBox(width: DoayaSpacing.sm),
                     Expanded(
                       flex: 3,
                       child: ProductName(product: p, muted: !on),
                     ),
                     Expanded(flex: 3, child: reasonInfo),
                     qty,
-                    const SizedBox(width: DoayaSpacing.l),
+                    SizedBox(width: DoayaSpacing.l),
                     SizedBox(
                       width: DoayaSizes.employeeTile + DoayaSpacing.huge,
                       child: supplierPick,
@@ -263,7 +263,7 @@ class OrdersTab extends ConsumerWidget {
 
     return ListView.separated(
       itemCount: orders.length,
-      separatorBuilder: (_, _) => const SizedBox(height: DoayaSpacing.s),
+      separatorBuilder: (_, _) => SizedBox(height: DoayaSpacing.s),
       itemBuilder: (context, i) {
         final o = orders[i];
         final name = suppliers[o.supplierId]?.name ?? l.none;
@@ -372,7 +372,7 @@ class _OrderDialog extends ConsumerWidget {
           tone: SurfaceTone.strong,
           blur: true,
           borderRadius: BorderRadius.circular(DoayaRadii.hero),
-          padding: const EdgeInsets.all(DoayaSpacing.huge),
+          padding: EdgeInsets.all(DoayaSpacing.huge),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -388,14 +388,14 @@ class _OrderDialog extends ConsumerWidget {
                   orderStatusChip(l, order.status),
                 ],
               ),
-              const SizedBox(height: DoayaSpacing.l),
+              SizedBox(height: DoayaSpacing.l),
               Flexible(
                 child: ListView(
                   shrinkWrap: true,
                   children: [
                     for (final x in lines)
                       Padding(
-                        padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
+                        padding: EdgeInsets.only(bottom: DoayaSpacing.sm),
                         child: Row(
                           children: [
                             Expanded(
@@ -420,7 +420,7 @@ class _OrderDialog extends ConsumerWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: DoayaSpacing.xl),
+              SizedBox(height: DoayaSpacing.xl),
               Wrap(
                 spacing: DoayaSpacing.sm,
                 runSpacing: DoayaSpacing.sm,

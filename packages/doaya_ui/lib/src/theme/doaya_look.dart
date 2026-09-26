@@ -34,7 +34,12 @@ class DoayaPaletteSpec {
   final Color dark;
   final Color light;
 
-  static const green = DoayaPaletteSpec('green', Color(0xFFC9DEAE), Color(0xFF1B3F2B), Color(0xFFEAF0E6));
+  static const green = DoayaPaletteSpec(
+    'green',
+    Color(0xFFC9DEAE),
+    Color(0xFF1B3F2B),
+    Color(0xFFEAF0E6),
+  );
 
   static const all = [
     green,
@@ -50,8 +55,7 @@ class DoayaPaletteSpec {
     DoayaPaletteSpec('char', Color(0xFFDADADA), Color(0xFF1E1F22), Color(0xFFF1F1F2)),
   ];
 
-  static DoayaPaletteSpec byId(String id) =>
-      all.firstWhere((p) => p.id == id, orElse: () => green);
+  static DoayaPaletteSpec byId(String id) => all.firstWhere((p) => p.id == id, orElse: () => green);
 }
 
 /// Everything the user picks in «المظهر». Kept per device, never synced.
@@ -166,8 +170,7 @@ class DoayaLook {
   }
 
   @override
-  bool operator ==(Object other) =>
-      other is DoayaLook && _eq(toJson(), other.toJson());
+  bool operator ==(Object other) => other is DoayaLook && _eq(toJson(), other.toJson());
 
   @override
   int get hashCode => Object.hashAll(toJson().values);
@@ -376,8 +379,16 @@ class DoayaPalette {
     if (hi && light) back = _mix(back, _white, 0.5);
 
     final target = hi ? 7.0 : 4.5;
-    final top = black ? _black : light ? _mix(back, _white, .4) : _mix(back, _white, .10);
-    final bottom = black ? _black : light ? _mix(back, _black, .05) : _mix(back, _black, .25);
+    final top = black
+        ? _black
+        : light
+        ? _mix(back, _white, .4)
+        : _mix(back, _white, .10);
+    final bottom = black
+        ? _black
+        : light
+        ? _mix(back, _black, .05)
+        : _mix(back, _black, .25);
     final (text, _) = ensureContrast(
       light ? _mix(back, _black, hi ? .97 : .88) : _mix(back, _white, hi ? 1 : .93),
       back,
@@ -392,7 +403,8 @@ class DoayaPalette {
     var accentOn = accent;
     var sageTop = light ? _mix(accent, _white, .06) : _mix(accent, _white, .42);
     var sageBottom = light ? _mix(accent, _black, .12) : accent;
-    double whiteScore() => math.min(contrastRatio(_white, sageTop), contrastRatio(_white, accentOn));
+    double whiteScore() =>
+        math.min(contrastRatio(_white, sageTop), contrastRatio(_white, accentOn));
     double darkScore() => math.min(contrastRatio(dark, sageBottom), contrastRatio(dark, accentOn));
     final onWhite = whiteScore() >= darkScore();
     final away = onWhite ? _black : _white;
@@ -402,8 +414,16 @@ class DoayaPalette {
       accentOn = _mix(accentOn, away, .07);
     }
     final onSage = onWhite ? _white : _mix(back, _black, .75);
-    final surface = black ? const Color(0xFF0B0B0B) : light ? _white : _mix(back, _white, .06);
-    final raised = black ? const Color(0xFF141414) : light ? _mix(back, _white, .55) : _mix(back, _white, .11);
+    final surface = black
+        ? const Color(0xFF0B0B0B)
+        : light
+        ? _white
+        : _mix(back, _white, .06);
+    final raised = black
+        ? const Color(0xFF141414)
+        : light
+        ? _mix(back, _white, .55)
+        : _mix(back, _white, .11);
     final glassBase = light ? _white : text;
     final ink = light ? text : _white;
 
@@ -412,8 +432,16 @@ class DoayaPalette {
       bgTop: top,
       bgMid: back,
       bgBottom: bottom,
-      blobLight: light ? _white : black ? _black : _mix(back, _white, .22),
-      blobDark: light ? _mix(back, _black, .08) : black ? _black : _mix(back, _white, .14),
+      blobLight: light
+          ? _white
+          : black
+          ? _black
+          : _mix(back, _white, .22),
+      blobDark: light
+          ? _mix(back, _black, .08)
+          : black
+          ? _black
+          : _mix(back, _white, .14),
       leafFillA: light ? _mix(back, _black, .06) : _mix(back, _white, .07),
       leafVeinA: light ? _mix(back, _black, .14) : _mix(back, _white, .25),
       leafFillB: light ? _mix(back, _black, .04) : _mix(back, _white, .05),
@@ -427,7 +455,11 @@ class DoayaPalette {
       glassHighlightStrong: _alpha(_white, light ? .95 : .16),
       surface: surface,
       surfaceRaised: raised,
-      border: light ? _mix(back, _black, .14) : black ? const Color(0xFF2A2A2A) : _mix(back, _white, .2),
+      border: light
+          ? _mix(back, _black, .14)
+          : black
+          ? const Color(0xFF2A2A2A)
+          : _mix(back, _white, .2),
       sageTop: sageTop,
       sageBottom: sageBottom,
       sageHighlight: _alpha(_white, light ? .25 : .5),

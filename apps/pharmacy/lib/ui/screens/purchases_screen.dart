@@ -88,19 +88,19 @@ class _PurchasesScreenState extends ConsumerState<PurchasesScreen> {
                   selected: _tab == PurchasesTab.invoices,
                   onPressed: () => setState(() => _tab = PurchasesTab.invoices),
                 ),
-                const SizedBox(width: DoayaSpacing.s),
+                SizedBox(width: DoayaSpacing.s),
                 GlassPillButton(
                   label: l.tabSuppliers,
                   selected: _tab == PurchasesTab.suppliers,
                   onPressed: () => setState(() => _tab = PurchasesTab.suppliers),
                 ),
-                const SizedBox(width: DoayaSpacing.s),
+                SizedBox(width: DoayaSpacing.s),
                 GlassPillButton(
                   label: l.tabShortages,
                   selected: _tab == PurchasesTab.shortages,
                   onPressed: () => setState(() => _tab = PurchasesTab.shortages),
                 ),
-                const SizedBox(width: DoayaSpacing.s),
+                SizedBox(width: DoayaSpacing.s),
                 GlassPillButton(
                   label: l.tabOrders,
                   selected: _tab == PurchasesTab.orders,
@@ -110,7 +110,7 @@ class _PurchasesScreenState extends ConsumerState<PurchasesScreen> {
             ),
           ),
           if (_tab == PurchasesTab.invoices || _tab == PurchasesTab.suppliers) ...[
-            const SizedBox(height: DoayaSpacing.sm),
+            SizedBox(height: DoayaSpacing.sm),
             GlassSearchField(hint: l.search, onChanged: (v) => setState(() => _query = v)),
           ],
         ] else
@@ -121,19 +121,19 @@ class _PurchasesScreenState extends ConsumerState<PurchasesScreen> {
                 selected: _tab == PurchasesTab.invoices,
                 onPressed: () => setState(() => _tab = PurchasesTab.invoices),
               ),
-              const SizedBox(width: DoayaSpacing.s),
+              SizedBox(width: DoayaSpacing.s),
               GlassPillButton(
                 label: l.tabSuppliers,
                 selected: _tab == PurchasesTab.suppliers,
                 onPressed: () => setState(() => _tab = PurchasesTab.suppliers),
               ),
-              const SizedBox(width: DoayaSpacing.s),
+              SizedBox(width: DoayaSpacing.s),
               GlassPillButton(
                 label: l.tabShortages,
                 selected: _tab == PurchasesTab.shortages,
                 onPressed: () => setState(() => _tab = PurchasesTab.shortages),
               ),
-              const SizedBox(width: DoayaSpacing.s),
+              SizedBox(width: DoayaSpacing.s),
               GlassPillButton(
                 label: l.tabOrders,
                 selected: _tab == PurchasesTab.orders,
@@ -150,7 +150,7 @@ class _PurchasesScreenState extends ConsumerState<PurchasesScreen> {
                 ),
             ],
           ),
-        const SizedBox(height: DoayaSpacing.l),
+        SizedBox(height: DoayaSpacing.l),
         Expanded(
           child: switch (_tab) {
             PurchasesTab.invoices => PurchaseList(query: _query),
@@ -200,7 +200,7 @@ class PurchaseList extends ConsumerWidget {
       shrinkWrap: shrinkWrap,
       physics: shrinkWrap ? const NeverScrollableScrollPhysics() : null,
       itemCount: list.length,
-      separatorBuilder: (_, _) => const SizedBox(height: DoayaSpacing.s),
+      separatorBuilder: (_, _) => SizedBox(height: DoayaSpacing.s),
       itemBuilder: (context, i) {
         final p = list[i];
         final who = employees[p.employeeId]?.name ?? l.none;
@@ -218,7 +218,7 @@ class PurchaseList extends ConsumerWidget {
             children: [
               _purchasePaymentChip(l, p),
               if (owner) ...[
-                const SizedBox(width: DoayaSpacing.sm),
+                SizedBox(width: DoayaSpacing.sm),
                 Text(formatMoney(p.totalMinor, currency), style: DoayaTypography.label),
               ],
             ],
@@ -267,7 +267,7 @@ class _PurchaseDetail extends ConsumerWidget {
     final secondary = DoayaTypography.caption.copyWith(color: DoayaColors.textSecondary);
 
     Widget amountRow(String label, int minor, {bool signed = false}) => Padding(
-      padding: const EdgeInsets.only(top: DoayaSpacing.xs),
+      padding: EdgeInsets.only(top: DoayaSpacing.xs),
       child: Row(
         children: [
           Expanded(child: Text(label, style: secondary)),
@@ -285,7 +285,7 @@ class _PurchaseDetail extends ConsumerWidget {
       children: [
         for (final line in lines)
           Padding(
-            padding: const EdgeInsets.only(bottom: DoayaSpacing.sm),
+            padding: EdgeInsets.only(bottom: DoayaSpacing.sm),
             child: Row(
               children: [
                 Expanded(
@@ -314,7 +314,7 @@ class _PurchaseDetail extends ConsumerWidget {
             ),
           ),
         if (owner) ...[
-          const Divider(color: DoayaColors.divider),
+          Divider(color: DoayaColors.divider),
           amountRow(l.gross, purchase.grossMinor),
           if (purchase.lineDiscountsMinor > 0)
             amountRow(l.lineDiscounts, -purchase.lineDiscountsMinor, signed: true),
@@ -355,7 +355,7 @@ class _SupplierList extends ConsumerWidget {
 
     return ListView.separated(
       itemCount: list.length,
-      separatorBuilder: (_, _) => const SizedBox(height: DoayaSpacing.s),
+      separatorBuilder: (_, _) => SizedBox(height: DoayaSpacing.s),
       itemBuilder: (context, i) {
         final s = list[i];
         final bal = ledger.balance(s.id);
@@ -405,9 +405,9 @@ Future<SupplierRow?> showAddSupplierDialog(
             autofocus: true,
             validator: (v) => (v ?? '').trim().isEmpty ? l.required : null,
           ),
-          const SizedBox(height: DoayaSpacing.l),
+          SizedBox(height: DoayaSpacing.l),
           GlassTextField(label: '${l.repNameLabel} (${l.optional})', controller: rep),
-          const SizedBox(height: DoayaSpacing.l),
+          SizedBox(height: DoayaSpacing.l),
           GlassTextField(
             label: '${l.whatsappPhoneLabel} (${l.optional})',
             hint: l.whatsappPhoneHint,
@@ -478,12 +478,12 @@ class _SupplierPickerState extends ConsumerState<_SupplierPicker> {
           tone: SurfaceTone.strong,
           blur: true,
           borderRadius: BorderRadius.circular(DoayaRadii.hero),
-          padding: const EdgeInsets.all(DoayaSpacing.huge),
+          padding: EdgeInsets.all(DoayaSpacing.huge),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(l.chooseSupplier, style: DoayaTypography.titleSmall),
-              const SizedBox(height: DoayaSpacing.l),
+              SizedBox(height: DoayaSpacing.l),
               GlassSearchField(
                 hint: l.search,
                 autofocus: true,
@@ -492,13 +492,13 @@ class _SupplierPickerState extends ConsumerState<_SupplierPicker> {
                   if (list.length == 1) Navigator.of(context).pop(list.first);
                 },
               ),
-              const SizedBox(height: DoayaSpacing.ml),
+              SizedBox(height: DoayaSpacing.ml),
               Expanded(
                 child: list.isEmpty
                     ? EmptyHint(l.noSuppliers)
                     : ListView.separated(
                         itemCount: list.length,
-                        separatorBuilder: (_, _) => const SizedBox(height: DoayaSpacing.s),
+                        separatorBuilder: (_, _) => SizedBox(height: DoayaSpacing.s),
                         itemBuilder: (context, i) {
                           final s = list[i];
                           return CaseRow(
@@ -510,7 +510,7 @@ class _SupplierPickerState extends ConsumerState<_SupplierPicker> {
                         },
                       ),
               ),
-              const SizedBox(height: DoayaSpacing.ml),
+              SizedBox(height: DoayaSpacing.ml),
               GlassPillButton(
                 label: l.addSupplier,
                 icon: DoayaIcons.add,

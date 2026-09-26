@@ -41,7 +41,7 @@ class GlassSurface extends StatelessWidget {
     this.child,
     this.tone = SurfaceTone.normal,
     this.blur = false,
-    this.borderRadius = const BorderRadius.all(Radius.circular(DoayaRadii.card)),
+    this.borderRadius,
     this.padding,
     this.width,
     this.height,
@@ -52,7 +52,9 @@ class GlassSurface extends StatelessWidget {
   final Widget? child;
   final SurfaceTone tone;
   final bool blur;
-  final BorderRadius borderRadius;
+
+  /// Defaults to the card radius.
+  final BorderRadius? borderRadius;
   final EdgeInsetsGeometry? padding;
   final double? width;
   final double? height;
@@ -64,6 +66,7 @@ class GlassSurface extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tokens = DoayaTokens.of(context);
+    final borderRadius = this.borderRadius ?? BorderRadius.circular(DoayaRadii.card);
     final style = _resolve(tokens);
     final useBlur = blur && tokens.blurAllowed;
     final sigma = tone == SurfaceTone.strong ? DoayaBlur.glassStrong : DoayaBlur.glass;
@@ -74,7 +77,7 @@ class GlassSurface extends StatelessWidget {
         decoration: BoxDecoration(
           color: fill ?? style.fill,
           borderRadius: borderRadius,
-          border: Border.all(color: style.border, width: DoayaSizes.borderWidth),
+          border: Border.all(color: style.border, width: tokens.borderWidth),
         ),
         child: padding == null ? child : Padding(padding: padding!, child: child),
       ),
@@ -117,23 +120,23 @@ class GlassSurface extends StatelessWidget {
         t.highlightStrong,
         t.shadow,
       ),
-      SurfaceTone.accentSoft => const _SurfaceStyle(
+      SurfaceTone.accentSoft => _SurfaceStyle(
         DoayaColors.accentSoftFill,
         DoayaColors.accentSoftBorder,
         DoayaColors.transparent,
-        [],
+        const [],
       ),
-      SurfaceTone.warning => const _SurfaceStyle(
+      SurfaceTone.warning => _SurfaceStyle(
         DoayaColors.warningFill,
         DoayaColors.warningBorder,
         DoayaColors.transparent,
-        [],
+        const [],
       ),
-      SurfaceTone.danger => const _SurfaceStyle(
+      SurfaceTone.danger => _SurfaceStyle(
         DoayaColors.dangerFill,
         DoayaColors.dangerBorder,
         DoayaColors.transparent,
-        [],
+        const [],
       ),
     };
   }
