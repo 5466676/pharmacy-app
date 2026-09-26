@@ -193,7 +193,12 @@ class FakeServer {
   });
 }
 
-Future<void> pumpApp(WidgetTester tester, FakeServer server, MemorySessionStore store) async {
+Future<void> pumpApp(
+  WidgetTester tester,
+  FakeServer server,
+  MemorySessionStore store, {
+  Stream<Object?>? live,
+}) async {
   tester.view
     ..physicalSize = const Size(390, 844)
     ..devicePixelRatio = 1;
@@ -203,7 +208,7 @@ Future<void> pumpApp(WidgetTester tester, FakeServer server, MemorySessionStore 
       overrides: [
         apiProvider.overrideWithValue(PatientApi(Uri.parse('https://x/'), client: server.client)),
         sessionStoreProvider.overrideWithValue(store),
-        liveConnectProvider.overrideWithValue((_) => StreamController<Object?>().stream),
+        liveConnectProvider.overrideWithValue((_) => live ?? StreamController<Object?>().stream),
       ],
       child: const PatientApp(),
     ),
@@ -213,6 +218,7 @@ Future<void> pumpApp(WidgetTester tester, FakeServer server, MemorySessionStore 
 
 Future<void> tap(WidgetTester tester, String text) async {
   await tester.ensureVisible(find.text(text).last);
+  await tester.pumpAndSettle();
   await tester.tap(find.text(text).last);
   await tester.pumpAndSettle();
 }

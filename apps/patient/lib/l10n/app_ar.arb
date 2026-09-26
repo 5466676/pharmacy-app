@@ -146,5 +146,117 @@
     }
   },
   "thinking": "عم يكتب…",
-  "retry": "جرّب كمان مرة"
+  "retry": "جرّب كمان مرة",
+  "navOrders": "طلباتي",
+  "searchHint": "دوّر على دوا أو منتج…",
+  "availableAtPharmacy": "متوفر بصيدليتك",
+  "shelfTitle": "رفوف صيدليتك",
+  "available": "متوفر",
+  "unavailable": "مو متوفر هلق",
+  "prescriptionOnly": "بوصفة",
+  "noPrescription": "بدون وصفة",
+  "rxHint": "هالدوا بدو وصفة طبية: جيبها معك وقت الاستلام، والصيدلي بيقرر.",
+  "askPharmacistHint": "اسأل صيدليتك عن الطريقة المناسبة إلك، خصوصاً إذا عم تاخد أدوية تانية.",
+  "ingredient": "المادة الفعالة",
+  "strength": "العيار",
+  "dosageForm": "الشكل",
+  "noResults": "ما لقينا شي بهالاسم",
+  "orderFromPharmacy": "اطلب من صيدليتي",
+  "addedToCart": "انضاف لطلبيتك",
+  "inCart": "بطلبيتك: {count}",
+  "@inCart": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "viewCart": "شوف الطلبية",
+  "less": "أقل",
+  "more": "أكتر",
+  "cartTitle": "طلبيتي",
+  "cartEmpty": "طلبيتك فاضية. اختار من رفوف صيدليتك.",
+  "browseShelf": "تصفّح الرفوف",
+  "noteToPharmacist": "ملاحظة للصيدلي",
+  "orderTotal": "المجموع: {amount}",
+  "@orderTotal": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "pickupFrom": "استلام من {name}",
+  "@pickupFrom": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sendOrder": "أرسل الطلب للصيدلية",
+  "payAtPickup": "الدفع عند الاستلام بالصيدلية",
+  "finalQuantitiesHint": "الكميات النهائية بيحددها الصيدلي حسب الموجود.",
+  "orderSent": "وصل طلبك للصيدلية",
+  "ordersTitle": "طلباتي",
+  "noOrders": "ما عندك طلبات لسا",
+  "orderStatus": "{status, select, sent{وصل للصيدلية} preparing{عم يتحضّر} ready{جاهز للاستلام} picked_up{استلمته} rejected{ما في هلق} cancelled{ملغى} other{{status}}}",
+  "@orderStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "orderLines": "{count, plural, =1{منتج واحد} =2{منتجين} few{{count} منتجات} other{{count} منتج}}",
+  "@orderLines": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "lineChanged": "طلبت {requested}، الصيدلي حضّر {quantity}",
+  "@lineChanged": {
+    "placeholders": {
+      "requested": {
+        "type": "String"
+      },
+      "quantity": {
+        "type": "String"
+      }
+    }
+  },
+  "lineDropped": "طلبت {requested}، ما في هلق",
+  "@lineDropped": {
+    "placeholders": {
+      "requested": {
+        "type": "String"
+      }
+    }
+  },
+  "cancelOrder": "إلغاء الطلب",
+  "cancelOrderConfirm": "بدك تلغي هالطلب؟",
+  "keepOrder": "لا، خليه",
+  "orderTitle": "طلب {date}",
+  "@orderTitle": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "errUnknownProduct": "في منتج ما عاد موجود على الرف. حدّث الطلبية.",
+  "errAlreadyHandled": "الصيدلي بلّش بالطلب، ما عاد فيك تلغيه.",
+  "lineQtyPrice": "{quantity} × {price}",
+  "@lineQtyPrice": {
+    "placeholders": {
+      "quantity": {
+        "type": "String"
+      },
+      "price": {
+        "type": "String"
+      }
+    }
+  }
 }

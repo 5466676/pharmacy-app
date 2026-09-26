@@ -637,6 +637,264 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'جرّب كمان مرة'**
   String get retry;
+
+  /// No description provided for @navOrders.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلباتي'**
+  String get navOrders;
+
+  /// No description provided for @searchHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'دوّر على دوا أو منتج…'**
+  String get searchHint;
+
+  /// No description provided for @availableAtPharmacy.
+  ///
+  /// In ar, this message translates to:
+  /// **'متوفر بصيدليتك'**
+  String get availableAtPharmacy;
+
+  /// No description provided for @shelfTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'رفوف صيدليتك'**
+  String get shelfTitle;
+
+  /// No description provided for @available.
+  ///
+  /// In ar, this message translates to:
+  /// **'متوفر'**
+  String get available;
+
+  /// No description provided for @unavailable.
+  ///
+  /// In ar, this message translates to:
+  /// **'مو متوفر هلق'**
+  String get unavailable;
+
+  /// No description provided for @prescriptionOnly.
+  ///
+  /// In ar, this message translates to:
+  /// **'بوصفة'**
+  String get prescriptionOnly;
+
+  /// No description provided for @noPrescription.
+  ///
+  /// In ar, this message translates to:
+  /// **'بدون وصفة'**
+  String get noPrescription;
+
+  /// No description provided for @rxHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'هالدوا بدو وصفة طبية: جيبها معك وقت الاستلام، والصيدلي بيقرر.'**
+  String get rxHint;
+
+  /// No description provided for @askPharmacistHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسأل صيدليتك عن الطريقة المناسبة إلك، خصوصاً إذا عم تاخد أدوية تانية.'**
+  String get askPharmacistHint;
+
+  /// No description provided for @ingredient.
+  ///
+  /// In ar, this message translates to:
+  /// **'المادة الفعالة'**
+  String get ingredient;
+
+  /// No description provided for @strength.
+  ///
+  /// In ar, this message translates to:
+  /// **'العيار'**
+  String get strength;
+
+  /// No description provided for @dosageForm.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشكل'**
+  String get dosageForm;
+
+  /// No description provided for @noResults.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما لقينا شي بهالاسم'**
+  String get noResults;
+
+  /// No description provided for @orderFromPharmacy.
+  ///
+  /// In ar, this message translates to:
+  /// **'اطلب من صيدليتي'**
+  String get orderFromPharmacy;
+
+  /// No description provided for @addedToCart.
+  ///
+  /// In ar, this message translates to:
+  /// **'انضاف لطلبيتك'**
+  String get addedToCart;
+
+  /// No description provided for @inCart.
+  ///
+  /// In ar, this message translates to:
+  /// **'بطلبيتك: {count}'**
+  String inCart(String count);
+
+  /// No description provided for @viewCart.
+  ///
+  /// In ar, this message translates to:
+  /// **'شوف الطلبية'**
+  String get viewCart;
+
+  /// No description provided for @less.
+  ///
+  /// In ar, this message translates to:
+  /// **'أقل'**
+  String get less;
+
+  /// No description provided for @more.
+  ///
+  /// In ar, this message translates to:
+  /// **'أكتر'**
+  String get more;
+
+  /// No description provided for @cartTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلبيتي'**
+  String get cartTitle;
+
+  /// No description provided for @cartEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلبيتك فاضية. اختار من رفوف صيدليتك.'**
+  String get cartEmpty;
+
+  /// No description provided for @browseShelf.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصفّح الرفوف'**
+  String get browseShelf;
+
+  /// No description provided for @noteToPharmacist.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملاحظة للصيدلي'**
+  String get noteToPharmacist;
+
+  /// No description provided for @orderTotal.
+  ///
+  /// In ar, this message translates to:
+  /// **'المجموع: {amount}'**
+  String orderTotal(String amount);
+
+  /// No description provided for @pickupFrom.
+  ///
+  /// In ar, this message translates to:
+  /// **'استلام من {name}'**
+  String pickupFrom(String name);
+
+  /// No description provided for @sendOrder.
+  ///
+  /// In ar, this message translates to:
+  /// **'أرسل الطلب للصيدلية'**
+  String get sendOrder;
+
+  /// No description provided for @payAtPickup.
+  ///
+  /// In ar, this message translates to:
+  /// **'الدفع عند الاستلام بالصيدلية'**
+  String get payAtPickup;
+
+  /// No description provided for @finalQuantitiesHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكميات النهائية بيحددها الصيدلي حسب الموجود.'**
+  String get finalQuantitiesHint;
+
+  /// No description provided for @orderSent.
+  ///
+  /// In ar, this message translates to:
+  /// **'وصل طلبك للصيدلية'**
+  String get orderSent;
+
+  /// No description provided for @ordersTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلباتي'**
+  String get ordersTitle;
+
+  /// No description provided for @noOrders.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما عندك طلبات لسا'**
+  String get noOrders;
+
+  /// No description provided for @orderStatus.
+  ///
+  /// In ar, this message translates to:
+  /// **'{status, select, sent{وصل للصيدلية} preparing{عم يتحضّر} ready{جاهز للاستلام} picked_up{استلمته} rejected{ما في هلق} cancelled{ملغى} other{{status}}}'**
+  String orderStatus(String status);
+
+  /// No description provided for @orderLines.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count, plural, =1{منتج واحد} =2{منتجين} few{{count} منتجات} other{{count} منتج}}'**
+  String orderLines(int count);
+
+  /// No description provided for @lineChanged.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلبت {requested}، الصيدلي حضّر {quantity}'**
+  String lineChanged(String requested, String quantity);
+
+  /// No description provided for @lineDropped.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلبت {requested}، ما في هلق'**
+  String lineDropped(String requested);
+
+  /// No description provided for @cancelOrder.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء الطلب'**
+  String get cancelOrder;
+
+  /// No description provided for @cancelOrderConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'بدك تلغي هالطلب؟'**
+  String get cancelOrderConfirm;
+
+  /// No description provided for @keepOrder.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا، خليه'**
+  String get keepOrder;
+
+  /// No description provided for @orderTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلب {date}'**
+  String orderTitle(String date);
+
+  /// No description provided for @errUnknownProduct.
+  ///
+  /// In ar, this message translates to:
+  /// **'في منتج ما عاد موجود على الرف. حدّث الطلبية.'**
+  String get errUnknownProduct;
+
+  /// No description provided for @errAlreadyHandled.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصيدلي بلّش بالطلب، ما عاد فيك تلغيه.'**
+  String get errAlreadyHandled;
+
+  /// No description provided for @lineQtyPrice.
+  ///
+  /// In ar, this message translates to:
+  /// **'{quantity} × {price}'**
+  String lineQtyPrice(String quantity, String price);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

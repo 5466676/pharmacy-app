@@ -1,4 +1,5 @@
-import 'package:doaya_core/doaya_core.dart' show SyncApiException, SyncNetworkException;
+import 'package:doaya_core/doaya_core.dart'
+    show Currency, Money, SyncApiException, SyncNetworkException;
 import 'package:doaya_ui/doaya_ui.dart';
 import 'package:flutter/material.dart';
 
@@ -12,6 +13,8 @@ String errorText(AppLocalizations l, Object e) => switch (e) {
   SyncApiException(code: 'too_many_attempts') => l.errTooMany,
   SyncApiException(code: 'pharmacy_not_found') => l.errPharmacyNotFound,
   SyncApiException(code: 'consultation_closed') => l.consultationClosed,
+  SyncApiException(code: 'unknown_product') => l.errUnknownProduct,
+  SyncApiException(code: 'already_handled') => l.errAlreadyHandled,
   SyncApiException(:final code) => l.errGeneric(code),
   _ => l.errGeneric('$e'),
 };
@@ -126,6 +129,92 @@ StatusTone consultTone(String status) => switch (status) {
   'ready' => StatusTone.success,
   'emergency' || 'needs_doctor' => StatusTone.danger,
   'summary' => StatusTone.warning,
+  'sent' || 'preparing' => StatusTone.accent,
+  _ => StatusTone.neutral,
+};
+
+Currency _currency(String code) => switch (code) {
+  'SYP' => Currency.syp,
+  'USD' => Currency.usd,
+  _ => Currency(code: code, symbol: code, decimals: 2),
+};
+
+/// "2,500 ل.س": the pharmacy's price, English digits, fraction only when
+/// non-zero.
+String formatPrice(int minor, String currencyCode) {
+  final c = _currency(currencyCode);
+  final m = Money(minor, c);
+  return '${formatNumber(m.majorValue, decimals: m.hasFraction ? c.decimals : 0)} ${c.symbol}';
+}
+
+/// The product's photo when the pharmacy has one, else a medicine icon.
+class ProductImage extends StatelessWidget {
+  const ProductImage({super.key, required this.url, this.size = DoayaSizes.productIcon});
+
+  final String? url;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    final icon = Icon(DoayaIcons.medicine, size: size, color: DoayaColors.accent);
+    if (url == null) return icon;
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(DoayaRadii.imageWell),
+      child: Image.network(url!, fit: BoxFit.cover, errorBuilder: (_, _, _) => icon),
+    );
+  }
+}
+
+/// − n + for a quantity.
+class QuantityStepper extends StatelessWidget {
+  const QuantityStepper({
+    super.key,
+    required this.value,
+    required this.onChanged,
+    this.min = 0,
+    this.max = 100,
+  });
+
+  final int value;
+  final int min;
+  final int max;
+  final ValueChanged<int> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    const size = DoayaSizes.qtyButton + DoayaSpacing.sm;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        RoundIconButton(
+          icon: DoayaIcons.remove,
+          tooltip: l.less,
+          size: size,
+          onPressed: value > min ? () => onChanged(value - 1) : null,
+        ),
+        SizedBox(
+          width: DoayaSpacing.giant,
+          child: Text(
+            formatNumber(value),
+            textAlign: TextAlign.center,
+            style: DoayaTypography.label,
+          ),
+        ),
+        RoundIconButton(
+          icon: DoayaIcons.add,
+          tooltip: l.more,
+          size: size,
+          onPressed: value < max ? () => onChanged(value + 1) : null,
+        ),
+      ],
+    );
+  }
+}
+
+StatusTone orderTone(String status) => switch (status) {
+  'ready' => StatusTone.success,
+  'rejected' => StatusTone.danger,
   'sent' || 'preparing' => StatusTone.accent,
   _ => StatusTone.neutral,
 };
