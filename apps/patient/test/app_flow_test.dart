@@ -9,7 +9,6 @@ import 'package:doaya_patient/ui/chat_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 
 import 'auth_test.dart' show pharmacy;
