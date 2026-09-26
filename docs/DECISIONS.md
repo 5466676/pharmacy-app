@@ -171,3 +171,19 @@ The server doesn't recreate the app's ~25 tables. Each synced row is stored once
 - Some everyday words are deliberately **not** rules because they'd raise constant false alarms at a pharmacy: «حرقة» (heartburn), «صرع» alone (repeat medicine), «شلل» alone (polio vaccine), «تشنج» of a muscle. The LLM classifier (step 2) looks at the whole conversation for what rules miss, and it can only add alarms, never cancel one.
 - **Emergency numbers**: ambulance 110 (Syrian Ministry of Health unified ambulance operations room, launched 2026), 112 police / emergency. Both are server settings.
 
+## 2026-09-26 · Central server: same code, pharmacy keys, devices go through their own server
+- **One codebase.** The central (internet) server is the same FastAPI app with more tables (migration 0002). A pharmacy's own server simply has none of those rows. Hosting is still open (owner), so it's built host-agnostic (Docker Compose) and tested locally.
+- **A pharmacy server authenticates to the central one with a key** (`Authorization: Pharmacy dk_…`, stored hashed, issued by `app.cli pharmacy-key`). The acting pharmacist's name travels percent-encoded in `X-Doaya-Actor`, for the record.
+- **Devices never talk to the central server directly.** They call `/central/…` on their own pharmacy server, which forwards to `/pharmacy-api/…` with the key, and only cases, orders and updates are forwarded.
+  - Nobody links twice.
+  - Phones keep their pinned-TLS link to the pharmacy server.
+  - A lost phone is cut off by unlinking it, as before.
+  - With no internet, only the case inbox is unavailable; selling never depends on it.
+- **Live updates**:
+  - Patients use a WebSocket while the app is open, plus `/updates?since=` for background checks, since there's no Firebase.
+  - Pharmacy devices poll `/central/updates` through their server (every ~15 s while open) in v1. A WebSocket relay on the pharmacy server can come later if polling proves too slow.
+- **The shelf** is recomputed from the synced rows every 10 minutes: active products, sale price, available = ledger total > 0. It is replaced as a whole. Patients never see quantities (owner's decision).
+- **Patients**: phone + password (no SMS in v1), session secrets like device secrets. Patient tokens can't use pharmacy endpoints and vice versa.
+- **The pharmacist's decision may contain doses**: the guard applies to the AI only. Dosing belongs to the pharmacist (SPEC §2.1).
+- **Orders**: the patient's quantities are a request. The pharmacist sets the final quantity per line, where 0 drops it, and the order keeps both.
+

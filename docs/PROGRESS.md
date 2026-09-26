@@ -377,7 +377,7 @@ Patients aren't on the pharmacy's Wi-Fi, so the patient app will need a server r
   - The end-to-end test runs over real TLS: first-contact pinning, linking, syncing, and an impostor certificate refused before anything is sent. Details in DECISIONS.
 - Totals: server 34, core 95, design system 23, app 80 (+ the end-to-end script, over HTTPS).
 
-## Phase 3 — Patient app + AI · ✅ plan approved (2026-09-25), starts after Phase 1.5 is finished
+## Phase 3 — Patient app + AI · ⏸ steps 1–4 done, **waiting for review** (plan approved 2026-09-25)
 
 ### Owner answers (2026-09-25)
 1. **Hosting**: still being decided. Build it host-agnostic (Docker Compose), and run it locally for now.
@@ -545,4 +545,39 @@ Screens from `design/patient_*.html`, same `doaya_ui` dark glass, RTL, English d
   - Every step returns log entries (`red_flag`, `assistant_reply` with model / prompt / raw, `guard_block`, `summary`, `llm_down`) for the API to store.
   - 10 engine tests with a scripted model (a bare «اي» caught by the classifier; the guard replacing «خود بنادول حبتين كل 8 ساعات»). Server 164.
   - A run against a real LM Studio model needs a machine with one; it's in the step 8 checklist for your PC.
+- [x] Step 4: **central server** (same FastAPI code; migration `0002`). Server 183 tests.
+  - **Patients**:
+    - phone + password once (no SMS), then a long-lived session secret (stored hashed) traded for 15-minute tokens
+    - profile: birth year, sex, city, chosen pharmacy
+    - logout
+    - patient and pharmacy tokens are refused on each other's endpoints
+  - **Directory**: listed pharmacies by city, by name, or by the short code shown at the counter (`app.cli list-pharmacy <id> --code SH4F --city دمشق`).
+  - **Pharmacy key**: `app.cli pharmacy-key <id>` → `DOAYA_CENTRAL_KEY` on that pharmacy's own server (stored hashed on the central one).
+  - **Shelf**:
+    - The pharmacy's server computes it from its synced rows: active products, price, and available = stock ledger > 0.
+    - It publishes the whole shelf every 10 minutes when there's internet. Only names, prices and available-or-not leave the pharmacy.
+    - Patients browse and search it; available items come first, and no quantities are shown.
+  - **Consultations → cases**:
+    - The patient chats through the step-3 pipeline, checks and corrects the summary (the edit is logged), and sends it, or sends the plain chat if the model is down.
+    - An emergency goes to the pharmacy at once as **urgent**, listed first.
+    - After sending, the patient's messages go to the pharmacist, still through the red-flag rules first.
+  - **Pharmacy side** (key + the pharmacist's name in `X-Doaya-Actor`):
+    - list and open cases, with the patient's name, phone, age and sex, so the app can match its own customer
+    - «اسأل المريض سؤال»
+    - the **decision**: medicines, quantities, the pharmacist's own instructions, optional times/day and days for reminders → ready
+    - picked up / needs a doctor / close
+    - **corrections** of an assistant message or a summary field → `ai_log`
+  - **Pickup orders** from the shelf: the patient asks for quantities; the pharmacist sets the final ones (0 drops a line) with a note. Transitions are checked. The patient can cancel until it's handled.
+  - **Live updates**:
+    - `/ws` WebSocket (patient token or pharmacy key) with a ping every 25 s
+    - `/updates?since=` and `/pharmacy-api/updates?since=` so a phone can check in the background and nothing is lost while offline
+  - **The pharmacy's devices** reach all this through **their own server**, at `/central/cases|orders|updates…`. It adds the key and the account's name, so no second login is needed, and devices never hold the central key. With no internet only these calls fail.
+  - Isolation tests: another pharmacy's key can't see a case or an order; another patient can't open a consultation.
+
+### How to review (step 4)
+Server side only so far (the screens are steps 5–7). The tests read as the scenarios:
+- `backend/tests/test_consultations.py`: from the first message to pickup; an emergency; a red flag after sending; the model down; isolation; corrections.
+- `test_orders_live.py`: orders with the pharmacist's final quantities, background updates, WebSocket, a device going through its own server.
+- `test_redflags.py`: the sentence tables.
+- `test_directory.py`: the shelf from synced rows.
 

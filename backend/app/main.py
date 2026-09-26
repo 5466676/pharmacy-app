@@ -5,7 +5,17 @@ from pathlib import Path
 from fastapi import FastAPI
 from sqlalchemy import select, text
 
-from . import __version__, accounts, consultations, directory, patients, sync
+from . import (
+    __version__,
+    accounts,
+    central_proxy,
+    consultations,
+    directory,
+    orders,
+    patients,
+    realtime,
+    sync,
+)
 from .backup import BackupScheduler, latest_backup_time, list_backups
 from .bridge import ShelfPublisher
 from .config import Settings, get_settings
@@ -83,6 +93,9 @@ def create_app(
     app.include_router(patients.router)
     app.include_router(directory.router)
     app.include_router(consultations.router)
+    app.include_router(orders.router)
+    app.include_router(realtime.router)
+    app.include_router(central_proxy.router)
 
     @app.get("/health")
     def health(db: DbSession) -> dict:
