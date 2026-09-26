@@ -50,6 +50,52 @@ class FakeServer {
         'messages': <Map<String, Object?>>[],
       };
 
+  final shelf = <Map<String, Object?>>[
+    shelfJson('p1', 'Panadol 500mg', 'بنادول', 250000),
+    shelfJson('p2', 'Omega 3', null, 1200000),
+    shelfJson('p3', 'Augmentin 1g', 'اوغمنتين', 900000, available: false, rx: true),
+  ];
+  final orders = <String, Map<String, Object?>>{};
+
+  static Map<String, Object?> shelfJson(
+    String id,
+    String name,
+    String? arabic,
+    int price, {
+    bool available = true,
+    bool rx = false,
+  }) => {
+    'product_id': id,
+    'trade_name': name,
+    'arabic_name': arabic,
+    'active_ingredient': null,
+    'strength': null,
+    'form': null,
+    'price_minor': price,
+    'currency': 'SYP',
+    'available': available,
+    'prescription_only': rx,
+    'photo_url': null,
+  };
+
+  Map<String, Object?> order(String id, List<Map<String, Object?>> lines, String? note) =>
+      orders[id] = {
+        'id': id,
+        'pharmacy_id': 'ph1',
+        'status': 'sent',
+        'lines': lines,
+        'currency': 'SYP',
+        'total_minor': lines.fold<int>(
+          0,
+          (s, l) => s + (l['quantity']! as int) * (l['price_minor']! as int),
+        ),
+        'note': note,
+        'pharmacist_note': null,
+        'handled_by': null,
+        'created_at': '2026-09-26T10:00:00Z',
+        'updated_at': '2026-09-26T10:00:00Z',
+      };
+
   late final client = MockClient((req) async {
     final path = req.url.path;
     seen.add('${req.method} $path');
@@ -69,10 +115,48 @@ class FakeServer {
           ],
           'orders': [],
         });
+      case ('GET', '/directory/ph1/shelf'):
+        final q = req.url.queryParameters['q'];
+        return json([
+          for (final i in shelf)
+            if (q == null ||
+                '${i['trade_name']} ${i['arabic_name']}'.toLowerCase().contains(q.toLowerCase()))
+              i,
+        ]);
+      case ('GET', _) when path.startsWith('/directory/ph1/shelf/'):
+        return json(shelf.firstWhere((i) => i['product_id'] == parts.last));
+      case ('POST', '/orders'):
+        final lines = [
+          for (final l in body['lines'] as List)
+            {
+              'product_id': l['product_id'],
+              'name': shelf.firstWhere((i) => i['product_id'] == l['product_id'])['trade_name'],
+              'requested': l['quantity'],
+              'quantity': l['quantity'],
+              'price_minor': shelf.firstWhere(
+                (i) => i['product_id'] == l['product_id'],
+              )['price_minor'],
+            },
+        ];
+        return json(order('o${orders.length + 1}', lines, body['note'] as String?));
+      case ('GET', '/orders'):
+        return json(orders.values.toList().reversed.toList());
+      case ('GET', _) when path.startsWith('/orders/'):
+        return json(orders[parts[2]]!);
+      case ('POST', _) when path.startsWith('/orders/') && path.endsWith('/cancel'):
+        final o = orders[parts[2]]!;
+        if (o['status'] != 'sent') return json({'detail': 'already_handled'}, 409);
+        o['status'] = 'cancelled';
+        return json(o);
       case ('GET', '/directory'):
         return json([pharmacy]);
       case ('PATCH', '/patients/me'):
-        me = {...me, 'pharmacy': pharmacy};
+        if (body case {'pharmacy_id': final String id}) {
+          me = {
+            ...me,
+            'pharmacy': {...pharmacy, 'id': id},
+          };
+        }
         return json(me);
       case ('GET', '/patients/me'):
         return json(me);

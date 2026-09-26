@@ -188,3 +188,94 @@ class Consultation {
     return messages.where((m) => m.mine).firstOrNull?.text ?? '';
   }
 }
+
+/// A product on the pharmacy's shelf: name, price, available or not (no
+/// quantities: owner's decision).
+class ShelfItem {
+  ShelfItem.fromJson(Map<String, Object?> j)
+    : productId = j['product_id']! as String,
+      tradeName = j['trade_name']! as String,
+      arabicName = j['arabic_name'] as String?,
+      activeIngredient = j['active_ingredient'] as String?,
+      strength = j['strength'] as String?,
+      form = j['form'] as String?,
+      priceMinor = j['price_minor']! as int,
+      currency = j['currency']! as String,
+      available = j['available']! as bool,
+      prescriptionOnly = j['prescription_only'] as bool? ?? false,
+      photoUrl = j['photo_url'] as String?;
+
+  final String productId;
+  final String tradeName;
+  final String? arabicName;
+  final String? activeIngredient;
+  final String? strength;
+  final String? form;
+  final int priceMinor;
+  final String currency;
+  final bool available;
+  final bool prescriptionOnly;
+  final String? photoUrl;
+}
+
+/// Pickup order states (backend/app/orders.py).
+abstract final class OrderStatus {
+  static const sent = 'sent';
+  static const preparing = 'preparing';
+  static const ready = 'ready';
+  static const pickedUp = 'picked_up';
+  static const rejected = 'rejected';
+  static const cancelled = 'cancelled';
+
+  static const finished = {pickedUp, rejected, cancelled};
+}
+
+class OrderLine {
+  OrderLine.fromJson(Map<String, Object?> j)
+    : productId = j['product_id']! as String,
+      name = j['name']! as String,
+      requested = j['requested']! as int,
+      quantity = j['quantity']! as int,
+      priceMinor = j['price_minor']! as int;
+
+  final String productId;
+  final String name;
+
+  /// What the patient asked for, and what the pharmacist settled on
+  /// (0: the pharmacist dropped it).
+  final int requested;
+  final int quantity;
+  final int priceMinor;
+
+  bool get changed => requested != quantity;
+}
+
+class PatientOrder {
+  PatientOrder.fromJson(Map<String, Object?> j)
+    : id = j['id']! as String,
+      pharmacyId = j['pharmacy_id']! as String,
+      status = j['status']! as String,
+      lines = [for (final l in j['lines']! as List) OrderLine.fromJson(l as Map<String, Object?>)],
+      currency = j['currency']! as String,
+      totalMinor = j['total_minor']! as int,
+      note = j['note'] as String?,
+      pharmacistNote = j['pharmacist_note'] as String?,
+      handledBy = j['handled_by'] as String?,
+      createdAt = _date(j['created_at'])!,
+      updatedAt = _date(j['updated_at'])!;
+
+  final String id;
+  final String pharmacyId;
+  final String status;
+  final List<OrderLine> lines;
+  final String currency;
+  final int totalMinor;
+  final String? note;
+  final String? pharmacistNote;
+  final String? handledBy;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+
+  bool get finished => OrderStatus.finished.contains(status);
+  bool get cancellable => status == OrderStatus.sent;
+}

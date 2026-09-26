@@ -126,6 +126,64 @@ class PatientApi {
         as Map<String, Object?>,
   );
 
+  // ─── Shelf and orders ────────────────────────────────────────────────────
+
+  /// The pharmacy's shelf, available first; [query] matches trade, Arabic
+  /// and ingredient names.
+  Future<List<ShelfItem>> shelf(
+    String pharmacyId, {
+    String? query,
+    bool availableOnly = false,
+    int limit = 50,
+    int offset = 0,
+  }) async {
+    final uri = baseUrl
+        .resolve('directory/${Uri.encodeComponent(pharmacyId)}/shelf')
+        .replace(
+          queryParameters: {
+            if (query != null && query.trim().isNotEmpty) 'q': query.trim(),
+            if (availableOnly) 'available_only': 'true',
+            'limit': '$limit',
+            'offset': '$offset',
+          },
+        );
+    return [
+      for (final i in (await _send('GET', uri))! as List)
+        ShelfItem.fromJson(i as Map<String, Object?>),
+    ];
+  }
+
+  Future<ShelfItem> shelfItem(String pharmacyId, String productId) async => ShelfItem.fromJson(
+    (await _send(
+          'GET',
+          baseUrl.resolve(
+            'directory/${Uri.encodeComponent(pharmacyId)}/shelf/${Uri.encodeComponent(productId)}',
+          ),
+        ))!
+        as Map<String, Object?>,
+  );
+
+  PatientOrder _o(Object? j) => PatientOrder.fromJson(j! as Map<String, Object?>);
+
+  /// Product id → quantity asked for; the pharmacist settles the final ones.
+  Future<PatientOrder> placeOrder(Map<String, int> lines, {String? note}) async => _o(
+    await _authorized('POST', 'orders', {
+      'lines': [
+        for (final MapEntry(:key, :value) in lines.entries) {'product_id': key, 'quantity': value},
+      ],
+      'note': ?note,
+    }),
+  );
+
+  Future<List<PatientOrder>> orders() async => [
+    for (final o in (await _authorized('GET', 'orders'))! as List) _o(o),
+  ];
+
+  Future<PatientOrder> order(String id) async => _o(await _authorized('GET', 'orders/$id'));
+
+  Future<PatientOrder> cancelOrder(String id) async =>
+      _o(await _authorized('POST', 'orders/$id/cancel'));
+
   // ─── Consultations ───────────────────────────────────────────────────────
 
   Consultation _c(Object? j) => Consultation.fromJson(j! as Map<String, Object?>);
