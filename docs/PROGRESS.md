@@ -872,7 +872,7 @@ From SPEC §1.3 and `design/admin_overview_layout.html` (layout only, rebuilt in
 6. Stopping a pharmacy: licence days and read-only vs export. (answered in A3: 30 days, per pharmacy; read-only + export)
 5. Order: themes first, then Phase 4. (answered: yes)
 
-## Phase 4b — Managing the assistant from the panel · 📝 plan, waiting for the owner's OK (asked 2026-09-26)
+## Phase 4b — Managing the assistant from the panel · ▶ plan approved 2026-09-26 (with the owner's answers)
 
 The owner asked for the AI model to be managed from his panel: its state and its prompts. Today the panel only shows the model's address and name and can test it once. The model is changed in the server's settings file, and the prompts live in the code.
 
@@ -921,3 +921,19 @@ The owner asked for the AI model to be managed from his panel: its state and its
 1. Is the plan right?
 2. The red-flag classifier's prompt: locked (proposed, since a mistake there hides emergencies), or editable too, behind the test set?
 3. The model's key: kept in the database, readable only by the server (proposed)? Or only in the server's settings file (safer: a stolen admin session can't change it)?
+
+### Owner's answers (2026-09-26)
+1. The plan is approved.
+2. **The red-flag classifier's prompt is editable too.** The owner will build a dataset of situations where the assistant must warn the patient. So:
+   - **«أمثلة السلامة»**: a dataset in the panel. Each example is a patient message, a label and a short note. Labels:
+     - «إسعاف» (emergency)
+     - «لازم دكتور» (see a doctor)
+     - «عادي» (normal)
+   - Enabled examples are given to the classifier as examples (never used to train anything).
+   - The same examples form the test set: a draft of any prompt can't be activated if it misses an «إسعاف» example, or if a reply trips the guard.
+   - **A new level, «لازم دكتور»**: the classifier can also say the patient should see a doctor soon (not an emergency). The patient gets a clear message to see a doctor, and the case goes to the pharmacy marked as such. No ambulance numbers.
+   - The code rules still run first and can't be edited. The classifier can only add alarms.
+3. **Model in the panel**: «اختر المخدم» (LM Studio / Ollama / a hosted service) with its address, «اختر النموذج» from the list the server offers, and the API key.
+   - The key is stored encrypted on the server (with the server's own secret) and is never sent back to the panel; the panel only shows that one is set.
+   - A model is only switched to after it answers. Every change is logged.
+
