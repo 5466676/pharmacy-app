@@ -21,6 +21,7 @@ from .consult.llm import ChatMessage
 from .consult.redflags import check
 from .deps import DbSession, Patient, PharmacyCaller, error
 from .events import patient_topic, pharmacy_topic
+from .health_file import medicines_from_decision, profile_lines, propose_from_summary
 from .knowledge import match_notes
 from .models import AiLog, Consultation, ConsultMessage, PatientProfile, User
 from .prompts import load_prompts
@@ -62,6 +63,9 @@ class ConsultationOut(BaseModel):
 
 
 class CasePatient(BaseModel):
+    # For the patient's health file (Phase 5).
+    id: str
+    has_file: bool
     name: str
     phone: str
     age: int | None
@@ -177,6 +181,8 @@ def _profile_text(db: Session, patient_id: str) -> str:
         parts.append(f"age {age}")
     if prof and prof.sex:
         parts.append({"m": "male", "f": "female"}[prof.sex])
+    # From the health file, so the assistant doesn't ask again.
+    parts += profile_lines(db, patient_id)
     return ", ".join(parts)
 
 
@@ -353,6 +359,7 @@ def send(cid: str, p: Patient, db: DbSession, request: Request) -> dict:
         raise error(409, "empty_consultation")
     c.status, c.sent_at = "sent", _now()
     _say(db, c, "system", texts.SENT)
+    propose_from_summary(db, c)
     _changed(request, c, "case_new")
     db.commit()
     return _out(db, c)
@@ -371,7 +378,12 @@ def _case(db: Session, caller, cid: str) -> Consultation:
 def _case_patient(db: Session, patient_id: str) -> CasePatient:
     user, prof = db.get(User, patient_id), db.get(PatientProfile, patient_id)
     return CasePatient(
-        name=user.name, phone=user.phone, age=_age(prof), sex=prof.sex if prof else None
+        id=user.id,
+        has_file=bool(prof and prof.file_consent_at),
+        name=user.name,
+        phone=user.phone,
+        age=_age(prof),
+        sex=prof.sex if prof else None,
     )
 
 
@@ -467,6 +479,7 @@ def decide(
         raise error(409, "bad_status")
     c.decision = {**body.model_dump(), "by": caller.actor, "at": _now().isoformat()}
     c.status = "ready"
+    medicines_from_decision(db, c, caller.actor)
     lines = [f"• {i.name} ({i.quantity}): {i.instructions}" for i in body.items]
     text = "\n".join([texts.READY, *lines, *([body.note] if body.note else [])])
     _say(db, c, "pharmacist", text, author=caller.actor)

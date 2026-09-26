@@ -178,6 +178,8 @@ class PatientProfile(Base):
     city: Mapped[str | None] = mapped_column(String(80))
     # The pharmacy the patient chose; cases and orders go there.
     pharmacy_id: Mapped[str | None] = mapped_column(ForeignKey("pharmacies.id"))
+    # Phase 5: the patient agreed to the health file (null: no file).
+    file_consent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
 
 class PatientSession(Base):
@@ -436,4 +438,81 @@ class SafetyExample(Base):
     note: Mapped[str | None] = mapped_column(String(300))
     enabled: Mapped[bool] = mapped_column(Boolean, default=True)
     created_by: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+# ─── Phase 5: the patient's health file ─────────────────────────────────────
+
+
+class HealthFact(Base):
+    """One fact in a patient's health file: an allergy, a condition, a
+    medicine taken now, pregnancy, weight or a note. Facts are ended, never
+    edited, so the history stays."""
+
+    __tablename__ = "health_facts"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    patient_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    # allergy | condition | medication | pregnancy | weight | note
+    kind: Mapped[str] = mapped_column(String(12))
+    text: Mapped[str] = mapped_column(String(300))
+    # A medicine: the pharmacist's instructions, times a day, days.
+    detail: Mapped[dict | None] = mapped_column(JSONB)
+    # patient: the patient said so · pharmacist: a pharmacist added or
+    # confirmed it.
+    source: Mapped[str] = mapped_column(String(10))
+    confirmed: Mapped[bool] = mapped_column(Boolean, default=False)
+    added_by: Mapped[str | None] = mapped_column(String(200))
+    pharmacy_id: Mapped[str | None] = mapped_column(ForeignKey("pharmacies.id"))
+    consultation_id: Mapped[str | None] = mapped_column(ForeignKey("consultations.id"))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    # A course of medicine ends by itself; anything can be ended by hand.
+    ends_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    ended_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class FileProposal(Base):
+    """Something new a chat revealed, waiting for the patient (facts about
+    themselves) or the pharmacist (medical facts) to confirm. The assistant
+    never writes the file itself."""
+
+    __tablename__ = "file_proposals"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    patient_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    consultation_id: Mapped[str | None] = mapped_column(ForeignKey("consultations.id"))
+    kind: Mapped[str] = mapped_column(String(12))
+    text: Mapped[str] = mapped_column(String(300))
+    # patient | pharmacist
+    needs: Mapped[str] = mapped_column(String(10))
+    # pending | accepted | rejected
+    status: Mapped[str] = mapped_column(String(8), default="pending")
+    decided_by: Mapped[str | None] = mapped_column(String(200))
+    decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class FileChange(Base):
+    """Every change to a health file: who (patient / pharmacist / admin /
+    system), what, when."""
+
+    __tablename__ = "file_changes"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    patient_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    actor: Mapped[str] = mapped_column(String(10))
+    actor_name: Mapped[str | None] = mapped_column(String(200))
+    action: Mapped[str] = mapped_column(String(12))
+    detail: Mapped[dict | None] = mapped_column(JSONB)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class FileAccess(Base):
+    """The platform owner opened a patient's file in the panel."""
+
+    __tablename__ = "file_access"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    admin_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    patient_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

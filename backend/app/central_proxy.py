@@ -113,7 +113,7 @@ def remove_link(_: Owner, request: Request) -> dict:
 # ─── Forwarding for the pharmacy's devices ─────────────────────────────────
 
 # Only the pharmacy side of the central API, nothing else.
-ALLOWED = ("cases", "orders", "updates", "photos")
+ALLOWED = ("cases", "orders", "updates", "photos", "patients")
 
 
 def _client(request: Request) -> httpx.Client:
