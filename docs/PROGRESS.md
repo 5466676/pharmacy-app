@@ -769,6 +769,34 @@ From SPEC §1.3 and `design/admin_overview_layout.html` (layout only, rebuilt in
   - «إلغاء» (remove): uninstalling on site. The admin marks it removed and its key stops working.
   - Every one of these actions asks for confirmation and is logged (who, when, why).
 
+### A3. Owner's answers (2026-09-26, after the design page)
+- **Design**: all three directions from the «لوحة مالك دوايا» page, and the owner switches between them in the panel:
+  - «غرفة القيادة» (dark console)
+  - «الدفتر» (light, navy side menu)
+  - «من عيلة دوايا» (Doaya green, Amiri headings)
+  - Built as three looks on the existing `DoayaLook` system, so no new colour code and no new fonts (Readex Pro + Amiri, bundled).
+- **Always connected, but the pharmacy's business stays private.** The owner sees *whether the pharmacy is running*, never its stock, medicines, sales, profits or debts.
+  - **Heartbeat** every 10 minutes from each pharmacy's server (with the shelf publish). It sends only:
+    - app and server version
+    - how many devices, and when each last synced
+    - last backup time
+    - sync errors
+  - The panel shows each pharmacy as connected / not seen for X.
+  - The heartbeat's reply carries the **control state** (active / suspended / stopped / removed) and the licence date.
+  - **Monthly health check** (the "full access once a month" the owner asked for):
+    - The pharmacy's own server runs it over *all* its data, on its own PC.
+    - It sends up **only the results** («تمام» / «تنبيه» / «مشكلة» per check, with a count at most), never the data. Checks:
+      - backups ran
+      - every device synced
+      - ledgers consistent (no stock below zero, every event has device/employee/time)
+      - open shifts left unclosed
+      - expired items still marked for sale (count only)
+      - disk space
+      - the server version is supported
+    - The owner can ask for a check now from the panel; it runs at the next heartbeat.
+    - Deeper remote access (seeing screens or data) is **not built**. If ever needed, it would need the pharmacy owner's approval on their screen each time (proposal, not in this phase).
+- **Licence**: 30 days without contact by default, changeable per pharmacy from the panel. «إيقاف النظام» means read-only screens + data export (the recommendation; the owner can change it).
+
 ### B. Admin app (`apps/admin`, Flutter web, `--no-web-resources-cdn`)
 - Sign-in, then a side menu as in the layout: نظرة عامة، الصيدليات، المرضى، مراجعة المحادثات (with a badge)، قاعدة المعرفة، الإعدادات. «المدفوعات» is shown as off for now.
 - Desktop-first, solid surfaces (no blur), usable on a tablet.
@@ -785,5 +813,5 @@ From SPEC §1.3 and `design/admin_overview_layout.html` (layout only, rebuilt in
 2. Themes: «تصميمي» for everyone? (answered: the look is for everyone)
 3. Admin: one admin (the owner) for now; more can be added from the server's command line. (answered)
 4. Admin: reviewing shows no patient name/phone (age, sex, pharmacy only). (answered: approved)
-6. Stopping a pharmacy: how many days may a pharmacy server work without contacting Doaya online before it asks to connect (proposal 30)? And should a stopped pharmacy keep read-only access to its screens, or only the data export?
+6. Stopping a pharmacy: licence days and read-only vs export. (answered in A3: 30 days, per pharmacy; read-only + export)
 5. Order: themes first, then Phase 4. (answered: yes)
