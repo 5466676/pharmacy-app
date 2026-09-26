@@ -193,6 +193,7 @@ void main() {
       expect(sales!.single.totalMinor, 9000);
       expect(sales.single.employeeId, owner.id);
       expect(find.textContaining('تمّ البيع'), findsOneWidget);
+      expect(find.text('اطبع الإيصال'), findsOneWidget); // a small button on the toast
       await unmount(tester);
     });
 

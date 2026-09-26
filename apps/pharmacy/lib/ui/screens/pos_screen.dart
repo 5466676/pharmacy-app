@@ -10,6 +10,8 @@ import 'package:go_router/go_router.dart';
 import '../../central/pickup.dart';
 import '../../data/database.dart';
 import '../../l10n/app_localizations.dart';
+import '../../data/people_repository.dart' show SettingKeys;
+import '../../printing/receipt.dart';
 import '../../providers.dart';
 import '../../router.dart';
 import '../format.dart';
@@ -254,6 +256,55 @@ class _PosScreenState extends ConsumerState<PosScreen> {
   int? _tenderedMinor(Currency c) =>
       _tendered.text.trim().isEmpty ? null : Money.tryParse(_tendered.text, c)?.minor;
 
+  /// The sale as printed, taken before the cart is cleared.
+  Receipt _receipt(AppLocalizations l, CompletedSale sale, Currency currency) => Receipt(
+    pharmacyName: ref.read(settingsProvider).value?[SettingKeys.pharmacyName] ?? l.appName,
+    saleId: sale.id,
+    at: DateTime.now(),
+    cashier: ref.read(requireSessionProvider).employee.name,
+    customer: _customer?.name,
+    lines: [
+      for (final c in _cart)
+        ReceiptLine(
+          name: c.product.tradeName,
+          quantity: c.quantity,
+          unitPriceMinor: c.unitPriceMinor,
+        ),
+    ],
+    currency: currency,
+    subtotalMinor: sale.subtotalMinor,
+    discountMinor: sale.discountMinor,
+    paymentLabel: switch (sale.payment) {
+      PaymentType.cash => l.paymentCash,
+      PaymentType.debt => l.paymentDebt,
+      PaymentType.transfer => l.paymentTransfer,
+    },
+    tenderedMinor: sale.tenderedMinor,
+  );
+
+  Future<void> _print(Receipt r) async {
+    final l = AppLocalizations.of(context);
+    try {
+      await printReceipt(
+        r,
+        ReceiptLabels(
+          saleNo: l.receiptSaleNo,
+          cashier: l.receiptCashier,
+          customer: l.receiptCustomer,
+          subtotal: l.receiptSubtotal,
+          discount: l.receiptDiscount,
+          total: l.receiptTotal,
+          payment: l.receiptPayment,
+          tendered: l.receiptTendered,
+          change: l.receiptChange,
+          thanks: l.receiptThanks,
+        ),
+      );
+    } on Object {
+      if (mounted) toast(context, l.printFailed, error: true);
+    }
+  }
+
   Future<void> _complete() async {
     if (_busy) return;
     final l = AppLocalizations.of(context);
@@ -285,12 +336,14 @@ class _PosScreenState extends ConsumerState<PosScreen> {
           );
       if (!mounted) return;
       final change = sale.changeMinor;
+      final receipt = _receipt(l, sale, currency);
       toast(
         context,
         change != null && change > 0
             ? '${l.saleDone(formatMoney(sale.totalMinor, currency))}، '
                   '${l.changeDue}: ${formatMoney(change, currency)}'
             : l.saleDone(formatMoney(sale.totalMinor, currency)),
+        action: (l.printReceipt, () => _print(receipt)),
       );
       _discount.clear();
       _tendered.clear();

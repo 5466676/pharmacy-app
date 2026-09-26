@@ -1275,5 +1275,17 @@
   "removeItem": "شيل",
   "centralUrlHint": "https://…",
   "noSummaryUrgent": "ما في ملخص: المساعد وقّف الاستشارة أول ما طلعت علامة الخطر. اقرا المحادثة.",
-  "prescriptionPhoto": "صورة الوصفة من المريض. اضغط لتكبّرها."
+  "prescriptionPhoto": "صورة الوصفة من المريض. اضغط لتكبّرها.",
+  "printReceipt": "اطبع الإيصال",
+  "receiptSaleNo": "فاتورة",
+  "receiptCashier": "البائع",
+  "receiptCustomer": "الزبون",
+  "receiptSubtotal": "المجموع",
+  "receiptDiscount": "الحسم",
+  "receiptTotal": "الإجمالي",
+  "receiptPayment": "الدفع",
+  "receiptTendered": "المدفوع",
+  "receiptChange": "الباقي",
+  "receiptThanks": "سلامتك، ومنتمنالك الشفا",
+  "printFailed": "ما قدرنا نطبع. تأكد إنو الطابعة شغّالة."
 }

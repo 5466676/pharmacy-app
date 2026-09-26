@@ -3757,6 +3757,78 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'صورة الوصفة من المريض. اضغط لتكبّرها.'**
   String get prescriptionPhoto;
+
+  /// No description provided for @printReceipt.
+  ///
+  /// In ar, this message translates to:
+  /// **'اطبع الإيصال'**
+  String get printReceipt;
+
+  /// No description provided for @receiptSaleNo.
+  ///
+  /// In ar, this message translates to:
+  /// **'فاتورة'**
+  String get receiptSaleNo;
+
+  /// No description provided for @receiptCashier.
+  ///
+  /// In ar, this message translates to:
+  /// **'البائع'**
+  String get receiptCashier;
+
+  /// No description provided for @receiptCustomer.
+  ///
+  /// In ar, this message translates to:
+  /// **'الزبون'**
+  String get receiptCustomer;
+
+  /// No description provided for @receiptSubtotal.
+  ///
+  /// In ar, this message translates to:
+  /// **'المجموع'**
+  String get receiptSubtotal;
+
+  /// No description provided for @receiptDiscount.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحسم'**
+  String get receiptDiscount;
+
+  /// No description provided for @receiptTotal.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإجمالي'**
+  String get receiptTotal;
+
+  /// No description provided for @receiptPayment.
+  ///
+  /// In ar, this message translates to:
+  /// **'الدفع'**
+  String get receiptPayment;
+
+  /// No description provided for @receiptTendered.
+  ///
+  /// In ar, this message translates to:
+  /// **'المدفوع'**
+  String get receiptTendered;
+
+  /// No description provided for @receiptChange.
+  ///
+  /// In ar, this message translates to:
+  /// **'الباقي'**
+  String get receiptChange;
+
+  /// No description provided for @receiptThanks.
+  ///
+  /// In ar, this message translates to:
+  /// **'سلامتك، ومنتمنالك الشفا'**
+  String get receiptThanks;
+
+  /// No description provided for @printFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما قدرنا نطبع. تأكد إنو الطابعة شغّالة.'**
+  String get printFailed;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

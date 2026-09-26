@@ -2099,4 +2099,40 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get prescriptionPhoto => 'صورة الوصفة من المريض. اضغط لتكبّرها.';
+
+  @override
+  String get printReceipt => 'اطبع الإيصال';
+
+  @override
+  String get receiptSaleNo => 'فاتورة';
+
+  @override
+  String get receiptCashier => 'البائع';
+
+  @override
+  String get receiptCustomer => 'الزبون';
+
+  @override
+  String get receiptSubtotal => 'المجموع';
+
+  @override
+  String get receiptDiscount => 'الحسم';
+
+  @override
+  String get receiptTotal => 'الإجمالي';
+
+  @override
+  String get receiptPayment => 'الدفع';
+
+  @override
+  String get receiptTendered => 'المدفوع';
+
+  @override
+  String get receiptChange => 'الباقي';
+
+  @override
+  String get receiptThanks => 'سلامتك، ومنتمنالك الشفا';
+
+  @override
+  String get printFailed => 'ما قدرنا نطبع. تأكد إنو الطابعة شغّالة.';
 }
