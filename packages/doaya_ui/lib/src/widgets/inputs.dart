@@ -126,6 +126,9 @@ class GlassTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tokens = DoayaTokens.of(context);
+    // A field always shows its edge: in the flat style surfaces have none,
+    // and a field would vanish into the card it sits on.
+    final edge = tokens.surfaceBorder.a == 0 ? DoayaColors.border : tokens.surfaceBorder;
     OutlineInputBorder border(Color c, [double w = DoayaSizes.borderWidth]) => OutlineInputBorder(
       borderRadius: BorderRadius.circular(DoayaRadii.tile),
       borderSide: BorderSide(color: c, width: w),
@@ -171,8 +174,8 @@ class GlassTextField extends StatelessWidget {
               horizontal: DoayaSpacing.xl,
               vertical: DoayaSpacing.l,
             ),
-            border: border(tokens.surfaceBorder),
-            enabledBorder: border(tokens.surfaceBorder),
+            border: border(edge),
+            enabledBorder: border(edge),
             focusedBorder: border(DoayaColors.accent, DoayaSizes.focusWidth),
             errorBorder: border(DoayaColors.dangerBorder),
             focusedErrorBorder: border(DoayaColors.dangerText, DoayaSizes.focusWidth),

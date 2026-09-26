@@ -421,5 +421,13 @@
     }
   },
   "corsOrigins": "عناوين الويب المسموحة",
-  "serverVersion": "نسخة السيرفر"
+  "serverVersion": "نسخة السيرفر",
+  "detailMatched": "الكلام يلي طابق",
+  "detailCategory": "النوع",
+  "detailCorrection": "التصحيح",
+  "detailOriginal": "قبل التصحيح",
+  "detailReply": "رد المساعد",
+  "detailError": "الخطأ",
+  "detailBy": "الصيدلي",
+  "detailReason": "السبب"
 }

@@ -1387,6 +1387,54 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'نسخة السيرفر'**
   String get serverVersion;
+
+  /// No description provided for @detailMatched.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكلام يلي طابق'**
+  String get detailMatched;
+
+  /// No description provided for @detailCategory.
+  ///
+  /// In ar, this message translates to:
+  /// **'النوع'**
+  String get detailCategory;
+
+  /// No description provided for @detailCorrection.
+  ///
+  /// In ar, this message translates to:
+  /// **'التصحيح'**
+  String get detailCorrection;
+
+  /// No description provided for @detailOriginal.
+  ///
+  /// In ar, this message translates to:
+  /// **'قبل التصحيح'**
+  String get detailOriginal;
+
+  /// No description provided for @detailReply.
+  ///
+  /// In ar, this message translates to:
+  /// **'رد المساعد'**
+  String get detailReply;
+
+  /// No description provided for @detailError.
+  ///
+  /// In ar, this message translates to:
+  /// **'الخطأ'**
+  String get detailError;
+
+  /// No description provided for @detailBy.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصيدلي'**
+  String get detailBy;
+
+  /// No description provided for @detailReason.
+  ///
+  /// In ar, this message translates to:
+  /// **'السبب'**
+  String get detailReason;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

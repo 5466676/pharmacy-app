@@ -715,4 +715,28 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get serverVersion => 'نسخة السيرفر';
+
+  @override
+  String get detailMatched => 'الكلام يلي طابق';
+
+  @override
+  String get detailCategory => 'النوع';
+
+  @override
+  String get detailCorrection => 'التصحيح';
+
+  @override
+  String get detailOriginal => 'قبل التصحيح';
+
+  @override
+  String get detailReply => 'رد المساعد';
+
+  @override
+  String get detailError => 'الخطأ';
+
+  @override
+  String get detailBy => 'الصيدلي';
+
+  @override
+  String get detailReason => 'السبب';
 }

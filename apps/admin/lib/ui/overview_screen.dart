@@ -118,9 +118,12 @@ class _Body extends ConsumerWidget {
             tone: StatusTone.accent,
             icon: DoayaIcons.review,
             message: l.reviewWaiting(n(o.reviewWaiting)),
-            action: GlassPillButton(
-              label: l.openReview,
-              onPressed: () => context.go(Routes.review),
+            action: Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: GlassPillButton(
+                label: l.openReview,
+                onPressed: () => context.go(Routes.review),
+              ),
             ),
           ),
           SizedBox(height: DoayaSpacing.m),

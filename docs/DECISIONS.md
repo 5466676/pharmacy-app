@@ -217,3 +217,27 @@ The server doesn't recreate the app's ~25 tables. Each synced row is stored once
 - Danger red and warning amber keep their meaning in every look; no palette has a red main colour.
 - Tokens (`DoayaColors`, spacing, radii, typography) became getters reading the current look, instead of passing a theme object through every widget. This cost 589 `const`s, removed mechanically by an analyzer-driven script.
 - The pharmacy desktop never blurs, whatever the style (old PCs).
+
+## 2026-09-26 · Admin panel: the owner sees whether pharmacies run, never their business
+- Owner's decision: the panel is the platform owner's. It shows each pharmacy's connection, speed and health, never its stock, medicines, sales, profits or debts.
+- Heartbeat: rides on the shelf publish (every 10 minutes) and sends only technical state. Its answer carries the control state and the licence.
+- The monthly health check: this is the owner's "full access once a month", done so the data stays private. It runs on the pharmacy's own PC over everything, and sends only verdicts and counts. Deeper remote access (seeing screens or data) is not built; if ever wanted, it would need the pharmacy owner's approval each time.
+- Stop / remove: the pharmacy app locks selling and stock changes at its next start, never mid-day. Reading and exporting stay open: the records are the pharmacy's own and the law needs them.
+- Licence: 30 days without contact by default, set per pharmacy from the panel.
+- The licence is not cryptographically signed in v1. Someone editing the app's files could get round it. The real levers are the contract and the key, which stops everything online at once.
+- Response time = the pharmacist's first action on a case, minus the time it was sent.
+- Reward tiers:
+  - gold: answered ≥95% and ≥90% within 10 minutes
+  - silver: answered ≥90% and ≥75% within 10 minutes
+  - fewer than 10 cases a month: not ranked
+  - The rewards themselves are decided outside the app.
+
+## 2026-09-26 · Knowledge base: tags, not a vector database
+- Notes reach the assistant when the patient's words contain one of their tags. Arabic spelling is folded as in the red-flag rules, and tags match inside words, so a stem like «حرار» works.
+- This is chosen over PostgreSQL full-text search: its Arabic stemming is weak, and the curated set is small. The rule is also one the owner can predict ("the note comes when the patient says one of these words") and test with «جرّب».
+- At most 3 notes per turn. A note stating a dose is refused (the same guard as the assistant's replies). Never automatic training.
+
+## 2026-09-26 · Admin app: three designs as looks
+- The owner wanted all three designs from the preview page, switchable: «غرفة القيادة», «الدفتر» and «من عيلة دوايا».
+- Each is a `DoayaLook`, so the colours still come from the design system with its contrast guarantees. No new fonts (Readex Pro + Amiri) and no blur.
+- The choice is kept per browser.

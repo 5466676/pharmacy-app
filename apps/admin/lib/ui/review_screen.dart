@@ -37,6 +37,25 @@ String patientBrief(AppLocalizations l, ReviewItem r) => l.patientBrief(
   r.pharmacy ?? '—',
 );
 
+/// The log entry's details worth reading, in words (the model's raw output
+/// and ids are left out).
+List<(String, String)> detailLines(AppLocalizations l, Json d) {
+  final labels = {
+    'category': l.detailCategory,
+    'matched': l.detailMatched,
+    'reason': l.detailReason,
+    'original': l.detailOriginal,
+    'correction': l.detailCorrection,
+    'reply': l.detailReply,
+    'by': l.detailBy,
+    'error': l.detailError,
+  };
+  return [
+    for (final e in labels.entries)
+      if (d[e.key] is String && (d[e.key]! as String).isNotEmpty) (e.value, d[e.key]! as String),
+  ];
+}
+
 class ReviewScreen extends ConsumerWidget {
   const ReviewScreen({super.key, this.selected});
   final int? selected;
@@ -181,10 +200,9 @@ class _ReviewDetailState extends ConsumerState<ReviewDetail> {
                   formatDateTime(r.at),
                   style: DoayaTypography.caption.copyWith(color: DoayaColors.textSecondary),
                 ),
-                if (r.detail.isNotEmpty) ...[
-                  SizedBox(height: DoayaSpacing.sm),
-                  for (final e in r.detail.entries.where((e) => e.key != 'raw'))
-                    Text('${e.key}: ${e.value}', style: DoayaTypography.caption),
+                for (final (label, value) in detailLines(l, r.detail)) ...[
+                  SizedBox(height: DoayaSpacing.xs),
+                  Text('$label: $value', style: DoayaTypography.bodySmall),
                 ],
                 SizedBox(height: DoayaSpacing.m),
                 for (final m in r.messages) _Message(m),

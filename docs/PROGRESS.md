@@ -736,7 +736,7 @@ Preview: the «ألوان دوايا» page (version 2). Choices are made in «�
 - Screenshots: `docs/screenshots/themes/` (patient web in 7 looks + the «المظهر» screen; pharmacy desktop in 4 looks).
 - Tests: `doaya_ui` 30 (every palette × mode × style and a sweep of custom colours pass the contrast rules; safety colours keep their meaning), pharmacy 98, patient 28.
 
-## Phase 4 — Admin panel · 📝 plan, waiting for the owner's OK (asked 2026-09-26)
+## Phase 4 — Admin panel · ✅ done 2026-09-26, waiting for review
 
 From SPEC §1.3 and `design/admin_overview_layout.html` (layout only, rebuilt in the dark tokens). Subscriptions and payments stay **off** (owner's decision for the pilot); the screens say so instead of showing fake numbers.
 
@@ -807,6 +807,62 @@ From SPEC §1.3 and `design/admin_overview_layout.html` (layout only, rebuilt in
 3. Admin app: skeleton, sign-in, overview, pharmacies.
 4. Admin app: review queue and knowledge base, settings.
 5. Real run with screenshots, docs → **review**.
+
+### Done (2026-09-26)
+- **Server**:
+  - Admin accounts: `app.cli create-admin`, with long sessions like the patients' and a sign-in limiter. No other token reaches `/admin/*`, and an admin token reaches nothing else (tested).
+  - Overview.
+  - Pharmacies:
+    - add a pharmacy (its server key is shown once)
+    - approve / suspend / resume / stop / remove
+    - list / hide
+    - new key
+    - licence days
+    - health check now
+    - Each action needs a reason where it matters, and is logged with who, when and why.
+  - First response time is recorded on the pharmacist's first action.
+  - Performance per month for rewards:
+    - answered, median, P90, share within 10 minutes
+    - urgent cases answered in time, orders
+    - tiers: gold (answered ≥95% and ≥90% within 10 minutes) and silver (≥90% and ≥75%)
+    - fewer than 10 cases: not ranked
+- **Control and heartbeat**:
+  - Each pharmacy's server reports with every shelf publish (every 10 minutes). The report is technical only: version, devices, backups, errors, disk. A test proves no product, price, sale or customer leaves the pharmacy.
+  - The answer carries the owner's control and the licence. It is kept in `control.json`, and the devices ask `GET /control`.
+  - The pharmacy app keeps the answer after each sync and reads it once at start. When stopped, removed, or the licence has expired, these close:
+    - selling
+    - receiving stock
+    - stocktake
+    - purchases
+    - the till
+  - Reports, inventory, debts, backups and export stay open.
+  - It never locks in the middle of a day. A reminder shows 5 days before the licence runs out. Unlinking from Doaya online doesn't lift a lock.
+- **Monthly health check**: runs on the pharmacy's PC over all its data and sends only verdicts and counts:
+  - backups
+  - devices synced
+  - stock below zero
+  - expired items still for sale
+  - incomplete ledger events
+  - shifts left open
+  - disk space
+- **Review queue**:
+  - Covers red flags, guard blocks, corrections, edited summaries and model-down moments.
+  - Shown with age, sex and pharmacy only (tested: no patient name or phone).
+  - Items are marked reviewed with a note, and can become a knowledge note.
+- **Knowledge base**:
+  - Notes with tags and on/off. Every change is logged.
+  - A note that states a dose is refused.
+  - The assistant gets up to 3 enabled notes whose tags the patient mentioned. Spelling is folded and stems are allowed. The notes used are logged with the reply.
+  - A «جرّب» box shows which notes a sentence would bring.
+- **Admin app** (`apps/admin`, Flutter web, built with `--no-web-resources-cdn`):
+  - Screens: sign-in, overview (with the response-time chart and the pharmacies needing attention), pharmacies with the detail and the actions, performance, review, knowledge, settings (with a model check).
+  - **The three designs** switch from the top bar and are kept in the browser. No blur.
+- **Found by the real run and fixed**:
+  - Text fields vanished in the flat style (no edge on a card of the same colour). Fields now always show their edge (`doaya_ui`, all apps).
+  - Review details showed raw English keys. They now show in words.
+  - The review button stretched across the banner.
+- Screenshots: `docs/screenshots/phase4/` (the three designs on the overview, a pharmacy with health warnings, a suspended pharmacy, performance, review, knowledge, settings, sign-in).
+- Tests: server 231, pharmacy 108, patient 28, admin 11, `doaya_ui` 30, core 95.
 
 ### Questions for the owner
 1. Themes: the preview page's choices. (answered: approved, with more colours and styles)
