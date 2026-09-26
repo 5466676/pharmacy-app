@@ -8,6 +8,8 @@ import '../l10n/app_localizations.dart';
 import '../router.dart';
 import 'common.dart';
 import 'consultation_tile.dart';
+import '../data/shop.dart';
+import 'shelf_screens.dart';
 
 /// Opens a new consultation and goes to its chat.
 Future<void> startConsultation(BuildContext context, WidgetRef ref) async {
@@ -31,6 +33,7 @@ class HomeScreen extends ConsumerWidget {
     final l = AppLocalizations.of(context);
     final pharmacy = ref.watch(authProvider).patient?.pharmacy;
     final recent = ref.watch(consultationsProvider);
+    final shelf = ref.watch(shelfProvider(''));
     return RefreshIndicator(
       onRefresh: () => ref.refresh(consultationsProvider.future),
       child: PhoneBody(
@@ -40,7 +43,7 @@ class HomeScreen extends ConsumerWidget {
             Row(
               children: [
                 Text(l.appName, style: DoayaTypography.title),
-                const Spacer(),
+                const SizedBox(width: DoayaSpacing.ml),
                 if (pharmacy != null)
                   Flexible(
                     child: GlassPillButton(
@@ -50,9 +53,16 @@ class HomeScreen extends ConsumerWidget {
                       onPressed: () => context.go(Routes.account),
                     ),
                   ),
+                const Spacer(),
+                const CartButton(),
               ],
             ),
-            const SizedBox(height: DoayaSpacing.xl),
+            const SizedBox(height: DoayaSpacing.l),
+            GlassSearchField(
+              hint: l.searchHint,
+              onSubmitted: (q) => context.push(Routes.shelfSearch(q.trim())),
+            ),
+            const SizedBox(height: DoayaSpacing.l),
             const _Hero(),
             const SizedBox(height: DoayaSpacing.xl),
             NoticeBanner(message: l.safetyLine, icon: DoayaIcons.warning),
@@ -92,6 +102,16 @@ class HomeScreen extends ConsumerWidget {
               ],
               _ => [const Center(child: CircularProgressIndicator())],
             },
+            if (shelf.value case final items? when items.isNotEmpty) ...[
+              const SizedBox(height: DoayaSpacing.xl),
+              SectionHeader(
+                title: l.availableAtPharmacy,
+                actionLabel: l.seeAll,
+                onAction: () => context.push(Routes.shelf),
+              ),
+              const SizedBox(height: DoayaSpacing.sm),
+              ShelfGrid(items: items.where((i) => i.available).take(6).toList()),
+            ],
             const SizedBox(height: DoayaSpacing.xl),
           ],
         ),

@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'dart:async';
 
 import 'package:doaya_patient/app.dart';
+import 'package:doaya_patient/data/doses.dart';
 import 'package:doaya_patient/data/live_updates.dart';
+import 'package:doaya_patient/data/photos.dart';
 import 'package:doaya_patient/data/patient_api.dart';
 import 'package:doaya_patient/data/providers.dart';
 import 'package:doaya_patient/data/session_store.dart';
@@ -12,12 +14,19 @@ import 'package:doaya_patient/ui/chat_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 
 import 'auth_test.dart' show pharmacy;
+import 'fake_notifications.dart';
 import 'patient_api_test.dart' show json, patientJson;
 
 final l = lookupAppLocalizations(const Locale('ar'));
+
+/// A real 1×1 PNG (Image.memory decodes it in tests).
+final png = base64Decode(
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+);
 
 /// Doaya online in memory: one patient, one pharmacy, a scripted assistant.
 class FakeServer {
@@ -50,10 +59,70 @@ class FakeServer {
         'messages': <Map<String, Object?>>[],
       };
 
+  final shelf = <Map<String, Object?>>[
+    shelfJson('p1', 'Panadol 500mg', 'بنادول', 250000),
+    shelfJson('p2', 'Omega 3', null, 1200000),
+    shelfJson('p3', 'Augmentin 1g', 'اوغمنتين', 900000, available: false, rx: true),
+  ];
+  final orders = <String, Map<String, Object?>>{};
+
+  static Map<String, Object?> shelfJson(
+    String id,
+    String name,
+    String? arabic,
+    int price, {
+    bool available = true,
+    bool rx = false,
+  }) => {
+    'product_id': id,
+    'trade_name': name,
+    'arabic_name': arabic,
+    'active_ingredient': null,
+    'strength': null,
+    'form': null,
+    'price_minor': price,
+    'currency': 'SYP',
+    'available': available,
+    'prescription_only': rx,
+    'photo_url': null,
+  };
+
+  Map<String, Object?> order(String id, List<Map<String, Object?>> lines, String? note) =>
+      orders[id] = {
+        'id': id,
+        'pharmacy_id': 'ph1',
+        'status': 'sent',
+        'lines': lines,
+        'currency': 'SYP',
+        'total_minor': lines.fold<int>(
+          0,
+          (s, l) => s + (l['quantity']! as int) * (l['price_minor']! as int),
+        ),
+        'note': note,
+        'pharmacist_note': null,
+        'handled_by': null,
+        'created_at': '2026-09-26T10:00:00Z',
+        'updated_at': '2026-09-26T10:00:00Z',
+      };
+
+  final photos = <String, List<int>>{};
+
   late final client = MockClient((req) async {
     final path = req.url.path;
     seen.add('${req.method} $path');
-    final body = req.body.isEmpty ? null : jsonDecode(req.body);
+    final multipart = req.headers['content-type']?.startsWith('multipart/') ?? false;
+    final body = multipart || req.bodyBytes.isEmpty ? null : jsonDecode(req.body);
+    if (multipart) {
+      final id = 'photo${photos.length + 1}';
+      photos[id] = req.bodyBytes;
+      if (path == '/photos') return json({'id': id});
+      final c = consultations[path.split('/')[2]]!;
+      (c['messages']! as List).add({..._message('patient', 'بعتت صورة'), 'photo_id': id});
+      return json(c);
+    }
+    if (req.method == 'GET' && path.startsWith('/photos/')) {
+      return http.Response.bytes(png, 200, headers: {'content-type': 'image/png'});
+    }
     final parts = path.split('/');
     switch ((req.method, path)) {
       case ('POST', '/patients/register'):
@@ -69,10 +138,51 @@ class FakeServer {
           ],
           'orders': [],
         });
+      case ('GET', '/directory/ph1/shelf'):
+        final q = req.url.queryParameters['q'];
+        return json([
+          for (final i in shelf)
+            if (q == null ||
+                '${i['trade_name']} ${i['arabic_name']}'.toLowerCase().contains(q.toLowerCase()))
+              i,
+        ]);
+      case ('GET', _) when path.startsWith('/directory/ph1/shelf/'):
+        return json(shelf.firstWhere((i) => i['product_id'] == parts.last));
+      case ('POST', '/orders'):
+        if (body['photo_id'] != null) seen.add('photo_id ${body['photo_id']}');
+        final lines = [
+          for (final l in body['lines'] as List)
+            {
+              'product_id': l['product_id'],
+              'name': shelf.firstWhere((i) => i['product_id'] == l['product_id'])['trade_name'],
+              'requested': l['quantity'],
+              'quantity': l['quantity'],
+              'price_minor': shelf.firstWhere(
+                (i) => i['product_id'] == l['product_id'],
+              )['price_minor'],
+            },
+        ];
+        final o = order('o${orders.length + 1}', lines, body['note'] as String?);
+        o['photo_id'] = body['photo_id'];
+        return json(o);
+      case ('GET', '/orders'):
+        return json(orders.values.toList().reversed.toList());
+      case ('GET', _) when path.startsWith('/orders/'):
+        return json(orders[parts[2]]!);
+      case ('POST', _) when path.startsWith('/orders/') && path.endsWith('/cancel'):
+        final o = orders[parts[2]]!;
+        if (o['status'] != 'sent') return json({'detail': 'already_handled'}, 409);
+        o['status'] = 'cancelled';
+        return json(o);
       case ('GET', '/directory'):
         return json([pharmacy]);
       case ('PATCH', '/patients/me'):
-        me = {...me, 'pharmacy': pharmacy};
+        if (body case {'pharmacy_id': final String id}) {
+          me = {
+            ...me,
+            'pharmacy': {...pharmacy, 'id': id},
+          };
+        }
         return json(me);
       case ('GET', '/patients/me'):
         return json(me);
@@ -109,7 +219,15 @@ class FakeServer {
   });
 }
 
-Future<void> pumpApp(WidgetTester tester, FakeServer server, MemorySessionStore store) async {
+Future<void> pumpApp(
+  WidgetTester tester,
+  FakeServer server,
+  MemorySessionStore store, {
+  Stream<Object?>? live,
+  FakeNotifications? notifications,
+  MemorySessionStore? reminders,
+}) async {
+  Future<PickedPhoto?> picker(PhotoSource _) async => (bytes: png, name: 'rx.png');
   tester.view
     ..physicalSize = const Size(390, 844)
     ..devicePixelRatio = 1;
@@ -119,7 +237,11 @@ Future<void> pumpApp(WidgetTester tester, FakeServer server, MemorySessionStore 
       overrides: [
         apiProvider.overrideWithValue(PatientApi(Uri.parse('https://x/'), client: server.client)),
         sessionStoreProvider.overrideWithValue(store),
-        liveConnectProvider.overrideWithValue((_) => StreamController<Object?>().stream),
+        liveConnectProvider.overrideWithValue((_) => live ?? StreamController<Object?>().stream),
+        deviceNotificationsProvider.overrideWithValue(notifications ?? FakeNotifications()),
+        remindersStoreProvider.overrideWithValue(reminders ?? MemorySessionStore()),
+        watchStoreProvider.overrideWithValue(MemorySessionStore()),
+        photoPickerProvider.overrideWithValue(picker),
       ],
       child: const PatientApp(),
     ),
@@ -129,6 +251,7 @@ Future<void> pumpApp(WidgetTester tester, FakeServer server, MemorySessionStore 
 
 Future<void> tap(WidgetTester tester, String text) async {
   await tester.ensureVisible(find.text(text).last);
+  await tester.pumpAndSettle();
   await tester.tap(find.text(text).last);
   await tester.pumpAndSettle();
 }

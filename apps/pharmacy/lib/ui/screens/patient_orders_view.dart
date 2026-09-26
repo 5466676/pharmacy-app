@@ -10,6 +10,7 @@ import '../../l10n/app_localizations.dart';
 import '../../providers.dart';
 import '../../router.dart';
 import '../format.dart';
+import '../patient_photo.dart';
 import '../widgets.dart';
 import 'cases_screen.dart' show patientLine;
 import 'sync_screen.dart' show syncErrorText;
@@ -100,6 +101,16 @@ class _OrderDetailViewState extends ConsumerState<OrderDetailView> {
             ].where((s) => s.isNotEmpty).join('، '),
             style: secondary,
           ),
+          if (o.photoId case final photo?) ...[
+            const SizedBox(height: DoayaSpacing.sm),
+            Row(
+              children: [
+                PatientPhoto(id: photo),
+                const SizedBox(width: DoayaSpacing.ml),
+                Expanded(child: Text(l.prescriptionPhoto, style: secondary)),
+              ],
+            ),
+          ],
           if (o.note != null) ...[
             const SizedBox(height: DoayaSpacing.sm),
             NoticeBanner(message: l.orderPatientNote(o.note!)),

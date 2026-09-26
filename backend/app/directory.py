@@ -123,3 +123,13 @@ def shelf(
         stmt = stmt.where(ShelfItem.available)
     stmt = stmt.order_by(ShelfItem.available.desc(), ShelfItem.trade_name)
     return list(db.scalars(stmt.limit(min(limit, 200)).offset(max(offset, 0))))
+
+
+@router.get("/directory/{pharmacy_id}/shelf/{product_id}", response_model=ShelfOut)
+def shelf_item(pharmacy_id: str, product_id: str, db: DbSession) -> ShelfItem:
+    """One product, for its own page (a link or a reload on the web)."""
+    _listed(db, pharmacy_id)
+    item = db.get(ShelfItem, (pharmacy_id, product_id))
+    if item is None:
+        raise error(404, "product_not_found")
+    return item

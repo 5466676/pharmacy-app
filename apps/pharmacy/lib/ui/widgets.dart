@@ -249,14 +249,24 @@ DateTime? parseDate(String input) {
 }
 
 /// Shows a short message at the bottom.
-void toast(BuildContext context, String message, {bool error = false}) {
+/// A short message; with [action] (e.g. «اطبع الإيصال») it stays longer.
+void toast(
+  BuildContext context,
+  String message, {
+  bool error = false,
+  (String, VoidCallback)? action,
+}) {
   ScaffoldMessenger.of(context)
     ..hideCurrentSnackBar()
     ..showSnackBar(
       SnackBar(
         behavior: SnackBarBehavior.floating,
         backgroundColor: error ? DoayaColors.dangerText : DoayaColors.accent,
+        duration: Duration(seconds: action == null ? 4 : 10),
         content: Text(message, style: DoayaTypography.label.copyWith(color: DoayaColors.onSage)),
+        action: action == null
+            ? null
+            : SnackBarAction(label: action.$1, textColor: DoayaColors.onSage, onPressed: action.$2),
       ),
     );
 }

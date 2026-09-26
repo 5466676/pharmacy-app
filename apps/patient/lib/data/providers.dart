@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -9,10 +10,12 @@ import 'session_store.dart';
 
 /// Doaya online's address, set at build time:
 /// `--dart-define=DOAYA_API=https://…`.
-final apiBaseProvider = Provider<Uri>((ref) {
+final Uri apiBaseUrl = () {
   const raw = String.fromEnvironment('DOAYA_API', defaultValue: 'http://127.0.0.1:8100');
   return Uri.parse(raw.endsWith('/') ? raw : '$raw/');
-});
+}();
+
+final apiBaseProvider = Provider<Uri>((ref) => apiBaseUrl);
 
 final sessionStoreProvider = Provider<SessionStore>((ref) => SessionStore());
 
@@ -147,6 +150,8 @@ class ConsultationController extends AsyncNotifier<Consultation> {
   Future<void> correctSummary(Map<String, Object?> summary) =>
       _run(() => _api.correctSummary(id, summary));
   Future<void> send() => _run(() => _api.send(id));
+  Future<void> sendPhoto(Uint8List bytes, String name) =>
+      _run(() => _api.sendPhoto(id, bytes, name));
   Future<void> reload() => _run(() => _api.consultation(id));
 }
 

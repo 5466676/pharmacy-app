@@ -9,6 +9,8 @@ import '../data/providers.dart';
 import '../l10n/app_localizations.dart';
 import '../router.dart';
 import 'common.dart';
+import 'photo_widgets.dart';
+import 'doses_screen.dart' show RemindMeButton;
 import 'summary_editor.dart';
 
 /// From design/patient_chat.html: the assistant asks, summarises, the
@@ -66,6 +68,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     if (text.isEmpty || _busy) return;
     if (quick == null) _input.clear();
     _act(() => _ctl.say(text), pending: text);
+  }
+
+  Future<void> _photo() async {
+    final picked = await pickPhoto(context, ref);
+    if (picked == null || !mounted) return;
+    await _act(() => _ctl.sendPhoto(picked.bytes, picked.name));
   }
 
   Future<void> _editSummary(Consultation c) async {
@@ -168,6 +176,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           hint: l.messageHint,
           sendLabel: l.send,
           onSend: _say,
+          photoLabel: l.attachPhoto,
+          onPhoto: _busy ? null : _photo,
         ),
     ];
   }
@@ -267,6 +277,8 @@ class _Messages extends StatelessWidget {
       if (!c.withAssistant && !c.finished && c.status != ConsultStatus.emergency)
         _Steps(status: c.status),
       if (c.decision != null) _DecisionCard(decision: c.decision!, pharmacyName: pharmacyName),
+      if (c.decision != null && !c.finished)
+        RemindMeButton(consultationId: c.id, decision: c.decision!),
     ];
     if (items.isEmpty) {
       items.add(
@@ -334,6 +346,10 @@ class _Bubble extends StatelessWidget {
               style: DoayaTypography.caption.copyWith(color: DoayaColors.accent),
             ),
           ),
+        if (m?.photoId case final photo?) ...[
+          PhotoThumb(id: photo),
+          const SizedBox(height: DoayaSpacing.xs),
+        ],
         Text(body, style: style),
         if (m != null)
           Text(
@@ -551,7 +567,12 @@ class _InputBar extends StatelessWidget {
     required this.hint,
     required this.sendLabel,
     required this.onSend,
+    required this.photoLabel,
+    required this.onPhoto,
   });
+
+  final String photoLabel;
+  final VoidCallback? onPhoto;
 
   final TextEditingController controller;
   final FocusNode focusNode;
@@ -576,9 +597,14 @@ class _InputBar extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: DoayaSpacing.s),
       child: Row(
         children: [
+          IconButton(
+            icon: const Icon(DoayaIcons.camera, color: DoayaColors.textSecondary),
+            tooltip: photoLabel,
+            onPressed: onPhoto,
+          ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: DoayaSpacing.l),
+              padding: const EdgeInsetsDirectional.only(end: DoayaSpacing.l),
               child: TextField(
                 controller: controller,
                 focusNode: focusNode,

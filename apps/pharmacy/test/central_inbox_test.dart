@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:doaya_pharmacy/app.dart';
 import 'package:doaya_pharmacy/central/inbox_controller.dart';
 import 'package:doaya_pharmacy/data/catalog_repository.dart';
@@ -237,6 +239,26 @@ void main() {
     await tester.tap(find.text('تأكيد'));
     await settle(tester);
     expect(api.central.cases['c1']!['status'], 'needs_doctor');
+  });
+
+  testWidgets('the patient\'s prescription photo shows in the case, full size on a click', (
+    tester,
+  ) async {
+    await pumpLinked(tester);
+    api.central.photos['ph1'] = base64Decode(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+    );
+    final c = api.central.addCase('c1', messages: [('patient', 'بدي هالدوا')]);
+    ((c['messages']! as List).last as Map)['photo_id'] = 'ph1';
+    await refreshInbox(tester);
+    container.read(routerProvider).go(Routes.cases);
+    await settle(tester);
+    await tester.tap(find.text('بدي هالدوا').first);
+    await settle(tester);
+    expect(find.byType(Image), findsOneWidget);
+    await tester.tap(find.byType(Image));
+    await settle(tester);
+    expect(find.byType(InteractiveViewer), findsOneWidget);
   });
 
   testWidgets('an order: the pharmacist sets the final quantities, then sells it', (tester) async {

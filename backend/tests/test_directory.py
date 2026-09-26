@@ -46,6 +46,9 @@ def test_a_pharmacy_publishes_its_shelf_and_patients_browse_it(client, engine):
     assert items[0]["currency"] == "SYP" and "quantity" not in items[0]
     assert [i["product_id"] for i in client.get(f"/directory/{pid}/shelf?q=بروف").json()] == ["p2"]
     assert client.get(f"/directory/{pid}/shelf?available_only=true").json()[0]["product_id"] == "p1"
+    one = client.get(f"/directory/{pid}/shelf/p2").json()
+    assert (one["product_id"], one["currency"]) == ("p2", "SYP")
+    assert client.get(f"/directory/{pid}/shelf/nope").status_code == 404
 
     # Publishing again replaces the shelf.
     shelf["items"] = shelf["items"][:1]

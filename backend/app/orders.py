@@ -27,6 +27,8 @@ class OrderLineIn(BaseModel):
 class OrderIn(BaseModel):
     lines: list[OrderLineIn] = Field(min_length=1, max_length=50)
     note: str | None = Field(default=None, max_length=1000)
+    # A prescription photo uploaded with POST /photos.
+    photo_id: str | None = Field(default=None, max_length=36)
 
 
 class OrderLine(BaseModel):
@@ -48,6 +50,7 @@ class OrderOut(BaseModel):
     note: str | None
     pharmacist_note: str | None
     handled_by: str | None
+    photo_id: str | None = None
     created_at: datetime
     updated_at: datetime
 
@@ -115,6 +118,10 @@ def place(body: OrderIn, p: Patient, db: DbSession, request: Request) -> dict:
         note=body.note.strip() if body.note else None,
     )
     db.add(o)
+    if body.photo_id:
+        from .photos import attach_to_order
+
+        attach_to_order(db, p.user_id, o, body.photo_id)
     _changed(request, o)
     db.commit()
     return _out(o)

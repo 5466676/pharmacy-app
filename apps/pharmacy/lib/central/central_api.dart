@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:doaya_core/doaya_core.dart';
 
 /// The pharmacy side of Doaya online (patients' cases and pickup orders),
@@ -67,9 +69,13 @@ class CaseMessage {
       text = j['text']! as String,
       quickReplies = (j['quick_replies'] as List?)?.cast<String>(),
       author = _str(j['author']),
+      photoId = _str(j['photo_id']),
       createdAt = _date(j['created_at'])!;
 
   final int id;
+
+  /// A photo the patient sent (a prescription, a box).
+  final String? photoId;
 
   /// patient | assistant | pharmacist | system
   final String role;
@@ -202,10 +208,14 @@ class PatientOrder {
       note = _str(j['note']),
       pharmacistNote = _str(j['pharmacist_note']),
       handledBy = _str(j['handled_by']),
+      photoId = _str(j['photo_id']),
       createdAt = _date(j['created_at'])!,
       patient = CasePatient.fromJson(j['patient']! as Map<String, Object?>);
 
   final String id;
+
+  /// The prescription photo sent with the order.
+  final String? photoId;
   final String status;
   final List<OrderLine> lines;
   final int totalMinor;
@@ -270,6 +280,9 @@ class CentralApi {
         'field': field,
         'correction': correction,
       });
+
+  /// A patient's photo, through the pharmacy's own server.
+  Future<Uint8List> photo(String id) => _remote.getBytes('central/photos/$id');
 
   Future<List<PatientOrder>> orders() async => [
     for (final o in (await _remote.getJson('central/orders'))! as List)

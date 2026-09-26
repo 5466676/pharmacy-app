@@ -4,7 +4,9 @@ import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
+import 'doses.dart';
 import 'providers.dart';
+import 'shop.dart';
 
 /// Opens the live socket; tests swap in a stream of their own.
 typedef LiveConnect = Stream<Object?> Function(Uri uri);
@@ -64,6 +66,16 @@ class LiveUpdates {
       return;
     }
     if (event case {'consultation_id': final String id}) _changed(id);
+    if (event case {'order_id': final String id}) _orderChanged(id);
+    if (event case {'type': final String type} when type != 'ping') {
+      unawaited(checkUpdatesNow(_ref));
+    }
+  }
+
+  void _orderChanged(String id) {
+    _ref
+      ..invalidate(orderProvider(id))
+      ..invalidate(ordersProvider);
   }
 
   void _changed(String id) {
@@ -89,6 +101,9 @@ class LiveUpdates {
       _since = DateTime.parse(u['now']! as String);
       for (final c in (u['consultations'] as List? ?? const [])) {
         if (c case {'id': final String id}) _changed(id);
+      }
+      for (final o in (u['orders'] as List? ?? const [])) {
+        if (o case {'id': final String id}) _orderChanged(id);
       }
     } on Object {
       // Offline: try again at the next tick.

@@ -3,11 +3,12 @@ import 'dart:js_interop_unsafe';
 
 import 'session_store.dart';
 
-SessionStore platformSessionStore() => _LocalStorageSessionStore();
+SessionStore platformSessionStore(String name) => _LocalStorageSessionStore('doaya.$name');
 
 /// `window.localStorage`, through the SDK's own JS interop (no package).
 class _LocalStorageSessionStore implements SessionStore {
-  static const _key = 'doaya.session';
+  _LocalStorageSessionStore(this._key);
+  final String _key;
 
   JSObject get _storage => globalContext['localStorage']! as JSObject;
 

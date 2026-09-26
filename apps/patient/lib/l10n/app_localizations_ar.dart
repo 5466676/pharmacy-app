@@ -309,4 +309,309 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get retry => 'جرّب كمان مرة';
+
+  @override
+  String get navOrders => 'طلباتي';
+
+  @override
+  String get searchHint => 'دوّر على دوا أو منتج…';
+
+  @override
+  String get availableAtPharmacy => 'متوفر بصيدليتك';
+
+  @override
+  String get shelfTitle => 'رفوف صيدليتك';
+
+  @override
+  String get available => 'متوفر';
+
+  @override
+  String get unavailable => 'مو متوفر هلق';
+
+  @override
+  String get prescriptionOnly => 'بوصفة';
+
+  @override
+  String get noPrescription => 'بدون وصفة';
+
+  @override
+  String get rxHint => 'هالدوا بدو وصفة طبية: جيبها معك وقت الاستلام، والصيدلي بيقرر.';
+
+  @override
+  String get askPharmacistHint =>
+      'اسأل صيدليتك عن الطريقة المناسبة إلك، خصوصاً إذا عم تاخد أدوية تانية.';
+
+  @override
+  String get ingredient => 'المادة الفعالة';
+
+  @override
+  String get strength => 'العيار';
+
+  @override
+  String get dosageForm => 'الشكل';
+
+  @override
+  String get noResults => 'ما لقينا شي بهالاسم';
+
+  @override
+  String get orderFromPharmacy => 'اطلب من صيدليتي';
+
+  @override
+  String get addedToCart => 'انضاف لطلبيتك';
+
+  @override
+  String inCart(String count) {
+    return 'بطلبيتك: $count';
+  }
+
+  @override
+  String get viewCart => 'شوف الطلبية';
+
+  @override
+  String get less => 'أقل';
+
+  @override
+  String get more => 'أكتر';
+
+  @override
+  String get cartTitle => 'طلبيتي';
+
+  @override
+  String get cartEmpty => 'طلبيتك فاضية. اختار من رفوف صيدليتك.';
+
+  @override
+  String get browseShelf => 'تصفّح الرفوف';
+
+  @override
+  String get noteToPharmacist => 'ملاحظة للصيدلي';
+
+  @override
+  String orderTotal(String amount) {
+    return 'المجموع: $amount';
+  }
+
+  @override
+  String pickupFrom(String name) {
+    return 'استلام من $name';
+  }
+
+  @override
+  String get sendOrder => 'أرسل الطلب للصيدلية';
+
+  @override
+  String get payAtPickup => 'الدفع عند الاستلام بالصيدلية';
+
+  @override
+  String get finalQuantitiesHint => 'الكميات النهائية بيحددها الصيدلي حسب الموجود.';
+
+  @override
+  String get orderSent => 'وصل طلبك للصيدلية';
+
+  @override
+  String get ordersTitle => 'طلباتي';
+
+  @override
+  String get noOrders => 'ما عندك طلبات لسا';
+
+  @override
+  String orderStatus(String status) {
+    String _temp0 = intl.Intl.selectLogic(status, {
+      'sent': 'وصل للصيدلية',
+      'preparing': 'عم يتحضّر',
+      'ready': 'جاهز للاستلام',
+      'picked_up': 'استلمته',
+      'rejected': 'ما في هلق',
+      'cancelled': 'ملغى',
+      'other': '$status',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String orderLines(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count منتج',
+      few: '$count منتجات',
+      two: 'منتجين',
+      one: 'منتج واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String lineChanged(String requested, String quantity) {
+    return 'طلبت $requested، الصيدلي حضّر $quantity';
+  }
+
+  @override
+  String lineDropped(String requested) {
+    return 'طلبت $requested، ما في هلق';
+  }
+
+  @override
+  String get cancelOrder => 'إلغاء الطلب';
+
+  @override
+  String get cancelOrderConfirm => 'بدك تلغي هالطلب؟';
+
+  @override
+  String get keepOrder => 'لا، خليه';
+
+  @override
+  String orderTitle(String date) {
+    return 'طلب $date';
+  }
+
+  @override
+  String get errUnknownProduct => 'في منتج ما عاد موجود على الرف. حدّث الطلبية.';
+
+  @override
+  String get errAlreadyHandled => 'الصيدلي بلّش بالطلب، ما عاد فيك تلغيه.';
+
+  @override
+  String lineQtyPrice(String quantity, String price) {
+    return '$quantity × $price';
+  }
+
+  @override
+  String get noticeConsultationReady => 'حضّرلك الصيدلي دواك';
+
+  @override
+  String get noticeConsultationReadyBody => 'جاهز للاستلام من صيدليتك، والتعليمات بالمحادثة.';
+
+  @override
+  String get noticeNeedsDoctor => 'الصيدلي شايف لازم تشوف طبيب';
+
+  @override
+  String get noticeNeedsDoctorBody => 'افتح المحادثة لتقرا شو كتبلك.';
+
+  @override
+  String get noticePreparing => 'الصيدلي عم يحضّر حالتك';
+
+  @override
+  String get noticeOrderReady => 'طلبك جاهز للاستلام';
+
+  @override
+  String get noticeOrderRejected => 'ما قدرت الصيدلية تحضّر طلبك';
+
+  @override
+  String get noticeOrderBody => 'افتح «طلباتي» للتفاصيل.';
+
+  @override
+  String doseTitle(String name) {
+    return 'وقت دوا $name';
+  }
+
+  @override
+  String get navDoses => 'جرعاتي';
+
+  @override
+  String get dosesTitle => 'جرعاتي';
+
+  @override
+  String get noDoses =>
+      'ما عندك تذكيرات. لما الصيدلي يحضّرلك دوا بعدد مرات باليوم، فيك تشغّل التذكير من المحادثة.';
+
+  @override
+  String get remindMe => 'ذكّرني بالجرعات';
+
+  @override
+  String get reminderOn => 'التذكير شغّال';
+
+  @override
+  String get reminderSaved => 'انحفظ التذكير';
+
+  @override
+  String get reminderTimes => 'المواعيد';
+
+  @override
+  String reminderDays(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'كورس $days يوم',
+      few: 'كورس $days أيام',
+      two: 'كورس يومين',
+      one: 'كورس يوم واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reminderOngoing => 'لحتى توقّفه';
+
+  @override
+  String get reminderFinished => 'خلص الكورس';
+
+  @override
+  String get reminderWebNote => 'التذكير بيوصلك كإشعار على تطبيق الموبايل. هون بتشوف المواعيد بس.';
+
+  @override
+  String get reminderTimesHelp => 'فيك تزيح المواعيد لتناسبك. عدد المرات من الصيدلي.';
+
+  @override
+  String get deleteReminder => 'احذف التذكير';
+
+  @override
+  String nextDose(String time) {
+    return 'الجاية: $time';
+  }
+
+  @override
+  String get notificationsOff =>
+      'الإشعارات مسكّرة. شغّلها من إعدادات الموبايل منشان يوصلك التذكير.';
+
+  @override
+  String get earlier => 'أبكر نص ساعة';
+
+  @override
+  String get later => 'أبعد نص ساعة';
+
+  @override
+  String remindersAdded(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'انضاف $count تذكير',
+      few: 'انضاف $count تذكيرات',
+      two: 'انضاف تذكيرين',
+      one: 'انضاف تذكير واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get remindersActive => 'التذكير شغّال لهالأدوية';
+
+  @override
+  String get attachPhoto => 'بعت صورة';
+
+  @override
+  String get takePhoto => 'صوّر بالكاميرا';
+
+  @override
+  String get fromGallery => 'اختار من الصور';
+
+  @override
+  String get attachPrescription => 'أرفق صورة الوصفة';
+
+  @override
+  String get removePhoto => 'شيل الصورة';
+
+  @override
+  String get prescriptionPhotoHint => 'صورة الوصفة بتوصل للصيدلي مع الطلب.';
+
+  @override
+  String get photoSent => 'وصلت الصورة';
+
+  @override
+  String get errPhotoTooBig => 'الصورة كبيرة كتير، جرّب وحدة أصغر';
+
+  @override
+  String get errNotAnImage => 'هاد مو ملف صورة';
+
+  @override
+  String get close => 'سكّر';
 }

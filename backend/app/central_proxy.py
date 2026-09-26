@@ -112,7 +112,7 @@ def remove_link(_: Owner, request: Request) -> dict:
 # ─── Forwarding for the pharmacy's devices ─────────────────────────────────
 
 # Only the pharmacy side of the central API, nothing else.
-ALLOWED = ("cases", "orders", "updates")
+ALLOWED = ("cases", "orders", "updates", "photos")
 
 
 def _client(request: Request) -> httpx.Client:
@@ -150,4 +150,9 @@ async def forward(path: str, request: Request, caller: Caller, db: DbSession) ->
         r = await anyio.to_thread.run_sync(send)
     except httpx.HTTPError as e:
         raise error(503, "central_unreachable") from e
-    return Response(r.content, status_code=r.status_code, media_type="application/json")
+    # JSON, or a prescription photo's own type.
+    return Response(
+        r.content,
+        status_code=r.status_code,
+        media_type=r.headers.get("content-type", "application/json"),
+    )

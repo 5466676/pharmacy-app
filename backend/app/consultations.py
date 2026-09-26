@@ -9,7 +9,7 @@ Pharmacy: /pharmacy-api/cases …     (the pharmacy server's key; the
 from datetime import UTC, date, datetime
 from typing import Literal
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, UploadFile
 from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -37,6 +37,7 @@ class MessageOut(BaseModel):
     text: str
     quick_replies: list[str] | None
     author: str | None
+    photo_id: str | None = None
     created_at: datetime
 
 
@@ -133,10 +134,15 @@ def _out(db: Session, c: Consultation) -> dict:
     }
 
 
-def _say(db, c: Consultation, role: str, text: str, quick=None, author=None) -> None:
+def _say(db, c: Consultation, role: str, text: str, quick=None, author=None, photo_id=None) -> None:
     db.add(
         ConsultMessage(
-            consultation_id=c.id, role=role, text=text, quick_replies=quick or None, author=author
+            consultation_id=c.id,
+            role=role,
+            text=text,
+            quick_replies=quick or None,
+            author=author,
+            photo_id=photo_id,
         )
     )
 
@@ -285,6 +291,25 @@ def patient_says(cid: str, body: TextIn, p: Patient, db: DbSession, request: Req
         _changed(request, c, "consultation")
     else:
         _changed(request, c, "consultation")
+    db.commit()
+    return _out(db, c)
+
+
+@router.post("/consultations/{cid}/photos", response_model=ConsultationOut)
+async def send_photo(
+    cid: str, file: UploadFile, p: Patient, db: DbSession, request: Request
+) -> dict:
+    """A photo in the chat (a prescription, a box). It goes to the
+    pharmacist with the case; the assistant doesn't read it."""
+    from .photos import save_photo
+
+    c = _mine(db, p, cid)
+    if c.status in FINISHED:
+        raise error(409, "consultation_closed")
+    photo = await save_photo(request, db, p.user_id, c.pharmacy_id, file)
+    photo.consultation_id = c.id
+    _say(db, c, "patient", texts.PHOTO, photo_id=photo.id)
+    _changed(request, c, "case_message" if c.sent_at else "consultation")
     db.commit()
     return _out(db, c)
 

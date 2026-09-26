@@ -14,6 +14,7 @@ from . import (
     directory,
     orders,
     patients,
+    photos,
     realtime,
     sync,
 )
@@ -100,6 +101,7 @@ def create_app(
     app.include_router(directory.router)
     app.include_router(consultations.router)
     app.include_router(orders.router)
+    app.include_router(photos.router)
     app.include_router(realtime.router)
     app.include_router(central_proxy.router)
     app.include_router(central_proxy.link_router)
