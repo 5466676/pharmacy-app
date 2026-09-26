@@ -1006,3 +1006,44 @@ The owner asked for the AI model to be managed from his panel: its state and its
 - Patient app: `record` (recording the voice).
 - Pharmacy app: `audioplayers` or `just_audio` (listening to it).
 - The server needs nothing new (it calls the models over HTTP).
+
+### Owner's answers on voice (2026-09-26)
+- The patient talks with the assistant by voice or text; the assistant answers in text (no synthetic voice in v1).
+- Each voice message is turned into text at once, so the red-flag rules and the checker run on it. The patient sees «هيك فهمنا عليك» and can correct it.
+- The pharmacist gets, in this order:
+  1. the written summary on top
+  2. every voice message as text, with ▶ to hear the original, and unsure words marked
+  3. the full recording, kept with the case
+- No spoken summary.
+- **Kept**: the text and the summary, always. The voice is deleted after 3 months (proposed, not objected to).
+
+## Phase 5 (proposal) — The patient's health file («ملف المريض») · 📝 waiting for the owner's answers (asked 2026-09-26)
+
+The owner wants one file per patient, kept up to date as their health changes, available on the central system, to the patient and to the pharmacist.
+
+### What it holds
+- **Basics**: age, sex, weight (for children), pregnancy / breastfeeding.
+- **Allergies**, especially to medicines.
+- **Chronic conditions**.
+- **Medicines taken now**, with the doses the pharmacist decided and the reminders.
+- **History**: every consultation (summary, the pharmacist's decision, «لازم دكتور» / emergency), orders, prescription photos with the pharmacist-confirmed reading, and the voice transcripts.
+- A change log: who changed what, and when.
+
+### How it stays up to date (proposal)
+- **The assistant never changes the file by itself.** When a chat reveals something new (a new allergy, a new medicine), it becomes a proposed update:
+  - the patient confirms facts about themselves
+  - the pharmacist confirms the medical ones (allergy, condition, medicine)
+- The pharmacist can add a note or a fact from the case screen.
+- The assistant reads the file, so it doesn't ask again what is already known. The allergies and current medicines also help the pharmacist decide.
+
+### Where it lives
+- **The central server** is the one true copy.
+- **The patient** sees their whole file in the app, can correct their own facts, and can export it or ask for it to be deleted.
+- **The pharmacist** sees the file of their own pharmacy's patients only, when opening a case or an order. It is read from the central server, with a short cache on the pharmacy PC: not a full copy of every patient on every pharmacy PC.
+
+### Questions for the owner
+1. **The platform owner's access**: the rule so far is no patient names or phones in the panel. Should the panel show files by name? Proposal: counts and anonymised files only. Opening one by name only for a complaint or a legal need, with the reason written and logged.
+2. **When the patient moves to another pharmacy**: the new one sees the file (proposal: yes, the patient chose it). The old one keeps only its own past cases.
+3. **Consent**: at sign-up the patient agrees to the file («ملفك الصحي بينحفظ وبيشوفه صيدلي صيدليتك بس»), and can delete it any time.
+4. **Order**: the file first (the voice and the photos then feed into it), or the voice first?
+
