@@ -12,6 +12,7 @@ import '../../l10n/app_localizations.dart';
 import '../../providers.dart';
 import '../../router.dart';
 import '../format.dart';
+import '../patient_photo.dart';
 import '../widgets.dart';
 import 'patient_orders_view.dart';
 import 'sync_screen.dart' show syncErrorText;
@@ -449,6 +450,11 @@ class _Conversation extends ConsumerWidget {
                           'pharmacist' => m.author ?? l.employee,
                           _ => l.roleSystem,
                         }, style: caption),
+                        if (m.photoId case final photo?) ...[
+                          const SizedBox(height: DoayaSpacing.xs),
+                          PatientPhoto(id: photo),
+                          const SizedBox(height: DoayaSpacing.xs),
+                        ],
                         Text(
                           m.text,
                           style: DoayaTypography.bodySmall.copyWith(

@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:doaya_core/doaya_core.dart';
 import 'package:doaya_core/sync_testing.dart';
 import 'package:doaya_pharmacy/sync/sync_api.dart';
@@ -163,6 +165,12 @@ class _FakeRemote implements SyncRemote {
   Future<Object?> deleteJson(String path) async {
     _check();
     return _central('DELETE', path);
+  }
+
+  @override
+  Future<Uint8List> getBytes(String path) async {
+    _check();
+    return api.central.handle('GET', path, null)! as Uint8List;
   }
 
   @override

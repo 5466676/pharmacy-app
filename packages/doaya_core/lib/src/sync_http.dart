@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
 
@@ -94,6 +95,9 @@ abstract interface class SyncRemote implements SyncTransport {
   Future<Object?> postJson(String path, [Object? body]);
   Future<Object?> putJson(String path, Object body);
   Future<Object?> deleteJson(String path);
+
+  /// Raw bytes (a patient's prescription photo).
+  Future<Uint8List> getBytes(String path);
   void close();
 }
 
@@ -220,6 +224,13 @@ class HttpSyncClient implements SyncRemote {
         .replace(queryParameters: {'after': '$after', 'limit': '$limit'});
     final r = await _authorized((c, h) => c.get(uri, headers: h));
     return PullPage.fromJson(_decode(r) as Map<String, Object?>);
+  }
+
+  @override
+  Future<Uint8List> getBytes(String path) async {
+    final r = await _authorized((c, h) => c.get(baseUrl.resolve(path), headers: h));
+    if (r.statusCode >= 200 && r.statusCode < 300) return r.bodyBytes;
+    throw SyncApiException(r.statusCode, _code(r) ?? 'http_${r.statusCode}');
   }
 
   /// Any authorized GET/POST returning JSON (devices, users…).

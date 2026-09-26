@@ -665,12 +665,30 @@
   "costOfGoods": "تكلفة البضاعة المباعة",
   "grossProfit": "الربح",
   "marginCaption": "هامش الربح {pct}",
-  "@marginCaption": {"placeholders": {"pct": {"type": "String"}}},
+  "@marginCaption": {
+    "placeholders": {
+      "pct": {
+        "type": "String"
+      }
+    }
+  },
   "stockValueAtCost": "قيمة المخزون بالتكلفة",
   "piecesWithoutCost": "{pieces} قطعة بدون تكلفة",
-  "@piecesWithoutCost": {"placeholders": {"pieces": {"type": "String"}}},
+  "@piecesWithoutCost": {
+    "placeholders": {
+      "pieces": {
+        "type": "String"
+      }
+    }
+  },
   "unknownCostNotice": "في {pieces} قطعة انباعت من بضاعة دخلت قبل فواتير الشراء، تكلفتها مو معروفة، فالربح الظاهر أعلى من الحقيقي. بيتصلّح لحالو لما تخلص هالبضاعة وتدخل بفواتير شراء.",
-  "@unknownCostNotice": {"placeholders": {"pieces": {"type": "String"}}},
+  "@unknownCostNotice": {
+    "placeholders": {
+      "pieces": {
+        "type": "String"
+      }
+    }
+  },
   "byProduct": "حسب الصنف",
   "byEmployee": "حسب الموظف",
   "byDay": "حسب اليوم",
@@ -682,7 +700,13 @@
   "statProfitToday": "ربح اليوم",
   "statSupplierDebts": "علينا للموردين",
   "suppliersOwedCount": "{count} مورد",
-  "@suppliersOwedCount": {"placeholders": {"count": {"type": "String"}}},
+  "@suppliersOwedCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "costIncomplete": "تكلفة ناقصة",
   "tabShortages": "النواقص",
   "tabOrders": "الطلبيات",
@@ -690,30 +714,72 @@
   "reasonBelowMinimum": "تحت الحد الأدنى",
   "reasonSellingFast": "عم يخلص بسرعة",
   "runsOutIn": "بيخلص خلال {days} يوم",
-  "@runsOutIn": {"placeholders": {"days": {"type": "String"}}},
+  "@runsOutIn": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
   "orderQtyBoxes": "الطلب (علبة)",
   "noShortages": "ما في نواقص، كل شي متوفر",
   "createOrders": "اعمل الطلبيات ({count})",
-  "@createOrders": {"placeholders": {"count": {"type": "String"}}},
+  "@createOrders": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "ordersCreated": "انعملت {count} طلبية",
-  "@ordersCreated": {"placeholders": {"count": {"type": "String"}}},
+  "@ordersCreated": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "errShortageNeedsSupplier": "في أصناف بدون مورد: اختار المورد أو شيل التحديد عنها",
   "noOrders": "ما في طلبيات",
   "orderDraft": "مسودة",
   "orderSent": "انبعتت",
   "orderReceived": "استلمناها",
   "itemsCount": "{count} صنف",
-  "@itemsCount": {"placeholders": {"count": {"type": "String"}}},
+  "@itemsCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "orderTitle": "طلبية {supplier}",
-  "@orderTitle": {"placeholders": {"supplier": {"type": "String"}}},
+  "@orderTitle": {
+    "placeholders": {
+      "supplier": {
+        "type": "String"
+      }
+    }
+  },
   "copyOrder": "انسخ الطلبية",
   "orderCopied": "انسخت الطلبية: الصقها بواتساب أو تلغرام",
   "receiveOrder": "وصلت: فاتورة شراء",
   "deleteOrder": "حذف",
   "orderMessageHeader": "طلبية من {pharmacy}",
-  "@orderMessageHeader": {"placeholders": {"pharmacy": {"type": "String"}}},
+  "@orderMessageHeader": {
+    "placeholders": {
+      "pharmacy": {
+        "type": "String"
+      }
+    }
+  },
   "orderMessageDate": "التاريخ: {date}",
-  "@orderMessageDate": {"placeholders": {"date": {"type": "String"}}},
+  "@orderMessageDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "orderMessageThanks": "ويعطيكن العافية",
   "editSupplier": "تعديل المورد",
   "whatsappPhoneLabel": "رقم الواتساب",
@@ -729,29 +795,77 @@
   "stocktakeHelp": "الجرد ما بيوقف البيع: بتعدّ كل صنف لحال، والبرنامج بيسجّل الكمية يلي كانت بالنظام لحظة العدّ. إذا عدّيت صنف مرتين، العدّة الأخيرة هي المعتمدة.",
   "scopeLabel": "الرف (اختياري، لجرد جزئي)",
   "stocktakeOpen": "جرد مفتوح من {date}",
-  "@stocktakeOpen": {"placeholders": {"date": {"type": "String"}}},
+  "@stocktakeOpen": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "stocktakeScope": "الرف: {shelf}",
-  "@stocktakeScope": {"placeholders": {"shelf": {"type": "String"}}},
+  "@stocktakeScope": {
+    "placeholders": {
+      "shelf": {
+        "type": "String"
+      }
+    }
+  },
   "countSearchHint": "امسح أو ابحث عن الصنف يلي عم تعدّه",
   "countedBoxesLabel": "العلب المعدودة",
   "countedStripsLabel": "ظروف فرط",
   "saveCount": "سجّل",
   "tabCounted": "انعدّت ({count})",
-  "@tabCounted": {"placeholders": {"count": {"type": "String"}}},
+  "@tabCounted": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "tabNotCounted": "لسا ({count})",
-  "@tabNotCounted": {"placeholders": {"count": {"type": "String"}}},
+  "@tabNotCounted": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "colCounted": "المعدود",
   "colSystem": "بالنظام",
   "colDifference": "الفرق",
   "shortageValue": "قيمة النقص: {amount}",
-  "@shortageValue": {"placeholders": {"amount": {"type": "String"}}},
+  "@shortageValue": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "surplusValue": "قيمة الزيادة: {amount}",
-  "@surplusValue": {"placeholders": {"amount": {"type": "String"}}},
+  "@surplusValue": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "applyStocktake": "طبّق الجرد",
   "applyConfirm": "رح ينعمل {count} تعديل على المخزون، وبيتسكّر الجرد. أكيد؟",
-  "@applyConfirm": {"placeholders": {"count": {"type": "String"}}},
+  "@applyConfirm": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "stocktakeApplied": "انطبّق الجرد: {count} تعديل",
-  "@stocktakeApplied": {"placeholders": {"count": {"type": "String"}}},
+  "@stocktakeApplied": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "ownerAppliesNote": "تطبيق الجرد على المخزون للمالك بس",
   "pastStocktakes": "جرودات سابقة",
   "noStocktakes": "ما في جرودات سابقة",
@@ -776,20 +890,56 @@
   "linkButton": "اربط",
   "createAndLink": "أنشئ واربط",
   "linkedTo": "مربوط بـ {pharmacy}",
-  "@linkedTo": {"placeholders": {"pharmacy": {"type": "String"}}},
+  "@linkedTo": {
+    "placeholders": {
+      "pharmacy": {
+        "type": "String"
+      }
+    }
+  },
   "signedInAs": "الحساب: {name}",
-  "@signedInAs": {"placeholders": {"name": {"type": "String"}}},
+  "@signedInAs": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "lastSync": "آخر مزامنة: {time}",
-  "@lastSync": {"placeholders": {"time": {"type": "String"}}},
+  "@lastSync": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "neverSynced": "لسا ما صار مزامنة",
   "pendingChanges": "{count} حركة ناطرة",
-  "@pendingChanges": {"placeholders": {"count": {"type": "String"}}},
+  "@pendingChanges": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "syncNowButton": "زامن هلق",
   "syncDownloading": "عم ننزّل بيانات الصيدلية: {percent}%",
-  "@syncDownloading": {"placeholders": {"percent": {"type": "String"}}},
+  "@syncDownloading": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
   "statusSyncing": "عم يزامن",
   "statusSynced": "متزامن {time}",
-  "@statusSynced": {"placeholders": {"time": {"type": "String"}}},
+  "@statusSynced": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "statusServerMissing": "السيرفر مو موجود",
   "statusUnlinked": "الجهاز مفصول",
   "statusFailed": "المزامنة وقفت",
@@ -801,16 +951,34 @@
   "relinkButton": "اربط من جديد",
   "relinkConfirm": "رح ينفك ربط هالجهاز بالسيرفر لتربطه من جديد. البيانات يلي عليه بتضل، وبترتفع كلها مع الربط الجديد. أكيد؟",
   "serverCode": "رمز السيرفر: {code}",
-  "@serverCode": {"placeholders": {"code": {"type": "String"}}},
+  "@serverCode": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
   "serverCodeHelp": "لازم يطابق الرمز يلي طلع وقت تركيب السيرفر.",
   "devicesTitle": "الأجهزة المربوطة",
   "unlinkDevice": "افصل",
   "unlinkConfirm": "رح ينفصل الجهاز {name} عن السيرفر فوراً. أكيد؟",
-  "@unlinkConfirm": {"placeholders": {"name": {"type": "String"}}},
+  "@unlinkConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "thisDeviceTag": "هالجهاز",
   "deviceUnlinkedTag": "مفصول",
   "lastSeen": "آخر ظهور {time}",
-  "@lastSeen": {"placeholders": {"time": {"type": "String"}}},
+  "@lastSeen": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "accountsTitle": "حسابات الموظفين",
   "accountsHelp": "كل موظف إلو رقم وكلمة سر، بيربط فيهن موبايله مرة وحدة وبيضل مسجّل.",
   "addAccount": "حساب لموظف",
@@ -823,11 +991,23 @@
   "errDeviceOtherPharmacy": "هالجهاز مربوط بصيدلية تانية",
   "errPharmacyInactive": "الصيدلية موقوفة على السيرفر",
   "errServer": "صار خطأ بالسيرفر ({code})",
-  "@errServer": {"placeholders": {"code": {"type": "String"}}},
+  "@errServer": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
   "joinExisting": "انضمام لصيدلية موجودة",
   "navMore": "المزيد",
   "serverBackupLast": "آخر نسخة احتياطية على السيرفر: {time}",
-  "@serverBackupLast": {"placeholders": {"time": {"type": "String"}}},
+  "@serverBackupLast": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "serverBackupNone": "السيرفر لسا ما عمل نسخة احتياطية",
   "serverBackupError": "في مشكلة بالنسخ الاحتياطي على السيرفر: شوف دليل التركيب",
   "navInventoryShort": "المخزون",
@@ -844,12 +1024,24 @@
   "expenseCategoryLabel": "شو نوع المصروف؟",
   "expenseCustomLabel": "اسم المصروف",
   "expenseCategory": "{key, select, rent{أجار} salaries{رواتب} electricity{كهربا} generator{أمبيرات} internet{إنترنت وموبايل} other{غير شي}}",
-  "@expenseCategory": {"placeholders": {"key": {"type": "String"}}},
+  "@expenseCategory": {
+    "placeholders": {
+      "key": {
+        "type": "String"
+      }
+    }
+  },
   "tillDrawerPurchases": "مشتريات من الصندوق",
   "tillDrawerExpenses": "مصاريف من الصندوق",
   "tillSupplierRefunds": "رجع من المستودعات نقداً",
   "monthName": "{month, select, 1{كانون التاني} 2{شباط} 3{آذار} 4{نيسان} 5{أيار} 6{حزيران} 7{تموز} 8{آب} 9{أيلول} 10{تشرين الأول} 11{تشرين التاني} 12{كانون الأول} other{{month}}}",
-  "@monthName": {"placeholders": {"month": {"type": "String"}}},
+  "@monthName": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
   "previousMonth": "الشهر يلي قبل",
   "nextMonth": "الشهر يلي بعد",
   "pnlTitle": "الأرباح والخسائر",
@@ -873,13 +1065,25 @@
   "backupNow": "خذ نسخة هلق",
   "backingUp": "عم ناخد نسخة",
   "backupLast": "آخر نسخة: {when}",
-  "@backupLast": {"placeholders": {"when": {"type": "String"}}},
+  "@backupLast": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
   "backupNone": "ما في نسخة لسا",
   "backupFailed": "ما قدرنا ناخد النسخة (المجلد مو موجود أو الفلاشة مشلوحة؟). منرجع منجرّب لحالنا.",
   "backupDone": "انعملت النسخة",
   "restoreButton": "استرجع",
   "restoreConfirm": "رح ترجع بيانات هالجهاز متل ما كانت بتاريخ {when}، وكل شي صار بعدها على هالجهاز بيروح. البيانات الحالية بتنحفظ على جنب. أكيد؟",
-  "@restoreConfirm": {"placeholders": {"when": {"type": "String"}}},
+  "@restoreConfirm": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
   "restoreRestart": "جاهز. سكّر البرنامج وافتحه من جديد، وبيفتح على النسخة يلي اخترتها.",
   "restoreLinkedNote": "هالجهاز مربوط بالسيرفر: إذا خرب، ركّبه من جديد واختار «انضمام لصيدلية موجودة» وبتنزل كل البيانات. الاسترجاع من نسخة هون للأجهزة يلي مو مربوطة.",
   "navCases": "الحالات",
@@ -1070,5 +1274,6 @@
   "errCentralUnreachable": "ما قدرنا نوصل لدوايا أونلاين",
   "removeItem": "شيل",
   "centralUrlHint": "https://…",
-  "noSummaryUrgent": "ما في ملخص: المساعد وقّف الاستشارة أول ما طلعت علامة الخطر. اقرا المحادثة."
+  "noSummaryUrgent": "ما في ملخص: المساعد وقّف الاستشارة أول ما طلعت علامة الخطر. اقرا المحادثة.",
+  "prescriptionPhoto": "صورة الوصفة من المريض. اضغط لتكبّرها."
 }

@@ -2096,4 +2096,7 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get noSummaryUrgent =>
       'ما في ملخص: المساعد وقّف الاستشارة أول ما طلعت علامة الخطر. اقرا المحادثة.';
+
+  @override
+  String get prescriptionPhoto => 'صورة الوصفة من المريض. اضغط لتكبّرها.';
 }

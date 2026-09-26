@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:doaya_core/doaya_core.dart';
 
 /// Doaya online as the pharmacy's server forwards it (`/central/…`), in
@@ -78,6 +80,9 @@ class FakeCentral {
     'created_at': '2026-09-26T10:00:00Z',
   };
 
+  /// Patients' photos by id (PNG bytes).
+  final photos = <String, Uint8List>{};
+
   Object? handle(String method, String path, Object? body) {
     final b = (body as Map<String, Object?>?) ?? const {};
     if (path == 'central-link') {
@@ -97,6 +102,8 @@ class FakeCentral {
     if (!online) throw const SyncApiException(503, 'central_unreachable');
     final parts = path.split('/').skip(1).toList(); // after "central"
     switch ((method, parts)) {
+      case ('GET', ['photos', final id]):
+        return photos[id] ?? (throw const SyncApiException(404, 'photo_not_found'));
       case ('GET', ['cases']):
         final list = cases.values.toList()
           ..sort((a, b) {
