@@ -23,7 +23,7 @@ from .assistant import (
     get_llm,
     make_llm,
 )
-from .consult.classifier import FORMAT, HEAD, RULE
+from .consult.classifier import CATEGORIES, FORMAT, HEAD, RULE
 from .consult.engine import ASSISTANT_TAIL, SAFETY_RULES, SUMMARY_HEAD, SUMMARY_TAIL, handle_message
 from .consult.llm import ChatMessage, LLMUnavailable
 from .deps import DbSession, error
@@ -207,7 +207,7 @@ Kind = Literal["assistant", "summary", "classifier"]
 LOCKED = {
     "assistant": [SAFETY_RULES, ASSISTANT_TAIL.replace("{{", "{").replace("}}", "}")],
     "summary": [SUMMARY_HEAD, SUMMARY_TAIL],
-    "classifier": [HEAD, RULE, FORMAT],
+    "classifier": [HEAD, RULE, FORMAT % ", ".join(CATEGORIES)],
 }
 
 

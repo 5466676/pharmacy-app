@@ -872,7 +872,7 @@ From SPEC §1.3 and `design/admin_overview_layout.html` (layout only, rebuilt in
 6. Stopping a pharmacy: licence days and read-only vs export. (answered in A3: 30 days, per pharmacy; read-only + export)
 5. Order: themes first, then Phase 4. (answered: yes)
 
-## Phase 4b — Managing the assistant from the panel · ▶ plan approved 2026-09-26 (with the owner's answers)
+## Phase 4b — Managing the assistant from the panel · ✅ done 2026-09-26, waiting for review
 
 The owner asked for the AI model to be managed from his panel: its state and its prompts. Today the panel only shows the model's address and name and can test it once. The model is changed in the server's settings file, and the prompts live in the code.
 
@@ -936,4 +936,44 @@ The owner asked for the AI model to be managed from his panel: its state and its
 3. **Model in the panel**: «اختر المخدم» (LM Studio / Ollama / a hosted service) with its address, «اختر النموذج» from the list the server offers, and the API key.
    - The key is stored encrypted on the server (with the server's own secret) and is never sent back to the panel; the panel only shows that one is set.
    - A model is only switched to after it answers. Every change is logged.
+
+### Done (2026-09-26)
+- **The model from the panel**:
+  - «غيّر النموذج»: choose the server (LM Studio / Ollama / a hosted service), «جيب النماذج» lists what that server offers, pick one, the API key, the wait time.
+  - A model is switched to only after it answers.
+  - The key is stored encrypted with the server's own secret, never sent back, and never carried over to another address.
+  - The server settings stay the fallback. Every change is logged.
+- **State**:
+  - replies and reply time (now logged with every reply)
+  - times the model was down
+  - red flags from the rules / from the model
+  - «نصيحة بطبيب»
+  - guard blocks
+  - A banner on the overview when the model was down in the last hour.
+- **Prompts**:
+  - The three editable parts (the assistant's questions, the pharmacist's summary, the red-flag checker). The fixed parts are shown read-only and always added by the server: the safety rules, the rule for doubt ("choose the more serious one"), and the answer formats.
+  - Workflow: draft → «امتحن» → «اعتمد», and «رجوع خطوة». Every reply logs the version that wrote it.
+- **The test gate**: 12 built-in cases plus the owner's examples run through the real pipeline. A draft can't be activated if any of these happen:
+  - it misses an emergency or a doctor case
+  - a reply trips the guard (a medicine or a dose)
+  - the summary fails
+  - the model doesn't answer
+  - False alarms are reported without blocking.
+- **«أمثلة السلامة»**:
+  - Patient messages labelled «إسعاف» / «لازم دكتور» / «عادي», switchable.
+  - The newest 40 go to the checker as examples, and all of them are in the test. Never used to train anything.
+- **«لازم دكتور»**, a new level from the checker:
+  - The patient is told to see a doctor soon, with no ambulance numbers.
+  - The case goes to the pharmacist, marked «المساعد نصح بطبيب» in the pharmacy app.
+- **«جرّب»**: chat as a patient with any drafts. Nothing is saved.
+- **Real run**: a stand-in OpenAI-compatible model on port 1234 (no LM Studio in the cloud), driven through the real server and panel.
+  - The test gate refused a checker draft twice for real misses: a stroke example (caught by the code rules anyway) and a child with 4 days of fever.
+  - After the model knew them, it passed and was activated.
+  - A patient writing «عندي سعلة صرلها 3 أسابيع» got «لازم دكتور» and the case reached the pharmacy.
+- **Found and fixed**:
+  - The prompt editor freed its text box while the dialog was closing (caught by the panel test).
+  - The locked format showed a raw "%s".
+  - Tests leaked database connections (the server now closes its pool on shutdown).
+- Screenshots: `docs/screenshots/phase4/10-14`.
+- Tests: server 255, admin 12, pharmacy 108.
 

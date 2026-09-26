@@ -225,6 +225,8 @@ def test_the_locked_parts_are_shown_read_only(client, admin):
     p = client.get("/admin/assistant/prompts", headers=admin).json()
     assert SAFETY_RULES in p["assistant"]["locked"]
     assert any("choose the more serious one" in x for x in p["classifier"]["locked"])
+    assert not any("%s" in x for x in p["classifier"]["locked"])
+    assert any("chest_pain" in x for x in p["classifier"]["locked"])
     assert set(p) == {"assistant", "summary", "classifier"}
 
 

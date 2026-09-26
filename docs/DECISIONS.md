@@ -241,3 +241,17 @@ The server doesn't recreate the app's ~25 tables. Each synced row is stored once
 - The owner wanted all three designs from the preview page, switchable: «غرفة القيادة», «الدفتر» and «من عيلة دوايا».
 - Each is a `DoayaLook`, so the colours still come from the design system with its contrast guarantees. No new fonts (Readex Pro + Amiri) and no blur.
 - The choice is kept per browser.
+
+## 2026-09-26 · The assistant is managed from the panel; safety stays in code
+- Owner's decision: the model (server, model, key) and the prompts are managed from the admin panel, including the red-flag checker's prompt. He will build a dataset of situations where the assistant must warn the patient.
+- What the panel can never change:
+  - the red-flag rules (they run first)
+  - the output guard
+  - the fixed safety paragraph
+  - the checker's rule for doubt
+  - the answer formats
+  - The server always adds them, whatever an edited prompt says. The classifier can only add alarms.
+- A prompt change reaches patients only through a draft that passed the test gate after its last edit: the built-in cases plus the owner's examples, with no emergency or doctor case missed, no dose through the guard, and a working summary. Rollback needs no test (it was used before).
+- «أمثلة السلامة» are given to the checker as examples in its prompt (the newest 40) and are the test set. This is few-shot prompting, not training.
+- New level «لازم دكتور» (doctor soon, not an emergency): the patient gets a clear message without ambulance numbers, and the case goes to the pharmacist marked. Stored in `consultations.doctor_advice`, not `red_flag`, so the patient app doesn't show the emergency panel.
+- The API key is encrypted with a key derived from the server's secret (Fernet, `cryptography`, already a dependency). A database copy alone doesn't reveal it. The key is never returned to the panel, and it is not reused for a different address.
