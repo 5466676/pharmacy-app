@@ -672,3 +672,66 @@ Server side only so far (the screens are steps 5–7). The tests read as the sce
   - Tests: patient app 27, pharmacy app 97, server 189, core 95.
 
 
+
+## Themes: colour choices and a custom theme · 📝 plan, waiting for the owner's OK (asked 2026-09-26)
+
+Users asked for other colours, and for a place to make their own.
+
+### What the user gets
+- **«المظهر»** (Settings in the pharmacy app, «حسابي» in the patient app, later in admin): a few ready themes as live previews, then **«تصميمي»**.
+- **Ready themes** (proposal, the owner picks the final list):
+  1. «أخضر دوايا» (today's, the default)
+  2. «كحلي» (navy with a teal accent)
+  3. «خمري» (dark wine with a gold accent)
+  4. «فاتح» (a light theme for bright pharmacies and daylight; phones in the sun)
+- **«تصميمي»**: the user picks **the main colour** (buttons, highlights) and **the background colour** from swatches plus a hue/brightness slider (built in, no new library). The whole screen previews live. Everything else is derived: surfaces, borders, text shades.
+- **Safety stays fixed**: red for danger and emergencies, amber for warnings, whatever the theme. The app refuses a custom choice whose text would be hard to read, and adjusts its brightness automatically to reach WCAG contrast 4.5:1.
+- Saved **per device** in the pharmacy app (the counter PC and a phone can differ) and on the phone in the patient app. Not synced, not sent to any server.
+
+### How (engineering)
+- `doaya_ui`: a `DoayaPalette` holds every colour token. The four presets plus `DoayaPalette.custom(main, background)` derive the rest. `DoayaColors.*` keep their names and read the current palette, so screens don't change. Places that were `const` because of a colour lose `const` (mechanical; the analyzer lists them).
+- The solid (no-blur) desktop mode keeps working with every palette.
+- **Tests first**: every preset and a sweep of custom colours pass the contrast check; safety colours never change; the choice survives a restart.
+- The component gallery shows all themes side by side.
+
+### Steps
+1. Palette + presets + custom derivation + contrast tests (`doaya_ui`).
+2. `DoayaColors` reads the palette; remove the colour `const`s; all apps still pass their tests.
+3. «المظهر» screen with live previews and «تصميمي», in the pharmacy app and the patient app; the setting kept per device.
+4. Screenshots of each theme on desktop and phone → review.
+
+## Phase 4 — Admin panel · 📝 plan, waiting for the owner's OK (asked 2026-09-26)
+
+From SPEC §1.3 and `design/admin_overview_layout.html` (layout only, rebuilt in the dark tokens). Subscriptions and payments stay **off** (owner's decision for the pilot); the screens say so instead of showing fake numbers.
+
+### A. Server (tests before any screen)
+- **Admin accounts**: role `admin` on the central server only, created with `app.cli create-admin` (no sign-up screen). Phone + password once, then long sessions like the pharmacist's, with a sign-in limiter.
+- **Overview** (last 30 days): pharmacies (active / waiting / suspended, new this month), patients (registered, active this month), consultations today, **the pharmacists' median response time** (sent → first pharmacist action), urgent cases, orders.
+- **Pharmacies**: the list with city, code, patients, response time and state. Actions: approve, suspend (its patients see «الصيدلية مو متاحة هلق»), list/unlist in the directory, issue a new key (the old one stops).
+- **Review queue** («مراجعة المحادثات»), from the AI log:
+  - red flags (rules / classifier)
+  - replies blocked by the safety guard
+  - pharmacist corrections
+  - summaries the patient edited
+  - «model down» moments
+  - Each item shows the conversation **without the patient's name or phone** (age, sex and pharmacy only). The admin marks it reviewed, with a note.
+- **Knowledge base («قاعدة المعرفة»)**: short notes the admin curates, usually from a correction («الأطفال تحت سنتين: لا تسأل عن الجرعة، حوّل للصيدلي»). Each note has tags and on/off; every change is logged. The assistant receives the notes that match the conversation (PostgreSQL full-text search, no vector database, no new service). **Never automatic training.**
+- **Settings**: see the model in use and whether it answers, the emergency numbers, the CORS origins (read-only; changed in the server's settings).
+
+### B. Admin app (`apps/admin`, Flutter web, `--no-web-resources-cdn`)
+- Sign-in, then a side menu as in the layout: نظرة عامة، الصيدليات، المرضى، مراجعة المحادثات (with a badge)، قاعدة المعرفة، الإعدادات. «المدفوعات» is shown as off for now.
+- Desktop-first, solid surfaces (no blur), usable on a tablet.
+
+### Steps (tests first; a commit after each; **stop for review at the end**)
+1. Server: admin accounts, overview, pharmacies and their actions; tests (including: a pharmacy or patient token can't reach any admin endpoint).
+2. Server: review queue + knowledge base + the assistant using the notes; tests (a note reaches the prompt only when it matches; a disabled note never does).
+3. Admin app: skeleton, sign-in, overview, pharmacies.
+4. Admin app: review queue and knowledge base, settings.
+5. Real run with screenshots, docs → **review**.
+
+### Questions for the owner
+1. Themes: the four above, or others (and should «فاتح» be there)?
+2. Themes: is «تصميمي» for everyone, or only the pharmacy owner in the pharmacy app (so the counter looks the same for all staff)?
+3. Admin: one admin (you) for now, or several with the same rights?
+4. Admin: should reviewing show the patient's name/phone? The proposal is **no** (age, sex, pharmacy only).
+5. Order: themes first, then Phase 4? (Proposed, since the admin app would then be built on the new palette.)
