@@ -85,6 +85,13 @@ class AccountScreen extends ConsumerWidget {
               ),
             ),
           SizedBox(height: DoayaSpacing.huge),
+          SagePillButton(
+            label: l.fileTitle,
+            icon: DoayaIcons.health,
+            expand: true,
+            onPressed: () => context.push(Routes.healthFile),
+          ),
+          SizedBox(height: DoayaSpacing.sm),
           GlassPillButton(
             label: l.lookTitle,
             icon: DoayaIcons.settings,

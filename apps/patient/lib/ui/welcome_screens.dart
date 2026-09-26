@@ -115,6 +115,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   final _year = TextEditingController();
   final _city = TextEditingController();
   String? _sex;
+  var _consent = false;
   var _busy = false;
 
   @override
@@ -139,6 +140,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
             birthYear: int.tryParse(toLatinDigits(_year.text)),
             sex: _sex,
             city: _city.text.trim().isEmpty ? null : _city.text.trim(),
+            fileConsent: _consent,
           );
     } on Object catch (e) {
       if (mounted) toast(context, errorText(l, e), error: true);
@@ -216,6 +218,13 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
               gap,
               GlassTextField(label: '${l.cityLabel} (${l.optional})', controller: _city),
               SizedBox(height: DoayaSpacing.sm),
+              CheckboxListTile(
+                contentPadding: EdgeInsets.zero,
+                controlAffinity: ListTileControlAffinity.leading,
+                value: _consent,
+                onChanged: (v) => setState(() => _consent = v ?? false),
+                title: Text(l.fileConsent, style: DoayaTypography.bodySmall),
+              ),
               Text(
                 l.signUpHelp,
                 style: DoayaTypography.caption.copyWith(color: DoayaColors.textSecondary),

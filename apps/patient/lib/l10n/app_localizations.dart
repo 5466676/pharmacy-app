@@ -1465,6 +1465,204 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'رجّع للأصل'**
   String get lookReset;
+
+  /// No description provided for @fileConsent.
+  ///
+  /// In ar, this message translates to:
+  /// **'بوافق إنو ينعمل إلي ملف صحي: بينحفظ عند دوايا، وبيشوفه صيدلي صيدليتي. فيني امسحه أي وقت.'**
+  String get fileConsent;
+
+  /// No description provided for @fileTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملفي الصحي'**
+  String get fileTitle;
+
+  /// No description provided for @fileIntro.
+  ///
+  /// In ar, this message translates to:
+  /// **'هون حساسياتك وأمراضك والأدوية يلي عم تاخدها وكل استشاراتك. المساعد بيعرفها فما بيسألك عنها كل مرة، والصيدلي بيشوفها قبل ما يقرر.'**
+  String get fileIntro;
+
+  /// No description provided for @fileNoConsent.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما عندك ملف صحي لسا. إذا فعّلته، بينحفظ عند دوايا وبيشوفه صيدلي صيدليتك بس، وفيك تمسحه أي وقت.'**
+  String get fileNoConsent;
+
+  /// No description provided for @fileEnable.
+  ///
+  /// In ar, this message translates to:
+  /// **'فعّل ملفي الصحي'**
+  String get fileEnable;
+
+  /// No description provided for @fileConfirmMine.
+  ///
+  /// In ar, this message translates to:
+  /// **'بدها تأكيدك'**
+  String get fileConfirmMine;
+
+  /// No description provided for @fileConfirmPharmacist.
+  ///
+  /// In ar, this message translates to:
+  /// **'ناطرة تأكيد الصيدلي'**
+  String get fileConfirmPharmacist;
+
+  /// No description provided for @fileProposalHelp.
+  ///
+  /// In ar, this message translates to:
+  /// **'هالشي فهمناه من محادثتك. صحيح؟'**
+  String get fileProposalHelp;
+
+  /// No description provided for @yes.
+  ///
+  /// In ar, this message translates to:
+  /// **'صح'**
+  String get yes;
+
+  /// No description provided for @no.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا، مو صح'**
+  String get no;
+
+  /// No description provided for @fileNow.
+  ///
+  /// In ar, this message translates to:
+  /// **'هلق'**
+  String get fileNow;
+
+  /// No description provided for @filePast.
+  ///
+  /// In ar, this message translates to:
+  /// **'قديم'**
+  String get filePast;
+
+  /// No description provided for @fileHistory.
+  ///
+  /// In ar, this message translates to:
+  /// **'استشاراتي'**
+  String get fileHistory;
+
+  /// No description provided for @fileEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما في شي بملفك لسا.'**
+  String get fileEmpty;
+
+  /// No description provided for @kindAllergy.
+  ///
+  /// In ar, this message translates to:
+  /// **'حساسية'**
+  String get kindAllergy;
+
+  /// No description provided for @kindCondition.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرض مزمن'**
+  String get kindCondition;
+
+  /// No description provided for @kindMedication.
+  ///
+  /// In ar, this message translates to:
+  /// **'دوا عم آخده'**
+  String get kindMedication;
+
+  /// No description provided for @kindPregnancy.
+  ///
+  /// In ar, this message translates to:
+  /// **'حمل أو رضاعة'**
+  String get kindPregnancy;
+
+  /// No description provided for @kindWeight.
+  ///
+  /// In ar, this message translates to:
+  /// **'الوزن'**
+  String get kindWeight;
+
+  /// No description provided for @kindNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملاحظة'**
+  String get kindNote;
+
+  /// No description provided for @factByPharmacist.
+  ///
+  /// In ar, this message translates to:
+  /// **'أكّده الصيدلي'**
+  String get factByPharmacist;
+
+  /// No description provided for @factByMe.
+  ///
+  /// In ar, this message translates to:
+  /// **'من عندي'**
+  String get factByMe;
+
+  /// No description provided for @factUntil.
+  ///
+  /// In ar, this message translates to:
+  /// **'لحد {date}'**
+  String factUntil(String date);
+
+  /// No description provided for @factEnd.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما عاد صحيح'**
+  String get factEnd;
+
+  /// No description provided for @addFact.
+  ///
+  /// In ar, this message translates to:
+  /// **'ضيف لملفي'**
+  String get addFact;
+
+  /// No description provided for @factText.
+  ///
+  /// In ar, this message translates to:
+  /// **'شو بالضبط؟'**
+  String get factText;
+
+  /// No description provided for @fileExport.
+  ///
+  /// In ar, this message translates to:
+  /// **'خد نسخة'**
+  String get fileExport;
+
+  /// No description provided for @fileExported.
+  ///
+  /// In ar, this message translates to:
+  /// **'انتسخ ملفك (JSON). فيك تلصقه وين ما بدك.'**
+  String get fileExported;
+
+  /// No description provided for @fileDelete.
+  ///
+  /// In ar, this message translates to:
+  /// **'امسح ملفي'**
+  String get fileDelete;
+
+  /// No description provided for @fileDeleteConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'أكيد؟ رح ينمسح ملفك الصحي كله. استشاراتك بتضل عند الصيدلية كسجلات إلها.'**
+  String get fileDeleteConfirm;
+
+  /// No description provided for @fileDeleted.
+  ///
+  /// In ar, this message translates to:
+  /// **'انمسح ملفك الصحي.'**
+  String get fileDeleted;
+
+  /// No description provided for @doctorAdvisedShort.
+  ///
+  /// In ar, this message translates to:
+  /// **'انصح بطبيب'**
+  String get doctorAdvisedShort;
+
+  /// No description provided for @urgentShort.
+  ///
+  /// In ar, this message translates to:
+  /// **'مستعجلة'**
+  String get urgentShort;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

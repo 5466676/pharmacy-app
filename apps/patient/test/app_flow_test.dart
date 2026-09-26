@@ -108,6 +108,51 @@ class FakeServer {
 
   final photos = <String, List<int>>{};
 
+  // «ملفي الصحي»: null until the patient agrees.
+  bool? consent;
+  final facts = <Map<String, Object?>>[];
+  final proposals = <Map<String, Object?>>[];
+  Map<String, Object?>? registered;
+
+  Map<String, Object?> fact(String id, String kind, String text, {bool pharmacist = false}) => {
+    'id': id,
+    'kind': kind,
+    'text': text,
+    'detail': kind == 'medication' ? {'instructions': 'حبة الصبح'} : null,
+    'source': pharmacist ? 'pharmacist' : 'patient',
+    'confirmed': pharmacist,
+    'added_by': pharmacist ? 'رنا' : 'سامر',
+    'created_at': '2026-09-20T10:00:00Z',
+    'ends_at': null,
+    'ended_at': null,
+    'active': true,
+  };
+
+  Map<String, Object?> file() => {
+    'facts': [...facts.where((f) => f['ended_at'] == null)],
+    'past_facts': [...facts.where((f) => f['ended_at'] != null)],
+    'proposals': [...proposals.where((p) => p['status'] == 'pending')],
+    'history': [
+      {
+        'id': 'c9',
+        'pharmacy': 'صيدلية الشفاء',
+        'sent_at': '2026-09-20T10:00:00Z',
+        'status': 'ready',
+        'urgent': false,
+        'red_flag': null,
+        'doctor_advice': null,
+        'summary': {
+          'symptoms': ['صداع'],
+        },
+        'decision': {
+          'items': [
+            {'name': 'Panadol 500mg'},
+          ],
+        },
+      },
+    ],
+  };
+
   late final client = MockClient((req) async {
     final path = req.url.path;
     seen.add('${req.method} $path');
@@ -127,6 +172,8 @@ class FakeServer {
     final parts = path.split('/');
     switch ((req.method, path)) {
       case ('POST', '/patients/register'):
+        registered = Map.of(body as Map<String, Object?>);
+        if (body['file_consent'] == true) consent = true;
         me = {...me, 'name': body['name']};
         return json({'patient': me, 'session_token': 's.x', 'access_token': 'a'});
       case ('POST', '/patients/token'):
@@ -214,6 +261,33 @@ class FakeServer {
         c['status'] = 'sent';
         (c['messages']! as List).add(_message('system', 'بعتنا حالتك للصيدلية.'));
         return json(c);
+      case ('GET', '/patients/me/file'):
+        if (consent != true) return json({'detail': 'no_consent'}, 409);
+        return json(file());
+      case ('POST', '/patients/me/consent'):
+        consent = body['consent'] as bool;
+        return json({'consent_at': consent! ? '2026-09-26T10:00:00Z' : null});
+      case ('POST', '/patients/me/file/facts'):
+        facts.add(fact('f${facts.length + 1}', body['kind'] as String, body['text'] as String));
+        return json(facts.last);
+      case ('POST', _) when path.startsWith('/patients/me/file/facts/'):
+        final f = facts.firstWhere((f) => f['id'] == parts[5]);
+        f['ended_at'] = '2026-09-26T10:00:00Z';
+        return json(f);
+      case ('POST', _) when path.startsWith('/patients/me/file/proposals/'):
+        final p = proposals.firstWhere((p) => p['id'] == parts[5]);
+        p['status'] = body['accept'] == true ? 'accepted' : 'rejected';
+        if (body['accept'] == true) {
+          facts.add(fact('f${facts.length + 1}', p['kind']! as String, p['text']! as String));
+        }
+        return json(p);
+      case ('GET', '/patients/me/file/export'):
+        return json({...file(), 'changes': []});
+      case ('DELETE', '/patients/me/file'):
+        consent = null;
+        facts.clear();
+        proposals.clear();
+        return json({'deleted': true});
       default:
         return json({'detail': 'not_found'}, 404);
     }
